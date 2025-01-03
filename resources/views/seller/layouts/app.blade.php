@@ -1,49 +1,55 @@
 <!doctype html>
-@if(\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
-<html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@if (\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
+    <html dir="rtl" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @else
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 @endif
 <head>
-	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<meta name="app-url" content="{{ getBaseURL() }}">
-	<meta name="file-base-url" content="{{ getFileBaseURL() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="app-url" content="{{ getBaseURL() }}">
+    <meta name="file-base-url" content="{{ getFileBaseURL() }}">
 
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<!-- Favicon -->
-	<link rel="icon" href="{{ uploaded_asset(get_setting('site_icon')) }}">
-	<title>{{ get_setting('website_name').' | '.get_setting('site_motto') }}</title>
+    <!-- Favicon -->
+    <link rel="icon" href="{{ uploaded_asset(get_setting('site_icon')) }}">
+    <title>{{ get_setting('website_name') . ' | ' . get_setting('site_motto') }}</title>
 
-	<!-- google font -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <!-- google font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
 
-	<!-- aiz core css -->
-	<link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
-    @if(\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
-    <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
+    <!-- aiz core css -->
+    <link rel="stylesheet" href="{{ static_asset('assets/css/vendors.css') }}">
+    @if (\App\Models\Language::where('code', Session::get('locale', Config::get('app.locale')))->first()->rtl == 1)
+        <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-rtl.min.css') }}">
     @endif
-	<link rel="stylesheet" href="{{ static_asset('assets/css/aiz-seller.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css" integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ static_asset('assets/css/aiz-seller.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/css/dropify.css"
+        integrity="sha512-In/+MILhf6UMDJU4ZhDL0R0fEpsp4D3Le23m6+ujDWXwl3whwpucJG1PEmI3B07nyJx+875ccs+yX2CqQJUxUw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="{{ static_asset('assets/css/countrySelect.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css" rel="stylesheet">
 
     @stack('styles')
     <style>
         /* Override Dropify's default message font size */
         .dropify-wrapper .dropify-message p {
-            font-size: 13px !important; /* Adjust the font size as needed */
+            font-size: 13px !important;
+            /* Adjust the font size as needed */
         }
 
         .country-select {
             width: 100%;
         }
 
-        .country-select.inside input, .country-select.inside input[type=text] {
+        .country-select.inside input,
+        .country-select.inside input[type=text] {
             width: 100%;
             height: calc(1.3125rem + 1.2rem + 2px);
             border: 1px solid #e4e5eb;
@@ -51,115 +57,132 @@
 
         }
 
-        .icon-delete-pricing{
+        .icon-delete-pricing {
             display: flex;
             justify-content: flex-end;
             margin-bottom: 14px;
         }
-        /* .fa-regular{
-            color:red
-        } */
 
-        .div-btn{
+        .div-btn {
             display: flex;
             width: 100%;
             justify-content: center;
         }
 
-        #bloc_pricing_configuration_variant{
+        #bloc_pricing_configuration_variant {
             width: 94%;
             margin-left: 19px;
             margin-top: 21px;
         }
 
-        .bloc_pricing_configuration_variant{
+        .bloc_pricing_configuration_variant {
             width: 94%;
             margin-left: 19px;
             margin-top: 21px;
         }
 
-        #bloc_sample_pricing_configuration_variant{
+        #bloc_sample_pricing_configuration_variant {
             width: 98%;
             margin-left: 14px;
             margin-top: 21px;
         }
 
-        .bloc_sample_pricing_configuration_variant{
+        .bloc_sample_pricing_configuration_variant {
             width: 98%;
             margin-left: 14px;
             margin-top: 21px;
         }
 
-        #general_attributes{
+        #general_attributes {
             width: 100%;
             margin-left: 19px !important;
         }
 
-        .font-size-icon{
+        .font-size-icon {
             font-size: 23px;
         }
 
-        .container-img{
+        .container-img {
             position: relative;
         }
 
-        .icon-delete-image{
+        .icon-delete-image {
             position: absolute;
             color: red;
             top: 0;
             right: -11px;
         }
 
-        .icon-delete-image:hover{
+        .icon-delete-image:hover {
             cursor: pointer;
         }
+
         .custom-th {
             background-color: rgb(242 242 242);
         }
+
         .dataTables_wrapper .dataTables_filter {
-            float: left  !important;
+            float: left !important;
 
         }
+
         .dataTables_filter input[type="search"] {
             background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"%3E%3Cpath fill="%23757575" d="M505.1 442.7L392.4 330c-7.4-7.5-19.4-7.5-26.9 0s-7.4 19.7 0 27.3l112.7 112.7c7.5 7.5 19.7 7.5 27.2 0l27.2-27.2c7.5-7.5 7.5-19.7 0-27.3zM184 0C82.6 0 0 82.6 0 184c0 101.3 82.6 184 184 184 101.4 0 184-82.7 184-184C368 82.6 285.3 0 184 0zm0 328c-72.1 0-136-64.9-136-136 0-72.1 63.9-136 136-136s136 63.9 136 136c0 71.1-63.9 136-136 136z"%3E%3C/path%3E%3C/svg%3E');
-            background-position: right 10px center; /* Position icon to the left */
+            background-position: right 10px center;
+            /* Position icon to the left */
             background-repeat: no-repeat;
-            border: 1px solid rgb(217, 216, 216) !important; /* Blue border */
-            border-radius: 5px !important; /* Rounded corners */
-            padding: 5px 10px !important; /* Padding */
-            background-size: 16px; /* Adjust the size of the background image */
+            border: 1px solid rgb(217, 216, 216) !important;
+            /* Blue border */
+            border-radius: 5px !important;
+            /* Rounded corners */
+            padding: 5px 10px !important;
+            /* Padding */
+            background-size: 16px;
+            /* Adjust the size of the background image */
 
         }
-
 
         .btn-excel {
-            background-color: white !important; /* White background */
-            color: #a2b8c6 !important; /* Blue text color */
-            border: 1px solid #a2b8c6 !important; /* Blue border */
-            border-radius: 5px !important; /* Rounded corners */
-            padding: 5px 10px !important; /* Padding */
-            margin-left: 10px !important; /* Adjust as needed */
+            background-color: white !important;
+            /* White background */
+            color: #a2b8c6 !important;
+            /* Blue text color */
+            border: 1px solid #a2b8c6 !important;
+            /* Blue border */
+            border-radius: 5px !important;
+            /* Rounded corners */
+            padding: 5px 10px !important;
+            /* Padding */
+            margin-left: 10px !important;
+            /* Adjust as needed */
         }
+
         div.dt-buttons {
-            float: right  !important;
+            float: right !important;
         }
 
-        div.dt-buttons>.dt-button, div.dt-buttons>div.dt-button-split .dt-button {
-            background:  none !important; /* White background */
+        div.dt-buttons>.dt-button,
+        div.dt-buttons>div.dt-button-split .dt-button {
+            background: none !important;
+            /* White background */
 
         }
+
         .customer-btn-color {
-            border-radius: 5px !important; /* Rounded corners */
-            background-color: #a2b8c6 !important; /* Initial background color */
-            border: 1px solid #a2b8c6 !important; /* Border color */
+            border-radius: 5px !important;
+            /* Rounded corners */
+            background-color: #a2b8c6 !important;
+            /* Initial background color */
+            border: 1px solid #a2b8c6 !important;
+            /* Border color */
         }
 
         .customer-btn-color:hover {
-            background-color: #1b3a57 !important; /* Navy blue background on hover */
-            border: 1px solid #1b3a57 !important; /* Navy blue border on hover */
+            background-color: #1b3a57 !important;
+            /* Navy blue background on hover */
+            border: 1px solid #1b3a57 !important;
+            /* Navy blue border on hover */
         }
-
-
     </style>
 
     <!-- Font Awesome CSS -->
@@ -167,7 +190,8 @@
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Include MultiSelect CSS -->
@@ -178,19 +202,23 @@
         body {
             font-size: 12px;
         }
-        #map{
+
+        #map {
             width: 100%;
             height: 250px;
         }
-        #edit_map{
+
+        #edit_map {
             width: 100%;
             height: 250px;
         }
-        .pac-container{
+
+        .pac-container {
             z-index: 100000;
         }
 
-        .plus, .minus {
+        .plus,
+        .minus {
             display: inline-block;
             background-repeat: no-repeat;
             background-size: 16px 16px !important;
@@ -206,7 +234,7 @@
             background-image: url(https://img.icons8.com/material-rounded/24/minus.png);
         }
 
-        .square-variant{
+        .square-variant {
             margin-right: 10px;
             color: black;
         }
@@ -235,11 +263,11 @@
             padding: 0px 0px 0px 35px;
         }
 
-        .width-badge{
+        .width-badge {
             width: 100%;
         }
 
-        .ms-options-wrap > .ms-options {
+        .ms-options-wrap>.ms-options {
             position: absolute;
             left: 0;
             width: 100%;
@@ -252,84 +280,94 @@
             visibility: hidden;
         }
 
-        .bloc-default-shipping-style{
+        .bloc-default-shipping-style {
             border: 1px solid gainsboro;
             border-radius: 5px;
             padding: 15px 26px;
         }
-
     </style>
     <style>
-/* .introjs-prevbutton {
-     visibility: hidden !important;
-     display: none !important; } */
-.coming-soon-container {
-        text-align: center;
-        padding: 50px;
-        background-color: #f7f8fa; /* Adjust the background color if needed */
-    }
+        .coming-soon-container {
+            text-align: center;
+            padding: 50px;
+            background-color: #f7f8fa;
+            /* Adjust the background color if needed */
+        }
 
-
-
-    .coming-soon-container img {
-        max-width: 100%;
-        height: auto;
-    }
-
-    .coming-soon-container h1 {
-        font-weight: 700;
-        font-size: 2.5em; /* Adjusted size for visibility */
-        color: #333; /* Adjusted color for contrast */
-        margin-bottom: 0.5em; /* Spacing adjusted */
-    }
-
-    .coming-soon-container p {
-        color: #666; /* Adjusted color for contrast */
-        font-size: 1em; /* Adjusted size for readability */
-        margin-bottom: 2em; /* Spacing adjusted */
-    }
-    .email-input {
-        padding: 15px;
-        margin-right: 10px; /* Space between input and button */
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        width: 300px; /* Fixed width for the input */
-    }
-
-    .notify-btn {
-        padding: 15px 25px;
-        background-color: #A2B8C6; /* Button color reference */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        color: white;
-        font-size: 1em;
-        /* Adding hover effect for the button */
-        transition: background-color 0.3s ease;
-    }
-
-    .notify-btn:hover {
-        background-color: #8a9ba8; /* Slightly darker shade on hover */
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
         .coming-soon-container img {
-            max-width: 70%; /* Larger image on smaller screens */
+            max-width: 100%;
+            height: auto;
+        }
+
+        .coming-soon-container h1 {
+            font-weight: 700;
+            font-size: 2.5em;
+            /* Adjusted size for visibility */
+            color: #333;
+            /* Adjusted color for contrast */
+            margin-bottom: 0.5em;
+            /* Spacing adjusted */
+        }
+
+        .coming-soon-container p {
+            color: #666;
+            /* Adjusted color for contrast */
+            font-size: 1em;
+            /* Adjusted size for readability */
+            margin-bottom: 2em;
+            /* Spacing adjusted */
         }
 
         .email-input {
-            width: auto; /* Full width on small screens */
-            margin: 0 0 1em 0; /* Stack input above button */
+            padding: 15px;
+            margin-right: 10px;
+            /* Space between input and button */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            /* Fixed width for the input */
         }
 
         .notify-btn {
-            width: auto; /* Full width on small screens */
+            padding: 15px 25px;
+            background-color: #A2B8C6;
+            /* Button color reference */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            /* Adding hover effect for the button */
+            transition: background-color 0.3s ease;
         }
-    }
+
+        .notify-btn:hover {
+            background-color: #8a9ba8;
+            /* Slightly darker shade on hover */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .coming-soon-container img {
+                max-width: 70%;
+                /* Larger image on smaller screens */
+            }
+
+            .email-input {
+                width: auto;
+                /* Full width on small screens */
+                margin: 0 0 1em 0;
+                /* Stack input above button */
+            }
+
+            .notify-btn {
+                width: auto;
+                /* Full width on small screens */
+            }
+        }
     </style>
-	<script>
-    	var AIZ = AIZ || {};
+    <script>
+        var AIZ = AIZ || {};
         AIZ.local = {
             nothing_selected: '{!! translate('Nothing selected', null, true) !!}',
             nothing_found: '{!! translate('Nothing found', null, true) !!}',
@@ -352,31 +390,30 @@
             file: '{{ translate('File') }}',
             files: '{{ translate('Files') }}',
         }
-	</script>
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 </head>
 <body class="">
-
-	<div class="aiz-main-wrapper">
+    <div class="aiz-main-wrapper">
         @include('seller.inc.seller_sidenav')
-		<div class="aiz-content-wrapper">
+        <div class="aiz-content-wrapper">
             @include('seller.inc.seller_nav')
-			<div class="aiz-main-content">
-				<div class="px-15px px-lg-25px">
+            <div class="aiz-main-content">
+                <div class="px-15px px-lg-25px">
                     @yield('panel_content')
-				</div>
-				<div class="bg-white text-center py-3 px-15px px-lg-25px mt-auto border-sm-top">
-					<p class="mb-0">&copy; {{ get_setting('site_name') }} v{{ get_setting('current_version') }}</p>
-				</div>
-			</div><!-- .aiz-main-content -->
-		</div><!-- .aiz-content-wrapper -->
-	</div><!-- .aiz-main-wrapper -->
+                </div>
+                <div class="bg-white text-center py-3 px-15px px-lg-25px mt-auto border-sm-top">
+                    <p class="mb-0">&copy; {{ get_setting('site_name') }} v{{ get_setting('current_version') }}</p>
+                </div>
+            </div><!-- .aiz-main-content -->
+        </div><!-- .aiz-content-wrapper -->
+    </div><!-- .aiz-main-wrapper -->
 
     @yield('modal')
 
 
-	<script src="{{ static_asset('assets/js/vendors.js') }}" ></script>
-	<script src="{{ static_asset('assets/js/aiz-core.js') }}" ></script>
+    <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
+    <script src="{{ static_asset('assets/js/aiz-core.js') }}"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <!-- Select extension -->
@@ -387,9 +424,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
 
     <script type="text/javascript">
-	    @foreach (session('flash_notification', collect())->toArray() as $message)
-	        AIZ.plugins.notify('{{ $message['level'] }}', '{{ $message['message'] }}');
-	    @endforeach
+        @foreach (session('flash_notification', collect())->toArray() as $message)
+            AIZ.plugins.notify('{{ $message['level'] }}', '{{ $message['message'] }}');
+        @endforeach
 
         $('.dropdown-menu a[data-toggle="tab"]').click(function(e) {
             e.stopPropagation()
@@ -398,51 +435,61 @@
 
         if ($('#lang-change').length > 0) {
             $('#lang-change .dropdown-menu a').each(function() {
-                $(this).on('click', function(e){
+                $(this).on('click', function(e) {
                     e.preventDefault();
                     var $this = $(this);
                     var locale = $this.data('flag');
-                    $.post('{{ route('language.change') }}',{_token:'{{ csrf_token() }}', locale:locale}, function(data){
+                    $.post('{{ route('language.change') }}', {
+                        _token: '{{ csrf_token() }}',
+                        locale: locale
+                    }, function(data) {
                         location.reload();
                     });
 
                 });
             });
         }
-        function menuSearch(){
-			var filter, item;
-			filter = $("#menu-search").val().toUpperCase();
-			items = $("#main-menu").find("a");
-			items = items.filter(function(i,item){
-				if($(item).find(".aiz-side-nav-text")[0].innerText.toUpperCase().indexOf(filter) > -1 && $(item).attr('href') !== '#'){
-					return item;
-				}
-			});
 
-			if(filter !== ''){
-				$("#main-menu").addClass('d-none');
-				$("#search-menu").html('')
-				if(items.length > 0){
-					for (i = 0; i < items.length; i++) {
-						const text = $(items[i]).find(".aiz-side-nav-text")[0].innerText;
-						const link = $(items[i]).attr('href');
-						 $("#search-menu").append(`<li class="aiz-side-nav-item"><a href="${link}" class="aiz-side-nav-link"><i class="las la-ellipsis-h aiz-side-nav-icon"></i><span>${text}</span></a></li`);
-					}
-				}else{
-					$("#search-menu").html(`<li class="aiz-side-nav-item"><span	class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`);
-				}
-			}else{
-				$("#main-menu").removeClass('d-none');
-				$("#search-menu").html('')
-			}
+        function menuSearch() {
+            var filter, item;
+            filter = $("#menu-search").val().toUpperCase();
+            items = $("#main-menu").find("a");
+            items = items.filter(function(i, item) {
+                if ($(item).find(".aiz-side-nav-text")[0].innerText.toUpperCase().indexOf(filter) > -1 && $(item)
+                    .attr('href') !== '#') {
+                    return item;
+                }
+            });
+
+            if (filter !== '') {
+                $("#main-menu").addClass('d-none');
+                $("#search-menu").html('')
+                if (items.length > 0) {
+                    for (i = 0; i < items.length; i++) {
+                        const text = $(items[i]).find(".aiz-side-nav-text")[0].innerText;
+                        const link = $(items[i]).attr('href');
+                        $("#search-menu").append(
+                            `<li class="aiz-side-nav-item"><a href="${link}" class="aiz-side-nav-link"><i class="las la-ellipsis-h aiz-side-nav-icon"></i><span>${text}</span></a></li`
+                            );
+                    }
+                } else {
+                    $("#search-menu").html(
+                        `<li class="aiz-side-nav-item"><span	class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
+                        );
+                }
+            } else {
+                $("#main-menu").removeClass('d-none');
+                $("#search-menu").html('')
+            }
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}" ></script>
+    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}"></script>
     <script>
-        jQuery("img").one('error', function () {
-            jQuery(this).attr("src", "{{asset('public/images/placeholder.png')}}"); //.unbind("error") is useless here
-        }).each(function () {
+        jQuery("img").one('error', function() {
+            jQuery(this).attr("src",
+            "{{ asset('public/images/placeholder.png') }}"); //.unbind("error") is useless here
+        }).each(function() {
             if (this.complete && !this.naturalHeight && !this.naturalWidth) {
                 $(this).triggerHandler('error');
             }

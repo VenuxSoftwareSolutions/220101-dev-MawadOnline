@@ -17,11 +17,10 @@
         </div>
         <div class="card-body">
             <div class="row">
-
                 <div class="col-lg-6">
                     <table class="table-borderless table">
                         <tr>
-                            <td class="w-50 fw-600">{{ translate('Order Code') }}:</td>
+                            <td class="w-50 fw-600">{{ translate('Order Code') }}</td>
                             <td>{{ $order->code }}</td>
                         </tr>
                         <tr>
@@ -177,7 +176,7 @@
                                                 onclick="product_review('{{ $orderDetail->product_id }}')"
                                                 class="btn btn-primary btn-sm rounded-0"> {{ translate('Review') }} </a>
                                         @else
-                                            <span class="text-danger">{{ translate('Not Delivered Yet') }}</span>
+                                            <span class="text-danger {{ $orderDetail->delivery_status }}__clz">{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}</span>
                                         @endif
                                     </td>
                                 </tr>

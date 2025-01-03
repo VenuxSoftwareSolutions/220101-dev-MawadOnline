@@ -8,7 +8,6 @@
         }
     }
 @endphp
-<!-- Cart button with cart count -->
 <a href="javascript:void(0)" class="d-flex align-items-center text-dark px-3 h-100" data-toggle="dropdown">
     <span class="mr-2">
         <span class="badge badge-counter font-prompt">{{ count($carts) }}</span>

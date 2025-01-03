@@ -1,8 +1,6 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-
-    <!-- Steps -->
     <section class="pt-5 mb-4">
         <div class="container">
             <div class="row">
@@ -86,7 +84,7 @@
                                                         </div>
                                                         <div class="row">
                                                             <span class="fs-14 text-secondary col-3">{{ translate('State') }}</span>
-                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->area)->name }}</span>
+                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->state)->name }}</span>
                                                         </div>
                                                         <div class="row">
                                                             <span class="fs-14 text-secondary col-3">{{ translate('Country') }}</span>

@@ -538,15 +538,16 @@ class ProductController extends Controller
 
     public function edit(Request $request, $id)
     {
-        //$product = Product::findOrFail($id);
-
         $product = Product::find($id);
+
         if (Auth::user()->id != $product->user_id) {
             abort(404);
         }
+
         $colors = Color::orderBy('name', 'asc')->get();
         $product_category = ProductCategory::where('product_id', $id)->first();
         $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
+
         if ($product_category != null) {
             $categorie = Category::find($product_category->category_id);
         } else {
@@ -565,13 +566,18 @@ class ProductController extends Controller
 
         $shippers = Shipper::all();
         $supported_shippers = [];
-        if (count($shippers) > 0) {
+
+        if ($shippers->count() > 0) {
             foreach ($shippers as $shipper) {
                 $shipper_areas = ShippersArea::where('shipper_id', $shipper->id)->get();
 
                 if (count($shipper_areas) > 0) {
                     foreach ($shipper_areas as $area) {
-                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
+                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)
+                            ->where('emirate_id', $area->emirate_id)
+                            ->where('area_id', $area->state_id)
+                            ->get();
+
                         if (count($warehouses) > 0) {
                             if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
@@ -579,13 +585,13 @@ class ProductController extends Controller
                         }
                     }
                 }
-
             }
         }
 
         if ($product != null) {
             if ($product->activate_third_party == 1) {
                 $volumetric_weight = getProductVolumetricWeight($product->length, $product->height, $product->weight);
+
                 if ($volumetric_weight > $product->weight) {
                     $chargeable_weight = $volumetric_weight;
                 } else {
@@ -624,7 +630,6 @@ class ProductController extends Controller
 
             if (count($general_attributes) > 0) {
                 foreach ($general_attributes as $general_attribute) {
-                    // $data_general_attributes[$general_attribute->id_attribute] = $general_attribute;
                     if ($general_attribute->id_colors != null) {
                         if (array_key_exists($general_attribute->id_attribute, $data_general_attributes)) {
                             array_push($data_general_attributes[$general_attribute->id_attribute], $general_attribute->id_colors);
@@ -676,7 +681,6 @@ class ProductController extends Controller
                                 }
                             }
                         }
-
                     }
                 }
             }

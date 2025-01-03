@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Seller;
 
 use Auth;
-use App\Models\Tour;
 use App\Models\Coupon;
 use App\Models\Category;
 use App\Models\Product;
@@ -50,7 +49,6 @@ class CouponController extends Controller
 
     public function create()
     {
-
         $products = Product::where('user_id', Auth::id())->with('categories')->get();
 
         $productCategoryIds = $products->map(function ($product) {
@@ -122,8 +120,6 @@ class CouponController extends Controller
         ]);
     }
 
-    
-
     public function edit($id)
     {
         $coupon = Coupon::findOrFail($id);
@@ -133,15 +129,13 @@ class CouponController extends Controller
     public function update(CouponUpdateRequest  $request, $id)
     {
         $validatedData = $request->validated();
-        $coupon = Coupon::findOrFail($id);
-        $coupon->update($validatedData);
+        Coupon::findOrFail($id)->update($validatedData);
         return response()->json(['success' => true, 'message' => 'Coupon updated successfully.']);
     }
 
     public function destroy($id)
     {
-        $coupon = Coupon::findOrFail($id);
-        $coupon->delete();
+        Coupon::findOrFail($id)->delete();
         return response()->json(['success' => true, 'message' => 'Coupon deleted successfully.']);
     }
 
@@ -195,6 +189,7 @@ class CouponController extends Controller
 
         return response()->json(['categories' => $categories]);
     }
+
     public function toggleStatus(Request $request)
     {
         $request->validate(['id' => 'required|integer', 'status' => 'required|boolean']);
@@ -210,5 +205,4 @@ class CouponController extends Controller
 
         return response()->json(['success' => false], 404);
     }
-
 }

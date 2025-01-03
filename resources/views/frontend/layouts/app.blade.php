@@ -448,6 +448,27 @@
                     });
                 });
             }
+            const compareData = JSON.parse(localStorage.getItem('compare'));
+            const hasSynced = sessionStorage.getItem('compareSynced');
+
+            if (compareData  && !hasSynced) {
+                $.post('{{ route('compare.syncCompareList') }}', {
+                    _token: AIZ.data.csrf,
+                    localStorageCompare: compareData
+                }, function (response) {
+                    if (response.message) {
+                        console.log(response.message);
+                        //this will depend on business requiremnts  wether to clear local storage or not
+                        // localStorage.removeItem('compare');
+                        sessionStorage.setItem('compareSynced', true);
+
+                    }
+                }).fail(function (jqXHR) {
+                    console.error('Failed to sync compare list:', jqXHR.responseJSON);
+                });
+        }
+
+           
         });
 
         $('#search').on('keyup', function(){
@@ -517,14 +538,22 @@
 
         function updateNavCart(view,count){
             $('.cart-count').html(count);
+
             $('#cart_items').html(view);
+
+            if(count === 0) {
+                AIZ.plugins.notify("danger", "{{ __("Your Cart is empty!") }}")
+                setTimeout(() => {
+                    location.href = '/'
+                }, 2500);
+            }
         }
 
-        function removeFromCart(key){
+        function removeFromCart(key) {
             $.post('{{ route('cart.removeFromCart') }}', {
                 _token  : AIZ.data.csrf,
                 id      :  key
-            }, function(data){
+            }, function(data) {
                 updateNavCart(data.nav_cart_view,data.cart_count);
                 $('#cart-summary').html(data.cart_view);
                 AIZ.plugins.notify('success', "{{ translate('Item has been removed from cart') }}");
@@ -536,12 +565,136 @@
             $('#login_modal').modal();
         }
 
-        function addToCompare(id){
-            $.post('{{ route('compare.addToCompare') }}', {_token: AIZ.data.csrf, id:id}, function(data){
-                $('#compare').html(data);
-                AIZ.plugins.notify('success', "{{ translate('Item has been added to compare list') }}");
-                $('#compare_items_sidenav').html(parseInt($('#compare_items_sidenav').html())+1);
-            });
+        function addToCompare(id) {
+            let localCompare;
+            try {
+                localCompare = JSON.parse(localStorage.getItem('compare')) || {};
+            } catch (e) {
+                console.error('Invalid JSON in localStorage for key "compare":', e);
+                localCompare = {};
+                localStorage.removeItem('compare');
+            }
+
+            $.post('{{ route('compare.addToCompare') }}', {
+                _token: AIZ.data.csrf,
+                id: id,
+                localStorageCompare: localCompare
+            }, function(data) {
+                if (data.localStorageAction) {
+                    // Handle for guest users
+                    let compare = JSON.parse(localStorage.getItem('compare')) || {};
+                    if (!compare[data.categoryId]) {
+                        compare[data.categoryId] = [];
+                    }
+
+                    if (compare[data.categoryId].includes(data.variantId)) {
+                        AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
+                        return;
+                    }
+
+                    if (compare[data.categoryId].length < data.maxVariants) {
+                        compare[data.categoryId].push(data.variantId);
+                        localStorage.setItem('compare', JSON.stringify(compare));
+
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount + 1);
+
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                    } else {
+                        AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
+                    }
+                } else {
+                    // Handle for logged-in users
+                    if (data.item_already_exists) {
+                        AIZ.plugins.notify('warning', "{{ translate('This item is already in the compare list.') }}");
+                    } else if (data.max_limit_reached) {
+                        AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
+                    } else {
+                        localStorage.setItem('compare', JSON.stringify(data.compareData));
+
+                        $('#compare').html(data.compareData);
+
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount + 1);
+
+                        AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+                    }
+                }
+            })
+            .fail(function(jqXHR) {
+                if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
+                    AIZ.plugins.notify('warning', jqXHR.responseJSON.error);
+                } else {
+                    AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
+                }
+        });
+        }
+
+
+        $(document).on('click', '.confirm-delete', function(e) {
+            e.preventDefault();
+
+            let categoryId = $(this).data('category-id');
+            let variantId = $(this).data('variant-id');
+
+            $('#delete-confirmation-modal').modal('show');
+
+            $('#confirm-delete-btn').off('click').on('click', function() {
+                removeFromCompare(categoryId, variantId);
+            }); 
+        });
+
+        function removeFromCompare(categoryId, variantId) {
+            const isLoggedIn = '{{ Auth::check() }}' === '1';
+            if (isLoggedIn) {
+
+                $.post('{{ route('compare.removeFromCompare') }}', {
+                    _token: AIZ.data.csrf,
+                    category_id: categoryId,
+                    variant_id: variantId
+                })
+                .done(function(data) {
+                    if (data.success) {
+                        AIZ.plugins.notify('success', "{{ translate('Item has been removed from the compare list.') }}");
+
+                        let compareCount = parseInt($('#compare_items_sidenav').html());
+                        $('#compare_items_sidenav').html(compareCount - 1);
+
+                        $('#delete-confirmation-modal').modal('hide');
+                        location.reload();
+
+                    } else {
+                        AIZ.plugins.notify('warning', data.message || "{{ translate('Unable to remove the item.') }}");
+                    }
+                })
+                .fail(function() {
+                    AIZ.plugins.notify('error', "{{ translate('Something went wrong. Please try again.') }}");
+                });
+            } else {
+                let compareList = JSON.parse(localStorage.getItem('compare')) || {};
+                
+                if (compareList[categoryId]) {
+                    compareList[categoryId] = compareList[categoryId].filter(id => id != variantId);
+
+                    if (compareList[categoryId].length === 0) {
+                        delete compareList[categoryId];
+                    }
+
+                    localStorage.setItem('compare', JSON.stringify(compareList));
+                }
+
+                AIZ.plugins.notify('success', "{{ translate('Item has been removed from the compare list.') }}");
+
+                let compareCount = parseInt($('#compare_items_sidenav').html());
+                $('#compare_items_sidenav').html(compareCount - 1);
+
+                $('#delete-confirmation-modal').modal('hide');
+                location.reload();
+            }
+        }
+
+        function clearLocalStorage(event) {
+            localStorage.clear(); 
         }
 
         function addToWishList(id){
@@ -879,8 +1032,7 @@
                     $('header').delay(800).removeClass('z-1').addClass('z-1020');
                 }
             }
-        </script>
-    @endif
+        </script> @endif
 
     @yield('script')
 

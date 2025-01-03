@@ -2082,7 +2082,7 @@
 
             $('body').on('change', '#attributes', function() {
                 var ids_attributes = $(this).val();
-
+                
                 var clicked = ids_attributes.diff(initial_attributes);
                 if (clicked.length == 0) {
                     clicked = initial_attributes.diff(ids_attributes);

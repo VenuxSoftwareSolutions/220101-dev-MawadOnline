@@ -721,7 +721,7 @@
     const menuWrapper = document.querySelector('.menu-wrapper');
     const scrollLeft = document.querySelector('.scroll-left');
     const scrollRight = document.querySelector('.scroll-right');
-    const scrollAmount = 700; // Adjust this value as needed
+    const scrollAmount = 635; // Adjust this value as needed
 
     function updateArrowVisibility() {
         const scrollLeftValue = menuWrapper.scrollLeft;
@@ -737,7 +737,7 @@
             scrollLeft.style.display = 'block';
         }
 
-        if (scrollLeftValue + clientWidth +10 >= scrollWidth) {
+        if (scrollLeftValue + clientWidth + 10 >= scrollWidth) {
             scrollRight.style.display = 'none';
         } else {
             scrollRight.style.display = 'block';

@@ -607,12 +607,13 @@
                                             </span>
                                             <span class="button-text">{{ translate('visit eShop') }}</span>
                                         </a>
-                                        @if ($seller->verification_status == 1)
-                                            <!--<span class="absolute-top-right mr-05rem mt-05rem">
+                                        @endif
+{{--                                        @if ($seller->verification_status == 1)
+                                          <span class="absolute-top-right mr-05rem mt-05rem">
                                                 <img class="International-eShops-img"
                                                     src="{{ static_asset('assets/img/International-eShops.png') }}">
-                                            </span>-->
-                                        @endif
+                                            </span>
+                                        @endif --}}
                                     </div>
                                 </div>
                             @endif

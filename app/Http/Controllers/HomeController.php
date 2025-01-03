@@ -137,30 +137,33 @@ class HomeController extends Controller
 
     public function registration(Request $request)
     {
-        if (Auth::check()) {
-            return redirect()->route('home');
-        }
+        // if (Auth::check()) {
+        //     return redirect()->route('home');
+        // }
 
-        if ($request->has('referral_code') && addon_is_activated('affiliate_system')) {
-            try {
-                $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
-                $cookie_minute = 30 * 24;
-                if ($affiliate_validation_time) {
-                    $cookie_minute = $affiliate_validation_time->value * 60;
-                }
+        // if ($request->has('referral_code') && addon_is_activated('affiliate_system')) {
+        //     try {
+        //         $affiliate_validation_time = AffiliateConfig::where('type', 'validation_time')->first();
+        //         $cookie_minute = 30 * 24;
+        //         if ($affiliate_validation_time) {
+        //             $cookie_minute = $affiliate_validation_time->value * 60;
+        //         }
 
-                Cookie::queue('referral_code', $request->referral_code, $cookie_minute);
-                $referred_by_user = User::where('referral_code', $request->referral_code)->first();
+        //         Cookie::queue('referral_code', $request->referral_code, $cookie_minute);
+        //         $referred_by_user = User::where('referral_code', $request->referral_code)->first();
 
-                $affiliateController = new AffiliateController;
-                $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
-            } catch (Exception) {
-            }
-        }
+        //         $affiliateController = new AffiliateController;
+        //         $affiliateController->processAffiliateStats($referred_by_user->id, 1, 0, 0, 0);
+        //     } catch (Exception) {
+        //     }
+        // }
 
-        $viewPath = 'auth.'.get_setting('authentication_layout_select').'.user_registration';
+        // $viewPath = 'auth.'.get_setting('authentication_layout_select').'.user_registration';
 
-        return view($viewPath);
+        // return view($viewPath);
+
+
+        return back();
     }
 
     public function cart_login(Request $request)

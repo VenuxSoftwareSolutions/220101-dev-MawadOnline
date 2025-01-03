@@ -14,8 +14,10 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\UploadedFile;
 use App\Models\ProposedPayoutChange;
 use App\Http\Requests\SellerProfileRequest;
+use App\Models\Upload;
 use App\Notifications\VendorProfileChangesNotification;
 use App\Notifications\VendorProfileChangesWebNotification;
+use Artisan;
 
 class ProfileController extends Controller
 {
@@ -33,13 +35,13 @@ class ProfileController extends Controller
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
         // dd($proposedPayoutChange->modified_fields->getNewValue('bank_name')) ;
-        return view('seller.profile.index', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        return view('seller.profile.index', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
     /**
@@ -85,34 +87,76 @@ class ProfileController extends Controller
         return back();
     }
 
-    public function updatePersonalInfo(Request $request) {
+    public function updatePersonalInfo(Request $request)
+    {
 
         // Validate the incoming request data
-    $request->validate([
-        'first_name_personal' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[^\d]+$/' // Allow only alphabetic characters (no numbers)
-        ],
-        'last_name_personal' => [
-            'required',
-            'string',
-            'max:255',
-            'regex:/^[^\d]+$/' // Allow only alphabetic characters (no numbers)
-        ],
+        $request->validate([
+            'first_name_personal' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[^\d]+$/' // Allow only alphabetic characters (no numbers)
+            ],
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', // Ensure it's an image
 
-    ]);
-       $user=Auth::user() ;
+            'last_name_personal' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[^\d]+$/' // Allow only alphabetic characters (no numbers)
+            ],
+
+        ]);
+        $user = Auth::user();
 
         // Update the user model with the provided data
         $user->name = $request->first_name_personal . " " . $request->last_name_personal;
         $user->first_name = $request->first_name_personal;
         $user->last_name = $request->last_name_personal;
 
+
+        if ($request->hasFile('photo')) {
+            // Get the file and store original details
+            $file = $request->file('photo');
+            $originalName = $file->getClientOriginalName();
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $fileSize = $file->getSize();
+            $extension = $file->getClientOriginalExtension();
+
+            // Move the file to the uploads directory
+            $file->move(public_path('uploads/all/'), $fileName);
+
+            // Save the file details in the Upload model
+            $upload = new Upload();
+            $upload->file_original_name = $originalName;
+            $upload->file_name = 'public/uploads/all/'.$fileName;
+            $upload->user_id = Auth::id(); // Store the user's ID
+            $upload->file_size = $fileSize;
+            $upload->extension = $extension;
+            $upload->type = 'image'; // Or any other type you want to define
+            $upload->save();
+
+            // Update the user's avatar with the upload ID
+            $user = Auth::user();
+            $user->avatar = $upload->id;
+            $user->avatar_original = $upload->id;
+
+
+             // Update the shop's logo with the upload ID
+            if ($user->shop) {  // Assuming the User model has a relation to the Shop model
+                $shop = $user->shop;
+                $shop->logo = $upload->id;
+                $shop->save();
+            }
+
+        }
         // Save the updated user model
         $user->save();
 
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        
         // Optionally, you can return a response or redirect somewhere
         return redirect()->back()->with('success', 'User information updated successfully');
     }
@@ -121,7 +165,7 @@ class ProfileController extends Controller
     {
         // Get the existing payout information
         $user = Auth::user();
-        $user_id = $user->id ;
+        $user_id = $user->id;
         // Validate the incoming request data
         $request->validate([
             'bank_name' => 'required|string|max:128|regex:/\D/',
@@ -136,10 +180,10 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The ' . $attribute . ' must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The ' . $attribute . ' must be less than or equal to 5120 KB.');
                         }
                     }
                 },
@@ -200,10 +244,10 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The ' . $attribute . ' must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The ' . $attribute . ' must be less than or equal to 5120 KB.');
                         }
                     }
                 },
@@ -216,14 +260,14 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The ' . $attribute . ' must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The ' . $attribute . ' must be less than or equal to 5120 KB.');
                         }
                     }
                 },
-            ] :'',
+            ] : '',
             'tax_waiver' => $request->vat_registered == 0 ? [
                 'required',
                 function ($attribute, $value, $fail) {
@@ -231,14 +275,14 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The ' . $attribute . ' must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The ' . $attribute . ' must be less than or equal to 5120 KB.');
                         }
                     }
                 },
-            ] :'',
+            ] : '',
             'civil_defense_approval' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -246,10 +290,10 @@ class ProfileController extends Controller
                         // If the input value is a file (UploadedFile), validate file upload
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
                         if (!in_array($value->getMimeType(), $allowedMimeTypes)) {
-                            $fail('The '.$attribute.' must be a PDF, JPEG, or PNG file.');
+                            $fail('The ' . $attribute . ' must be a PDF, JPEG, or PNG file.');
                         }
                         if ($value->getSize() > 5120 * 1024) {
-                            $fail('The '.$attribute.' must be less than or equal to 5120 KB.');
+                            $fail('The ' . $attribute . ' must be less than or equal to 5120 KB.');
                         }
                     }
                 },
@@ -263,11 +307,42 @@ class ProfileController extends Controller
         // List of specific keys to check
         $keysToCheckPayout = ['bank_name', 'account_name', 'account_number', 'iban', 'swift_code', 'iban_certificate'];
         $keysToCheckBusiness = [
-            'trade_name_english', 'trade_name_arabic', 'trade_license_doc', 'eshop_name_english', 'eshop_name_arabic', 'eshop_desc_english', 'eshop_desc_arabic', 'license_issue_date',
-            'license_expiry_date', 'state', 'area_id', 'street', 'building', 'unit', 'po_box', 'landline', 'vat_registered', 'vat_certificate', 'trn', 'tax_waiver', 'civil_defense_approval'
+            'trade_name_english',
+            'trade_name_arabic',
+            'trade_license_doc',
+            'eshop_name_english',
+            'eshop_name_arabic',
+            'eshop_desc_english',
+            'eshop_desc_arabic',
+            'license_issue_date',
+            'license_expiry_date',
+            'state',
+            'area_id',
+            'street',
+            'building',
+            'unit',
+            'po_box',
+            'landline',
+            'vat_registered',
+            'vat_certificate',
+            'trn',
+            'tax_waiver',
+            'civil_defense_approval'
         ];
-        $keysToCheckContact = ['first_name', 'last_name', 'email', 'mobile_phone', 'additional_mobile_phone', 'nationality','date_of_birth','emirates_id_number','emirates_id_expiry_date',
-                               'emirates_id_file_path','business_owner','designation'];
+        $keysToCheckContact = [
+            'first_name',
+            'last_name',
+            'email',
+            'mobile_phone',
+            'additional_mobile_phone',
+            'nationality',
+            'date_of_birth',
+            'emirates_id_number',
+            'emirates_id_expiry_date',
+            'emirates_id_file_path',
+            'business_owner',
+            'designation'
+        ];
 
         // Initialize array to store modified fields
         $modifiedFields = [];
@@ -329,35 +404,32 @@ class ProfileController extends Controller
                         $existingTranslateKeyName = $existingBusinessInformation->getTranslation($translationKey, $language, false);
 
                         // Compare the value with the existing value if it exists
-                        if ($existingBusinessInformation && ($existingTranslateKeyName != $value || is_null($value) )) {
-                            if($value != null && $value !== '') {
+                        if ($existingBusinessInformation && ($existingTranslateKeyName != $value || is_null($value))) {
+                            if ($value != null && $value !== '') {
                                 $modifiedFields[] = [
                                     'field' => $key,
                                     'old_value' => $existingTranslateKeyName,
                                     'new_value' => $value,
                                 ];
+                            } else {
+                                $existingBusinessInformation->{$translationKey} = [$language => null];
+                                $existingBusinessInformation->save();
                             }
-                            else {
-                                $existingBusinessInformation->{$translationKey} = [$language=>null] ;
-                                $existingBusinessInformation->save() ;
-                            }
-
                         }
                     } else {
-                        if(strpos($key, '_date'))
-                            $value=Carbon::createFromFormat('d M Y',$value)->format('Y-m-d') ;
+                        if (strpos($key, '_date'))
+                            $value = Carbon::createFromFormat('d M Y', $value)->format('Y-m-d');
                         // Compare the value with the existing value if it exists
-                        if ($existingBusinessInformation && ($existingBusinessInformation->{$key} != $value || is_null($value )) ) {
-                            if($value != null && $value !== '') {
+                        if ($existingBusinessInformation && ($existingBusinessInformation->{$key} != $value || is_null($value))) {
+                            if ($value != null && $value !== '') {
                                 $modifiedFields[] = [
                                     'field' => $key,
                                     'old_value' => $existingBusinessInformation->{$key},
                                     'new_value' => $value,
                                 ];
-                            }
-                            else {
-                                    $existingBusinessInformation->{$key} = null ;
-                                    $existingBusinessInformation->save();
+                            } else {
+                                $existingBusinessInformation->{$key} = null;
+                                $existingBusinessInformation->save();
                             }
                         }
                     }
@@ -379,30 +451,26 @@ class ProfileController extends Controller
                     ];
                 } else {
 
-                        if(strpos($key, 'date') !== false) {
+                    if (strpos($key, 'date') !== false) {
 
-                            $value=Carbon::createFromFormat('d M Y',$value)->format('Y-m-d') ;
-                        }
-                        // Compare the value with the existing value if it exists
-                        if ($existingContactInformation && ($existingContactInformation->{$key} != $value|| is_null($value))) {
+                        $value = Carbon::createFromFormat('d M Y', $value)->format('Y-m-d');
+                    }
+                    // Compare the value with the existing value if it exists
+                    if ($existingContactInformation && ($existingContactInformation->{$key} != $value || is_null($value))) {
 
-                            if($value != null && $value !== '') {
-                                $modifiedFields[] = [
-                                    'field' => $key,
-                                    'old_value' => $existingContactInformation->{$key},
-                                    'new_value' => $value,
-                                ];
-                            }
-                            else {
-                                $existingContactInformation->{$key} = null ;
-                                $existingContactInformation->save();
-                            }
-
-
+                        if ($value != null && $value !== '') {
+                            $modifiedFields[] = [
+                                'field' => $key,
+                                'old_value' => $existingContactInformation->{$key},
+                                'new_value' => $value,
+                            ];
+                        } else {
+                            $existingContactInformation->{$key} = null;
+                            $existingContactInformation->save();
                         }
                     }
                 }
-
+            }
         }
 
         if (count($modifiedFields) > 0) {
@@ -412,17 +480,16 @@ class ProfileController extends Controller
                 'modified_fields' => json_encode($modifiedFields),
                 'status' => 'pending',
             ]);
-        // Trigger the notification
-        $admins = User::where('user_type','admin')->get(); // Fetch the first admin
-        if ($admins->isNotEmpty()) {
-            // Notify each admin user via Laravel notifications
-            foreach ($admins as $admin) {
-                $admin->notify(new VendorProfileChangesNotification($user,$modifiedFields));
-                Notification::send($admin, new VendorProfileChangesWebNotification($user));
+            // Trigger the notification
+            $admins = User::where('user_type', 'admin')->get(); // Fetch the first admin
+            if ($admins->isNotEmpty()) {
+                // Notify each admin user via Laravel notifications
+                foreach ($admins as $admin) {
+                    $admin->notify(new VendorProfileChangesNotification($user, $modifiedFields));
+                    Notification::send($admin, new VendorProfileChangesWebNotification($user));
+                }
             }
-         }
-         return back()->with('success', trans('profile.changes_proposed'));
-
+            return back()->with('success', trans('profile.changes_proposed'));
         }
 
 
@@ -431,165 +498,170 @@ class ProfileController extends Controller
         return back();
     }
 
-    public function helpCenter(Request $request){
+    public function helpCenter(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.help-center', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.help-center', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
 
-    public function AccountRegistration(Request $request){
+    public function AccountRegistration(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.AccountRegistration', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.AccountRegistration', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
-    public function ProductManagement(Request $request){
+    public function ProductManagement(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.ProductManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.ProductManagement', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
 
-    public function InventoryManagement(Request $request){
+    public function InventoryManagement(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.InventoryManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.InventoryManagement', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
 
 
-    public function OrderManagement(Request $request){
+    public function OrderManagement(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.OrderManagement', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.OrderManagement', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
-    public function eshop(Request $request){
+    public function eshop(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.eshop', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.eshop', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
 
 
-    public function eshopProfile(Request $request){
+    public function eshopProfile(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.eshopProfile', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.eshopProfile', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
-    public function FAQS(Request $request){
+    public function FAQS(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.FAQS', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.FAQS', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
 
-    public function SupportTicket(Request $request){
+    public function SupportTicket(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.SupportTicket', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.SupportTicket', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
 
-    public function billing(Request $request){
+    public function billing(Request $request)
+    {
         $user = Auth::user();
 
         /*         $addresses = $user->addresses; */
         $emirates = Emirate::all();
         $proposedPayoutChange = ProposedPayoutChange::where('user_id', $user->id)->latest()->first();
 
-        if ($proposedPayoutChange && ($proposedPayoutChange->status=="approved" || $proposedPayoutChange->status=="rejected" )  ) {
-            $proposedPayoutChange = null ;
+        if ($proposedPayoutChange && ($proposedPayoutChange->status == "approved" || $proposedPayoutChange->status == "rejected")) {
+            $proposedPayoutChange = null;
         }
 
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.help_centre.billing', compact('user', 'emirates', 'proposedPayoutChange' , 'tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.help_centre.billing', compact('user', 'emirates', 'proposedPayoutChange', 'tour_steps'));
     }
-
-
-
-
-
 }

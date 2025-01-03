@@ -103,14 +103,14 @@ Route::controller(LoginController::class)->group(function () {
     Route::get('/handle-demo-login', 'handle_demo_login')->name('handleDemoLogin');
 });
 
-Route::controller(VerificationController::class)->group(function () {
+Route::controller(VerificationController::class)->middleware('throttle:global')->group(function () {
     Route::get('/email/resend', 'resend')->name('verification.resend');
     Route::get('/verification-confirmation/{code}', 'verification_confirmation')->name('email.verification.confirmation');
 });
 
-Route::controller(HomeController::class)->group(function () {
+Route::controller(HomeController::class)->middleware('throttle:global')->group(function () {
     Route::get('/email-change/callback', 'email_change_callback')->name('email_change.callback');
-    Route::post('/password/reset/email/submit', 'reset_password_with_code')->name('password.update');
+    Route::post('/password/reset/email/submit', 'reset_password_with_code')->name('password.update')->middleware('throttle:1,1');
 
     Route::get('/users/login', 'login')->name('user.login')->middleware('handle-demo-login');
     Route::get('/vendor/login', 'login')->name('seller.login')->middleware('handle-demo-login');
@@ -131,7 +131,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/send-waitlist-email', 'sendWaitlistEmail')->name('send-waitlist-email');
 
     //Home Page
-    Route::get('/', 'index')->name('home');
+    Route::get('/', 'index')->middleware('throttle:global')->name('home');
 
     Route::post('/home/section/featured', 'load_featured_section')->name('home.section.featured');
     Route::post('/home/section/todays-deal', 'load_todays_deal_section')->name('home.section.todays_deal');
@@ -174,10 +174,10 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/track-your-order', 'trackOrder')->name('orders.track');
 });
 
-Route::controller(CustomerLoginController::class)->group(function () {
+Route::controller(CustomerLoginController::class)->middleware('throttle:global')->group(function () {
     Route::post('/users/login/login_user', 'login')->name('user.login_user')->middleware('handle-demo-login');
 });
-Route::controller(SellerLoginController::class)->group(function () {
+Route::controller(SellerLoginController::class)->middleware('throttle:global')->group(function () {
     Route::post('/seller/login/login_seller', 'login')->name('seller.login_seller')->middleware('handle-demo-login');
 });
 // Language Switch
@@ -194,7 +194,7 @@ Route::get('/sitemap.xml', function () {
 });
 
 // Classified Product
-Route::controller(CustomerProductController::class)->group(function () {
+Route::controller(CustomerProductController::class)->middleware('throttle:global')->group(function () {
     Route::get('/customer-products', 'customer_products_listing')->name('customer.products');
     Route::get('/customer-products?category={category_slug}', 'search')->name('customer_products.category');
     Route::get('/customer-products?city={city_id}', 'search')->name('customer_products.city');
@@ -203,7 +203,7 @@ Route::controller(CustomerProductController::class)->group(function () {
 });
 
 // Search
-Route::controller(SearchController::class)->group(function () {
+Route::controller(SearchController::class)->middleware('throttle:global')->group(function () {
     Route::get('/search', 'index')->name('search');
     Route::get('/search?keyword={search}', 'index')->name('suggestion.search');
     Route::post('/ajax-search', 'ajax_search')->name('search.ajax');
@@ -212,7 +212,7 @@ Route::controller(SearchController::class)->group(function () {
 });
 
 // Cart
-Route::controller(CartController::class)->group(function () {
+Route::controller(CartController::class)->middleware('throttle:global')->group(function () {
     Route::get('/cart', 'index')->name('cart');
     Route::post('/cart/show-cart-modal', 'showCartModal')->name('cart.showCartModal');
     Route::post('/cart/addtocart', 'addToCart')->name('cart.addToCart');
@@ -220,17 +220,17 @@ Route::controller(CartController::class)->group(function () {
     Route::post('/cart/updateQuantity', 'updateQuantity')->name('cart.updateQuantity');
 });
 
-Route::controller(PaypalController::class)->group(function () {
+Route::controller(PaypalController::class)->middleware('throttle:global')->group(function () {
     Route::get('/paypal/payment/done', 'getDone')->name('payment.done');
     Route::get('/paypal/payment/cancel', 'getCancel')->name('payment.cancel');
 });
 
-Route::controller(MercadopagoController::class)->group(function () {
+Route::controller(MercadopagoController::class)->middleware('throttle:global')->group(function () {
     Route::any('/mercadopago/payment/done', 'paymentstatus')->name('mercadopago.done');
     Route::any('/mercadopago/payment/cancel', 'callback')->name('mercadopago.cancel');
 });
 
-Route::controller(SslcommerzController::class)->group(function () {
+Route::controller(SslcommerzController::class)->middleware('throttle:global')->group(function () {
     Route::get('/sslcommerz/pay', 'index');
     Route::POST('/sslcommerz/success', 'success');
     Route::POST('/sslcommerz/fail', 'fail');
@@ -238,9 +238,10 @@ Route::controller(SslcommerzController::class)->group(function () {
     Route::POST('/sslcommerz/ipn', 'ipn');
 });
 
-Route::controller(StripeController::class)->group(function () {
+Route::controller(StripeController::class)->middleware('throttle:global')->group(function () {
     Route::get('stripe', 'stripe');
     Route::post('/stripe/create-checkout-session', 'create_checkout_session')->name('stripe.get_token');
+    Route::post('/stripe/payment/intent', 'createPaymentIntent')->name('stripe.create_payment_intent');
     Route::any('/stripe/payment/callback', 'callback')->name('stripe.callback');
     Route::get('/stripe/success', 'success')->name('stripe.success');
     Route::get('/stripe/cancel', 'cancel')->name('stripe.cancel');
@@ -251,11 +252,16 @@ Route::controller(CompareController::class)->group(function () {
     Route::get('/compare/reset', 'reset')->name('compare.reset');
     Route::post('/compare/addToCompare', 'addToCompare')->name('compare.addToCompare');
     Route::get('/compare/details/{id}', 'details')->name('compare.details');
+    Route::post('/compare/remove', [CompareController::class, 'removeFromCompare'])->name('compare.removeFromCompare');
+    Route::post('/compare/data', [CompareController::class, 'getCompareData'])->name('compare.data');
+    Route::post('/compare/local', [CompareController::class, 'fetchLocalCompareData'])->name('compare.local');
+
+
 });
 
 Route::resource('subscribers', SubscriberController::class);
 
-Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
+Route::group(['middleware' => ['user', 'verified', 'unbanned','global']], function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware(['prevent-back-history']);
         Route::get('/profile', 'profile')->name('profile');
@@ -267,7 +273,7 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned']], function () {
     Route::get('/all-notifications', [NotificationController::class, 'index'])->name('all-notifications');
 });
 
-Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock"]], function () {
+Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock",'global']], function () {
     // Checkout Routes
     Route::group(['prefix' => 'checkout'], function () {
         Route::controller(CheckoutController::class)->group(function () {
@@ -276,6 +282,11 @@ Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.s
             Route::post('/payment-select', 'store_delivery_info')->name('checkout.store_delivery_info');
             Route::get('/order-confirmed', 'order_confirmed')->name('order_confirmed')
                 ->withoutMiddleware("check.cart.stock");
+
+            Route::delete('/order/{combined_order_id}', 'cancelCheckout')
+                ->name('cancel_checkout')
+                ->withoutMiddleware("check.cart.stock");
+
             Route::post('/payment', 'checkout')->name('payment.checkout')
                 ->withoutMiddleware("check.cart.stock");
             Route::post('/get-pick-up-points', 'get_pick_up_points')->name('shipping_info.get_pick_up_points');
@@ -365,6 +376,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/destroy/{id}', 'destroy')->name('addresses.destroy');
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
+
+    //compare list sync after login 
+    Route::post('/compare/sync', [CompareController::class, 'syncCompareList'])->name('compare.syncCompareList');
+
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
@@ -379,7 +394,7 @@ Route::post('/shops/contact_person', [ShopController::class, 'storeContactPerson
 Route::post('/shops/warehouse', [ShopController::class, 'storeWarehouse'])->name('shops.warehouses');
 Route::post('/shops/payout_info', [ShopController::class, 'storePayoutInfo'])->name('shops.payout_info');
 Route::post('/shops/register', [ShopController::class, 'storeShopRegister'])->name('shops.register');
-Route::get('dictionary-words', [ShopController::class, 'getWords'])->name('get.words');
+Route::get('dictionary-words', [ShopController::class, 'getWords'])->name(name: 'get.words');
 
 Route::get('/instamojo/payment/pay-success', [InstamojoController::class, 'success'])->name('instamojo.success');
 
@@ -468,7 +483,7 @@ Route::controller(BlogController::class)->group(function () {
     Route::get('/blog/{slug}', 'blog_details')->name('blog.details');
 });
 
-Route::controller(PageController::class)->group(function () {
+Route::controller(PageController::class)->middleware('throttle:global')->group(function () {
     //mobile app balnk page for webview
     Route::get('/mobile-page/{slug}', 'mobile_custom_page')->name('mobile.custom-pages');
 
@@ -492,4 +507,5 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
     Route::get("carts/{user_id}", "carts");
 
     Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
+    Route::get("emirate/{emirate_id}/states", "getEmirateStates")->name("emirate.states");
 });

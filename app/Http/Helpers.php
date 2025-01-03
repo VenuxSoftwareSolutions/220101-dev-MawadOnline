@@ -49,12 +49,14 @@ use App\Models\FlashDealProduct;
 use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
+use App\Models\CompareList;
 use App\Utility\NotificationUtility;
 use Intervention\Image\Facades\Image;
 use App\Http\Resources\V2\CarrierCollection;
 use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\ClubPointController;
 use App\Http\Controllers\CommissionController;
+use App\Models\ProductAttributeValues;
 use AizPackages\ColorCodeConverter\Services\ColorCodeConverter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -1020,12 +1022,12 @@ function getShippingCost($carts, $index, $carrier = '')
         return 0;
     }
 
-    foreach ($carts as $key => $cart_item) {
+    foreach ($carts as $cart_item) {
         $item_product = Product::find($cart_item['product_id']);
+
         if ($item_product->added_by == 'admin') {
             array_push($admin_products, $cart_item['product_id']);
 
-            // For carrier wise shipping
             if ($shipping_type == 'carrier_wise_shipping') {
                 $admin_product_total_weight += ($item_product->weight * $cart_item['quantity']);
                 $admin_product_total_price += (cart_product_price($cart_item, $item_product, false, false) * $cart_item['quantity']);
@@ -1034,10 +1036,10 @@ function getShippingCost($carts, $index, $carrier = '')
             $product_ids = array();
             $weight = 0;
             $price = 0;
+
             if (isset($seller_products[$item_product->user_id])) {
                 $product_ids = $seller_products[$item_product->user_id];
 
-                // For carrier wise shipping
                 if ($shipping_type == 'carrier_wise_shipping') {
                     $weight += $seller_product_total_weight[$item_product->user_id];
                     $price += $seller_product_total_price[$item_product->user_id];
@@ -1047,7 +1049,6 @@ function getShippingCost($carts, $index, $carrier = '')
             array_push($product_ids, $cart_item['product_id']);
             $seller_products[$item_product->user_id] = $product_ids;
 
-            // For carrier wise shipping
             if ($shipping_type == 'carrier_wise_shipping') {
                 $weight += ($item_product->weight * $cart_item['quantity']);
                 $seller_product_total_weight[$item_product->user_id] = $weight;
@@ -1064,7 +1065,9 @@ function getShippingCost($carts, $index, $carrier = '')
         if ($product->added_by == 'admin') {
             return get_setting('shipping_cost_admin') / count($admin_products);
         } else {
-            return Shop::where('user_id', $product->user_id)->first()->shipping_cost / count($seller_products[$product->user_id]);
+            return Shop::where('user_id', $product->user_id)
+                ->first()
+                ->shipping_cost / count($seller_products[$product->user_id]);
         }
     } elseif ($shipping_type == 'area_wise_shipping') {
         $shipping_info = Address::where('id', $carts[0]['address_id'])->first();
@@ -1077,7 +1080,7 @@ function getShippingCost($carts, $index, $carrier = '')
             }
         }
         return 0;
-    } elseif ($shipping_type == 'carrier_wise_shipping') { // carrier wise shipping
+    } elseif ($shipping_type == 'carrier_wise_shipping') {
         $user_zone = Address::where('id', $carts[0]['address_id'])->first()->country->zone_id;
         if ($carrier == null || $user_zone == 0) {
             return 0;
@@ -1101,6 +1104,28 @@ function getShippingCost($carts, $index, $carrier = '')
         }
         return 0;
     } else {
+        $shippingOptions = $product->shippingOptions($cartItem["quantity"]);
+
+        if ($shippingOptions->shipper === "vendor") {
+            if ($shippingOptions->charge_per_unit_shipping != null) {
+                return $shippingOptions->charge_per_unit_shipping * $cartItem["quantity"];
+            } else {
+                return $shippingOptions->flat_rate_shipping;
+            }
+        } else {
+            // supported 3rd party shipper is aramex for now
+            request()->merge(["product_id" => $product->id]);
+
+            $apiResult = (new \App\Http\Controllers\AramexController)
+                ->calculateOrderProductsCharge(auth()->user()->id);
+
+            if ($apiResult->original["error"] === false) {
+                return $apiResult->original["data"]["TotalAmount"]["Value"];
+            }
+
+            return 0;
+        }
+
         if ($product->is_quantity_multiplied && ($shipping_type == 'product_wise_shipping')) {
             return  $product->shipping_cost * $cartItem['quantity'];
         }
@@ -1805,6 +1830,49 @@ if (!function_exists('get_single_product')) {
     {
         $product_query = Product::query()->with('thumbnail');
         return $product_query->find($product_id);
+    }
+}
+if (!function_exists('get_leaf_category')) {
+    
+    function get_leaf_category(int $productId): ?int
+    {
+        return DB::table('product_categories')
+            ->where('product_id', $productId)
+            ->value('category_id');
+    }
+}
+if (!function_exists('get_category_attributes')) {
+    
+    function get_category_attributes(int $categoryId): ?\Illuminate\Support\Collection
+    {
+        $attributeIds = DB::table('categories_has_attributes')
+            ->where('category_id', $categoryId)
+            ->pluck('attribute_id')
+            ->toArray();
+
+        if (!empty($attributeIds)) {
+            return Attribute::whereIn('id', $attributeIds)->get();
+        }
+
+        return null;
+    }
+}
+if (!function_exists('get_product_attribute_value')) {
+    function get_product_attribute_value(int $productId, int $attributeId): ?string
+    {
+        return ProductAttributeValues::where('id_products', $productId)
+            ->where('id_attribute', $attributeId)
+            ->value('value');
+    }
+}
+if (!function_exists('get_compare_counts')) {
+    function get_compare_counts($userId)
+    {
+        return CompareList::where('user_id', $userId)
+            ->get()
+            ->reduce(function ($total, $compareList) {
+                return $total + count($compareList->variants);
+            }, 0);
     }
 }
 
@@ -2734,16 +2802,22 @@ if (!function_exists('generateUniqueSlug')) {
 }
 
 if (function_exists('formatChargeBasedOnChargeType') === false) {
-    function formatChargeBasedOnChargeType(object $shippingOptions): string {
+    function formatChargeBasedOnChargeType(object $shippingOptions, $carts): string {
         if ($shippingOptions->charge_per_unit_shipping != null) {
-            return $shippingOptions->charge_per_unit_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+            $qty = 0;
+            $carts->each(function ($cart) use ($shippingOptions, &$qty) {
+                if ($cart->product_id === $shippingOptions->product_id) {
+                    $qty = $cart->quantity;
+                }
+            });
+            return single_price($shippingOptions->charge_per_unit_shipping * $qty);
         } else {
-            return $shippingOptions->flat_rate_shipping . " " . str()->ucfirst($shippingOptions->shipping_charge);
+            return single_price($shippingOptions->flat_rate_shipping);
         }
     }
 }
 
-if(function_exists("getProductVolumetricWeight") === false) {
+if (function_exists("getProductVolumetricWeight") === false) {
     function getProductVolumetricWeight($length, $height, $width) {
         return ($length * $height * $width) / 5000;
     }
