@@ -112,107 +112,76 @@ class AizUploadController extends Controller
             "xls" => "document",
             "xlsx" => "document"
         );
-
         if ($request->hasFile('aiz_file')) {
             $upload = new Upload;
-            $extension = strtolower($request->file('aiz_file')->getClientOriginalExtension());
+            $file = $request->file('aiz_file');
+            $extension = strtolower($file->getClientOriginalExtension());
 
-            if (
-                env('DEMO_MODE') == 'On' &&
-                isset($type[$extension]) &&
-                $type[$extension] == 'archive'
-            ) {
+            if (env('DEMO_MODE') == 'On' && isset($type[$extension]) && $type[$extension] == 'archive') {
                 return '{}';
             }
+    
 
             if (isset($type[$extension])) {
-                $upload->file_original_name = null;
-                $arr = explode('.', $request->file('aiz_file')->getClientOriginalName());
-                for ($i = 0; $i < count($arr) - 1; $i++) {
-                    if ($i == 0) {
-                        $upload->file_original_name .= $arr[$i];
-                    } else {
-                        $upload->file_original_name .= "." . $arr[$i];
-                    }
-                }
+                $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $path = 'uploads/all/';
+                $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.jpg';
+                //$setting_min_width = get_setting('image_min_width');
+                //$setting_img_quality = get_setting('image_img_quality');
 
                 if ($extension == 'svg') {
                     $sanitizer = new Sanitizer();
-                    // Load the dirty svg
-                    $dirtySVG = file_get_contents($request->file('aiz_file'));
-
-                    // Pass it to the sanitizer and get it back clean
+                    $dirtySVG = file_get_contents($file);
                     $cleanSVG = $sanitizer->sanitize($dirtySVG);
-
-                    // Load the clean svg
-                    file_put_contents($request->file('aiz_file'), $cleanSVG);
-                }
-                $path = $request->file('aiz_file')->store('uploads/all', 'local');
-
-                $manager = new ImageManager(new Driver());
-                $img =  $manager->read($request->file('aiz_file')->getRealPath());
-                $originalHeight = $img->height();
-                $originalWidth = $img->width();
-
-                $setting_min_width = get_setting('image_min_width');
-                //$setting_img_quality = get_setting('image_img_quality');
-                $setting_img_quality = 90;
-
-                if ($originalWidth > 1280 || $originalHeight > 1280) {
-                    $scalingFactor = 1280 / max($originalWidth, $originalHeight);
-    
-                    $newWidth = (int)($originalWidth * $scalingFactor);
-                    $newHeight = (int)($originalHeight * $scalingFactor);
-                    $img->resize($newWidth, $newHeight, function ($constraint) {
-                        $constraint->aspectRatio();
-                        $constraint->upsize();
-                    });
-
-                }
-    
-                $img->toJpeg($setting_img_quality)->save(base_path('public/') . $path);
-                clearstatcache();
-
-                // Get the file size
-                $size = $img->size();
-
-             
-                if ($type[$extension] == 'image' && get_setting('disable_image_optimization') != 1) {
-
+                    file_put_contents($file, $cleanSVG);
+                } elseif ($type[$extension] == 'image') {
                     try {
+                        //$img = Image::make($file->getRealPath());
+                        $manager = new ImageManager(new Driver());
+                        $img =  $manager->read($file->getRealPath());
+                        $originalHeight = $img->height();
+                        $originalWidth = $img->width();
+                        $maxDimension = 1280;
+                        $quality =90;
+
+                        if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
+                            $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
+                            $newWidth = (int)($originalWidth * $scalingFactor);
+                            $newHeight = (int)($originalHeight * $scalingFactor);
+                            $img->resize($newWidth, $newHeight, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
+                            });
+        
+                        }
+            
+        
+                        $img->toJpeg($quality);
+    
+                        //Storage::disk('local')->put($path . $filename, (string)$img);
+                        $img->save(public_path($path . $filename));
+
                     } catch (\Exception $e) {
-                        // Log the exception or handle it accordingly
-                        // Log::error('Image processing error: ' . $e->getMessage());
+                        return response()->json(['error' => 'Image processing failed: ' . $e->getMessage()], 500);
                     }
+                } else {
+                    $filename = $file->storeAs($path, $file->getClientOriginalName(), 'local');
                 }
-
-                // if (env('FILESYSTEM_DRIVER') != 'local') {
-
-                //     Storage::disk(env('FILESYSTEM_DRIVER'))->put(
-                //         $path,
-                //         file_get_contents(base_path('public/') . $path),
-                //         [
-                //             'visibility' => 'public',
-                //             'ContentType' =>  $extension == 'svg' ? 'image/svg+xml' : $file_mime
-                //         ]
-                //     );
-                //     // dd($storage);
-                //     if ($arr[0] != 'updates') {
-                //         unlink(base_path('public/') . $path);
-                //     }
-                // }
-
+    
+                $size = Storage::disk('local')->size($path . $filename);
+                $file_mime = $file->getMimeType();
+    
                 $upload->extension = $extension;
-                $upload->file_name = 'public/'.$path;
-                $upload->user_id = Auth::user()->id;
-                $upload->type = $type[$upload->extension];
+                $upload->file_name = 'public/' . $path . $filename;
+                $upload->user_id = Auth::id();
+                $upload->type = $type[$extension];
                 $upload->file_size = $size;
                 $upload->save();
             }
+    
             return '{}';
         }
     }
-
     public function get_uploaded_files(Request $request)
     {
         $uploads = Upload::where('user_id', Auth::user()->id);
