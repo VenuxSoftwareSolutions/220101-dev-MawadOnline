@@ -841,8 +841,9 @@
 
             // Initialize arrow visibility on page load
             updateArrowVisibility();
-        });
-        let compareBadge = document.getElementById('compare_items_sidenav');
+
+
+             /*let compareBadge = document.getElementById('compare_items_sidenav');
 
         let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
 
@@ -856,12 +857,14 @@
             /* let compare = JSON.parse(localStorage.getItem('compare')) || {};
             let localCount = Object.values(compare).reduce((total, items) => total + items.length, 0);
 
-            let combinedCount = sessionCount + localCount; */
+            let combinedCount = sessionCount + localCount;
 
             let compareCount = {{ get_compare_counts (Auth::id()) }};
             compareBadge.innerHTML = compareCount;
 
-        }
+        }/*
+        });
+
     </script>
     @section('script')
         <script type="text/javascript">
