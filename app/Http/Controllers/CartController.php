@@ -602,6 +602,53 @@ class CartController extends Controller
         return view('auction.frontend.addToCartAuction', compact('product'));
     }
 
+    private function handleAddingSampleProductToCart($product, $userId, $variantId, $quantity, $productPreview)
+    {
+        $data = [
+            'variation' => $product->productVariantDetails(),
+            'product_id' => $variantId
+        ];
+
+        $product->name = "Sample of $product->name";
+
+        if (auth()->check()) {
+            $data["user_id"] = $userId;
+        } else {
+            $data["temp_user_id"] = $userId;
+        }
+
+        $cart = Cart::firstOrNew($data);
+
+        $price = $productPreview["sampleDetails"]["sample_price"] * $quantity;
+
+        $tax = 0;
+
+        CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
+
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
+
+        $carts->each(function ($cart) {
+            if ($cart->user !== null) {
+                $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+            }
+        });
+
+        $samplePrice = $productPreview["sampleDetails"]["sample_price"];
+
+        $modalViewPath = 'frontend.' . get_setting('homepage_select') . '.partials.addedToCart';
+        $navCartViewPath = 'frontend.' . get_setting('homepage_select') . '.partials.cart';
+
+        return [
+            'status' => 1,
+            'cart_count' => count($carts),
+            'modal_view' => view($modalViewPath, compact('product', 'cart', "samplePrice"))->render(),
+            'nav_cart_view' => view($navCartViewPath, compact("samplePrice"))->render(),
+        ];
+    }
+
     public function addToCart(Request $request)
     {
         try {
@@ -619,6 +666,13 @@ class CartController extends Controller
             )->get();
 
             $product = Product::find($request->variationId);
+
+            if ($request->has("sample")) {
+                return $this->handleAddingSampleProductToCart(
+                    $product, $userId, $request->variationId,
+                    $request->quantity, $dataProduct["detailedProduct"]
+                );
+            }
 
             // Minimum quantity validation
             $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
