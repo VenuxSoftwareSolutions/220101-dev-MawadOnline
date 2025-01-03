@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Utility\NgeniusUtility;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,17 +43,27 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        if($this->isHttpException($e))
-        {
+        // Log the exception
+        \Log::error('Exception occurred: ' . $e->getMessage(), [
+            'exception' => $e,
+            'request' => $request->all(),
+        ]);
+    
+        // Handle ThrottleRequestsException (rate-limiting)
+        if ($e instanceof ThrottleRequestsException) {
+            return response()->json([
+                'message' => 'Too many requests. Please try again later.',
+            ], 429);
+        }
+    
+        // Handle custom logic for specific routes
+        if ($this->isHttpException($e)) {
             if ($request->is('customer-products/admin')) {
                 return NgeniusUtility::initPayment();
             }
-            
-            return parent::render($request, $e);
         }
-        else
-        {
-            return parent::render($request, $e);
-        }
+    
+        // Fallback to default exception handling
+        return parent::render($request, $e);
     }
 }
