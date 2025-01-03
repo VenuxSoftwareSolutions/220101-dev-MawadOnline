@@ -26,6 +26,7 @@
             $("#product-price").removeClass("d-flex").hide();
             $("#product-unit-of-sale").hide();
             $("#product-add-to-cart-span").hide();
+            $("#product-add-to-cart-btn").hide();
 
             if ($("#fullDescription").length > 0) {
                 $("#fullDescription").hide();
@@ -40,6 +41,7 @@
 
             $("#product-unit-of-sale").show();
             $("#product-add-to-cart-span").show();
+            $("#product-add-to-cart-btn").show();
 
             $('[id*="product-sample"]').addClass('d-none');
             $("#shortDescription").show();
@@ -86,7 +88,8 @@
                 </div>
             @endif
 
-            @if ($previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
+            @if (count($previewData['detailedProduct']['sampleDetails']) > 0 &&
+                    $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
                 <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
                     <span
                         class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ __('Available') }}</span>
@@ -115,7 +118,9 @@
             </p>
 
             <p id="product-sample-description" class="d-none">
-                {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
+                @if (count($previewData['detailedProduct']['sampleDetails']) > 0)
+                    {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
+                @endif
             </p>
 
             <!-- Full description (hidden initially) -->
@@ -187,7 +192,8 @@
 
             <div id="product-sample-price" class="d-none align-items-center">
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
-                    <span>{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span> /
+                    <span>{{ single_price(count($previewData['detailedProduct']['sampleDetails']) > 0 ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span>
+                    /
                     {{ __('Sample') }}
                 </strong>
             </div>
@@ -302,29 +308,29 @@
     @php
         $niveau = 0;
     @endphp
-    @foreach ($previewData['detailedProduct']['attributes'] as  $attributeId=>$attributeValues)
-    @php
-        $niveau++ ;
-        $attribue = App\Models\Attribute::find($attributeId) ;
-    @endphp
-    @if ($attribue['name']== "Manufacturer")
-    <div class="col-4 col-sm-4 mb-2">
-        <div class="fs-16 font-prompt-md attrib-name">
-            {{$attribue ? $attribue->getTranslation('name') : ""}}:
-        </div>
-    </div>
-    @else
-    <div class="col-2 col-sm-2 mb-2">
-        <div class="fs-16 font-prompt-md attrib-name">
-            {{$attribue ? $attribue->getTranslation('name') : ""}}:
-        </div>
-    </div>
-    @endif
-    @if ($attribue['name'] == "Manufacturer")
-    <div class="col-8 col-sm-8">
-    @else
-    <div class="col-10 col-sm-10">
-    @endif
+    @foreach ($previewData['detailedProduct']['attributes'] as $attributeId => $attributeValues)
+        @php
+            $niveau++;
+            $attribue = App\Models\Attribute::find($attributeId);
+        @endphp
+        @if ($attribue['name'] == 'Manufacturer')
+            <div class="col-4 col-sm-4 mb-2">
+                <div class="fs-16 font-prompt-md attrib-name">
+                    {{ $attribue ? $attribue->getTranslation('name') : '' }}:
+                </div>
+            </div>
+        @else
+            <div class="col-2 col-sm-2 mb-2">
+                <div class="fs-16 font-prompt-md attrib-name">
+                    {{ $attribue ? $attribue->getTranslation('name') : '' }}:
+                </div>
+            </div>
+        @endif
+        @if ($attribue['name'] == 'Manufacturer')
+            <div class="col-8 col-sm-8">
+            @else
+                <div class="col-10 col-sm-10">
+        @endif
         <div class="aiz-radio-inline">
             @foreach ($attributeValues as $key => $value)
                 @php
@@ -613,25 +619,40 @@
         @php
             $price = isset($previewData['detailedProduct']['discountedPrice']) ? $previewData['detailedProduct']['discountedPrice'] : $previewData['detailedProduct']['price'];
         @endphp
-        <button type="button"
+        <button type="button" id="product-add-to-cart-btn"
             class="btn btn-secondary-base add-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
             @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
-            <span id="product-add-to-cart-span" class="add-to-cart-style-txt" onclick="samplePriceSpanClicked=false;">{{ __('Add to cart') }} - <span
+            <span id="product-add-to-cart-span" class="add-to-cart-style-txt"
+                onclick="samplePriceSpanClicked=false;">{{ __('Add to cart') }} - <span
                     id="chosen_price">{{ single_price($price) }}</span></span>
-            <span id="product-sample-add-to-cart-span" class="d-none add-to-cart-style-txt" onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
-                <span
-                    id="sample_chosen_price">{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span></span>
+        </button>
+        <button type="button" id="product-sample-add-to-cart-btn"
+            class="d-none btn btn-secondary-base add-sample-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
+            @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif
+            @if (count($previewData['detailedProduct']['sampleDetails']) === 0) disabled : "" @endif>
+            @if (count($previewData['detailedProduct']['sampleDetails']) > 0)
+                <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
+                    onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
+                    <span
+                        id="sample_chosen_price">{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span></span>
+            @else
+                <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
+                    onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }}
+                </span>
+            @endif
         </button>
 
-        </div>
-        <div class="show-side-btn">
+    </div>
+    <div class="show-side-btn">
         <div class="col-12 d-flex justify-content-between p-0">
             <div class="col-6 p-0">
                 <div class="row no-gutters mb-3 col-12 p-0 float-left">
-                    <a href="javascript:void(0)" onclick="addToCompare({{ $previewData['detailedProduct']['product_id'] }})"
+                    <a href="javascript:void(0)"
+                        onclick="addToCompare({{ $previewData['detailedProduct']['product_id'] }})"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
                         <center><svg width="24" height="24" viewBox="0 0 32 32"
-                                class="compare-btn-style-icon mx-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                class="compare-btn-style-icon mx-0" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#4C4E54" stroke-width="1.5"
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M4.66663 19.9866H27.3333" stroke="#4C4E54" stroke-width="1.5"
@@ -640,7 +661,7 @@
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M27.3333 12.0134H4.66663" stroke="#4C4E54" stroke-width="1.5"
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
+                            </svg>
 
                             <span
                                 class="p-0 px-sm-3 fs-16 font-prompt-md compare-btn-txt">{{ translate('Add to Compare') }}</span>
@@ -652,8 +673,9 @@
                 <div class="row no-gutters mb-3 col-11 p-0 float-right">
                     <a href="javascript:void(0)"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
-                        <center><svg width="24" height="24" class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0"
-                                viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <center><svg width="24" height="24"
+                                class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0" viewBox="0 0 33 32"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M17.6267 27.7469C17.1733 27.9069 16.4267 27.9069 15.9733 27.7469C12.1067 26.4269 3.46667 20.9202 3.46667 11.5869C3.46667 7.46688 6.78667 4.13354 10.88 4.13354C13.3067 4.13354 15.4533 5.30688 16.8 7.12021C18.1467 5.30688 20.3067 4.13354 22.72 4.13354C26.8133 4.13354 30.1333 7.46688 30.1333 11.5869C30.1333 20.9202 21.4933 26.4269 17.6267 27.7469Z"
                                     stroke="#4C4E54" stroke-width="2" stroke-linecap="round"
@@ -676,7 +698,8 @@
                     <a href="javascript:void(0)"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
                         <center><svg width="24" height="24" viewBox="0 0 32 32"
-                                class="compare-btn-style-icon mx-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                class="compare-btn-style-icon mx-0" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path d="M27.3333 19.9866L20.6533 26.6799" stroke="#4C4E54" stroke-width="1.5"
                                     stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M4.66663 19.9866H27.3333" stroke="#4C4E54" stroke-width="1.5"
@@ -697,8 +720,9 @@
                 <div class="row no-gutters mb-3 col-12 p-0 float-right">
                     <a href="javascript:void(0)"
                         class="col-md-12 has-transitiuon hov-opacity-100 border-radius-16 Compare-btn-style">
-                        <center><svg width="24" height="24" class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0"
-                                viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <center><svg width="24" height="24"
+                                class="wishlist-btn-style-icon mx-0 mx-sm-1 mx-md-0" viewBox="0 0 33 32"
+                                fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M17.6267 27.7469C17.1733 27.9069 16.4267 27.9069 15.9733 27.7469C12.1067 26.4269 3.46667 20.9202 3.46667 11.5869C3.46667 7.46688 6.78667 4.13354 10.88 4.13354C13.3067 4.13354 15.4533 5.30688 16.8 7.12021C18.1467 5.30688 20.3067 4.13354 22.72 4.13354C26.8133 4.13354 30.1333 7.46688 30.1333 11.5869C30.1333 20.9202 21.4933 26.4269 17.6267 27.7469Z"
                                     stroke="#4C4E54" stroke-width="2" stroke-linecap="round"

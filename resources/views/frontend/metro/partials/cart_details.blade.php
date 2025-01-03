@@ -55,7 +55,7 @@
                                                     alt="{{ $data[$key]["product"]->getTranslation('name') }}"
                                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                             </span>
-                                            <span class="fs-14">{{ $data[$key]["product_name_with_choice"] }}</span>
+                                            <span class="fs-14">{{ $data[$key]["is_sample"] === true ? __("Sample of") . " " . $data[$key]["product_name_with_choice"] : $data[$key]["product_name_with_choice"] }}</span>
                                         </div>
                                         <!-- Stock Status -->
                                         <div class="col-md col-4 order-2 order-md-0 my-3 my-md-0">
