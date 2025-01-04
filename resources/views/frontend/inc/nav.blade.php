@@ -556,7 +556,6 @@
                         </div>
                     </div>
                     <!-- Header Menus -->
-<<<<<<< HEAD
                     <div class="scroll-left-container">
                         <button class="scroll-left btn btn-link translate-middle-y">
                             <svg width="24" height="24" class="scroll-left-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
