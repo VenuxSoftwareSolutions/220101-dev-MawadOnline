@@ -17,7 +17,7 @@ class CheckCartStock
             $outOfStockProducts = [];
 
             $carts = $carts->filter(function ($cart) use (&$outOfStockProducts) {
-                if ($cart->product->getTotalQuantity() == 0) {
+                if ($cart->is_sample !== 1 && $cart->product->getTotalQuantity() == 0) {
                     $outOfStockProducts[] = $cart->product->name;
 
                     $existingWishlist = Wishlist::where('user_id', auth()->user()->id)
