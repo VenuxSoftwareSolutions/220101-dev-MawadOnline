@@ -89,12 +89,13 @@ class CartController extends Controller
                 "product_stock" => $product_stock,
                 "total" => $total,
                 "product_name_with_choice" => $product_name_with_choice,
-                "stockStatus" =>$stockStatus,
+                "stockStatus" => $stockStatus,
                 "outOfStockItems" => $outOfStockItems,
-                "stockAlert" => $stockAlert
+                "stockAlert" => $stockAlert,
+                "is_sample" => $cart->is_sample === 1 ? true : false
             ];
 
-            if ($product_stock < $cart->quantity) {
+            if ($cart->is_sample !== 1 && $product_stock < $cart->quantity) {
                 if (auth()->user() != null) {
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
                         ->where('product_id', $cart->product_id)
@@ -109,7 +110,6 @@ class CartController extends Controller
                     }
                 }
 
-                // Remove from Cart
                 $cart->delete();
             }
         }
@@ -619,6 +619,8 @@ class CartController extends Controller
 
         $cart = Cart::firstOrNew($data);
 
+        $cart->is_sample = true;
+
         $price = $productPreview["sampleDetails"]["sample_price"] * $quantity;
 
         $tax = 0;
@@ -645,7 +647,7 @@ class CartController extends Controller
             'status' => 1,
             'cart_count' => count($carts),
             'modal_view' => view($modalViewPath, compact('product', 'cart', "samplePrice"))->render(),
-            'nav_cart_view' => view($navCartViewPath, compact("samplePrice"))->render(),
+            'nav_cart_view' => view($navCartViewPath)->render(),
         ];
     }
 

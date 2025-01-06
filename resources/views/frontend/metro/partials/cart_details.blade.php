@@ -62,8 +62,8 @@
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Stock Status') }}</span>
                                             <span
-                                                class="fw-700 fs-14 {{ $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $data[$key]["stockStatus"] }}</span>
-                                            @if ($data[$key]["stockAlert"])
+                                                class="fw-700 fs-14 {{ $data[$key]["is_sample"] === false && $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $data[$key]["is_sample"] === true ? __("Sample available") : $data[$key]["stockStatus"] }}</span>
+                                            @if ($data[$key]["is_sample"] === false && $data[$key]["stockAlert"])
                                                 <span class="badge badge-warning">{{ $data[$key]["stockAlert"] }}</span>
                                             @endif
                                         </div>
@@ -99,8 +99,7 @@
                                 </li>
                             @endforeach
                         </ul>
-                        <!-- Notification for Out of Stock Items Moved to Wishlist -->
-                        @if (count($data[$key]["outOfStockItems"]) > 0)
+                        @if ($data[$key]["is_sample"] === false && count($data[$key]["outOfStockItems"]) > 0)
                             <div class="alert alert-warning mt-3">
                                 {{ translate('Some products were out of stock and have been moved to your Wishlist.') }}
                             </div>
