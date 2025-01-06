@@ -36,4 +36,9 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function Tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }
