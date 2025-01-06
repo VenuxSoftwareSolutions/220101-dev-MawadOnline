@@ -7,7 +7,8 @@ use App\Models\UploadProducts;
 use Auth;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
-use Intervention\Image\ImageManagerStatic as ImageManager;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Illuminate\Support\Facades\Storage;
 
 class ProductUploadsService
@@ -351,7 +352,7 @@ class ProductUploadsService
         }
     
         // Load the image using Intervention Image
-        $img = Image::make($tempPath);
+        $img = ImageManager::imagick()->read($tempPath);
         
         // Get original dimensions
         $originalWidth = $img->width();
