@@ -59,7 +59,7 @@ class CartController extends Controller
             $total = $total + cart_product_price($cart, $product, false) * $cart['quantity'];
 
             $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
-            $stockStatus = 'In Stock';
+            $stockStatus = __('In Stock');
             $stockAlert = '';
             $outOfStockItems = [];
 
