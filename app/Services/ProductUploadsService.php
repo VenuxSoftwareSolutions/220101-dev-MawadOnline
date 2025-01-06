@@ -359,13 +359,15 @@ class ProductUploadsService
     
         // Check if resizing is needed
         if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-            $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
+            /*$scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
             $newWidth = $originalWidth * $scalingFactor;
             $newHeight = $originalHeight * $scalingFactor;
             $img->resize($newWidth, $newHeight, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
-            });
+            });*/
+            $img->scaleDown($maxDimension, $maxDimension);
+
         }
     
         // Convert to JPG and compress

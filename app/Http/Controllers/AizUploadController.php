@@ -137,7 +137,7 @@ class AizUploadController extends Controller
                 } elseif ($type[$extension] == 'image') {
                     try {
                         //$img = Image::make($file->getRealPath());
-                        $manager = new ImageManager(new Driver());
+                        $manager = ImageManager::imagick();
                         $img =  $manager->read($file->getRealPath());
                         $originalHeight = $img->height();
                         $originalWidth = $img->width();
@@ -145,15 +145,17 @@ class AizUploadController extends Controller
                         $quality =90;
 
                         if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-                            $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
+                            /*$scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
                             $newWidth = (int)($originalWidth * $scalingFactor);
                             $newHeight = (int)($originalHeight * $scalingFactor);
                             $img->resize($newWidth, $newHeight, function ($constraint) {
                                 $constraint->aspectRatio();
-                                $constraint->upsize();
-                            });
-        
+                                $constraint->upsize();}); */    
+                            $img->scaleDown($maxDimension, $maxDimension);
                         }
+
+        
+                        
             
         
                         $img->toJpeg($quality);
