@@ -14,7 +14,7 @@ use App\Http\Controllers\Seller\CouponController;
 
 
 //Upload
-Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','global'], 'as' => 'seller.'], function () {
+Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/jstree', 'jstree')->name('categories.jstree');
         Route::get('/jstreeSearch', 'jstreeSearch')->name('categories.jstreeSearch');
@@ -29,7 +29,7 @@ Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user
     });
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','global'], 'as' => 'seller.'], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::post('/tour', 'updateTour')->name('tour');
@@ -124,11 +124,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::post('/discounts/toggle-status', [DiscountController::class, 'toggleStatus'])->name('discounts.toggle-status');
     Route::get('/test-discounts', [DiscountController::class, 'testHighestDiscount']);
 
-    
-    //COUPONS 
+
+    //COUPONS
 
     Route::resource('coupons', CouponController::class)->except(['show']);
-    Route::put('/{id}', [CouponController::class, 'update'])->name('update'); 
+    Route::put('/{id}', [CouponController::class, 'update'])->name('update');
 
     Route::delete('/coupons/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy'); // DELETE route for deletion
     Route::get('/coupons/get-products-by-category', [CouponController::class, 'getProductsByCategory'])->name('coupons.getProductsByCategory');
@@ -136,7 +136,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::post('/coupons/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulk-delete');
     Route::post('/coupons/toggle-status', [CouponController::class, 'toggleStatus'])->name('coupons.toggle-status');
     Route::get('/test-coupons', [CouponController::class, 'testCouponCode']);
-    
+
     //Order
     Route::resource('orders', OrderController::class);
     Route::controller(OrderController::class)->middleware('throttle:global')->group(function () {
@@ -268,7 +268,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
 
 
-Route::middleware(['seller_or_admin','global'])->group(function () {
+Route::middleware(['seller_or_admin','throttle:global'])->group(function () {
     Route::controller(CatalogController::class)->group(function () {
         Route::get('/catalog/search_page', 'search')->name('catalog.search_page');
         Route::get('/catalog/search/new_action', 'new_search_action')->name('catalog.search.new_action');
