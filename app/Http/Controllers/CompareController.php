@@ -52,7 +52,7 @@ class CompareController extends Controller
                 ->get();
 
                 //a condition depends on business requirement to display or not compare list containing less than two items
-            if ($variants->count() > 1 ) {
+            if ($variants->count() > 0 ) {
                 $compareData[] = [
                     'id' => $category->category_id,
                     'category_name' => $category->category_name,
