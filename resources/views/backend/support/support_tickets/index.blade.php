@@ -28,6 +28,7 @@
                         <th data-breakpoints="lg">{{ translate('Vendor') }}</th>
                         <th data-breakpoints="lg">{{ translate('Vendor Business name') }}</th>
                         <th data-breakpoints="lg">{{ translate('Status') }}</th>
+                        <th data-breakpoints="lg">{{ translate('Sub-Order ID') }}</th>
                         <th data-breakpoints="lg">{{ translate('Last reply') }}</th>
                         <th class="text-right">{{ translate('Options') }}</th>
                     </tr>
@@ -54,6 +55,7 @@
                                         <span class="badge badge-inline badge-success">{{ translate('Solved') }}</span>
                                     @endif
                                 </td>
+                                <td title="{{ $ticket->orderDetails->product->name }}">{{ $ticket->orderDetails->id }}</td>
                                 <td>
                                     @if (count($ticket->ticketReplies) > 0)
                                         {{ $ticket->ticketReplies->first()->created_at }}
