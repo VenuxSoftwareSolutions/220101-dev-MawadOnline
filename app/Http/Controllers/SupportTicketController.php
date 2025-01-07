@@ -34,11 +34,13 @@ class SupportTicketController extends Controller
     public function admin_index(Request $request)
     {
         $sort_search = null;
-        $tickets = Ticket::orderBy('created_at', 'desc');
+        $tickets = Ticket::where("status", "pending")->orderBy('created_at', 'desc');
+
         if ($request->has('search')) {
             $sort_search = $request->search;
             $tickets = $tickets->where('code', 'like', '%' . $sort_search . '%');
         }
+
         $tickets = $tickets->paginate(15);
         return view('backend.support.support_tickets.index', compact('tickets', 'sort_search'));
     }
