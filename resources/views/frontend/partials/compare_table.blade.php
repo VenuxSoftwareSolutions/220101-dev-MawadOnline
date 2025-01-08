@@ -58,7 +58,7 @@
                                 $product = get_single_product($product_id);
                             @endphp
                             <td>
-                                @if (home_base_price($product) != home_discounted_base_price($product))
+                                @if (get_product_price($product_id) != home_discounted_base_price($product))
                                     <del class="fw-400 opacity-50 mr-1">{{ get_product_price($product_id) }}</del>
                                 @endif
                                 <span
@@ -93,7 +93,7 @@
                         @endforeach
                     </tr>
 
-                    <tr>
+                  {{--   <tr>
                         <td class="fw-700">{{ translate('Stock') }}</td>
                         @foreach ($compareItem['variants'] as $product)
                             <td>{{ $product->current_stock }}</td>
@@ -112,7 +112,7 @@
                             <td>{{ $product->length ?? 'N/A' }} x {{ $product->width ?? 'N/A' }} x
                                 {{ $product->height ?? 'N/A' }}</td>
                         @endforeach
-                    </tr>
+                    </tr> --}}
                     
                     @foreach ($attributes as $item_attribute)
                         <tr @if($loop->iteration % 2 != 0) class="bg-light" @endif>
