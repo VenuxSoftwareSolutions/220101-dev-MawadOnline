@@ -681,6 +681,10 @@
                             </a>
                         </li>
                             @endforeach
+                        <hr>
+                        <div class="px-3 py-2">
+                            <a href="/brands"><span class="left-menu-btm-link font-prompt-md fs-14 mr-2">Brands</span></a>·<a href="/vendors"><span class="left-menu-btm-link font-prompt-md fs-14 mr-2 ml-2">Vendors</span></a>·<a href="/blog"><span class="left-menu-btm-link font-prompt-md fs-14 ml-2">Blog</span></a>
+                        </div>
                 @auth
                     @if (isAdmin())
                         <hr>

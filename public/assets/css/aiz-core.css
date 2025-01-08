@@ -13616,3 +13616,7 @@ border:none !important;
     color: #3A3B40;
     background: #e7e7e7;
 }
+.left-menu-btm-link{
+    color: #3A3B40;
+    text-decoration: underline;
+}
