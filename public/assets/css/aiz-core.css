@@ -13563,3 +13563,56 @@ border:none !important;
 .container-h-m{
     max-width: 1500px;
 }
+.left-menu-c-btn{
+    background: #f0f0f0;
+    border-radius: 8px;
+    color: #cb774b;
+}
+.left-menu-c-btn:hover{
+    background: #ddd;
+}
+.hide-top-menu-bar{
+    position: relative;
+    top:3px;
+}
+.left-menu-log-cont{
+    background: #f0f0f0;
+    border-radius: 12px;
+}
+.left-menu-log-cont-1{
+    color: #fff;
+    background: #cb774b;
+    border-radius: 8px;
+}
+.left-menu-log-cont-2{
+    color: #3A3B40;
+    text-decoration: underline;
+}
+.left-menu-log-cont-1:hover{
+    color: #fff;
+    background: #d98356;
+}
+.left-menu-log-cont-2:hover{
+    color: #3A3B40;
+}
+.left-menu-ven-reg{
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #3A3B40;
+    padding:2px;
+
+}
+.left-menu-ven-reg:hover{
+    color: #3A3B40;
+    background: #e7e7e7;
+}
+.left-menu-ven-log{
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #3A3B40;
+    padding:2px;
+}
+.left-menu-ven-log:hover{
+    color: #3A3B40;
+    background: #e7e7e7;
+}
