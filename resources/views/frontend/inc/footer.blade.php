@@ -588,6 +588,7 @@
                     </svg>
                     MBZ City, Abu Dhabi, UAE
                 </span>
+                <!--
                 <span class="fs-14 font-prompt ml-2" style="color: #7E808A;">
                     <svg width="25" height="25" viewBox="0 0 25 25" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
@@ -596,7 +597,7 @@
                             stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" />
                     </svg>
                     +971555626232
-                </span>
+                </span>-->
                 <span class="fs-14 font-prompt ml-2" style="color: #7E808A;">
                     <svg width="25" height="25" viewBox="0 0 25 25" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
