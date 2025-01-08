@@ -734,7 +734,7 @@
                 $('#addToCart-modal-body').html('<p>Error loading product details.</p>');
             });
 
-        }show-cart-modal
+        }
 
         $.ajaxSetup({
             headers: {
