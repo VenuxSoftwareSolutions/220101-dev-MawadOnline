@@ -720,17 +720,21 @@
                 $('#modal-size').addClass('modal-lg');
             }
             $('#addToCart-modal-body').html(null);
-            $('#addToCart').modal();
+            $('#addToCart').modal('show');            
             $('.c-preloader').show();
-            $.post('{{ route('cart.showCartModal') }}', {_token: AIZ.data.csrf, id:id}, function(data){
+
+            $.post('{{ route('cart.showCartModal') }}', {
+                _token: AIZ.data.csrf,
+                id: id
+                }, function (data) {
                 $('.c-preloader').hide();
                 $('#addToCart-modal-body').html(data);
-                AIZ.plugins.slickCarousel();
-                AIZ.plugins.zoom();
-                AIZ.extra.plusMinus();
-                getVariantPrice();
+            }).fail(function () {
+                $('.c-preloader').hide();
+                $('#addToCart-modal-body').html('<p>Error loading product details.</p>');
             });
-        }
+
+        }show-cart-modal
 
         $.ajaxSetup({
             headers: {

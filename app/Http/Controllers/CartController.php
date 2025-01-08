@@ -142,7 +142,11 @@ class CartController extends Controller
     public function showCartModal(Request $request)
     {
         $product = Product::find($request->id);
-        $parent  = Product::where('id', $request->id)->first();
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+                $parent  = Product::where('id', $request->id)->first();
 
         if ($parent != null) {
             if ($parent->is_parent == 0) {
@@ -592,7 +596,7 @@ class CartController extends Controller
 
             $viewPath = 'frontend.' . get_setting('homepage_select') . '.partials.addToCart';
 
-            return view($viewPath, compact('product', 'previewData'));
+            return view($viewPath, compact('product', 'previewData'))->render();
         }
     }
 
