@@ -50,6 +50,7 @@ use App\Models\AuctionProductBid;
 use App\Models\ManualPaymentMethod;
 use App\Models\SellerPackagePayment;
 use App\Models\CompareList;
+use App\Models\UploadProducts;
 use App\Utility\NotificationUtility;
 use Intervention\Image\Facades\Image;
 use App\Http\Resources\V2\CarrierCollection;
@@ -1333,6 +1334,20 @@ if (!function_exists('uploaded_asset')) {
         return static_asset('assets/img/placeholder.jpg');
     }
 }
+if (!function_exists('get_uploaded_product')) {
+    function get_uploaded_product($product_id)
+    {
+        $product_query = UploadProducts::query()
+            ->where('id_product', $product_id)
+            ->where('type', 'thumbnails')
+            ->first();
+      if ($product_query && Storage::exists($product_query->path)) {
+            return static_asset($product_query->path);
+      }
+      return static_asset('assets/img/placeholder.jpg');
+    }
+}
+
 
 if (!function_exists('my_asset')) {
     /**
@@ -1832,6 +1847,7 @@ if (!function_exists('get_single_product')) {
         return $product_query->find($product_id);
     }
 }
+
 if (!function_exists('get_leaf_category')) {
     
     function get_leaf_category(int $productId): ?int

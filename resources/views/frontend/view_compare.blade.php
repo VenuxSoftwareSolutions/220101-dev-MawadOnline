@@ -70,10 +70,7 @@
             console.log('No compare data found in local storage.');
             return;
         }
-        }
-     
-
-        
+        }   
     });
 
 </script>   

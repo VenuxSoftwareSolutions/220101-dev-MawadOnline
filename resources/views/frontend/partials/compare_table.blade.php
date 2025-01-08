@@ -21,7 +21,7 @@
                             @endphp
                             <th>
                                 <div class="position-relative">
-                                    <img src="{{ uploaded_asset($product->thumbnail_img) }}"
+                                    <img src="{{ get_uploaded_product($product_id) }}"
                                         class="img-fluid mb-2" alt="{{ $product->name }}">
                                     <div class="absolute-top-right">
                                         <a href="#" class="btn btn-sm confirm-delete"
