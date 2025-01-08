@@ -170,7 +170,7 @@
                         </a>
                     </div>
                     <!-- Search field -->
-                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-0 mx-xl-4">
+                    <div class="flex-grow-1 front-header-search d-flex align-items-center bg-white mx-0 mx-lg-4 mx-xl-4">
                         <div class="position-relative flex-grow-1 px-3 px-lg-0">
                             <form action="{{ route('search') }}" method="GET" class="stop-propagation m-0">
                                 <div class="d-flex position-relative align-items-center">
