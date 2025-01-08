@@ -11,11 +11,14 @@
                         {{ translate('Reset Compare List') }}
                     </a>
                 </div>
-                <div class="compare-container position-relative">
-                    <div class="c-preloader text-center absolute-center">
-                        <i class="las la-spinner la-spin la-3x opacity-70"></i>
+                @if (!$compareList)
+
+                    <div class="compare-container position-relative">
+                        <div class="c-preloader text-center absolute-center">
+                            <i class="las la-spinner la-spin la-3x opacity-70"></i>
+                        </div>
                     </div>
-                </div>
+                @endif
                 <div class="compare-content d-none">
                     @if (Auth::check())
                         @include('frontend.partials.compare_table', ['compareData' => $compareList])

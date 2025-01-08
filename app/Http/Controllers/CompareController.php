@@ -22,7 +22,6 @@ class CompareController extends Controller
         } else {
             $compareList = $this->fetchCompareListData($user->id);
         }
-       // dd($compareList);
         return view('frontend.view_compare', compact('compareList'));
     
     }
