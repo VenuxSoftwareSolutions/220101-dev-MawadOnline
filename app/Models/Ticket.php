@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
+
+    protected $with = ["orderDetails"];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -23,7 +26,7 @@ class Ticket extends Model
 
     public function getVendor()
     {
-        $sub_order_id = $this->orderDetails->order_id;
+        $sub_order_id = $this->orderDetails()->first()->order_id;
 
         return Order::find($sub_order_id)->vendor;
     }
