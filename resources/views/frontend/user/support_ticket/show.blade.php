@@ -14,7 +14,7 @@
             </div>
         </div>
         <hr class="mx-4">
-        
+
         <div class="card-body">
             <!-- Reply form -->
             <form action="{{route('support_ticket.seller_store')}}" method="POST" enctype="multipart/form-data">
@@ -41,17 +41,17 @@
                     <button type="submit" class="btn btn-sm btn-primary rounded-0 w-150px" onclick="submit_reply('pending')">{{ translate('Send Reply') }}</button>
                 </div>
             </form>
-            
+
             <div class="pad-top">
                 <ul class="list-group list-group-flush mt-3">
                     <!-- Replies -->
-                    @foreach($ticket->ticketreplies as $ticketreply)
+                    @foreach($ticket->ticketReplies as $ticketReply)
                         <li class="list-group-item px-0 border-bottom-0">
                             <div class="media">
                                 <a class="media-left" href="#">
-                                    @if($ticketreply->user->avatar_original != null)
+                                    @if($ticketReply->user->avatar_original != null)
                                         <span class="avatar avatar-sm mr-3">
-                                            <img src="{{ uploaded_asset($ticketreply->user->avatar_original) }}" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
+                                            <img src="{{ uploaded_asset($ticketReply->user->avatar_original) }}" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
                                         </span>
                                     @else
                                         <span class="avatar avatar-sm mr-3">
@@ -61,16 +61,16 @@
                                 </a>
                                 <div class="media-body">
                                     <div class="comment-header">
-                                        <span class="fs-14 fw-700 text-dark">{{ $ticketreply->user->name }}</span>
-                                        <p class="text-muted text-sm fs-12 mt-2">{{ date('d.m.Y h:i:m', strtotime($ticketreply->created_at)) }}</p>
+                                        <span class="fs-14 fw-700 text-dark">{{ $ticketReply->user->name }}</span>
+                                        <p class="text-muted text-sm fs-12 mt-2">{{ date('d.m.Y h:i:m', strtotime($ticketReply->created_at)) }}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="fs-14 fw-400">
-                                {!! clean($ticketreply->reply) !!}
+                                {!! clean($ticketReply->reply) !!}
                                 <br>
                                 <br>
-                                @foreach ((explode(",",$ticketreply->files)) as $key => $file)
+                                @foreach ((explode(",",$ticketReply->files)) as $key => $file)
                                     @php $file_detail = get_single_uploaded_file($file) @endphp
                                     @if($file_detail != null)
                                         <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">
@@ -119,7 +119,7 @@
                             @endforeach
                         </div>
                     </li>
-                    
+
                 </ul>
             </div>
 

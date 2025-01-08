@@ -468,7 +468,7 @@
                 });
         }
 
-           
+
         });
 
         $('#search').on('keyup', function(){
@@ -641,7 +641,7 @@
 
             $('#confirm-delete-btn').off('click').on('click', function() {
                 removeFromCompare(categoryId, variantId);
-            }); 
+            });
         });
 
         function removeFromCompare(categoryId, variantId) {
@@ -672,7 +672,7 @@
                 });
             } else {
                 let compareList = JSON.parse(localStorage.getItem('compare')) || {};
-                
+
                 if (compareList[categoryId]) {
                     compareList[categoryId] = compareList[categoryId].filter(id => id != variantId);
 
@@ -694,7 +694,7 @@
         }
 
         function clearLocalStorage(event) {
-            localStorage.clear(); 
+            localStorage.clear();
         }
 
         function addToWishList(id){
@@ -793,7 +793,7 @@
             return false;
         }
 
-        function addToCart(isPreview = null){
+        function addToCart(isPreview = null) {
             if (isPreview == true) {
                 AIZ.plugins.notify('warning', "{{ __('messages.preview_mode_warning') }}");
                 return false;
@@ -809,7 +809,7 @@
                 $('.c-preloader').show();
                 $.ajax({
                     type:"POST",
-                    url: '{{ route('cart.addToCart') }}',
+                    url: `{{ route('cart.addToCart') }}${typeof(samplePriceSpanClicked) !== "undefined" && samplePriceSpanClicked === true ? "?sample=true" : ""}`,
                     data: $('#option-choice-form-preview').serializeArray(),
                     success: function(data){
                        $('#addToCart-modal-body').html(null);
@@ -821,8 +821,7 @@
                        updateNavCart(data.nav_cart_view,data.cart_count);
                     }
                 });
-            }
-            else{
+            } else {
                 AIZ.plugins.notify('warning', "{{ translate('Please choose all the options') }}");
             }
         }

@@ -97,7 +97,7 @@ class SupportTicketController extends Controller
         }
         $ticket->client_viewed = 1;
         $ticket->save();
-        $ticket_replies = $ticket->ticketreplies;
+        $ticket_replies = $ticket->ticketReplies;
         return view('seller.support_ticket.show', compact('ticket','ticket_replies'));
     }
 

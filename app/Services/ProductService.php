@@ -519,13 +519,9 @@ class ProductService
             }
 
             if (! isset($data['activate_attributes'])) {
-                $product = $this->storeProductWithDependencies($data, $pricing, $general_attributes_data, $ids_attributes_list, $ids_attributes_numeric, $unit_general_attributes_data, $shipping);
-
-                return $product;
+                return $this->storeProductWithDependencies($data, $pricing, $general_attributes_data, $ids_attributes_list, $ids_attributes_numeric, $unit_general_attributes_data, $shipping);
             } else {
-                $product_parent = $this->storeParentProductWithDependencies($data, $pricing, $shipping, $vat, $variants_data, $shipping_sample_parent, $ids_attributes_list, $ids_attributes_color, $ids_attributes_numeric, $vat_user, $general_attributes_data, $unit_general_attributes_data);
-
-                return $product_parent;
+                return $this->storeParentProductWithDependencies($data, $pricing, $shipping, $vat, $variants_data, $shipping_sample_parent, $ids_attributes_list, $ids_attributes_color, $ids_attributes_numeric, $vat_user, $general_attributes_data, $unit_general_attributes_data);
             }
         } catch (Exception $e) {
             Log::error('Error while store product data, with message: '.$e->getMessage());
@@ -5396,6 +5392,7 @@ class ProductService
             'ratingPercentages' => $ratingPercentages,
             'unit_of_sale' => $parent->unit ?? null,
             'outStock' => $outStock,
+            "sampleDetails" => $parent->getSampleDetails(),
         ];
     }
 
@@ -5555,7 +5552,8 @@ class ProductService
             return response()->json([
                 'unit_price' => $unitPrice,
                 'qty' => $qty,
-                'total' => $total,
+                'total' => single_price($total),
+                'sampleTotal' => single_price($data['detailedProduct']['sampleDetails']["sample_price"] * $qty),
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'totalDiscount' => $totalDiscount,

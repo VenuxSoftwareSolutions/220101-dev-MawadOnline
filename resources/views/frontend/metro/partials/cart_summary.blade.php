@@ -115,7 +115,7 @@
 
                         $shipping += $product_shipping_cost;
 
-                        $product_name_with_choice = $product->getTranslation('name');
+                        $product_name_with_choice = $cartItem->is_sample === 1 ? __("Sample of") . " " . $product->getTranslation('name') : $product->getTranslation('name');
 
                         if ($cartItem['variant'] != null) {
                             $product_name_with_choice = $product->getTranslation('name') . ' - ' . $cartItem['variant'];

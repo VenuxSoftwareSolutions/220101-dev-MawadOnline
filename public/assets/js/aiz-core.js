@@ -903,20 +903,24 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                 var placeholder = $this.attr("placeholder");
                 var format = $this.data("format");
 
-                buttons = !buttons
-                    ? [
-                          ["font", ["bold", "underline", "italic", "clear"]],
-                          ["para", ["ul", "ol", "paragraph"]],
-                          ["style", ["style"]],
-                          ["color", ["color"]],
-                          ["table", ["table"]],
-                          ["insert", ["link", "picture", "video"]],
-                          ["view", ["fullscreen", "undo", "redo"]],
-                      ]
-                    : buttons;
-                placeholder = !placeholder ? "" : placeholder;
-                minHeight = !minHeight ? 200 : minHeight;
-                format = typeof format == "undefined" ? false : format;
+                buttons =
+                    buttons === undefined
+                        ? [
+                              [
+                                  "font",
+                                  ["bold", "underline", "italic", "clear"],
+                              ],
+                              ["para", ["ul", "ol", "paragraph"]],
+                              ["style", ["style"]],
+                              ["color", ["color"]],
+                              ["table", ["table"]],
+                              ["insert", ["link", "picture", "video"]],
+                              ["view", ["fullscreen", "undo", "redo"]],
+                          ]
+                        : buttons;
+                placeholder = placeholder === undefined ? "" : placeholder;
+                minHeight = minHeight === undefined ? 200 : minHeight;
+                format = format === undefined ? false : format;
 
                 $this.summernote({
                     toolbar: buttons,

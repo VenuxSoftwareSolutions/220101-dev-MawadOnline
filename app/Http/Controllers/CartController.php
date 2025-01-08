@@ -59,7 +59,7 @@ class CartController extends Controller
             $total = $total + cart_product_price($cart, $product, false) * $cart['quantity'];
 
             $product_name_with_choice = str()->ucfirst($product->getTranslation('name'));
-            $stockStatus = 'In Stock';
+            $stockStatus = __('In Stock');
             $stockAlert = '';
             $outOfStockItems = [];
 
@@ -89,12 +89,13 @@ class CartController extends Controller
                 "product_stock" => $product_stock,
                 "total" => $total,
                 "product_name_with_choice" => $product_name_with_choice,
-                "stockStatus" =>$stockStatus,
+                "stockStatus" => $stockStatus,
                 "outOfStockItems" => $outOfStockItems,
-                "stockAlert" => $stockAlert
+                "stockAlert" => $stockAlert,
+                "is_sample" => $cart->is_sample === 1 ? true : false
             ];
 
-            if ($product_stock < $cart->quantity) {
+            if ($cart->is_sample !== 1 && $product_stock < $cart->quantity) {
                 if (auth()->user() != null) {
                     $existingWishlistItem = Wishlist::where('user_id', $user_id)
                         ->where('product_id', $cart->product_id)
@@ -109,7 +110,6 @@ class CartController extends Controller
                     }
                 }
 
-                // Remove from Cart
                 $cart->delete();
             }
         }
@@ -602,11 +602,59 @@ class CartController extends Controller
         return view('auction.frontend.addToCartAuction', compact('product'));
     }
 
+    private function handleAddingSampleProductToCart($product, $userId, $variantId, $quantity, $productPreview)
+    {
+        $data = [
+            'variation' => $product->productVariantDetails(),
+            'product_id' => $variantId
+        ];
+
+        $product->name = "Sample of $product->name";
+
+        if (auth()->check()) {
+            $data["user_id"] = $userId;
+        } else {
+            $data["temp_user_id"] = $userId;
+        }
+
+        $cart = Cart::firstOrNew($data);
+
+        $cart->is_sample = true;
+
+        $price = $productPreview["sampleDetails"]["sample_price"] * $quantity;
+
+        $tax = 0;
+
+        CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);
+
+        $carts = Cart::where(
+            auth()->check() ? 'user_id' : 'temp_user_id',
+            $userId
+        )->get();
+
+        $carts->each(function ($cart) {
+            if ($cart->user !== null) {
+                $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+            }
+        });
+
+        $samplePrice = $productPreview["sampleDetails"]["sample_price"];
+
+        $modalViewPath = 'frontend.' . get_setting('homepage_select') . '.partials.addedToCart';
+        $navCartViewPath = 'frontend.' . get_setting('homepage_select') . '.partials.cart';
+
+        return [
+            'status' => 1,
+            'cart_count' => count($carts),
+            'modal_view' => view($modalViewPath, compact('product', 'cart', "samplePrice"))->render(),
+            'nav_cart_view' => view($navCartViewPath)->render(),
+        ];
+    }
+
     public function addToCart(Request $request)
     {
         try {
             $dataProduct = $request->session()->get('productPreviewData', null);
-
             $userId = auth()->check() ? auth()->user()->id : $request->session()->get('temp_user_id');
 
             if (!auth()->check() && !$userId) {
@@ -620,6 +668,13 @@ class CartController extends Controller
             )->get();
 
             $product = Product::find($request->variationId);
+
+            if ($request->has("sample")) {
+                return $this->handleAddingSampleProductToCart(
+                    $product, $userId, $request->variationId,
+                    $request->quantity, $dataProduct["detailedProduct"]
+                );
+            }
 
             // Minimum quantity validation
             $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
@@ -637,7 +692,8 @@ class CartController extends Controller
 
             // Check the product variant details
             $str = $product->productVariantDetails();
-            $product_stock = StockSummary::where('variant_id', $request['variationId'])->sum('current_total_quantity');
+            $product_stock = StockSummary::where('variant_id', $request['variationId'])
+                ->sum('current_total_quantity');
 
             if ($product_stock < $request['quantity']) {
                 return array(
