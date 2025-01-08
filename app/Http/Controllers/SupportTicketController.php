@@ -34,15 +34,49 @@ class SupportTicketController extends Controller
     public function admin_index(Request $request)
     {
         $sort_search = null;
-        $tickets = Ticket::where("status", "pending")->orderBy('created_at', 'desc');
+        $search_status = $request->has('search_status') ? $request->search_status : null;
+        $search_sub_order_status = null;
+
+        $isSearchStatusQueryParamExists = $search_status !== null;
+
+        $tickets = Ticket::when(
+            $isSearchStatusQueryParamExists,
+            function ($query) use ($search_status) {
+                $query->where('status', $search_status);
+            }, function ($query) {
+                $query->where('status', 'pending');
+            });
+
+        if ($request->has('search_sub_order_status')) {
+            $search_sub_order_status = $request->search_sub_order_status;
+
+            $tickets = $tickets->whereHas(
+                'orderDetails', function ($query) use ($search_sub_order_status) {
+                    $query->where('delivery_status', $search_sub_order_status);
+                },
+            );
+        }
 
         if ($request->has('search')) {
             $sort_search = $request->search;
-            $tickets = $tickets->where('code', 'like', '%' . $sort_search . '%');
+
+            $tickets = $tickets->where(function ($query) use ($sort_search) {
+                $query->where('code', 'like', "%$sort_search%")
+                      ->orWhere('subject', 'like', "%$sort_search%")
+                      ->orWhere('order_details_id', $sort_search)
+                      ->orWhereHas('orderDetails', function ($q) use ($sort_search) {
+                          $q->where('order_id', $sort_search);
+                      });
+            });
         }
 
-        $tickets = $tickets->with("orderDetails")->paginate(15);
-        return view('backend.support.support_tickets.index', compact('tickets', 'sort_search'));
+        $tickets = $tickets->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view(
+            'backend.support.support_tickets.index',
+            compact('tickets', 'search_status', 'search_sub_order_status')
+        );
     }
 
     /**
