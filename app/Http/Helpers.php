@@ -1942,6 +1942,17 @@ if (!function_exists('get_products_filter_price')) {
     }
 }
 
+if (!function_exists('get_product_price')) {
+    function get_product_price($product_id)
+    {
+        // Query the PricingConfiguration table for the given product_id
+        $pricing = PricingConfiguration::query()
+            ->where('id_products', $product_id)
+            ->first();
+        return $pricing ? format_price(convert_price($pricing->unit_price)) : 0;
+    }
+}
+
 // get minimum unit price of products
 if (!function_exists('get_product_min_unit_price')) {
     function get_product_min_unit_price($user_id = null)

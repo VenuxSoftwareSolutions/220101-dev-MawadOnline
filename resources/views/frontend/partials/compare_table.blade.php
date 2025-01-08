@@ -59,7 +59,7 @@
                             @endphp
                             <td>
                                 @if (home_base_price($product) != home_discounted_base_price($product))
-                                    <del class="fw-400 opacity-50 mr-1">{{ home_base_price($product) }}</del>
+                                    <del class="fw-400 opacity-50 mr-1">{{ get_product_price($product_id) }}</del>
                                 @endif
                                 <span
                                     class="fw-700 text-primary">{{ home_discounted_base_price($product) }}</span>
