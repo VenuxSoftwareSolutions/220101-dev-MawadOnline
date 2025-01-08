@@ -89,7 +89,7 @@
         </div>
         <div class="container d-flex justify-content-center">
             <div class="col-10 p-0 pt-1 fs-15 register-shop-desc d-flex justify-content-start font-prompt text-start">
-                Our support team is here to help you every step of the way. Contact us at hello@mawadonline.com or call +971 555626232
+                Our support team is here to help you every step of the way. Contact us at hello@mawadonline.com
             </div>
         </div>
     </section>
