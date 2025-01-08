@@ -32,7 +32,7 @@
                 <div class="col-sm-9">
                     <div class="fs-16 fw-700 text-primary">
                         <strong>
-                            {{ single_price(cart_product_price($cart, $product, false) * $cart->quantity) }}
+                            {{ single_price((isset($samplePrice) ? $samplePrice : cart_product_price($cart, $product, false)) * $cart->quantity) }}
                         </strong>
                     </div>
                 </div>

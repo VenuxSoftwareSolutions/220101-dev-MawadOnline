@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\SecondEmailVerifyMailManager;
 use App\Mail\WaitlistApplication;
 use App\Mail\WaitlistUserApplication;
-use App\Models\AffiliateConfig;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\Category;
@@ -22,7 +21,6 @@ use App\Models\User;
 use App\Models\Waitlist;
 use Auth;
 use Cache;
-use Cookie;
 use Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
@@ -33,7 +31,6 @@ use Illuminate\Support\Str;
 use Mail;
 use App\Services\ProductService;
 use App\Models\Emirate;
-use Exception;
 
 class HomeController extends Controller
 {

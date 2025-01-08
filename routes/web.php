@@ -261,7 +261,7 @@ Route::controller(CompareController::class)->group(function () {
 
 Route::resource('subscribers', SubscriberController::class);
 
-Route::group(['middleware' => ['user', 'verified', 'unbanned','global']], function () {
+Route::group(['middleware' => ['user', 'verified', 'unbanned','throttle:global']], function () {
     Route::controller(HomeController::class)->group(function () {
         Route::get('/dashboard', 'dashboard')->name('dashboard')->middleware(['prevent-back-history']);
         Route::get('/profile', 'profile')->name('profile');
@@ -273,7 +273,7 @@ Route::group(['middleware' => ['user', 'verified', 'unbanned','global']], functi
     Route::get('/all-notifications', [NotificationController::class, 'index'])->name('all-notifications');
 });
 
-Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock",'global']], function () {
+Route::group(['middleware' => ['customer', 'verified', 'unbanned', "check.cart.stock", "throttle:global"]], function () {
     // Checkout Routes
     Route::group(['prefix' => 'checkout'], function () {
         Route::controller(CheckoutController::class)->group(function () {

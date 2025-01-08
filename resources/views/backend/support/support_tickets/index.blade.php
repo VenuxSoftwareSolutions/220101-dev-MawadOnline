@@ -47,8 +47,8 @@
                                 @endif
                             </td>
                             <td>
-                                @if (count($ticket->ticketreplies) > 0)
-                                    {{ $ticket->ticketreplies->first()->created_at }}
+                                @if (count($ticket->ticketReplies) > 0)
+                                    {{ $ticket->ticketReplies->first()->created_at }}
                                 @else
                                     {{ $ticket->created_at }}
                                 @endif

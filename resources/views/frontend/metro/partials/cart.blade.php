@@ -47,7 +47,7 @@
                                 <span class="minw-0 pl-2 flex-grow-1">
                                     <span class="fw-700 fs-13 text-dark mb-2 text-truncate-2"
                                         title="{{ $product->getTranslation('name') }}">
-                                        {{ $product->getTranslation('name') }}
+                                        {{ $cartItem->is_sample === 1 ? __("Sample of") . " " . $product->getTranslation('name') : $product->getTranslation("name") }}
                                     </span>
                                     <span class="fs-14 fw-400 text-secondary">{{ $cartItem['quantity'] }}x</span>
                                     <span
