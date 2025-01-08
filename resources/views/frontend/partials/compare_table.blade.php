@@ -19,20 +19,22 @@
                                 $product_id = $product->id;
                                 $product = get_single_product($product_id);
                             @endphp
-                            <th>
-                                <div class="position-relative">
-                                    <img src="{{ get_uploaded_product($product_id) }}"
-                                        class="img-fluid mb-2" alt="{{ $product->name }}">
-                                    <div class="absolute-top-right">
-                                        <a href="#" class="btn btn-sm confirm-delete"
-                                            data-category-id="{{ get_leaf_category($product->id) }}"
-                                            data-variant-id="{{ $product->id }}"
-                                            title="{{ translate('Delete') }}">
-                                            <img src="{{ asset('public/trash.svg') }}">
-                                        </a>
-                                    </div>
-                                </div>
-                            </th>
+                                    <th>
+                                        <div class="product-card">
+                                            <img src="{{ get_uploaded_product($product_id) }}"
+                                                 class="product-image" alt="{{ $product->name }}">
+                                            <div class="absolute-top-right">
+                                                <a href="#" class="btn btn-sm confirm-delete"
+                                                   data-category-id="{{ get_leaf_category($product->id) }}"
+                                                   data-variant-id="{{ $product->id }}"
+                                                   title="{{ translate('Delete') }}">
+                                                    <img src="{{ asset('public/trash.svg') }}">
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="product-name">{{ $product->name }}</p>
+                                    </th>
+                            
                         @endforeach
                     </tr>
                     <tr>
@@ -144,3 +146,41 @@
 @empty
     <h4 class="fw-600 text-primary mb-3 text-center">{{ translate('No items in the compare list') }}</h4>
 @endforelse
+<style>
+.product-card {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.absolute-top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Styling for the product name */
+.product-name {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #007185; 
+}
+
+</style>
