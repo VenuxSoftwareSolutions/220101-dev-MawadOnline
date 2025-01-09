@@ -100,12 +100,9 @@
                         showNoItemsMessage();
                     });
             } else {
-                if (!compareData) {
-                    showNoItemsMessage();
-                } else {
                     spinner.classList.add('d-none');
                     contentContainer.classList.remove('d-none');
-                }
+                
             }
         });
     </script>
