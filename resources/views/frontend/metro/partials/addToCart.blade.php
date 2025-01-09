@@ -4,7 +4,7 @@
         <div class="col-lg-6">
             <div class="row gutters-10 flex-row-reverse">
                 @php
-                    $photos = 'assets/img/placeholder.jpg';
+                    $photos = explode(',', $product->photos);
                 @endphp
                 <div class="col">
                     <div class="aiz-carousel product-gallery" data-nav-for='.product-gallery-thumb' data-fade='true'
@@ -16,7 +16,7 @@
                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                             </div>
                         @endforeach
-{{--                         @foreach ($product->stocks as $key => $stock)
+                        @foreach ($product->stocks as $key => $stock)
                             @if ($stock->image != null)
                                 <div class="carousel-box img-zoom rounded-0">
                                     <img class="img-fluid lazyload"
@@ -26,7 +26,7 @@
                                 </div>
                             @endif
                         @endforeach
- --}}                    </div>
+                    </div>
                 </div>
                 <div class="col-auto w-90px">
                     <div class="aiz-carousel carousel-thumb product-gallery-thumb" data-items='5'
@@ -39,7 +39,7 @@
                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                             </div>
                         @endforeach
-                       {{--  @foreach ($product->stocks as $key => $stock)
+                        @foreach ($product->stocks as $key => $stock)
                             @if ($stock->image != null)
                                 <div class="carousel-box c-pointer border rounded-0"
                                     data-variation="{{ $stock->variant }}">
@@ -49,7 +49,7 @@
                                         onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                 </div>
                             @endif
-                        @endforeach --}}
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                         </div>
 
                         <!-- Club Point -->
-{{--                         @if (addon_is_activated('club_point') && $product->earn_point > 0)
+                        @if (addon_is_activated('club_point') && $product->earn_point > 0)
                             <div class="mt-2 bg-secondary-base d-flex justify-content-center align-items-center px-3 py-1"
                                 style="width: fit-content;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
@@ -109,19 +109,19 @@
                                     {{ $product->earn_point }}</small>
                             </div>
                         @endif
- --}}                    </div>
+                    </div>
                 </div>
 
 
-{{--                 @php
+                @php
                     $qty = 0;
                     foreach ($product->stocks as $key => $stock) {
                         $qty += $stock->qty;
                     }
                 @endphp
- --}}
+
                 <!-- Product Choice options form -->
-{{--                 <form id="option-choice-form-preview">
+                <form id="option-choice-form-preview">
                     @csrf
                     <input type="hidden" name="id" value="{{ $product->id }}">
                     <input type="hidden"
@@ -233,7 +233,7 @@
 
                 </form>
 
- --}}                <!-- Add to cart -->
+                <!-- Add to cart -->
                 <div class="mt-3">
                     <button type="button" class="btn btn-primary rounded-0 buy-now fw-600 add-to-cart"
                         onclick="addToCart()">
