@@ -35,7 +35,11 @@ class SupportTicketController extends Controller
     public function admin_index(Request $request)
     {
         $sort_search = null;
-        $search_status = $request->has('search_status') ? $request->search_status : null;
+        $search_status = $request->has('search_status') ? (
+            str($request->search_status)->contains(',') === true ?
+            str($request->search_status)->explode(',')
+            : $request->search_status
+        ) : null;
         $search_sub_order_status = null;
 
         $isSearchStatusQueryParamExists = $search_status !== null;
@@ -43,17 +47,26 @@ class SupportTicketController extends Controller
         $tickets = Ticket::when(
             $isSearchStatusQueryParamExists,
             function ($query) use ($search_status) {
-                $query->where('status', $search_status);
+                if (is_string($search_status) === true) {
+                    $query->where('status', $search_status);
+                } else {
+                    $query->whereIn('status', $search_status->toArray());
+                }
             }, function ($query) {
                 $query->where('status', 'pending');
             });
 
         if ($request->has('search_sub_order_status')) {
-            $search_sub_order_status = $request->search_sub_order_status;
+            $search_sub_order_status = str($request->search_sub_order_status)->contains(',') === true ?
+            str($request->search_sub_order_status)->explode(',') : $request->search_sub_order_status;
 
             $tickets = $tickets->whereHas(
                 'orderDetails', function ($query) use ($search_sub_order_status) {
-                    $query->where('delivery_status', $search_sub_order_status);
+                    if (is_string($search_sub_order_status) === true) {
+                        $query->where('delivery_status', $search_sub_order_status);
+                    } else {
+                        $query->whereIn('delivery_status', $search_sub_order_status->toArray());
+                    }
                 },
             );
         }
@@ -63,11 +76,21 @@ class SupportTicketController extends Controller
 
             $tickets = $tickets->where(function ($query) use ($sort_search) {
                 $query->where('code', 'like', "%$sort_search%")
-                      ->orWhere('subject', 'like', "%$sort_search%")
-                      ->orWhere('order_details_id', $sort_search)
-                      ->orWhereHas('orderDetails', function ($q) use ($sort_search) {
-                          $q->where('order_id', $sort_search);
-                      });
+                    ->orWhere('subject', 'like', "%$sort_search%")
+                    ->orWhere('order_details_id', $sort_search)
+                    ->orWhereHas('orderDetails', function ($q) use ($sort_search) {
+                        $q->where('order_id', $sort_search)
+                            ->orWhereHas('product', function ($q) use ($sort_search) {
+                                $q->where('name', 'like', "%$sort_search%");
+                            })->orWhereHas('order', function ($q) use ($sort_search) {
+                                $q->whereHas('vendor', function ($q) use ($sort_search) {
+                                    $q->where('name', 'like', "%$sort_search%")
+                                        ->orWhereHas('shop', function ($q) use ($sort_search) {
+                                            $q->where('name', 'like', "%$sort_search%");
+                                        });
+                                });
+                            });
+                    });
             });
         }
 
