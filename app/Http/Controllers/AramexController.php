@@ -803,7 +803,7 @@ class AramexController extends Controller
                     'OperationsInstructions' => null,
                     'AccountingInstructions' => null,
                     'Details' => [
-                        'Dimensions' => $input["dimensions"],
+                        'Dimensions' => $input['dimensions'],
                         'ActualWeight' => [
                             'Unit' => 'KG',
                             'Value' => 0.1,
