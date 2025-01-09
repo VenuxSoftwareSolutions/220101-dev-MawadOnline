@@ -312,7 +312,7 @@ if (!function_exists('discount_in_percentage')) {
 if (!function_exists('cart_product_price')) {
     function cart_product_price($cart_product, $product, $formatted = true, $tax = true)
     {
-        return $cart_product->price;
+        return $cart_product->is_sample === 1 ? $product->sample_price : $cart_product->price;
         if ($product->auction_product == 0) {
             $str = '';
             if ($cart_product['variation'] != null) {
@@ -1849,7 +1849,7 @@ if (!function_exists('get_single_product')) {
 }
 
 if (!function_exists('get_leaf_category')) {
-    
+
     function get_leaf_category(int $productId): ?int
     {
         return DB::table('product_categories')
@@ -1858,7 +1858,7 @@ if (!function_exists('get_leaf_category')) {
     }
 }
 if (!function_exists('get_category_attributes')) {
-    
+
     function get_category_attributes(int $categoryId): ?\Illuminate\Support\Collection
     {
         $attributeIds = DB::table('categories_has_attributes')

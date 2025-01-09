@@ -672,4 +672,26 @@ class Product extends Model
     {
         return $this->hasMany(StockDetails::class, 'variant_id', 'id');
     }
+
+    public function getSampleDetails() {
+        if ($this->sample_price === 0) {
+            return [];
+        }
+
+        $tableName = (new Product)->getTable();
+        $columns = DB::getSchemaBuilder()->getColumnListing($tableName);
+
+        $sampleColumns = array_filter($columns, function ($column) {
+            return str_contains($column, 'sample');
+        });
+
+        if (!empty($sampleColumns)) {
+            return Product::where("id", $this->id)
+                ->select($sampleColumns)
+                ->first()
+                ->toArray();
+        } else {
+            return [];
+        }
+    }
 }

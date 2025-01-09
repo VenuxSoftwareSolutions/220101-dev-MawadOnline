@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class OrderDetail extends Model
 {
     protected $guarded=[];
+
     public function order()
     {
         return $this->belongsTo(Order::class);
@@ -35,5 +36,10 @@ class OrderDetail extends Model
     public function seller()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function Tickets()
+    {
+        return $this->hasMany(Ticket::class);
     }
 }

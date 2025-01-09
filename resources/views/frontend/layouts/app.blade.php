@@ -472,7 +472,7 @@
                 });
         }
 
-           
+
         });
 
         $('#search').on('keyup', function(){
@@ -646,7 +646,7 @@
 
             $('#confirm-delete-btn').off('click').on('click', function() {
                 removeFromCompare(categoryId, variantId);
-            }); 
+            });
         });
 
         function removeFromCompare(categoryId, variantId) {
@@ -678,7 +678,7 @@
                 });
             } else {
                 let compareList = JSON.parse(localStorage.getItem('compare')) || {};
-                
+
                 if (compareList[categoryId]) {
                     compareList[categoryId] = compareList[categoryId].filter(id => id != variantId);
 
@@ -700,7 +700,7 @@
         }
 
         function clearLocalStorage(event) {
-            localStorage.clear(); 
+            localStorage.clear();
         }
 
         function addToWishList(id){
@@ -830,8 +830,7 @@
                        updateNavCart(data.nav_cart_view,data.cart_count);
                     }
                 });
-            }
-            else{
+            } else {
                 AIZ.plugins.notify('warning', "{{ translate('Please choose all the options') }}");
             }
         }
