@@ -797,7 +797,7 @@
             return false;
         }
 
-        function addToCart(isPreview = null){
+        function addToCart(isPreview = null,additionalData = null){
             if (isPreview == true) {
                 AIZ.plugins.notify('warning', "{{ __('messages.preview_mode_warning') }}");
                 return false;
@@ -811,10 +811,12 @@
             if(checkAddToCartValidity()) {
                 $('#addToCart').modal();
                 $('.c-preloader').show();
+                let dataToSend = additionalData ? additionalData : $('#option-choice-form-preview').serializeArray();
+
                 $.ajax({
                     type:"POST",
                     url: '{{ route('cart.addToCart') }}',
-                    data: $('#option-choice-form-preview').serializeArray(),
+                    data: dataToSend,
                     success: function(data){
                        $('#addToCart-modal-body').html(null);
                        $('.c-preloader').hide();

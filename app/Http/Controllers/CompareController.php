@@ -16,13 +16,20 @@ class CompareController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
+        $previewData = $request->session()->get('productPreviewData', null);
+        
+        if ($previewData) {
+            extract($previewData);
+            $isPreview = true;
+        }
+        
+        
         if (!$user) {
             $compareList = [];
         } else {
             $compareList = $this->fetchCompareListData($user->id);
         }
-        return view('frontend.view_compare', compact('compareList'));
+        return view('frontend.view_compare', compact('compareList','previewData'));
     
     }
     private function fetchCompareListData()

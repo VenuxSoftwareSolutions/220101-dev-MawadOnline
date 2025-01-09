@@ -1941,6 +1941,18 @@ if (!function_exists('get_products_filter_price')) {
         }
     }
 }
+if (!function_exists('get_default_qty')) {
+    /**
+     * Get the 'minmium ' qty for a given product ID from PricingConfiguration.
+     *
+     * @param int $productId
+     * @return mixed|null
+     */
+    function get_default_qty(int $productId)
+    {
+        return PricingConfiguration::where('id_products', $productId)->value('from');
+    }
+}
 
 if (!function_exists('get_product_price')) {
     function get_product_price($product_id)
