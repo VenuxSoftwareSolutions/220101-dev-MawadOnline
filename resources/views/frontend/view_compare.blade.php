@@ -12,7 +12,6 @@
                     </a>
                 </div>
                 @if (!$compareList)
-
                     <div class="compare-container position-relative">
                         <div class="c-preloader text-center absolute-center">
                             <i class="las la-spinner la-spin la-3x opacity-70"></i>
@@ -52,39 +51,61 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const compareData = localStorage.getItem('compare');
-            let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+            const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
             const spinner = document.querySelector('.c-preloader');
             const contentContainer = document.querySelector('.compare-content');
-    
+            const compareContainer = document.querySelector('.compare-container');
+
+            // Helper function to show "No items" message
+            const showNoItemsMessage = () => {
+                compareContainer.innerHTML = `
+            <h4 class="fw-600 text-primary mb-3 text-center">
+                {{ translate('No items in the compare list') }}
+            </h4>
+        `;
+                spinner.classList.add('d-none');
+                contentContainer.classList.add('d-none');
+            };
+
             if (!isLoggedIn) {
+                if (!compareData) {
+                    showNoItemsMessage();
+                    return;
+                }
+
                 fetch('/compare/local', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ compareData })
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            compareData
+                        })
+                    })
                     .then(response => response.json())
                     .then(data => {
                         if (data.html) {
-                            document.querySelector('.compare-container').innerHTML = data.html;
+                            compareContainer.innerHTML = data.html;
                             spinner.classList.add('d-none');
                             contentContainer.classList.remove('d-none');
                         } else {
-                            console.error('Failed to load compare data.');
+                            console.warn('No data returned from the server.');
+                            showNoItemsMessage();
                         }
                     })
-                    .catch(error => console.error('Error fetching compare data:', error));
-    
-                if (!compareData) {
-                    console.log('No compare data found in local storage.');
-                    spinner.classList.add('d-none');
-                    return;
-                }
+                    .catch(error => {
+                        console.error('Error fetching compare data:', error);
+                        showNoItemsMessage();
+                    });
             } else {
-                spinner.classList.add('d-none');
-                contentContainer.classList.remove('d-none');
+                if (!compareData) {
+                    showNoItemsMessage();
+                } else {
+                    spinner.classList.add('d-none');
+                    contentContainer.classList.remove('d-none');
+                }
             }
         });
     </script>
