@@ -461,6 +461,10 @@
                         //this will depend on business requiremnts  wether to clear local storage or not
                         // localStorage.removeItem('compare');
                         sessionStorage.setItem('compareSynced', true);
+                        if (response.totalItems !== undefined) {
+                            $('#compare_items_sidenav').html(response.totalItems);
+                        }   
+
 
                     }
                 }).fail(function (jqXHR) {
@@ -595,11 +599,12 @@
                     if (compare[data.categoryId].length < data.maxVariants) {
                         compare[data.categoryId].push(data.variantId);
                         localStorage.setItem('compare', JSON.stringify(compare));
+                        sessionStorage.removeItem('compareSynced');
 
                         let compareCount = parseInt($('#compare_items_sidenav').html());
                         $('#compare_items_sidenav').html(compareCount + 1);
-
                         AIZ.plugins.notify('success', "{{ translate('Item has been added to the compare list.') }}");
+
                     } else {
                         AIZ.plugins.notify('warning', "{{ translate('Max variants reached for this category.') }}");
                     }
@@ -656,6 +661,7 @@
                 .done(function(data) {
                     if (data.success) {
                         AIZ.plugins.notify('success', "{{ translate('Item has been removed from the compare list.') }}");
+                        sessionStorage.setItem('compareSynced', true);
 
                         let compareCount = parseInt($('#compare_items_sidenav').html());
                         $('#compare_items_sidenav').html(compareCount - 1);

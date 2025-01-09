@@ -120,14 +120,19 @@ class CompareController extends Controller
             // Merge and limit to the max allowed number of variants
             $mergedVariants = $existingVariants->merge($newVariants)->unique();
             if ($mergedVariants->count() > $maxVariants) {
-                $mergedVariants = $mergedVariants->slice(-$maxVariants);
+                $mergedVariants = $mergedVariants->slice(0, $maxVariants);
             }
     
             $compareList->update(['variants' => $mergedVariants->values()->all()]);
         });
     
+        $totalItems = CompareList::where('user_id', $user->id)
+        ->get()
+        ->reduce(function ($count, $compareList) {
+            return $count + count($compareList->variants);
+        }, 0);
 
-        return response()->json(['message' => 'Compare list synced successfully']);
+        return response()->json(['message' => 'Compare list synced successfully','totalItems' => $totalItems]);
     }
     public function reset(Request $request)
     {
