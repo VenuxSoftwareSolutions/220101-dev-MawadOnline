@@ -100,13 +100,11 @@
                         showNoItemsMessage();
                     });
             } else {
-                if (!compareData) {
-                    showNoItemsMessage();
-                } else {
-                    spinner.classList.add('d-none');
-                    contentContainer.classList.remove('d-none');
-                }
-            }
+                
+                spinner.classList.add('d-none');
+                contentContainer.classList.remove('d-none');
+                
+            ddd}
         });
     </script>
 @endsection

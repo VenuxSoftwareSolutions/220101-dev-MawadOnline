@@ -27,7 +27,7 @@ class CompareController extends Controller
         if (!$user) {
             $compareList = [];
         } else {
-            $compareList = $this->fetchCompareListData($user->id);
+            $compareList = $this->fetchCompareListData();
         }
         return view('frontend.view_compare', compact('compareList','previewData'));
     
@@ -186,7 +186,7 @@ class CompareController extends Controller
                     $mergedVariants = $existingVariants->merge($variants)->unique();
 
                     if ($mergedVariants->count() > compare_list_num_variants) {
-                        $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 3));
+                        $mergedVariants = $mergedVariants->slice(-compare_list_num_variants);
                     }
 
                     $compareList->update(['variants' => $mergedVariants->values()->all()]);
@@ -199,7 +199,6 @@ class CompareController extends Controller
 
             if ($variants->count() >= compare_list_num_variants) {
                 return response()->json(['max_limit_reached' => true]);
-                $variants->shift();
             }
 
 
