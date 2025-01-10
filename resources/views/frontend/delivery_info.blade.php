@@ -188,6 +188,8 @@
                                                                                         if (error === true) {
                                                                                             throw new Error(message);
                                                                                         } else if (data?.HasErrors === false) {
+                                                                                            $("#shipping_duration_{{ $product->id }}").html('{{ $duration . " " . __("days") }}');
+
                                                                                             $("#charge-result_{{ $product->id }}").html(
                                                                                                 `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
                                                                                             ).removeClass("text-dark").addClass("text-success").addClass(
