@@ -16,14 +16,20 @@ class CompareController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
+        $previewData = $request->session()->get('productPreviewData', null);
+        
+        if ($previewData) {
+            extract($previewData);
+            $isPreview = true;
+        }
+        
+        
         if (!$user) {
             $compareList = [];
         } else {
-            $compareList = $this->fetchCompareListData($user->id);
+            $compareList = $this->fetchCompareListData();
         }
-    
-        return view('frontend.view_compare', compact('compareList'));
+        return view('frontend.view_compare', compact('compareList','previewData'));
     
     }
     private function fetchCompareListData()
@@ -52,7 +58,7 @@ class CompareController extends Controller
                 ->get();
 
                 //a condition depends on business requirement to display or not compare list containing less than two items
-            if ($variants->count() > 1 ) {
+            if ($variants->count() > 0 ) {
                 $compareData[] = [
                     'id' => $category->category_id,
                     'category_name' => $category->category_name,
@@ -114,14 +120,19 @@ class CompareController extends Controller
             // Merge and limit to the max allowed number of variants
             $mergedVariants = $existingVariants->merge($newVariants)->unique();
             if ($mergedVariants->count() > $maxVariants) {
-                $mergedVariants = $mergedVariants->slice(-$maxVariants);
+                $mergedVariants = $mergedVariants->slice(0, $maxVariants);
             }
     
             $compareList->update(['variants' => $mergedVariants->values()->all()]);
         });
     
+        $totalItems = CompareList::where('user_id', $user->id)
+        ->get()
+        ->reduce(function ($count, $compareList) {
+            return $count + count($compareList->variants);
+        }, 0);
 
-        return response()->json(['message' => 'Compare list synced successfully']);
+        return response()->json(['message' => 'Compare list synced successfully','totalItems' => $totalItems]);
     }
     public function reset(Request $request)
     {
@@ -175,7 +186,7 @@ class CompareController extends Controller
                     $mergedVariants = $existingVariants->merge($variants)->unique();
 
                     if ($mergedVariants->count() > compare_list_num_variants) {
-                        $mergedVariants = $mergedVariants->slice(-config('app.compare_list_num_variants', 3));
+                        $mergedVariants = $mergedVariants->slice(-compare_list_num_variants);
                     }
 
                     $compareList->update(['variants' => $mergedVariants->values()->all()]);
@@ -188,7 +199,6 @@ class CompareController extends Controller
 
             if ($variants->count() >= compare_list_num_variants) {
                 return response()->json(['max_limit_reached' => true]);
-                $variants->shift();
             }
 
 

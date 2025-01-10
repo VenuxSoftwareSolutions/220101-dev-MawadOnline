@@ -1,7 +1,6 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-   
     <section class="mb-4 mt-3">
         <div class="container text-left">
             <div class="bg-white shadow-sm rounded py-3">
@@ -12,18 +11,23 @@
                         {{ translate('Reset Compare List') }}
                     </a>
                 </div>
-
-                <div class="compare-container">
-                        @if(Auth::check())
+                @if (!$compareList)
+                    <div class="compare-container position-relative">
+                        <div class="c-preloader text-center absolute-center">
+                            <i class="las la-spinner la-spin la-3x opacity-70"></i>
+                        </div>
+                    </div>
+                @endif
+                <div class="compare-content d-none">
+                    @if (Auth::check())
                         @include('frontend.partials.compare_table', ['compareData' => $compareList])
                     @else
                         {{-- Compare data will be loaded dynamically for guests --}}
                     @endif
-               </div>
+                </div>
             </div>
-        </div>
     </section>
-    
+
     <div id="delete-confirmation-modal" class="modal fade">
         <div class="modal-dialog modal-md modal-dialog-centered">
             <div class="modal-content">
@@ -44,37 +48,63 @@
         </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const compareData = localStorage.getItem('compare');
-        let isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
-        if (!isLoggedIn) {
-                fetch('/compare/local', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ compareData })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.html) {
-                    document.querySelector('.compare-container').innerHTML = data.html;
-                } else {
-                    console.error('Failed to load compare data.');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const compareData = localStorage.getItem('compare');
+            const isLoggedIn = {{ Auth::check() ? 'true' : 'false' }};
+            const spinner = document.querySelector('.c-preloader');
+            const contentContainer = document.querySelector('.compare-content');
+            const compareContainer = document.querySelector('.compare-container');
+
+            // Helper function to show "No items" message
+            const showNoItemsMessage = () => {
+                compareContainer.innerHTML = `
+            <h4 class="fw-600 text-primary mb-3 text-center">
+                {{ translate('No items in the compare list') }}
+            </h4>
+        `;
+                spinner.classList.add('d-none');
+                contentContainer.classList.add('d-none');
+            };
+
+            if (!isLoggedIn) {
+                if (!compareData) {
+                    showNoItemsMessage();
+                    return;
                 }
-            })
-            .catch(error => console.error('Error fetching compare data:', error));
-            if (!compareData) {
-            console.log('No compare data found in local storage.');
-            return;
-        }
-        }
-     
 
-        
-    });
-
-</script>   
+                fetch('/compare/local', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
+                        },
+                        body: JSON.stringify({
+                            compareData
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.html) {
+                            compareContainer.innerHTML = data.html;
+                            spinner.classList.add('d-none');
+                            contentContainer.classList.remove('d-none');
+                        } else {
+                            console.warn('No data returned from the server.');
+                            showNoItemsMessage();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching compare data:', error);
+                        showNoItemsMessage();
+                    });
+            } else {
+                
+                spinner.classList.add('d-none');
+                contentContainer.classList.remove('d-none');
+                
+            ddd}
+        });
+    </script>
 @endsection

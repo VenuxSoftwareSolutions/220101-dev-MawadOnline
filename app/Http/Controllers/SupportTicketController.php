@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Mail\SupportMailManager;
 use App\Models\Ticket;
+use App\Models\TicketReply;
 use App\Models\User;
 use Auth;
-use App\Models\TicketReply;
-use App\Mail\SupportMailManager;
-use Mail;
 use Exception;
+use Illuminate\Http\Request;
 use Log;
+use Mail;
 
 class SupportTicketController extends Controller
 {
@@ -28,31 +28,90 @@ class SupportTicketController extends Controller
     public function index()
     {
         $tickets = Ticket::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
+
         return view('frontend.user.support_ticket.index', compact('tickets'));
     }
 
     public function admin_index(Request $request)
     {
         $sort_search = null;
-        $tickets = Ticket::orderBy('created_at', 'desc');
+        $search_status = $request->has('search_status') ? (
+            str($request->search_status)->contains(',') === true ?
+            str($request->search_status)->explode(',')
+            : $request->search_status
+        ) : null;
+        $search_sub_order_status = null;
+
+        $isSearchStatusQueryParamExists = $search_status !== null;
+
+        $tickets = Ticket::when(
+            $isSearchStatusQueryParamExists,
+            function ($query) use ($search_status) {
+                if (is_string($search_status) === true) {
+                    $query->where('status', $search_status);
+                } else {
+                    $query->whereIn('status', $search_status->toArray());
+                }
+            }, function ($query) {
+                $query->where('status', 'pending');
+            });
+
+        if ($request->has('search_sub_order_status')) {
+            $search_sub_order_status = str($request->search_sub_order_status)->contains(',') === true ?
+            str($request->search_sub_order_status)->explode(',') : $request->search_sub_order_status;
+
+            $tickets = $tickets->whereHas(
+                'orderDetails', function ($query) use ($search_sub_order_status) {
+                    if (is_string($search_sub_order_status) === true) {
+                        $query->where('delivery_status', $search_sub_order_status);
+                    } else {
+                        $query->whereIn('delivery_status', $search_sub_order_status->toArray());
+                    }
+                },
+            );
+        }
+
         if ($request->has('search')) {
             $sort_search = $request->search;
-            $tickets = $tickets->where('code', 'like', '%' . $sort_search . '%');
+
+            $tickets = $tickets->where(function ($query) use ($sort_search) {
+                $query->where('code', 'like', "%$sort_search%")
+                    ->orWhere('subject', 'like', "%$sort_search%")
+                    ->orWhere('order_details_id', $sort_search)
+                    ->orWhereHas('orderDetails', function ($q) use ($sort_search) {
+                        $q->where('order_id', $sort_search)
+                            ->orWhereHas('product', function ($q) use ($sort_search) {
+                                $q->where('name', 'like', "%$sort_search%");
+                            })->orWhereHas('order', function ($q) use ($sort_search) {
+                                $q->whereHas('vendor', function ($q) use ($sort_search) {
+                                    $q->where('name', 'like', "%$sort_search%")
+                                        ->orWhereHas('shop', function ($q) use ($sort_search) {
+                                            $q->where('name', 'like', "%$sort_search%");
+                                        });
+                                });
+                            });
+                    });
+            });
         }
-        $tickets = $tickets->paginate(15);
-        return view('backend.support.support_tickets.index', compact('tickets', 'sort_search'));
+
+        $tickets = $tickets->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view(
+            'backend.support.support_tickets.index',
+            compact('tickets', 'search_status', 'search_sub_order_status')
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
         $ticket = new Ticket;
-        $ticket->code = strtotime(date('Y-m-d H:i:s')) . Auth::user()->id;
+        $ticket->code = strtotime(date('Y-m-d H:i:s')).Auth::user()->id;
         $ticket->user_id = Auth::user()->id;
         $ticket->subject = $request->subject;
         $ticket->details = $request->details;
@@ -61,6 +120,7 @@ class SupportTicketController extends Controller
         if ($ticket->save()) {
             $this->send_support_mail_to_admin($ticket);
             flash(translate('Ticket has been sent successfully'))->success();
+
             return redirect()->route('support_ticket.index');
         } else {
             flash(translate('Something went wrong'))->error();
@@ -70,7 +130,7 @@ class SupportTicketController extends Controller
     public function send_support_mail_to_admin($ticket)
     {
         $array['view'] = 'emails.support';
-        $array['subject'] = translate('Support ticket Code is') . ':- ' . $ticket->code;
+        $array['subject'] = translate('Support ticket Code is').':- '.$ticket->code;
         $array['from'] = env('MAIL_FROM_ADDRESS');
         $array['content'] = translate('Hi. A ticket has been created. Please check the ticket.');
         $array['link'] = route('support_ticket.admin_show', encrypt($ticket->id));
@@ -87,7 +147,7 @@ class SupportTicketController extends Controller
     public function send_support_reply_email_to_user($ticket, $tkt_reply)
     {
         $array['view'] = 'emails.support';
-        $array['subject'] = translate('Support ticket Code is') . ':- ' . $ticket->code;
+        $array['subject'] = translate('Support ticket Code is').':- '.$ticket->code;
         $array['from'] = env('MAIL_FROM_ADDRESS');
         $array['content'] = translate('Hi. You have a new response for this ticket. Please check the ticket.');
         $array['link'] = $ticket->user->user_type == 'seller' ? route('seller.support_ticket.show', encrypt($ticket->id)) : route('support_ticket.show', encrypt($ticket->id));
@@ -115,6 +175,7 @@ class SupportTicketController extends Controller
         if ($ticket_reply->save()) {
             flash(translate('Reply has been sent successfully'))->success();
             $this->send_support_reply_email_to_user($ticket_reply->ticket, $ticket_reply);
+
             return back();
         } else {
             flash(translate('Something went wrong'))->error();
@@ -134,6 +195,7 @@ class SupportTicketController extends Controller
 
         if ($ticket_reply->save()) {
             flash(translate('Reply has been sent successfully'))->success();
+
             return back();
         } else {
             flash(translate('Something went wrong'))->error();
@@ -147,8 +209,9 @@ class SupportTicketController extends Controller
             $ticket->client_viewed = 1;
             $ticket->save();
             $ticket_replies = $ticket->ticketReplies;
+
             return view('frontend.user.support_ticket.show', compact('ticket', 'ticket_replies'));
-        } catch(Exception) {
+        } catch (Exception) {
             abort(500);
         }
     }
@@ -158,6 +221,7 @@ class SupportTicketController extends Controller
         $ticket = Ticket::findOrFail(decrypt($id));
         $ticket->viewed = 1;
         $ticket->save();
+
         return view('backend.support.support_tickets.show', compact('ticket'));
     }
 }
