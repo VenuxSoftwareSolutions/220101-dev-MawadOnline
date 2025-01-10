@@ -34,17 +34,6 @@
                     <div class="form-group">
                         <label for="product_variant">{{ __('stock.Product Variant') }} <span class="text-primary">*</span> </label>
                         <!-- Add your searchable dropdown for choosing a product’s variant here -->
-                        {{-- <select required class="form-control select2" id="product_variant" name="product_variant">
-                            <option value="">{{__('stock.Please Choose !!')}}</option>
-                            <!-- Populate options dynamically based on your data -->
-                            <option @if (request('productVariant') == 2 )
-                                selected
-                            @endif value="2">Zephania Mann</option>
-                            <option @if (request('productVariant') == 1)
-                                selected
-                            @endif  value="1">Lucian Burke</option>
-                            <!-- Add more options as needed -->
-                        </select> --}}
                         <select required class="form-control select2" id="product_variant" name="product_variant">
                             <option value="">{{__('stock.Please Choose !!')}}</option>
                             <!-- Populate options dynamically based on your data -->

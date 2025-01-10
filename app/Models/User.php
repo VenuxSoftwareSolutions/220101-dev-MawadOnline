@@ -118,19 +118,16 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function vendor_status_history()
     {
-
         return $this->hasMany(VendorStatusHistory::class, 'vendor_id');
     }
 
     public function getSuspendedStatusHistory()
     {
         // Retrieve the latest vendor status history where the status is "Suspended"
-        $latestSuspendedHistory = Auth::user()->vendor_status_history()
+        return Auth::user()->vendor_status_history()
             ->where('status', 'Suspended')
             ->latest()
             ->first();
-
-        return $latestSuspendedHistory;
     }
 
     public function customer_package_payments()
@@ -191,25 +188,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function business_information()
     {
         return $this->hasOne(BusinessInformation::class);
-
     }
 
     public function contact_people()
     {
         return $this->hasOne(ContactPerson::class);
-
     }
 
     public function payout_information()
     {
         return $this->hasOne(PayoutInformation::class);
-
     }
 
     public function warehouses()
     {
         return $this->hasMany(Warehouse::class);
-
     }
 
     public function getStaff()
@@ -240,6 +233,5 @@ class User extends Authenticatable implements MustVerifyEmail
         $proposedChange = ProposedPayoutChange::where('user_id', $this->id)->latest()->first();
 
         return $proposedChange && $proposedChange->status == 'pending';
-
     }
 }
