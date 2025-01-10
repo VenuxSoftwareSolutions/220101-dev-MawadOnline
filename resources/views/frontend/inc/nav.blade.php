@@ -608,7 +608,7 @@
         <div class="overlay overlay-fixed dark c-pointer" data-toggle="class-toggle"
             data-target=".aiz-top-menu-sidebar" data-same=".hide-top-menu-bar"></div>
         <div class="collapse-sidebar c-scrollbar-light text-left">
-            <div class="d-flex justufy-content-between">
+            <div class="d-flex justufy-content-between pb-4 left-menu-header">
             @auth
                 <span class="col-10 d-flex align-items-center nav-user-info pl-4 mt-4">
                     <!-- Image -->
@@ -629,54 +629,78 @@
                 <!--Login & Registration -->
                 <span class="col-10 d-flex align-items-center nav-user-info pl-4 mt-4">
                     <!-- Image -->
-                    <div class="d-flex justify-content-between left-menu-log-cont py-2">
-                        <a href="{{ route('user.login') }}"
-                            class="left-menu-log-cont-1 fs-13 font-prompt mr-2 ml-3 px-3 py-1">{{ translate('Login') }}</a>
-                        <a href="{{ route('user.registration') }}"
-                            class="left-menu-log-cont-2 fs-13 font-prompt ml-2 mr-3 mt-1">{{ translate('Registration') }}</a>
-                    </div>
+                        <span class="left-menu-log-cont pr-2"><a href="{{ route('user.login') }}"
+                            class="left-menu-log-cont-1 fs-15 font-prompt animate-underline-primary">{{ translate('Login') }}</a>
+                        </span>
+                            <a href="{{ route('user.registration') }}"
+                            class="left-menu-log-cont-2 fs-15 font-prompt ml-2 mr-3 animate-underline-primary">{{ translate('Registration') }}</a>
             </span>
             @endauth
             <button type="button" class="btn btn-sm col-2 hide-top-menu-bar pt-4" data-toggle="class-toggle"
                 data-target=".aiz-top-menu-sidebar">
-               <!-- <i class="las la-times la-2x text-primary"></i> -->
-               <svg width="28" height="28" class="left-menu-c-btn" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <i class="las la-times la-2x text-primary left-menu-c-btn-fa"></i>
+               <!--<svg width="28" height="28" class="left-menu-c-btn" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9.16992 14.83L14.8299 9.17004" stroke="#cb774b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M14.8299 14.83L9.16992 9.17004" stroke="#cb774b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            </svg>-->
 
 
             </button>
             </div>
+            <!--
             <hr>
             @if (get_setting('vendor_system_activation') == 1)
                             @unless (Auth::check() && Auth::user()->user_type == 'seller')
                                     <div class="px-4">
                                     <a href="{{ route('shops.packages') }}"
-                                        class="fs-13 font-prompt left-menu-ven-reg px-1">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M3.00977 11.22V15.71C3.00977 20.2 4.80977 22 9.29977 22H14.6898C19.1798 22 20.9798 20.2 20.9798 15.71V11.22" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12.0005 12C13.8305 12 15.1805 10.51 15.0005 8.68L14.3405 2H9.67048L9.00048 8.68C8.82048 10.51 10.1705 12 12.0005 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M18.3108 12C20.3308 12 21.8108 10.36 21.6108 8.35L21.3308 5.6C20.9708 3 19.9708 2 17.3508 2H14.3008L15.0008 9.01C15.1708 10.66 16.6608 12 18.3108 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M5.64037 12C7.29037 12 8.78037 10.66 8.94037 9.01L9.16037 6.8L9.64037 2H6.59037C3.97037 2 2.97037 3 2.61037 5.6L2.34037 8.35C2.14037 10.36 3.62037 12 5.64037 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        {{ translate('Register as Vendor') }}</a>
+                                        class="fs-13 font-prompt left-menu-ven-reg px-1">{{ translate('Register as Vendor') }}</a>
                                     <a href="{{ route('seller.login') }}"
-                                        class="fs-13 font-prompt left-menu-ven-log px-1">
-                                        {{ translate('Vendor Login') }}</a>
+                                        class="fs-13 font-prompt left-menu-ven-log px-1">{{ translate('Vendor Login') }}</a>
                                     </div>
                                     <hr>
                             @endunless
                         @endif
-            <ul class="mb-0 pl-3 pb-3 h-100">
+                                -->
+            <span class="font-prompt fs-13 ml-4 left-menu-cat-title">VENDOR SECTION</span>
+            <ul class="mb-0 pl-2 mt-2">
+                <li class="mr-2 py-1 side-m-categ">
+                    <a href="{{ route('shops.packages') }}"
+                        class="fs-13 px-3 py-2 font-prompt-md w-100 d-inline-block text-dark header_menu_links">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3.00977 11.22V15.71C3.00977 20.2 4.80977 22 9.29977 22H14.6898C19.1798 22 20.9798 20.2 20.9798 15.71V11.22" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12.0005 12C13.8305 12 15.1805 10.51 15.0005 8.68L14.3405 2H9.67048L9.00048 8.68C8.82048 10.51 10.1705 12 12.0005 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18.3108 12C20.3308 12 21.8108 10.36 21.6108 8.35L21.3308 5.6C20.9708 3 19.9708 2 17.3508 2H14.3008L15.0008 9.01C15.1708 10.66 16.6608 12 18.3108 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5.64037 12C7.29037 12 8.78037 10.66 8.94037 9.01L9.16037 6.8L9.64037 2H6.59037C3.97037 2 2.97037 3 2.61037 5.6L2.34037 8.35C2.14037 10.36 3.62037 12 5.64037 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17C10.33 17 9.5 17.83 9.5 19.5V22H14.5V19.5C14.5 17.83 13.67 17 12 17Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        {{ translate('Register as Vendor') }}
+                    </a>
+                </li>
+                <li class="mr-2 py-1 side-m-categ">
+                    <a href="{{ route('seller.login') }}"
+                        class="fs-13 px-3 py-2 font-prompt-md w-100 d-inline-block text-dark header_menu_links">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.90039 7.56001C9.21039 3.96001 11.0604 2.49001 15.1104 2.49001H15.2404C19.7104 2.49001 21.5004 4.28001 21.5004 8.75001V15.27C21.5004 19.74 19.7104 21.53 15.2404 21.53H15.1104C11.0904 21.53 9.24039 20.08 8.91039 16.54" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12H14.88" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12.6504 8.64999L16.0004 12L12.6504 15.35" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        {{ translate('Vendor Login') }}
+                    </a>
+                </li>
+            </ul>
+            <hr class="my-2">
+            <span class="font-prompt fs-13 ml-4 left-menu-cat-title">OUR CATEGORIES</span>
+            <ul class="mb-0 pl-2 pb-3 h-100 mt-2">
                 @foreach (get_level_zero_categories()->take(12) as $key => $category)
                             @php
                                 $category_name = str_replace(' and ', ' & ', $category->getTranslation('name'));
                             @endphp
-                        <li class="mr-3 py-1 side-m-categ">
+                        <li class="mr-2 py-1 side-m-categ">
                             <a href="{{ route('products.category', $category->slug) }}"
                                 class="fs-13 px-3 py-2 font-prompt-md w-100 d-inline-block text-dark header_menu_links">
+                                <img class="side-m-categ-img" src="{{ isset($category->thumbnail_image) ? asset('public/'.$category->thumbnail_image) : asset('public/landscape-placeholder.svg') }}">
                                 {{ $category_name }}
                             </a>
                         </li>
