@@ -1,4 +1,4 @@
-<div class="modal-body px-4 py-4 c-scrollbar-light">
+<div class="modal-body px-4 py-2 c-scrollbar-light">
     <!-- Item added to your cart -->
     <div class="text-success mb-1 d-flex justify-content-start">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@
                 <div class="col-2 pr-0 fs-16 font-prompt text-secondary">
                     <div>{{ translate('Price') }}</div>
                 </div>
-                <div class="col-9">
+                <div class="col-9 p-0">
                     <div class="fs-16 font-prompt-sb text-primary">
                         <strong>
                             {{ single_price((isset($samplePrice) ? $samplePrice : cart_product_price($cart, $product, false)) * $cart->quantity) }}
@@ -37,16 +37,16 @@
             </div>
         </div>
     </div>
-
+    <hr>
     @if (get_related_products($product)->count() > 0)
         <!-- Related product -->
-        <div class="bg-white shadow-sm">
-            <div class="py-3">
-                <h3 class="fs-16 fw-700 mb-0 text-dark">
+        <div class="bg-white">
+            <div class="px-3">
+                <h3 class="fs-16 font-prompt-md mb-0 text-dark">
                     <span class="mr-4">{{ translate('Frequently Bought Together') }}</span>
                 </h3>
             </div>
-            <div class="p-3">
+            <div class="px-3 py-2">
                 <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="2" data-xl-items="3"
                     data-lg-items="4" data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'
                     data-infinite='true'>
@@ -55,24 +55,24 @@
                             <div class="aiz-card-box my-2 has-transition">
                                 <div class="">
                                     <a href="{{ route('product', $related_product->slug) }}" class="d-block">
-                                        <img class="img-fit lazyload mx-auto h-140px h-md-200px has-transition"
+                                        <img class="img-fit lazyload mx-auto h-140px h-md-200px has-transition border-radius-8px"
                                             src="{{ static_asset('assets/img/placeholder.jpg') }}"
                                             data-src="{{ uploaded_asset($related_product->thumbnail_img) }}"
                                             alt="{{ $related_product->getTranslation('name') }}"
                                             onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                     </a>
                                 </div>
-                                <div class="p-md-3 p-2 text-center">
-                                    <h3 class="fw-400 fs-14 text-dark text-truncate-2 lh-1-4 mb-0 h-35px">
+                                <div class="px-1 pt-2 text-start">
+                                    <h3 class="font-prompt-md fs-14 dark-c3 text-truncate-2 lh-1-4 mb-0 h-25px pt-1">
                                         <a href="{{ route('product', $related_product->slug) }}"
-                                            class="d-block text-reset hov-text-primary">{{ $related_product->getTranslation('name') }}</a>
+                                            class="d-block text-reset hov-text-primary cart-box-prod-title">{{ $related_product->getTranslation('name') }}</a>
                                     </h3>
-                                    <div class="fs-14 mt-3">
+                                    <div class="fs-14 mt-1">
                                         <span
-                                            class="fw-700 text-primary">{{ home_discounted_base_price($related_product) }}</span>
+                                            class="font-prompt-md fs-14 dark-c3">{{ home_discounted_base_price($related_product) }}</span>
                                         @if (home_base_price($related_product) != home_discounted_base_price($related_product))
                                             <del
-                                                class="fw-600 opacity-50 ml-1">{{ home_base_price($related_product) }}</del>
+                                                class="font-prompt-md opacity-50 ml-1">{{ home_base_price($related_product) }}</del>
                                         @endif
                                     </div>
                                 </div>
@@ -82,17 +82,18 @@
                 </div>
             </div>
         </div>
+        <hr class="mt-0">
     @endif
 
     <!-- Back to shopping & Checkout buttons -->
     <div class="row gutters-5">
-        <div class="col-sm-6">
-            <button class="btn btn-secondary-base mb-3 mb-sm-0 btn-block rounded-0 text-white"
+        <div class="col-6">
+            <button class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-16 fs-16 font-prompt py-2 w-210px"
                 data-dismiss="modal">{{ translate('Back to shopping') }}</button>
         </div>
-        <div class="col-sm-6">
+        <div class="col-6">
             <a href="{{ route('cart') }}"
-                class="btn btn-primary mb-3 mb-sm-0 btn-block rounded-0">{{ translate('Proceed to Checkout') }}</a>
+                class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-16 fs-16 font-prompt py-2 float-right w-210px">{{ translate('Proceed to Checkout') }}</a>
         </div>
 
     </div>

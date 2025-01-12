@@ -13687,3 +13687,12 @@ border:none !important;
 .close-btn-cartbox{
     margin-top: 20px;
 }
+.cart-box-prod-title
+{
+    height: 25px;
+    display: inline-block;
+    width: 195px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+}
