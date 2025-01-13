@@ -38,7 +38,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
+use App\Models\CategoryHasAttribute;
 
 class ProductController extends Controller
 {
@@ -618,14 +618,27 @@ class ProductController extends Controller
 
             if ($product->is_parent == 1) {
                 $children = Product::where('parent_id', $id)->get();
-                $children_ids = Product::where('parent_id', $id)->pluck('id')->toArray();
-                $variants_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->get();
+                $children_ids = Product::where('parent_id', $id)
+                    ->pluck('id')
+                    ->toArray();
+                $variants_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)
+                    ->where('is_variant', 1)
+                    ->get();
 
-                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)->where('is_variant', 1)->pluck('id_attribute')->toArray();
+                $variants_attributes_ids_attributes = ProductAttributeValues::whereIn('id_products', $children_ids)
+                    ->where('is_variant', 1)
+                    ->pluck('id_attribute')
+                    ->toArray();
 
             }
-            $general_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->get();
-            $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)->where('is_general', 1)->pluck('id_attribute')->toArray();
+
+            $general_attributes = ProductAttributeValues::where('id_products', $id)
+                ->where('is_general', 1)
+                ->get();
+            $general_attributes_ids_attributes = ProductAttributeValues::where('id_products', $id)
+                ->where('is_general', 1)
+                ->pluck('id_attribute')
+                ->toArray();
             $data_general_attributes = [];
 
             if (count($general_attributes) > 0) {
@@ -659,13 +672,21 @@ class ProductController extends Controller
                 }
 
                 if (count($parents) > 0) {
-                    $attributes_ids = DB::table('categories_has_attributes')->whereIn('category_id', $parents)->pluck('attribute_id')->toArray();
+                    $attributes_ids = CategoryHasAttribute::whereIn('category_id', $parents)
+                        ->pluck('attribute_id')
+                        ->toArray();
+
                     if (count($attributes_ids) > 0) {
                         $attributes = Attribute::whereIn('id', $attributes_ids)->get();
-                        $all_general_attributes = Attribute::whereIn('id', $attributes_ids)->whereNotIn('id', $variants_attributes_ids_attributes)->whereNotIn('id', $general_attributes_ids_attributes)->get();
+                        $all_general_attributes = Attribute::whereIn('id', $attributes_ids)
+                            ->whereNotIn('id', $variants_attributes_ids_attributes)
+                            ->whereNotIn('id', $general_attributes_ids_attributes)
+                            ->get();
+
                         if (count($all_general_attributes) > 0) {
                             foreach ($all_general_attributes as $attribute) {
                                 $data_general_attributes[$attribute->id] = $attribute;
+
                                 if ($attribute->type_value == 'color') {
                                     if (array_key_exists($attribute->id, $data_general_attributes)) {
                                         $data_general_attributes[$attribute->id] = [null];
