@@ -803,7 +803,7 @@ class AramexController extends Controller
                     'OperationsInstructions' => null,
                     'AccountingInstructions' => null,
                     'Details' => [
-                        'Dimensions' => $input["dimensions"],
+                        'Dimensions' => $input['dimensions'],
                         'ActualWeight' => [
                             'Unit' => 'KG',
                             'Value' => 0.1,
@@ -848,9 +848,13 @@ class AramexController extends Controller
     public function transformShipmentData(array $input)
     {
         try {
-            /* Actual Weight = Package Weight x Qty x margin (1.03) */
-            $package_weight = $input['product']['package_weight'] ?? collect($input['attributes'])->sum('value');
-            $actualWeightValue = (float) ($package_weight * $input['orderDetails']['quantity'] * WEIGHT_MARGIN);
+            $dimensions = collect($input['product'])->only(['length', 'width', 'height'])->toArray();
+            $actualWeightValue = (float) $this->calculateShipmentActualWeight(
+                $dimensions,
+                $input['orderDetails']['quantity']
+            );
+
+            $actualWeightUnit = 'KG';
 
             $dimensions = $input['product']['package_weight'] !== null ? [
                 'Length' => $input['product']['length'],
@@ -858,8 +862,6 @@ class AramexController extends Controller
                 'Height' => $input['product']['height'],
                 'Unit' => 'cm',
             ] : null;
-            $actualWeightUnit = $input['product']['unit_weight'] !== null ??
-                $input['attributes'][0]['id_units'] === KG_UNITY_ATTRIBUTE_ID ? 'KG' : 'LB';
 
             $currency_code = Currency::find(get_setting('system_default_currency'))->code;
 
@@ -934,14 +936,31 @@ class AramexController extends Controller
         } catch (Exception $e) {
             Log::error("Error while transforming shipment data, with message: {$e->getMessage()}");
 
-            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
+            throw $e;
+        }
+    }
+
+    public function calculateShipmentActualWeight(array $dimensions, $quantity)
+    {
+        // take the lowest dimension and multiply it with qty, take the result multiply it with the rest dimensions
+        try {
+            $collection = collect($dimensions);
+            $lowestDimensionValue = $collection->min();
+            $lowestDimensionKey = $collection->search($lowestDimensionValue);
+            $newLowestDimensionValue = $lowestDimensionValue * $quantity;
+            $otherDimensions = $collection->except($lowestDimensionKey);
+
+            return $newLowestDimensionValue * $otherDimensions->reduce(fn ($carry, $value) => $carry * $value, 1);
+        } catch (Exception $e) {
+            Log::info("Error while calculating shipment actual weight, with message: {$e->getMessage()}");
+
+            return 0;
         }
     }
 
     public function calculateOrderProductsCharge($user_id)
     {
         try {
-            // @todo add dimensions: length, width, height
             $weight_attribute_id = WEIGHT_ATTRIBUTE_ID;
 
             if (request()->has('product_id')) {
