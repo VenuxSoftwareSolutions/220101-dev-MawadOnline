@@ -170,9 +170,10 @@ class Product extends Model
         'taxes', 'thumbnail', 'stockSummaries',
     ];
 
-    // Ensure cascading deletes at the model level
+
     protected static function booted()
     {
+        // Ensure cascading deletes at the model level
         static::deleting(function ($product) {
             // Automatically delete related stock summaries
             $product->stockSummaries()->delete();
