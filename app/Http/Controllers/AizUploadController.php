@@ -10,7 +10,7 @@ use Storage;
 use Image;
 use enshrined\svgSanitize\Sanitizer;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\GD\Driver;
+use Intervention\Image\Drivers\GD\Imagick;
 
 class AizUploadController extends Controller
 {
