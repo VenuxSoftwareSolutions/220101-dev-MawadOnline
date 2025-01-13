@@ -604,7 +604,12 @@ class ProductController extends Controller
             }
 
             if ($product->activate_third_party_sample == 1) {
-                $volumetric_weight_sample = getProductVolumetricWeight($product->length_sample, $product->height_sample, $product->width_sample);
+                $volumetric_weight_sample = getProductVolumetricWeight(
+                    $product->length_sample,
+                    $product->height_sample,
+                    $product->width_sample
+                );
+
                 if ($volumetric_weight_sample > $product->package_weight_sample) {
                     $chargeable_weight_sample = $volumetric_weight_sample;
                 } else {
@@ -629,7 +634,6 @@ class ProductController extends Controller
                     ->where('is_variant', 1)
                     ->pluck('id_attribute')
                     ->toArray();
-
             }
 
             $general_attributes = ProductAttributeValues::where('id_products', $id)
