@@ -308,12 +308,16 @@
 
     <div class="modal fade" id="addToCart">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-zoom product-modal" id="modal-size" role="document">
-            <div class="modal-content position-relative">
+            <div class="modal-content position-relative py-3">
                 <div class="c-preloader text-center p-3">
                     <i class="las la-spinner la-spin la-3x"></i>
                 </div>
-                <button type="button" class="close absolute-top-right btn-icon close z-1 btn-circle bg-gray mr-2 mt-2 d-flex justify-content-center align-items-center" data-dismiss="modal" aria-label="Close" style="background: #ededf2; width: calc(2rem + 2px); height: calc(2rem + 2px);">
-                    <span aria-hidden="true" class="fs-24 fw-700" style="margin-left: 2px;">&times;</span>
+
+                <button type="button" class="close absolute-top-right btn-icon close z-1 btn-circle mr-3 d-flex justify-content-center align-items-center close-btn-cartbox" data-dismiss="modal" aria-label="Close" style="background: #ededf2; width: calc(2rem + 2px); height: calc(2rem + 2px);">
+                    <svg width="32" height="32" role="button" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path opacity="0.4" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="#292D32"/>
+                        <path d="M13.0594 12L15.3594 9.69998C15.6494 9.40998 15.6494 8.92999 15.3594 8.63999C15.0694 8.34999 14.5894 8.34999 14.2994 8.63999L11.9994 10.94L9.69937 8.63999C9.40937 8.34999 8.92937 8.34999 8.63938 8.63999C8.34938 8.92999 8.34938 9.40998 8.63938 9.69998L10.9394 12L8.63938 14.3C8.34938 14.59 8.34938 15.07 8.63938 15.36C8.78938 15.51 8.97937 15.58 9.16937 15.58C9.35937 15.58 9.54937 15.51 9.69937 15.36L11.9994 13.06L14.2994 15.36C14.4494 15.51 14.6394 15.58 14.8294 15.58C15.0194 15.58 15.2094 15.51 15.3594 15.36C15.6494 15.07 15.6494 14.59 15.3594 14.3L13.0594 12Z" fill="#292D32"/>
+                        </svg>
                 </button>
                 <div id="addToCart-modal-body">
                 </div>
@@ -463,7 +467,7 @@
                         sessionStorage.setItem('compareSynced', true);
                         if (response.totalItems !== undefined) {
                             $('#compare_items_sidenav').html(response.totalItems);
-                        }   
+                        }
 
 
                     }

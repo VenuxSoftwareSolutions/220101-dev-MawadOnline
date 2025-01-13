@@ -22,14 +22,20 @@
 </a>
 <!-- Cart Items -->
 <!-- Cart Items -->
-<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg p-0 stop-propagation rounded-0">
+<div class="dropdown-menu dropdown-menu-right dropdown-menu-lg dropdown-menu-all p-0 border-radius-16">
+<div class="dropdown-menu-cart-rel w-100">
+    <svg width="38" height="23" class="dropdown-menu-rel-icon" viewBox="0 0 38 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16.3542 2.81881C17.0675 1.99522 17.5685 1.41855 18.0015 1.04108C18.424 0.672893 18.7148 0.555051 19 0.555051C19.2852 0.555051 19.576 0.672893 19.9985 1.04108C20.4315 1.41855 20.9325 1.99522 21.6458 2.81881L33.6748 16.7087C34.9216 18.1485 35.8186 19.1862 36.3455 20.008C36.8781 20.8386 36.9254 21.2858 36.7712 21.6233C36.617 21.9608 36.248 22.2178 35.2714 22.359C34.3053 22.4987 32.9336 22.5 31.029 22.5H6.971C5.0664 22.5 3.69471 22.4987 2.72859 22.359C1.75202 22.2178 1.38303 21.9608 1.22883 21.6233C1.07463 21.2858 1.12192 20.8386 1.6545 20.008C2.18138 19.1862 3.07839 18.1485 4.32524 16.7087L16.3542 2.81881Z" fill="white" stroke="#DBDCDF"/>
+    </svg>
+</div>
+<div class="h-100 w-100 stop-propagation border-radius-16 dropdown-menu-in">
 
     @if (isset($carts) && count($carts) > 0)
-        <div class="fs-16 fw-700 text-soft-dark pt-4 pb-2 mx-4 border-bottom" style="border-color: #e5e5e5 !important;">
+        <div class="fs-16 fw-700 font-prompt text-soft-dark pt-4 pb-2 mx-4 border-bottom" style="border-color: #e5e5e5 !important;">
             {{ translate('Cart Items') }}
         </div>
         <!-- Cart Products -->
-        <ul class="h-360px overflow-auto c-scrollbar-light list-group list-group-flush mx-1">
+        <ul class="overflow-auto c-scrollbar-light list-group list-group-flush mx-1 cart-drop-inside">
             @foreach ($carts as $key => $cartItem)
                 @php
                     $product = get_single_product($cartItem['product_id']);
@@ -42,22 +48,30 @@
                                 <img src="{{ static_asset('assets/img/placeholder.jpg') }}"
                                     data-src="{{ asset('/public' . $product->getFirstImage()) }}"
                                     class="img-fit
-                                    lazyload size-60px has-transition" alt="{{ $product->getTranslation('name') }}"
+                                    lazyload size-60px has-transition border-radius-8px" alt="{{ $product->getTranslation('name') }}"
                                     onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                 <span class="minw-0 pl-2 flex-grow-1">
-                                    <span class="fw-700 fs-13 text-dark mb-2 text-truncate-2"
+                                    <span class="fw-700 fs-13 text-dark text-truncate-2 font-prompt pt-1"
                                         title="{{ $product->getTranslation('name') }}">
                                         {{ $cartItem->is_sample === 1 ? __("Sample of") . " " . $product->getTranslation('name') : $product->getTranslation("name") }}
                                     </span>
-                                    <span class="fs-14 fw-400 text-secondary">{{ $cartItem['quantity'] }}x</span>
+                                    <span class="fs-14 fw-400 text-secondary font-prompt">{{ $cartItem['quantity'] }}x</span>
                                     <span
-                                        class="fs-14 fw-400 text-secondary">{{ cart_product_price($cartItem, $product) }}</span>
+                                        class="fs-14 fw-400 text-secondary font-prompt">ADE {{ cart_product_price($cartItem, $product) }}</span>
                                 </span>
                             </a>
                             <span class="">
                                 <button onclick="removeFromCart({{ $cartItem['id'] }})"
-                                    class="btn btn-sm btn-icon stop-propagation">
-                                    <i class="la la-close fs-18 fw-600 text-secondary"></i>
+                                    class="btn btn-sm btn-icon stop-propagation cart-drop-rem">
+                                    <!--<i class="la la-close fs-18 fw-600 text-secondary"></i>-->
+                                    <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M26.25 7.4751C22.0875 7.0626 17.9 6.8501 13.725 6.8501C11.25 6.8501 8.775 6.9751 6.3 7.2251L3.75 7.4751" stroke="#3A3B40" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10.625 6.2125L10.9 4.575C11.1 3.3875 11.25 2.5 13.3625 2.5H16.6375C18.75 2.5 18.9125 3.4375 19.1 4.5875L19.375 6.2125" stroke="#3A3B40" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M23.563 11.4248L22.7505 24.0123C22.613 25.9748 22.5005 27.4998 19.013 27.4998H10.988C7.50049 27.4998 7.38799 25.9748 7.25049 24.0123L6.43799 11.4248" stroke="#3A3B40" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M12.9126 20.625H17.0751" stroke="#3A3B40" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M11.875 15.625H18.125" stroke="#3A3B40" stroke-width="1.875" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
                                 </button>
                             </span>
                         </span>
@@ -68,31 +82,37 @@
         <!-- Subtotal -->
         <div class="px-3 py-2 fs-15 border-top d-flex justify-content-between mx-4"
             style="border-color: #e5e5e5 !important;">
-            <span class="fs-14 fw-400 text-secondary">{{ translate('Subtotal') }}</span>
-            <span class="fs-16 fw-700 text-dark">{{ single_price($total) }}</span>
+            <span class="fs-16 fw-400 text-secondary font-prompt">{{ translate('Subtotal') }}</span>
+            <span class="fs-16 fw-700 text-dark font-prompt">{{ single_price($total) }}</span>
         </div>
         <!-- View cart & Checkout Buttons -->
         <div class="py-3 text-center border-top mx-4" style="border-color: #e5e5e5 !important;">
             <div class="row gutters-10 justify-content-center">
+                @if (Auth::check())
+                <div class="col-sm-6">
+                    <a href="{{ route('checkout.shipping_info') }}"
+                        class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-16 fs-18 font-prompt py-2">
+                        {{ translate('Checkout') }}
+                    </a>
+                </div>
+                @endif
                 <div class="col-sm-6 mb-2">
-                    <a href="{{ route('cart') }}" class="btn btn-secondary-base btn-sm btn-block rounded-4 text-white">
+                    <a href="{{ route('cart') }}" class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-16 fs-18 font-prompt py-2">
                         {{ translate('View cart') }}
                     </a>
                 </div>
-                @if (Auth::check())
-                    <div class="col-sm-6">
-                        <a href="{{ route('checkout.shipping_info') }}"
-                            class="btn btn-primary btn-sm btn-block rounded-4">
-                            {{ translate('Checkout') }}
-                        </a>
-                    </div>
-                @endif
             </div>
         </div>
     @else
         <div class="text-center p-3">
-            <i class="las la-frown la-3x opacity-60 mb-3"></i>
-            <h3 class="h6 fw-700">{{ translate('Your Cart is empty') }}</h3>
+            <!--<i class="las la-frown la-3x opacity-60 mb-3"></i>-->
+            <svg width="64" height="64" class="mb-3" viewBox="0 0 64 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.8569 44.388C8.66712 44.9902 5.78736 46.6863 3.714 49.184C1.64065 51.6817 0.503615 54.8245 0.498901 58.0706C0.502985 61.7636 1.97186 65.3043 4.58325 67.9157C7.19464 70.527 10.7353 71.9959 14.4283 72C17.6701 71.9946 20.8088 70.8602 23.3049 68.7916C25.801 66.723 27.4985 63.8496 28.1058 60.6651L61.1486 60.642C61.8306 60.642 62.4846 60.3711 62.9669 59.8888C63.4491 59.4066 63.72 58.7526 63.72 58.0706C63.72 57.3886 63.4491 56.7345 62.9669 56.2523C62.4846 55.7701 61.8306 55.4991 61.1486 55.4991H54.3883V25.8454C54.3883 21.5923 50.9272 18.1311 46.674 18.1311H16.9998V12.6386C16.9964 9.28721 15.6633 6.07413 13.2933 3.7046C10.9233 1.33508 7.70997 0.00272295 4.35862 0C3.67663 0 3.02258 0.270917 2.54034 0.753154C2.0581 1.23539 1.78719 1.88944 1.78719 2.57143C1.78719 3.25341 2.0581 3.90747 2.54034 4.3897C3.02258 4.87194 3.67663 5.14286 4.35862 5.14286C6.34642 5.14422 8.25246 5.9343 9.65829 7.33965C11.0641 8.745 11.8549 10.6508 11.8569 12.6386V44.388ZM14.4283 66.8571C9.58119 66.8571 5.64176 62.9151 5.64176 58.0706C5.64176 53.226 9.58119 49.284 14.4283 49.284C19.2755 49.284 23.2149 53.226 23.2149 58.0706C23.2149 62.9151 19.2729 66.8571 14.4283 66.8571ZM30.1835 23.274V30.3197C30.1835 31.0017 30.4544 31.6558 30.9366 32.138C31.4189 32.6202 32.0729 32.8911 32.7549 32.8911C33.4369 32.8911 34.0909 32.6202 34.5732 32.138C35.0554 31.6558 35.3263 31.0017 35.3263 30.3197V23.274H46.674C48.0909 23.274 49.2455 24.4286 49.2455 25.8454V55.4991H28.1083C27.5859 52.7463 26.2469 50.2145 24.2657 48.2332C22.2844 46.252 19.7526 44.913 16.9998 44.3906V23.2714L30.1835 23.274Z" fill="#DBDCDF"/>
+                <path d="M17.0531 58.0939C17.0531 57.4119 16.7821 56.7579 16.2999 56.2756C15.8177 55.7934 15.1636 55.5225 14.4816 55.5225H14.4559C13.0339 55.5225 11.8973 56.6745 11.8973 58.0939C11.8973 59.5133 13.0596 60.6653 14.4816 60.6653C15.9036 60.6653 17.0531 59.5133 17.0531 58.0939Z" fill="#DBDCDF"/>
+                </svg>
+            <br/>
+            <span class="cart-drop-empty fs-18 font-prompt-md">{{ translate('Your Cart is empty') }}</span>
         </div>
     @endif
+</div>
 </div>

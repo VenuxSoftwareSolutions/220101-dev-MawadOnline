@@ -13497,6 +13497,9 @@ border:none !important;
 .dark-c3{
     color: #3A3B40;
 }
+.gray-c7{
+    color: #7E808A;
+}
 .left-m-style:hover{
     background: #f0f1f4;
     border-radius:12px;
@@ -13562,4 +13565,134 @@ border:none !important;
 }
 .container-h-m{
     max-width: 1500px;
+}
+.left-menu-c-btn{
+    background: #f0f0f0;
+    border-radius: 8px;
+    color: #cb774b;
+}
+.left-menu-c-btn:hover{
+    background: #ddd;
+}
+.left-menu-c-btn-fa{
+    font-size: 1.5rem;
+    position: relative;
+    top: 3px;
+}
+.hide-top-menu-bar{
+    position: relative;
+    top:3px;
+}
+.left-menu-log-cont{
+    height: 21px;
+    color: #3A3B40;
+    border-right: solid 2px #DBDCDF;
+}
+.left-menu-log-cont-1{
+    height: 21px;
+    color: #3A3B40;
+    line-height: 22px;
+}
+.left-menu-log-cont-2{
+    height: 21px;
+    color: #3A3B40;
+    line-height: 22px;
+}
+.left-menu-log-cont-1:hover{
+    color: #3A3B40;
+}
+.left-menu-log-cont-2:hover{
+    color: #3A3B40;
+}
+.left-menu-ven-reg{
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #3A3B40;
+    padding:2px;
+
+}
+.left-menu-ven-reg:hover{
+    color: #3A3B40;
+    background: #e7e7e7;
+}
+.left-menu-ven-log{
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #3A3B40;
+    padding:2px;
+}
+.left-menu-ven-log:hover{
+    color: #3A3B40;
+    background: #e7e7e7;
+}
+.left-menu-btm-link{
+    color: #3A3B40;
+    text-decoration: underline;
+}
+.side-m-categ-img{
+    width: 18px;
+    height: 18px;
+    position: relative;
+    top: -1px;
+}
+.left-menu-header{
+    background: #f7f7f7;
+    border-bottom: solid 3px #f0f0f0;
+}
+.left-menu-cat-title{
+    position: relative;
+    top: 10px;
+}
+.dropdown-menu-cart{
+    position: relative;
+    top: 20px;
+}
+.dropdown-menu-cart-rel{
+   height: 23px;
+}
+.dropdown-menu-all{
+    background:none;
+    border: none;
+}
+.dropdown-menu-in{
+    background: #fff;
+}
+.dropdown-menu-rel-icon{
+    float: right;
+    position: relative;
+    right: 15px;
+    z-index: 1;
+}
+.cart-drop-rem{
+    width: 22px;
+    height: 22px;
+    position: relative;
+    top: -4px;
+}
+.cart-drop-inside{
+    min-height: 80px;
+    max-height: 360px;
+}
+.cart-drop-btn-vcart{
+    border: none;
+    height: 44px;
+}
+.cart-drop-btn-checkout{
+    height: 44px;
+    border:solid 1px #CB774B !important;
+}
+.cart-drop-empty{
+    line-height: 24px;
+}
+.close-btn-cartbox{
+    margin-top: 20px;
+}
+.cart-box-prod-title
+{
+    height: 25px;
+    display: inline-block;
+    width: 195px;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
 }
