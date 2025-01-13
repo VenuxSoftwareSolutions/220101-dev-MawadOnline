@@ -125,6 +125,7 @@ class AizUploadController extends Controller
             if (isset($type[$extension])) {
                 $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $path = 'uploads/all/';
+
                 $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.jpg';
                 //$setting_min_width = get_setting('image_min_width');
                 //$setting_img_quality = get_setting('image_img_quality');
@@ -137,28 +138,30 @@ class AizUploadController extends Controller
                 } elseif ($type[$extension] == 'image') {
                     try {
                         //$img = Image::make($file->getRealPath());
-                        $manager = ImageManager::imagick();
-                        $img =  $manager->read($file->getRealPath());
+                        $manager = new ImageManager(['driver' => 'imagick']);
+                        $img = $manager->make($file->getPathname());
                         $originalHeight = $img->height();
                         $originalWidth = $img->width();
                         $maxDimension = 1280;
-                        $quality =90;
+                        $quality = 90;
 
                         if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-                            /*$scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
+                           $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
                             $newWidth = (int)($originalWidth * $scalingFactor);
                             $newHeight = (int)($originalHeight * $scalingFactor);
                             $img->resize($newWidth, $newHeight, function ($constraint) {
                                 $constraint->aspectRatio();
-                                $constraint->upsize();}); */    
-                            $img->scaleDown($maxDimension, $maxDimension);
+                                $constraint->upsize();});   
+                            //$img->scaleDown($maxDimension, $maxDimension);
                         }
 
-        
+
                         
             
         
-                        $img->toJpeg($quality);
+                        $img->encode( 'jpg', $quality);
+    
+                        //Storage::disk('local')->put($path . $filename, (string)$img);
     
                         //Storage::disk('local')->put($path . $filename, (string)$img);
                         $img->save(public_path($path . $filename));

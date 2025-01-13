@@ -350,9 +350,9 @@ class ProductUploadsService
         if (!file_exists($tempPath)) {
             throw new \Exception('Temporary file does not exist: ' . $tempPath);
         }
-    
+
         // Load the image using Intervention Image
-        $img = ImageManager::imagick()->read($tempPath);
+        $img =  new ImageManager(['driver' => 'imagick'])->make($tempPath);
         
         // Get original dimensions
         $originalWidth = $img->width();
@@ -360,20 +360,20 @@ class ProductUploadsService
     
         // Check if resizing is needed
         if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-            /*$scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
+            $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
             $newWidth = $originalWidth * $scalingFactor;
             $newHeight = $originalHeight * $scalingFactor;
             $img->resize($newWidth, $newHeight, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
-            });*/
-            $img->scaleDown($maxDimension, $maxDimension);
+            });
+            //$img->scaleDown($maxDimension, $maxDimension);
 
         }
     
         // Convert to JPG and compress
         $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.jpg';
-        $img->toJpeg($quality)->save($tempPath);    
+        $img->encode('jpg',$quality)->save($tempPath);    
         return $tempPath;
     }
     
