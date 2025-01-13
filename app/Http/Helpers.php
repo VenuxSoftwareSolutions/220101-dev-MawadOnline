@@ -2848,3 +2848,23 @@ if (function_exists("getProductVolumetricWeight") === false) {
         return ($length * $height * $width) / 5000;
     }
 }
+
+if (function_exists("getAramexShippingDuration") === false) {
+    function getAramexShippingDuration($product, $quantity) {
+        $chargeableWeight = getProductChargeableWeight(
+            $product
+        );
+
+        $orderPreparationEstimatedDuration = $product->shippingOptions($quantity)->estimated_order;
+
+        $shippingDurations = $chargeableWeight >= 20 ? [
+            1 + $orderPreparationEstimatedDuration,
+            2 + $orderPreparationEstimatedDuration
+        ] : [
+            3 + $orderPreparationEstimatedDuration,
+            4 + $orderPreparationEstimatedDuration
+        ];
+
+        return __("{$shippingDurations[0]} to {$shippingDurations[1]} days");
+    }
+}
