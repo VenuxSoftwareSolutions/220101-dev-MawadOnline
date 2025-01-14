@@ -38,9 +38,9 @@ class OrderDetail extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function Tickets()
+    public function tickets()
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(Ticket::class,'order_details_id');
     }
 
     public function trackingShipment()
