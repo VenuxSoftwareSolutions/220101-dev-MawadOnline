@@ -154,7 +154,6 @@
                                         {{ single_price($orderDetail->price / $orderDetail->quantity) }}</td>
                                     <td class="text-center">{{ single_price($orderDetail->price) }}</td>
                                     <td>
-
                                         @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
                                             <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
                                                 data-user_id="{{ $orderDetail->seller->id }}"
