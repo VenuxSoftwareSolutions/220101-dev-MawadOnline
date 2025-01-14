@@ -119,6 +119,11 @@ class OrderController extends Controller
                 $pickup = $controller->createPickup($pickup_input);
 
                 if ($pickup !== null && $pickup["HasErrors"] === true) {
+                    Log::error(sprintf(
+                        "Error while creating pickup for order %d, with message: %s",
+                        $order->id, json_encode($pickup)
+                    ));
+
                     return response()->json([
                         "error" => true,
                         "message" => __("There's an error while processing pickup creation! Please try again later!")
@@ -143,6 +148,11 @@ class OrderController extends Controller
                 $shipment = $controller->createShipments($shipment_input);
 
                 if ($shipment !== null && $shipment["HasErrors"] === true) {
+                    Log::error(sprintf(
+                        "Error while creating shipment for order %d, with message: %s",
+                        $order->id, json_encode($shipment)
+                    ));
+
                     return response()->json([
                         "error" => true,
                         "message" => __("There's an error while processing shipment creation! Please try again later!")
