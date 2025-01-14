@@ -76,8 +76,10 @@ class OrderController extends Controller
 
     public function show($id)
     {
+        $id = decrypt($id);
+
         try {
-            $order = Order::findOrFail(decrypt($id));
+            $order = Order::findOrFail($id);
             $order_shipping_address = json_decode($order->shipping_address);
             $delivery_boys = User::where('city', $order_shipping_address->city)
                 ->where('user_type', 'delivery_boy')
@@ -97,7 +99,7 @@ class OrderController extends Controller
                 'payment_status', 'delivery_boys'
             ));
         } catch(Exception $e) {
-            Log::error("Error while showing order {decrypt($id)}, with message: {$e->getMessage()}");
+            Log::error("Error while showing order {$id}, with message: {$e->getMessage()}");
             abort(500);
         }
     }
