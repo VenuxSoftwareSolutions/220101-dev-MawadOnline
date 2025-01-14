@@ -8,11 +8,20 @@ use Auth;
 use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Intervention\Image\ImageManager;
+use App\Services\UploadService;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Illuminate\Support\Facades\Storage;
 
 class ProductUploadsService
 {
+    protected $uploadService;
+
+    public function __construct(UploadService $uploadService)
+    {
+        $this->uploadService = $uploadService;
+    }
+
+
     public function store_uploads(array $data, $update)
     {
         $collection = collect($data);
@@ -214,7 +223,7 @@ class ProductUploadsService
                     
                     if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png'])) {
                         
-                        $processedImagePath = $this->resizeImageIfNeeded($image, 1200, 90);
+                        $processedImagePath =  $this->uploadService->processImage($image, 1200, 90);
                         $path = '/upload_products/Product-' . $collection['product']->id . '/images/' . $imageName;
                         $thumbnailPath = public_path($path);
                         copy($processedImagePath, $thumbnailPath);
@@ -300,7 +309,7 @@ class ProductUploadsService
                 $extension = $image->getClientOriginalExtension();
 
                 if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png'])) {
-                    $processedImagePath = $this->resizeImageIfNeeded($image, 400, 90);
+                    $processedImagePath =  $this->uploadService->processImage($image, 400, 90);
                     $path_thumbnail = '/upload_products/Product-' . $collection['product']->id . '/thumbnails/' . $imageName;
                     $destinationPath = public_path($path_thumbnail);
                     copy($processedImagePath, $destinationPath);
@@ -344,38 +353,7 @@ class ProductUploadsService
     }
 
 
-    public function resizeImageIfNeeded($image, $maxDimension, $quality = 90) {
-        $tempPath = $image->getPathname();
     
-        if (!file_exists($tempPath)) {
-            throw new \Exception('Temporary file does not exist: ' . $tempPath);
-        }
-
-        // Load the image using Intervention Image
-        $img =  new ImageManager(['driver' => 'imagick'])->make($tempPath);
-        
-        // Get original dimensions
-        $originalWidth = $img->width();
-        $originalHeight = $img->height();
-    
-        // Check if resizing is needed
-        if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-            $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
-            $newWidth = $originalWidth * $scalingFactor;
-            $newHeight = $originalHeight * $scalingFactor;
-            $img->resize($newWidth, $newHeight, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            //$img->scaleDown($maxDimension, $maxDimension);
-
-        }
-    
-        // Convert to JPG and compress
-        $tempPath = tempnam(sys_get_temp_dir(), 'image_') . '.jpg';
-        $img->encode('jpg',$quality)->save($tempPath);    
-        return $tempPath;
-    }
     
     
     

@@ -11,9 +11,18 @@ use Image;
 use enshrined\svgSanitize\Sanitizer;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\GD\Imagick;
+use App\Services\UploadService;
 
 class AizUploadController extends Controller
 {
+    protected $uploadService;
+
+    public function __construct(UploadService $uploadService)
+    {
+        $this->uploadService = $uploadService;
+    }
+
+
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -137,34 +146,21 @@ class AizUploadController extends Controller
                     file_put_contents($file, $cleanSVG);
                 } elseif ($type[$extension] == 'image') {
                     try {
-                        //$img = Image::make($file->getRealPath());
-                        $manager = new ImageManager(['driver' => 'imagick']);
-                        $img = $manager->make($file->getPathname());
-                        $originalHeight = $img->height();
-                        $originalWidth = $img->width();
                         $maxDimension = 1280;
                         $quality = 90;
-
-                        if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
-                           $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);            
-                            $newWidth = (int)($originalWidth * $scalingFactor);
-                            $newHeight = (int)($originalHeight * $scalingFactor);
-                            $img->resize($newWidth, $newHeight, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();});   
-                            //$img->scaleDown($maxDimension, $maxDimension);
-                        }
-
-
-                        
-            
-        
-                        $img->encode( 'jpg', $quality);
+                        $tempPath  = $this->uploadService->processImage($file, $maxDimension, $quality);
+                                    
+                        $tempFile = new \Symfony\Component\HttpFoundation\File\File($tempPath);
+                        $uploadedFile = new \Illuminate\Http\UploadedFile(
+                            $tempFile->getPathname(),
+                            $filename,
+                            $tempFile->getMimeType(),
+                            null,
+                            true
+                        );
     
-                        //Storage::disk('local')->put($path . $filename, (string)$img);
+                        $uploadedFile->storeAs($path, $filename, 'local');
     
-                        //Storage::disk('local')->put($path . $filename, (string)$img);
-                        $img->save(public_path($path . $filename));
 
                     } catch (\Exception $e) {
                         return response()->json(['error' => 'Image processing failed: ' . $e->getMessage()], 500);
