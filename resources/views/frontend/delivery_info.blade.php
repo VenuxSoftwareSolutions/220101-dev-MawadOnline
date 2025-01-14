@@ -90,16 +90,19 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <h6 class="fs-14 fw-500">{{ translate('Shipping Options') }}</h6>
-                                                        <div class="border p-2 mb-2">
+                                                        @php
+                                                            $shippers = [];
+                                                            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
+                                                            if ($shippingOptions) {
+                                                                $shippers = explode(',', $shippingOptions->shipper);
+                                                                $duration = $shippingOptions->estimated_order + $shippingOptions->estimated_shipping;
+                                                            }
+
+                                                            $productWeight = getProductWeightGeneralAttribute($product->id);
+                                                        @endphp
+                                                        <div
+                                                            class="border p-2 mb-2 @if (in_array("third_party", $shippers) && $productWeight === null) d-none @endif">
                                                             <div class="row">
-                                                                @php
-                                                                    $shippers = [];
-                                                                    $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
-                                                                    if ($shippingOptions) {
-                                                                        $shippers = explode(',', $shippingOptions->shipper);
-                                                                        $duration = $shippingOptions->estimated_order + $shippingOptions->estimated_shipping;
-                                                                    }
-                                                                @endphp
                                                                 <div class="col-md-6">
                                                                     <label for="shipping_method_{{ $product->id }}"
                                                                         class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
@@ -163,7 +166,8 @@
                                                             <script>
                                                                 document.addEventListener("DOMContentLoaded", function() {
                                                                     $("#shipping_method_{{ $product->id }}").on("change", function() {
-                                                                        if (["vendor", ""].includes($(this).val()) === false && shippingMethodSelectFirstChange_{{ $product->id }} === true) {
+                                                                        if (["vendor", ""].includes($(this).val()) === false &&
+                                                                            shippingMethodSelectFirstChange_{{ $product->id }} === true) {
                                                                             @if ($shippingOptions !== null)
                                                                                 $("#charge-result_{{ $product->id }}").html(`
                                                                                     <span class="p-1 bg-black-20 rounded">
@@ -188,7 +192,12 @@
                                                                                         if (error === true) {
                                                                                             throw new Error(message);
                                                                                         } else if (data?.HasErrors === false) {
-                                                                                            $("#shipping_duration_{{ $product->id }}").html('{{ $duration . " " . __("days") }}');
+                                                                                            @php
+                                                                                                $quantity = $carts->filter(fn($cart) => $cart->product_id === $product->id)->first()->quantity;
+                                                                                                $aramexShippingDuration = getAramexShippingDuration($product, $quantity);
+                                                                                            @endphp
+                                                                                            $("#shipping_duration_{{ $product->id }}").html(
+                                                                                                '{{ $aramexShippingDuration }}');
 
                                                                                             $("#charge-result_{{ $product->id }}").html(
                                                                                                 `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
@@ -196,7 +205,8 @@
                                                                                                 "fw-700");
                                                                                         } else {
                                                                                             $("#charge-result_{{ $product->id }}").html("N/A");
-                                                                                            AIZ.plugins.notify('danger', data["Notifications"][0]["Message"].split(" - ")[1]);
+                                                                                            AIZ.plugins.notify('danger', data["Notifications"][0]["Message"]
+                                                                                                .split(" - ")[1]);
                                                                                         }
                                                                                     }).catch(() => {
                                                                                     $("#charge-result_{{ $product->id }}").html("N/A");
@@ -207,7 +217,8 @@
                                                                                     '{{ __('Free (handled by vendor)') }}');
                                                                             @endif
                                                                         } else if (["vendor"].includes($(this).val()) === true) {
-                                                                            $("#shipping_duration_{{ $product->id }}").html('{{ $duration . " " . __("days") }}');
+                                                                            $("#shipping_duration_{{ $product->id }}").html(
+                                                                                '{{ $duration . ' ' . __('days') }}');
                                                                             @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
                                                                                 $("#charge-result_{{ $product->id }}").html(
                                                                                     '{{ __('Free (handled by vendor)') }}');

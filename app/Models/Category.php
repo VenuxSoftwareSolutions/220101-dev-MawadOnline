@@ -2,30 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    //use SoftDeletes;
-
     protected $with = ['category_translations'];
 
-    // Parent Category Relationship
     public function parent()
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    // Recursive parents
     public function parents()
     {
         $parents = collect([]);
 
         $parent = $this->parent;
 
-        while (!is_null($parent)) {
+        while (! is_null($parent)) {
             $parents->prepend($parent);
             $parent = $parent->parent;
         }
@@ -39,7 +34,7 @@ class Category extends Model
 
         $parent = $this->parent;
 
-        while (!is_null($parent)) {
+        while (! is_null($parent)) {
             $parents->prepend($parent->id);
             $parent = $parent->parent;
         }
@@ -51,6 +46,7 @@ class Category extends Model
     {
         $lang = $lang == false ? App::getLocale() : $lang;
         $category_translation = $this->category_translations->where('lang', $lang)->first();
+
         return $category_translation != null ? $category_translation->$field : $this->$field;
     }
 
@@ -113,6 +109,7 @@ class Category extends Model
     {
         return $this->belongsToMany(Attribute::class, 'categories_has_attributes', 'category_id', 'attribute_id');
     }
+
     public function discounts()
     {
         return $this->hasMany(Discount::class);
@@ -127,6 +124,7 @@ class Category extends Model
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
+
     public function hasActiveDiscounts()
     {
         return $this->discounts()->active()->withinDateRange()->exists();
@@ -136,9 +134,4 @@ class Category extends Model
     {
         return $this->coupons()->active()->withinDateRange()->exists();
     }
-
-
-
-
-
 }
