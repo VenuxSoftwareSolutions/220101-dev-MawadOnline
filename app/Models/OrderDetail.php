@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
-    protected $guarded=[];
+    protected $guarded = [];
 
     public function order()
     {
@@ -41,5 +41,10 @@ class OrderDetail extends Model
     public function Tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function trackingShipment()
+    {
+        return $this->hasOne(TrackingShipment::class, "order_detail_id");
     }
 }
