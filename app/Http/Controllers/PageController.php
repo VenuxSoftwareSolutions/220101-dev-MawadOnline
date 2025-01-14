@@ -11,9 +11,9 @@ class PageController extends Controller
 {
     public function __construct() {
         // Staff Permission Check
-       // $this->middleware(['permission:add_website_page'])->only('create');
-        //$this->middleware(['permission:edit_website_page'])->only('edit');
-        //$this->middleware(['permission:delete_website_page'])->only('destroy');
+        $this->middleware(['permission:add_website_page'])->only('create');
+        $this->middleware(['permission:edit_website_page'])->only('edit');
+        $this->middleware(['permission:delete_website_page'])->only('destroy');
     }
 
     /**
