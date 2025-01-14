@@ -271,14 +271,17 @@ class OrderController extends Controller
     {
         try {
             $quantity = OrderDetail::find($request->order_id)->quantity;
-            $data = StockSummary::where(['seller_id' => $request->seller, 'variant_id' => $request->product])
-                ->with(['productVariant', 'warehouse'])->get();
+            $data = StockSummary::where([
+                'seller_id' => $request->seller,
+                'variant_id' => $request->product
+            ])->where("current_total_quantity", ">", 0)
+            ->with(['productVariant', 'warehouse'])->get();
 
             return response()->json(['error' => false, 'data' => $data, 'quantity' => $quantity]);
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return response()->json(['error' => true, 'message' => $e->getMessage()]);
+            return response()->json(['error' => true, 'message' => __("Something went wrong")]);
         }
 
     }
