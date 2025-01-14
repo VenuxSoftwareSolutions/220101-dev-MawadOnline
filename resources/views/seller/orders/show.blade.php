@@ -10,60 +10,11 @@
             <div class="row gutters-5">
                 <div class="col text-md-left text-center">
                 </div>
-                @php
-                    $delivery_status = $order->delivery_status;
-                    $payment_status = $order->orderDetails->where('seller_id', Auth::user()->owner_id)->first()->payment_status;
-                @endphp
-                @if (get_setting('product_manage_by_admin') == 0)
-                    <!-- <div class="col-md-3 ml-auto">
-                        <label for="update_payment_status">{{ translate('Payment Status') }}</label>
-                        @if (
-                            ($order->payment_type == 'cash_on_delivery' ||
-                                (addon_is_activated('offline_payment') == 1 && $order->manual_payment == 1)) &&
-                                $payment_status == 'unpaid')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_payment_status">
-                                <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>
-                                    {{ translate('Unpaid') }}</option>
-                                <option value="paid" @if ($payment_status == 'paid') selected @endif>
-                                    {{ translate('Paid') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
-                        @endif
-                    </div> -->
-                    <!-- <div class="col-md-3 ml-auto">
-                        <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
-                        @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_delivery_status">
-                                <option value="pending" @if ($delivery_status == 'pending') selected @endif>
-                                    {{ translate('Pending') }}</option>
-                                <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>
-                                    {{ translate('Confirmed') }}</option>
-                                <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>
-                                    {{ translate('Picked Up') }}</option>
-                                <option value="on_the_way" @if ($delivery_status == 'on_the_way') selected @endif>
-                                    {{ translate('On The Way') }}</option>
-                                <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>
-                                    {{ translate('Delivered') }}</option>
-                                <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>
-                                    {{ translate('Cancel') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
-                        @endif
-                    </div> -->
-                @endif
             </div>
             <div class="row gutters-5 mt-2">
                 <div class="col text-md-left text-center">
                     @if (json_decode($order->shipping_address))
                         <address>
-                            <!-- <strong class="text-main">
-                                {{ json_decode($order->shipping_address)->name }}
-                            </strong><br> -->
-                            <!-- {{ json_decode($order->shipping_address)->email }}<br> -->
                             {{ json_decode($order->shipping_address)->phone }}<br>
                             {{ json_decode($order->shipping_address)->address }},
                             {{ json_decode($order->shipping_address)->city }}, @if (isset(json_decode($order->shipping_address)->state))
@@ -301,7 +252,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="shipment-modal" tabindex="-1"
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
