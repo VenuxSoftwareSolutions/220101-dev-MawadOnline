@@ -76,16 +76,30 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::findOrFail(decrypt($id));
-        $order_shipping_address = json_decode($order->shipping_address);
-        $delivery_boys = User::where('city', $order_shipping_address->city)
-            ->where('user_type', 'delivery_boy')
-            ->get();
+        try {
+                $order = Order::findOrFail(decrypt($id));
+                $order_shipping_address = json_decode($order->shipping_address);
+                $delivery_boys = User::where('city', $order_shipping_address->city)
+                    ->where('user_type', 'delivery_boy')
+                    ->get();
 
-        $order->viewed = 1;
-        $order->save();
+                $delivery_status = $order->delivery_status;
+                $payment_status = $order->orderDetails
+                    ->where('seller_id', Auth::user()->owner_id)
+                    ->first()
+                    ->payment_status;
 
-        return view('seller.orders.show', compact('order', 'delivery_boys'));
+                $order->viewed = 1;
+                $order->save();
+
+                return view('seller.orders.show', compact(
+                    'order', 'delivery_status',
+                    'payment_status', 'delivery_boys'
+                ));
+        } catch(Exception $e) {
+            Log::error("Error while showing order {decrypt($id)}, with message: {$e->getMessage()}");
+            abort(500);
+        }
     }
 
     public function update_delivery_status(Request $request)
