@@ -267,7 +267,7 @@ class OrderController extends Controller
         return 1;
     }
 
-    public function getWarhouses(Request $request)
+    public function getWarehouses(Request $request)
     {
         try {
             $quantity = OrderDetail::find($request->order_id)->quantity;
