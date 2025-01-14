@@ -47,8 +47,8 @@
                 </h3>
             </div>
             <div class="px-3 py-2">
-                <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="2" data-xl-items="3"
-                    data-lg-items="4" data-md-items="3" data-sm-items="2" data-xs-items="2" data-arrows='true'
+                <div class="aiz-carousel gutters-5 half-outside-arrow" data-items="2" data-xl-items="2"
+                    data-lg-items="2" data-md-items="2" data-sm-items="2" data-xs-items="2" data-arrows='true'
                     data-infinite='true'>
                     @foreach (get_related_products($product) as $key => $related_product)
                         <div class="carousel-box hov-scale-img hov-shadow-sm">
@@ -88,12 +88,12 @@
     <!-- Back to shopping & Checkout buttons -->
     <div class="row gutters-5">
         <div class="col-6">
-            <button class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-16 fs-16 font-prompt py-2 w-210px"
+            <button class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2 w-210px"
                 data-dismiss="modal">{{ translate('Back to shopping') }}</button>
         </div>
         <div class="col-6">
             <a href="{{ route('cart') }}"
-                class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-16 fs-16 font-prompt py-2 float-right w-210px">{{ translate('Proceed to Checkout') }}</a>
+                class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2 float-right w-210px">{{ translate('Proceed to Checkout') }}</a>
         </div>
 
     </div>

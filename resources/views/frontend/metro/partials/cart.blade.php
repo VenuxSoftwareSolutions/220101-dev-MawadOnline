@@ -28,7 +28,7 @@
         <path d="M16.3542 2.81881C17.0675 1.99522 17.5685 1.41855 18.0015 1.04108C18.424 0.672893 18.7148 0.555051 19 0.555051C19.2852 0.555051 19.576 0.672893 19.9985 1.04108C20.4315 1.41855 20.9325 1.99522 21.6458 2.81881L33.6748 16.7087C34.9216 18.1485 35.8186 19.1862 36.3455 20.008C36.8781 20.8386 36.9254 21.2858 36.7712 21.6233C36.617 21.9608 36.248 22.2178 35.2714 22.359C34.3053 22.4987 32.9336 22.5 31.029 22.5H6.971C5.0664 22.5 3.69471 22.4987 2.72859 22.359C1.75202 22.2178 1.38303 21.9608 1.22883 21.6233C1.07463 21.2858 1.12192 20.8386 1.6545 20.008C2.18138 19.1862 3.07839 18.1485 4.32524 16.7087L16.3542 2.81881Z" fill="white" stroke="#DBDCDF"/>
     </svg>
 </div>
-<div class="h-100 w-100 stop-propagation border-radius-16 dropdown-menu-in">
+<div class="h-100 w-100 stop-propagation border-radius-12 dropdown-menu-in">
 
     @if (isset($carts) && count($carts) > 0)
         <div class="fs-16 fw-700 font-prompt text-soft-dark pt-4 pb-2 mx-4 border-bottom" style="border-color: #e5e5e5 !important;">
@@ -91,16 +91,22 @@
                 @if (Auth::check())
                 <div class="col-sm-6">
                     <a href="{{ route('checkout.shipping_info') }}"
-                        class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-16 fs-18 font-prompt py-2">
+                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-18 font-prompt py-2">
                         {{ translate('Checkout') }}
                     </a>
                 </div>
-                @endif
                 <div class="col-sm-6 mb-2">
-                    <a href="{{ route('cart') }}" class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-16 fs-18 font-prompt py-2">
+                    <a href="{{ route('cart') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-18 font-prompt py-2">
                         {{ translate('View cart') }}
                     </a>
                 </div>
+                @else
+                <div class="col-sm-6 mb-2">
+                    <a href="{{ route('cart') }}" class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-18 font-prompt py-2">
+                        {{ translate('View cart') }}
+                    </a>
+                </div>
+                @endif
             </div>
         </div>
     @else

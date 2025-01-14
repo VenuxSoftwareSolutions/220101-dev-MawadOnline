@@ -51,20 +51,20 @@
                         <div class="col done">
                             <div class="text-center border border-bottom-6px p-2 text-success">
                                 <i class="la-3x mb-2 las la-shopping-cart"></i>
-                                <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('1. My Cart') }}</h3>
+                                <h3 class="fs-14 font-prompt-md d-none d-lg-block">{{ translate('1. My Cart') }}</h3>
                             </div>
                         </div>
                         <div class="col done">
                             <div class="text-center border border-bottom-6px p-2 text-success">
                                 <i class="la-3x mb-2 las la-map"></i>
-                                <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('2. Shipping info') }}
+                                <h3 class="fs-14 font-prompt-md d-none d-lg-block">{{ translate('2. Shipping info') }}
                                 </h3>
                             </div>
                         </div>
                         <div class="col done">
                             <div class="text-center border border-bottom-6px p-2 text-success">
                                 <i class="la-3x mb-2 las la-truck"></i>
-                                <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('3. Delivery info') }}
+                                <h3 class="fs-14 font-prompt-md d-none d-lg-block">{{ translate('3. Delivery info') }}
                                 </h3>
                             </div>
                         </div>
@@ -72,13 +72,13 @@
                             <div class="text-center border border-bottom-6px p-2 text-primary">
                                 <i class="la-3x mb-2 las la-credit-card cart-animate"
                                     style="margin-right: -100px; transition: 2s;"></i>
-                                <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('4. Payment') }}</h3>
+                                <h3 class="fs-14 font-prompt-md d-none d-lg-block">{{ translate('4. Payment') }}</h3>
                             </div>
                         </div>
                         <div class="col">
                             <div class="text-center border border-bottom-6px p-2">
                                 <i class="la-3x mb-2 opacity-50 las la-check-circle"></i>
-                                <h3 class="fs-14 fw-600 d-none d-lg-block opacity-50">{{ translate('5. Confirmation') }}
+                                <h3 class="fs-14 font-prompt-md d-none d-lg-block opacity-50">{{ translate('5. Confirmation') }}
                                 </h3>
                             </div>
                         </div>

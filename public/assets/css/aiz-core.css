@@ -12715,6 +12715,9 @@ input[type="color"]::-webkit-color-swatch {
 .border-radius-8px{
 border-radius: 8px;
 }
+.border-radius-12{
+    border-radius: 12px;
+    }
 .aiz-p-hov-span-bg-dark a{
     background: #3D3D3B;
 }.aiz-p-hov-span-bg-orange a{
@@ -13695,4 +13698,19 @@ border:none !important;
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
+}
+.cart-trash-btn{
+    position: relative;
+    top: -2px;
+}
+.chechout-btn-rem-txt{
+    position: relative;
+    left: 1px;
+    top: 1px;
+}
+@media (max-width: 767.98px) {
+    .quantity-pos {
+        position: relative;
+        top: -7px;
+    }
 }
