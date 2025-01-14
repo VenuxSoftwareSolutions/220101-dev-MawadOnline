@@ -1848,7 +1848,6 @@
                         </div>
                     </div>
                 </div>
-                {{-- Bloc General Attributes --}}
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('General Attributes') }}</h5>
@@ -1887,16 +1886,6 @@
                         </div>
                     </div>
                 </div>
-                {{-- Bloc Product Description --}}
-                {{-- <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0 h6">{{translate('Product Description')}}</h5>
-                    </div>
-                    <div class="card-body">
-
-                    </div>
-                </div> --}}
-                {{-- Bloc Product Documents --}}
                 <div class="card">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Product Description and Specifications') }}</h5>
