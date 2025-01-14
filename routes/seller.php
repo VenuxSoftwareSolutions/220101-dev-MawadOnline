@@ -142,7 +142,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::controller(OrderController::class)->middleware('throttle:global')->group(function () {
         Route::post('/orders/update_delivery_status', 'update_delivery_status')->name('orders.update_delivery_status');
         Route::post('/orders/update_payment_status', 'update_payment_status')->name('orders.update_payment_status');
-        Route::post('/orders/get_warehouses', 'getWarhouses')->name('orders.get_warehouses');
+        Route::post('/orders/get_warehouses', 'getWarehouses')->name('orders.get_warehouses');
         Route::post('/orders/stock_movement', 'stockMovement')->name('orders.stock_movement');
     });
 
