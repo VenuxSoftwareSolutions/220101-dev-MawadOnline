@@ -79,110 +79,93 @@ class AizUploadController extends Controller
     }
     public function upload(Request $request)
     {
-        $type = array(
-            "jpg" => "image",
-            "jpeg" => "image",
-            "png" => "image",
-            "svg" => "image",
-            "webp" => "image",
-            "gif" => "image",
-            "avif" => "image",
-            "bmp" => "image",
-            "animatedwebp" => "image",
-            "tiff" => "image",
-            "jpeg2000" => "image",
-            "heic" => "image",        
-            "mp4" => "video",
-            "mpg" => "video",
-            "mpeg" => "video",
-            "webm" => "video",
-            "ogg" => "video",
-            "avi" => "video",
-            "mov" => "video",
-            "flv" => "video",
-            "swf" => "video",
-            "mkv" => "video",
-            "wmv" => "video",
-            "wma" => "audio",
-            "aac" => "audio",
-            "wav" => "audio",
-            "mp3" => "audio",
-            "zip" => "archive",
-            "rar" => "archive",
-            "7z" => "archive",
-            "doc" => "document",
-            "txt" => "document",
-            "docx" => "document",
-            "pdf" => "document",
-            "csv" => "document",
-            "xml" => "document",
-            "ods" => "document",
-            "xlr" => "document",
-            "xls" => "document",
-            "xlsx" => "document"
-        );
+        
+        $allowedImages = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif', 'bmp', 'tiff', 'heic'];
+        $allowedVideos = ['mp4', 'mpg', 'mpeg', 'webm', 'ogg', 'avi', 'mov', 'flv', 'mkv', 'wmv'];
+        $allowedAudios = ['wma', 'aac', 'wav', 'mp3'];
+        $allowedArchives = ['zip', 'rar', '7z'];
+        $allowedDocuments = ['doc', 'txt', 'docx', 'pdf', 'csv', 'xml', 'ods', 'xlr', 'xls', 'xlsx'];
+    
+        $allowedExtensions = array_merge($allowedImages, $allowedVideos, $allowedAudios, $allowedArchives, $allowedDocuments);
+    
         if ($request->hasFile('aiz_file')) {
-            $upload = new Upload;
             $file = $request->file('aiz_file');
             $extension = strtolower($file->getClientOriginalExtension());
-
-            if (env('DEMO_MODE') == 'On' && isset($type[$extension]) && $type[$extension] == 'archive') {
-                return '{}';
+    
+            if ($extension === 'svg') {
+                return response()->json(['error' => 'SVG files are not allowed for upload.'], 400);
             }
     
-
-            if (isset($type[$extension])) {
-                $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                $path = 'uploads/all/';
-
-                $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.jpg';
-                //$setting_min_width = get_setting('image_min_width');
-                //$setting_img_quality = get_setting('image_img_quality');
-
-                if ($extension == 'svg') {
-                    $sanitizer = new Sanitizer();
-                    $dirtySVG = file_get_contents($file);
-                    $cleanSVG = $sanitizer->sanitize($dirtySVG);
-                    file_put_contents($file, $cleanSVG);
-                } elseif ($type[$extension] == 'image') {
-                    try {
-                        $maxDimension = 1280;
-                        $quality = 90;
-                        $tempPath  = $this->uploadService->processImage($file, $maxDimension, $quality);
-                                    
-                        $tempFile = new \Symfony\Component\HttpFoundation\File\File($tempPath);
-                        $uploadedFile = new \Illuminate\Http\UploadedFile(
-                            $tempFile->getPathname(),
-                            $filename,
-                            $tempFile->getMimeType(),
-                            null,
-                            true
-                        );
+            if (!in_array($extension, $allowedExtensions)) {
+                return response()->json(['error' => 'File type not allowed.'], 400);
+            }
     
-                        $uploadedFile->storeAs($path, $filename, 'local');
+            $upload = new Upload;
+            $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $path = 'uploads/all/';
+            $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.' . $extension;
     
+            try {
+                if (in_array($extension, $allowedImages)) {
+                    $maxDimension = 1280;
+                    $quality = 90;
+                    $tempPath = $this->uploadService->processImage($file, $maxDimension, $quality);
+                    $extension = 'jpg';
+                    $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.' . $extension;
 
-                    } catch (\Exception $e) {
-                        return response()->json(['error' => 'Image processing failed: ' . $e->getMessage()], 500);
-                    }
+                    $tempFile = new \Symfony\Component\HttpFoundation\File\File($tempPath);
+                    $uploadedFile = new \Illuminate\Http\UploadedFile(
+                        $tempFile->getPathname(),
+                        $filename,
+                        $tempFile->getMimeType(),
+                        null,
+                        true
+                    );
+    
+                    $uploadedFile->storeAs($path, $filename, 'local');
                 } else {
                     $filename = $file->storeAs($path, $file->getClientOriginalName(), 'local');
                 }
     
                 $size = Storage::disk('local')->size($path . $filename);
-                $file_mime = $file->getMimeType();
     
                 $upload->extension = $extension;
                 $upload->file_name = 'public/' . $path . $filename;
                 $upload->user_id = Auth::id();
-                $upload->type = $type[$extension];
+                $upload->type = $this->getFileType($extension, $allowedImages, $allowedVideos, $allowedAudios, $allowedArchives, $allowedDocuments);
                 $upload->file_size = $size;
                 $upload->save();
-            }
     
-            return '{}';
+                return response()->json(['success' => 'File uploaded successfully.'], 200);
+    
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
+            }
         }
+    
+        return response()->json(['error' => 'No file provided.'], 400);
     }
+    
+    private function getFileType($extension, $images, $videos, $audios, $archives, $documents)
+    {
+            if (in_array($extension, $images)) {
+                return 'image';
+            }
+            if (in_array($extension, $videos)) {
+                return 'video';
+            }
+            if (in_array($extension, $audios)) {
+                return 'audio';
+            }
+            if (in_array($extension, $archives)) {
+                return 'archive';
+            }
+            if (in_array($extension, $documents)) {
+                return 'document';
+            }
+            return 'unknown';
+    }
+
     public function get_uploaded_files(Request $request)
     {
         $uploads = Upload::where('user_id', Auth::user()->id);
