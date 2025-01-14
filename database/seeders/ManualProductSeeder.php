@@ -35,7 +35,8 @@ class ManualProductSeeder extends Seeder
                     'name'       => $row['Product Name *'],
                     'sku'                => $row['sku'],
                     'brand_id'              => 467,
-                    'description'  => $row['Short Description *'],
+                    'short_description'  => $row['Short Description *'],
+                    'published' => 0,
                     'created_at'         => now(),
                     'updated_at'         => now(),
                 ]);
