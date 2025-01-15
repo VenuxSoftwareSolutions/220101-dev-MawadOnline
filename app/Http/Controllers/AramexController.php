@@ -804,10 +804,7 @@ class AramexController extends Controller
                     'AccountingInstructions' => null,
                     'Details' => [
                         'Dimensions' => $input['dimensions'],
-                        'ActualWeight' => [
-                            'Unit' => 'KG',
-                            'Value' => 0.1,
-                        ],
+                        'ActualWeight' => $input["weight"],
                         'ChargeableWeight' => null,
                         'DescriptionOfGoods' => 'Construction materials',
                         'GoodsOriginCountry' => 'AE',
@@ -848,11 +845,23 @@ class AramexController extends Controller
     public function transformShipmentData(array $input)
     {
         try {
-            $dimensions = collect($input['product'])->only(['length', 'width', 'height'])->toArray();
-            $actualWeightValue = (float) $this->calculateShipmentActualWeight(
-                $dimensions,
-                $input['orderDetails']['quantity']
-            );
+            $dimensions = collect($input['product'])
+                ->only(['length', 'width', 'height'])
+                ->map(fn ($dimension) => $dimension * DIMENSION_MARGIN)
+                ->toArray();
+
+            $package_weight = $input['product']['package_weight'] !== null ? (
+                str()->lower($input['product']['unit_weight']) === 'kilograms' ?
+                $input['product']['package_weight']
+                : $input['product']['package_weight'] * POUNDS_TO_KG_RATIO
+            ) : null;
+
+            $actualWeightValue = $package_weight !== null ? (
+                (float) ($package_weight * $input['orderDetails']['quantity'] * WEIGHT_MARGIN)
+            ) : ((float) $this->calculateShipmentActualWeight(
+                    $dimensions,
+                    $input['orderDetails']['quantity']
+                ));
 
             $actualWeightUnit = 'KG';
 
