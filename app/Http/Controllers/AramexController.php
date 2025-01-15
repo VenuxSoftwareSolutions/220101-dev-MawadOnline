@@ -1018,9 +1018,11 @@ class AramexController extends Controller
                         ];
                     })->first();
 
+                $rawData = $this->transformShipmentData($data);
+
                 return response()->json([
                     'error' => false,
-                    'data' => $this->calculateRate($this->transformShipmentData($data)),
+                    'data' => $this->calculateRate($rawData),
                 ]);
             }
 
