@@ -337,9 +337,12 @@ class OrderController extends Controller
             $globalOrder->save();
             $order->delivery_status = 'in_preparation';
             $order->save();
-            foreach ($warehouses as $key => $value) {
-                $stock = StockSummary::where(['warehouse_id' => $value['warehouse_id'], 'variant_id' => $request->product])
-                    ->first();
+
+            foreach ($warehouses as $value) {
+                $stock = StockSummary::where([
+                    'warehouse_id' => $value['warehouse_id'],
+                    'variant_id' => $request->product
+                ])->first();
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }
