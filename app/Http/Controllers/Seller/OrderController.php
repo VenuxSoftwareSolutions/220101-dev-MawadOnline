@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Http\Controllers\AramexController;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductStock;
 use App\Models\SmsTemplate;
 use App\Models\StockSummary;
+use App\Models\TrackingShipment;
 use App\Models\User;
 use App\Utility\NotificationUtility;
 use App\Utility\SmsUtility;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AramexController;
 use Log;
-use App\Models\TrackingShipment;
 
 class OrderController extends Controller
 {
@@ -98,7 +98,7 @@ class OrderController extends Controller
                 'order', 'delivery_status',
                 'payment_status', 'delivery_boys'
             ));
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while showing order {$id}, with message: {$e->getMessage()}");
             abort(500);
         }
@@ -218,7 +218,8 @@ class OrderController extends Controller
             ) {
                 try {
                     SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
-                } catch (Exception) {}
+                } catch (Exception) {
+                }
             }
 
             NotificationUtility::sendNotification($order->order, $request->status);
@@ -226,13 +227,13 @@ class OrderController extends Controller
             if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
                 $status = str_replace('_', '', $order->delivery_status);
                 $request->merge([
-                    "device_token" => $order->order->user->device_token,
-                    "title" => 'Order updated !',
-                    "status" => $status,
-                    "text" => " Your order {$order->order->code} has been {$status}",
-                    "type" => 'order',
-                    "id" => $order->id,
-                    "user_id" => $order->order->user->id
+                    'device_token' => $order->order->user->device_token,
+                    'title' => 'Order updated !',
+                    'status' => $status,
+                    'text' => " Your order {$order->order->code} has been {$status}",
+                    'type' => 'order',
+                    'id' => $order->id,
+                    'user_id' => $order->order->user->id,
                 ]);
 
                 NotificationUtility::sendFirebaseNotification($request);
@@ -245,21 +246,22 @@ class OrderController extends Controller
                 }
             }
 
-           if ($request->status === "ready_for_shipment") {
+            if ($request->status === 'ready_for_shipment') {
                 return response()->json([
-                    "error" => false,
-                    "data" => [
-                        "link" => $link
-                    ]
+                    'error' => false,
+                    'data' => [
+                        'link' => $link,
+                    ],
                 ], 200);
             }
 
             return 1;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
-            return response()->json(["error" => true, "message" => __("Something went wrong!")]);
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')]);
         }
-     }
+    }
 
     // Update Payment Status
     public function update_payment_status(Request $request)
@@ -318,15 +320,15 @@ class OrderController extends Controller
             $quantity = OrderDetail::find($request->order_id)->quantity;
             $data = StockSummary::where([
                 'seller_id' => $request->seller,
-                'variant_id' => $request->product
-            ])->where("current_total_quantity", ">", 0)
-            ->with(['productVariant', 'warehouse'])->get();
+                'variant_id' => $request->product,
+            ])->where('current_total_quantity', '>', 0)
+                ->with(['productVariant', 'warehouse'])->get();
 
             return response()->json(['error' => false, 'data' => $data, 'quantity' => $quantity]);
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return response()->json(['error' => true, 'message' => __("Something went wrong")]);
+            return response()->json(['error' => true, 'message' => __('Something went wrong')]);
         }
 
     }
