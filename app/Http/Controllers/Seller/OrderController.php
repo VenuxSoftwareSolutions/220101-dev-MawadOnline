@@ -112,25 +112,38 @@ class OrderController extends Controller
             $order->delivery_status = $request->status;
             $order->save();
 
-            if ($request->status === "ready_for_shipment") {
+            if ($request->status === 'ready_for_shipment') {
                 $controller = new AramexController;
                 $pickup_input = $controller->transformNewPickupData($request->all());
 
                 $pickup = $controller->createPickup($pickup_input);
 
-                if ($pickup !== null && $pickup["HasErrors"] === true) {
+                if ($pickup !== null && $pickup['HasErrors'] === true) {
                     Log::error(sprintf(
-                        "Error while creating pickup for order %d, with message: %s",
+                        'Error while creating pickup for order %d, with message: %s',
                         $order->id, json_encode($pickup)
                     ));
 
                     return response()->json([
-                        "error" => true,
-                        "message" => __("There's an error while processing pickup creation! Please try again later!")
+                        'error' => true,
+                        'message' => __("There's an error while processing pickup creation! Please try again later!"),
                     ], 500);
                 }
 
                 $product = get_single_product($request->product_id);
+
+                $package_weight = $product->weight !== null ? (
+                    str()->lower($product->unit_weight) === 'kilograms' ?
+                    $product->weight
+                    : $product->weight * POUNDS_TO_KG_RATIO
+                ) : null;
+
+                $actualWeightValue = $package_weight !== null ? (
+                    (float) ($package_weight * $order->quantity * WEIGHT_MARGIN)
+                ) : ((float) $controller->calculateShipmentActualWeight(
+                    $product->only(['length', 'width', 'height']),
+                    $order->quantity
+                ));
 
                 $dimensions = [
                     'Length' => $product->length,
@@ -139,33 +152,39 @@ class OrderController extends Controller
                     'Unit' => 'cm',
                 ];
 
+                $weight = [
+                    'Value' => $actualWeightValue,
+                    'Unit' => 'KG',
+                ];
+
                 $request->merge([
-                    "pickup_guid" => $pickup["ProcessedPickup"]["GUID"],
-                    "dimensions" => $dimensions
+                    'pickup_guid' => $pickup['ProcessedPickup']['GUID'],
+                    'dimensions' => $dimensions,
+                    'weight' => $weight,
                 ]);
 
                 $shipment_input = $controller->transformNewShipmentsData($request->all());
                 $shipment = $controller->createShipments($shipment_input);
 
-                if ($shipment !== null && $shipment["HasErrors"] === true) {
+                if ($shipment !== null && $shipment['HasErrors'] === true) {
                     Log::error(sprintf(
-                        "Error while creating shipment for order %d, with message: %s",
+                        'Error while creating shipment for order %d, with message: %s',
                         $order->id, json_encode($shipment)
                     ));
 
                     return response()->json([
-                        "error" => true,
-                        "message" => __("There's an error while processing shipment creation! Please try again later!")
+                        'error' => true,
+                        'message' => __("There's an error while processing shipment creation! Please try again later!"),
                     ], 500);
                 }
 
-                $link = $shipment["Shipments"][0]["ShipmentLabel"]["LabelURL"];
+                $link = $shipment['Shipments'][0]['ShipmentLabel']['LabelURL'];
 
                 TrackingShipment::firstOrCreate([
-                    "user_id" => auth()->user()->id,
-                    "order_detail_id" => $order->id,
-                    "shipment_id" => $shipment["Shipments"][0]["ID"],
-                    "label_url" => $link
+                    'user_id' => auth()->user()->id,
+                    'order_detail_id' => $order->id,
+                    'shipment_id' => $shipment['Shipments'][0]['ID'],
+                    'label_url' => $link,
                 ]);
             }
 
