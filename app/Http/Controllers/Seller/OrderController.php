@@ -147,6 +147,9 @@ class OrderController extends Controller
                         $order->id, json_encode($pickup)
                     ));
 
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
+
                     return response()->json([
                         'error' => true,
                         'message' => __("There's an error while processing pickup creation! Please try again later!"),
@@ -194,6 +197,9 @@ class OrderController extends Controller
                         'Error while creating shipment for order %d, with message: %s',
                         $order->id, json_encode($shipment)
                     ));
+
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
 
                     return response()->json([
                         'error' => true,
