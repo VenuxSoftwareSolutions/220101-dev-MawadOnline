@@ -76,7 +76,7 @@ class OrderController extends Controller
         $id = decrypt($id);
 
         try {
-            $order = Order::findOrFail($id);
+            $order = Order::with('orderDetails.product')->findOrFail($id);
             $order_shipping_address = json_decode($order->shipping_address);
             $delivery_boys = User::where('city', $order_shipping_address->city)
                 ->where('user_type', 'delivery_boy')
