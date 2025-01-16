@@ -12,6 +12,7 @@
             let email = $('#login_form input[name="email"]').val();
             let password = $('#login_form input[name="password"]').val();
 
+            return document.getElementById("login_form").submit();
             if (!email || !password) {
                 $('#error_message').text('Email and password are required.').show();
                 $('.login_btn').show();
@@ -20,6 +21,7 @@
             } else {
                 $('#error_message').hide();
             }
+return document.getElementById("login_form").submit();
 
             let url = '{{ route('generateSalt', ['email' => ':email']) }}';
             url = url.replace(':email', email);

@@ -1,5 +1,15 @@
 @extends('seller.layouts.app')
 
+@push('styles')
+    <style>
+        .swal2-icon .swal2-icon-content {
+            display: flex;
+            align-items: center;
+            font-size: 0.75em !important;
+        }
+    </style>
+@endpush
+
 @section('panel_content')
     <div class="card">
         <div class="card-header">
@@ -156,11 +166,12 @@
                                     <td>
                                         <div class="row align-items-center justify-content-center">
                                             @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                            @php
-                                                $shippers = explode(",", $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
-                                            @endphp
-                                                <select onchange="handleDeliveryStatusChanged(this,@if(in_array("third_party", $shippers)) true @else false @endif)" class="form-control"
-                                                    data-user_id="{{ $orderDetail->seller->id }}"
+                                                @php
+                                                    $shippers = explode(',', $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
+                                                @endphp
+                                                <select
+                                                    onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"
+                                                    class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
                                                     data-product_id="{{ $orderDetail->product->id }}"
                                                     data-orderdetail_id="{{ $orderDetail->id }}"
                                                     data-minimum-results-for-search="Infinity" id="update_delivery_status"
@@ -396,18 +407,33 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
                 handleUpdateWarehouse(event)
             } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
-                $("#shipment-modal").modal("show");
-                $("#shipment-modal").on('shown.bs.modal', function(e) {
-                    let orderDetailId = $(event).data("orderdetail_id");
-                    let productId = $(event).data("product_id");
-                    let modal = $(this);
-                    modal.find('.modal-body #order_detail_id').val(orderDetailId);
-                    modal.find('.modal-body [name=product_id]').val(productId);
+                Swal.fire({
+                    title: '{{ __('Warehouse') }}',
+                    text: '{{ __('The pickup address will be the same of the selected warehouse in the last step.') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({ isConfirmed }) => {
+                    if (isConfirmed === true) {
+                        $("#shipment-modal").modal("show");
+                        $("#shipment-modal").on('shown.bs.modal', function(e) {
+                            let orderDetailId = $(event).data("orderdetail_id");
+                            let productId = $(event).data("product_id");
+                            let modal = $(this);
+                            modal.find('.modal-body #order_detail_id').val(orderDetailId);
+                            modal.find('.modal-body [name=product_id]').val(productId);
+                        });
+                    } else {
+                        console.log($(event))
+                        $(event).val("in_preparation");
+                    }
                 });
             } else {
                 updateDeliveryStatus(event);
