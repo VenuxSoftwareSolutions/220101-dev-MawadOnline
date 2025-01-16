@@ -492,7 +492,7 @@
             let order_id = {{ $order->id }};
             let status = $('#update_payment_status').val();
             $.post('{{ route('seller.orders.update_payment_status') }}', {
-                _token: '{{ @csrf_token() }}',
+                _token: '{{ csrf_token() }}',
                 order_id: order_id,
                 status: status
             }, function(data) {
