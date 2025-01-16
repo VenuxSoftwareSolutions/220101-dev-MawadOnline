@@ -2,10 +2,10 @@
     @if ($carts && count($carts) > 0)
         <div class="row">
             <div class="col-xxl-8 col-xl-10 mx-auto">
-                <div class="border bg-white p-3 p-lg-4 text-left border-radius-16">
+                <div class="border bg-white px-3 pt-0 pb-3 px-lg-4 pb-lg-4 pt-lg-3 text-left border-radius-16">
                     <div class="mb-0 mb-md-4">
                         <!-- Headers -->
-                        <div class="row gutters-5 d-none d-lg-flex border-bottom mb-3 pb-3 dark-c3 fs-12">
+                        <div class="row gutters-5 d-none d-lg-flex border-bottom mb-0 pb-3 dark-c3 fs-12">
                             <div class="col-md-3  fs-15 font-prompt p-0">{{ translate('Product') }}</div>
                             <div class="col-md-2 fs-15 col-md-1 font-prompt p-0">{{ translate('Qty') }}</div>
                             <div class="col-md-2 fs-15 font-prompt p-0">{{ translate('Price') }}</div>
@@ -17,7 +17,7 @@
                         <!-- Cart Items -->
                         <ul class="list-group list-group-flush">
                             @foreach ($carts as $key => $cartItem)
-                                <li class="list-group-item px-0 pt-0">
+                                <li class="list-group-item px-0 pt-0 mt-3">
                                     <div class="row gutters-5 align-items-center">
                                         <!-- Product Image & name -->
                                         <div class="col-6 col-md-3 mb-2 mb-md-0 d-flex justify-content-start p-0">
@@ -166,10 +166,21 @@
                         <span class="fs-16 dark-c3 font-prompt-md">{{ single_price($data[$key]["total"]) }}</span>
                     </div>
                     <!--<div class="row align-items-center">-->
-                        <div class="col-12 h-50px p-0">
+                        <div class="row align-items-center">
                         <!-- Return to shop -->
-                        <div class="col-6 col-md-6 text-center text-md-left order-1 order-md-0 float-left p-0">
-                            <a href="{{ route('home') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2 float-left">
+                        <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
+                            <a href="{{ route('home') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2">
+
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+
+                                {{ translate('Return to shop') }}
+                            </a>
+                        </div>
+                        <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-block d-md-none">
+                            <a href="{{ route('home') }}" class="btn btn-link fs-16 text-secondary-base font-prompt pt-3 px-0">
 
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -180,15 +191,15 @@
                             </a>
                         </div>
                         <!-- Continue to Shipping -->
-                        <div class="col-6 col-md-6 text-center text-md-right float-right p-0">
+                        <div class="col-md-6 text-center text-md-right">
                             @if (Auth::check())
                                 <a href="{{ route('checkout.shipping_info') }}"
-                                    class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2 float-right">
-                                    {{ translate('Continue to Shipping') }}
+                                    class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2">
+                                    {{ translate('Continue to Checkout') }}
                                 </a>
                             @else
-                                <button class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2 float-right"
-                                    onclick="showLoginModal()">{{ translate('Continue to Shipping') }}</button>
+                                <button class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2"
+                                    onclick="showLoginModal()">{{ translate('Continue to Checkout') }}</button>
                             @endif
                         </div>
                     </div>

@@ -6,8 +6,8 @@
             <div class="row">
                 <div class="col-xl-8 mx-auto">
                     <div class="row gutters-5 sm-gutters-10">
-                        <div class="col done">
-                            <div class="text-center border border-bottom-6px p-2 text-success">
+                        <div class="col done-mwd">
+                            <div class="text-center border border-bottom-6px p-2 text-success-mwd">
                                 <i class="la-3x mb-2 las la-shopping-cart"></i>
                                 <h3 class="fs-14 font-prompt-md d-none d-lg-block">{{ translate('1. My Cart') }}</h3>
                             </div>
@@ -117,16 +117,26 @@
                                 </div>
                                 <div class="row align-items-center">
                                     <!-- Return to shop -->
-                                    <div class="col-md-6 text-center text-md-left order-1 order-md-0">
-                                        <a href="{{ route('home') }}" class="btn btn-link fs-14 fw-700 px-0">
-                                            <i class="las la-arrow-left fs-16"></i>
+                                    <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
+                                        <a href="{{ route('home') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            {{ translate('Return to shop') }}
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-block d-md-none">
+                                        <a href="{{ route('home') }}" class="btn btn-link fs-16 text-secondary-base font-prompt pt-3 px-0">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
                                             {{ translate('Return to shop') }}
                                         </a>
                                     </div>
                                     <!-- Continue to Delivery Info -->
                                     <div class="col-md-6 text-center text-md-right">
                                         <button type="submit"
-                                            class="btn btn-primary fs-14 fw-700 rounded-0 px-4">{{ translate('Continue to Delivery Info') }}</a>
+                                            class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2">{{ translate('Continue to Delivery Info') }}</a>
                                     </div>
                                 </div>
                             </div>

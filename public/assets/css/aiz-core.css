@@ -13714,3 +13714,9 @@ border:none !important;
         top: -7px;
     }
 }
+.text-success-mwd{
+    color: #82B5A6 !important;
+}
+.done-mwd .border-bottom-6px {
+    border-bottom-color: #82B5A6 !important;
+}

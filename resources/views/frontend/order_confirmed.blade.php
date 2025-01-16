@@ -7,28 +7,28 @@
             <div class="row">
                 <div class="col-xl-8 mx-auto">
                     <div class="row gutters-5 sm-gutters-10">
-                        <div class="col done">
-                            <div class="text-center border border-bottom-6px p-2 text-success">
+                        <div class="col done-mwd">
+                            <div class="text-center border border-bottom-6px p-2 text-success-mwd">
                                 <i class="la-3x mb-2 las la-shopping-cart"></i>
                                 <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('1. My Cart') }}</h3>
                             </div>
                         </div>
-                        <div class="col done">
-                            <div class="text-center border border-bottom-6px p-2 text-success">
+                        <div class="col done-mwd">
+                            <div class="text-center border border-bottom-6px p-2 text-success-mwd">
                                 <i class="la-3x mb-2 las la-map"></i>
                                 <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('2. Shipping info') }}
                                 </h3>
                             </div>
                         </div>
-                        <div class="col done">
-                            <div class="text-center border border-bottom-6px p-2 text-success">
+                        <div class="col done-mwd">
+                            <div class="text-center border border-bottom-6px p-2 text-success-mwd">
                                 <i class="la-3x mb-2 las la-truck"></i>
                                 <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('3. Delivery info') }}
                                 </h3>
                             </div>
                         </div>
-                        <div class="col done">
-                            <div class="text-center border border-bottom-6px p-2 text-success">
+                        <div class="col done-mwd">
+                            <div class="text-center border border-bottom-6px p-2 text-success-mwd">
                                 <i class="la-3x mb-2 las la-credit-card"></i>
                                 <h3 class="fs-14 fw-600 d-none d-lg-block">{{ translate('4. Payment') }}</h3>
                             </div>
