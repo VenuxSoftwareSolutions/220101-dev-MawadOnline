@@ -109,7 +109,9 @@ class OrderController extends Controller
             $order->delivery_status = $request->status;
             $order->save();
 
-            if ($request->status === 'ready_for_shipment') {
+            $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
+
+            if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
                 $controller = new AramexController;
 
                 $warehouses = session()->get('warehouses');
