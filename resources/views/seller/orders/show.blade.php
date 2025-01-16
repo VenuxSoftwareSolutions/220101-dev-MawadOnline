@@ -154,44 +154,52 @@
                                         {{ single_price($orderDetail->price / $orderDetail->quantity) }}</td>
                                     <td class="text-center">{{ single_price($orderDetail->price) }}</td>
                                     <td>
-                                        @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                            <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
-                                                data-user_id="{{ $orderDetail->seller->id }}"
-                                                data-product_id="{{ $orderDetail->product->id }}"
-                                                data-orderdetail_id="{{ $orderDetail->id }}"
-                                                data-minimum-results-for-search="Infinity" id="update_delivery_status"
-                                                style="width:200px;">
-                                                <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif
-                                                    @if (
-                                                        $orderDetail->delivery_status == 'in_preparation' ||
-                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
-                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                    {{ translate('Pending') }}</option>
-                                                <option value="in_preparation"
-                                                    @if ($orderDetail->delivery_status == 'in_preparation') selected @endif
-                                                    @if (
-                                                        $orderDetail->delivery_status == 'in_preparation' ||
-                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
-                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                    {{ __('order.in_preparation') }}</option>
-                                                <option value="ready_for_shipment"
-                                                    @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif>
-                                                    {{ __('order.ready_for_shipment') }}</option>
-                                                <option value="on_the_way"
-                                                    @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
-                                                    {{ __('order.on_the_way') }}</option>
-                                                <option value="delivered"
-                                                    @if ($orderDetail->delivery_status == 'delivered') selected @endif>
-                                                    {{ translate('Delivered') }}</option>
-                                                <option value="cancelled"
-                                                    @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
-                                                    {{ translate('Canceled') }}</option>
-                                            </select>
-                                        @else
-                                            <input type="text" class="form-control"
-                                                value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
-                                                disabled>
-                                        @endif
+                                        <div class="row align-items-center justify-content-center">
+                                            @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
+                                                <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
+                                                    data-user_id="{{ $orderDetail->seller->id }}"
+                                                    data-product_id="{{ $orderDetail->product->id }}"
+                                                    data-orderdetail_id="{{ $orderDetail->id }}"
+                                                    data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                    style="width:200px;">
+                                                    <option value="pending"
+                                                        @if ($orderDetail->delivery_status == 'pending') selected @endif
+                                                        @if (
+                                                            $orderDetail->delivery_status == 'in_preparation' ||
+                                                                $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                                $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ translate('Pending') }}</option>
+                                                    <option value="in_preparation"
+                                                        @if ($orderDetail->delivery_status == 'in_preparation') selected @endif
+                                                        @if (
+                                                            $orderDetail->delivery_status == 'in_preparation' ||
+                                                                $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                                $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ __('order.in_preparation') }}</option>
+                                                    <option value="ready_for_shipment"
+                                                        @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif>
+                                                        {{ __('order.ready_for_shipment') }}</option>
+                                                    <option value="on_the_way"
+                                                        @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
+                                                        {{ __('order.on_the_way') }}</option>
+                                                    <option value="delivered"
+                                                        @if ($orderDetail->delivery_status == 'delivered') selected @endif>
+                                                        {{ translate('Delivered') }}</option>
+                                                    <option value="cancelled"
+                                                        @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
+                                                        {{ translate('Canceled') }}</option>
+                                                </select>
+                                            @else
+                                                <input type="text" class="form-control"
+                                                    value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
+                                                    disabled>
+                                            @endif
+
+                                            @if ($orderDetail->trackingShipment !== null)
+                                                <a class="mx-3" href="{{ $orderDetail->trackingShipment->label_url }}"
+                                                    target="_blank" data-toggle="tooltip" title="{{ translate('Printable Label') }}"><i class="las la-print"></i></a>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
