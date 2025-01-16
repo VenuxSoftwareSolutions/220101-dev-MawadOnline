@@ -12,6 +12,7 @@ use App\Models\SmsTemplate;
 use App\Models\StockSummary;
 use App\Models\TrackingShipment;
 use App\Models\User;
+use App\Models\Warehouse;
 use App\Utility\NotificationUtility;
 use App\Utility\SmsUtility;
 use Auth;
@@ -373,6 +374,8 @@ class OrderController extends Controller
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }
+
+            session()->put('warehouses', $warehouses);
 
             return response()->json(['error' => false, 'message' => translate('Order status has been updated')]);
         } catch (Exception $e) {
