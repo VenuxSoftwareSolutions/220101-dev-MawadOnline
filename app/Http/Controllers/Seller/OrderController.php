@@ -270,7 +270,7 @@ class OrderController extends Controller
         }
 
         $status = 'paid';
-        foreach ($order->orderDetails as $key => $orderDetail) {
+        foreach ($order->orderDetails as $orderDetail) {
             if ($orderDetail->payment_status != 'paid') {
                 $status = 'unpaid';
             }
@@ -300,8 +300,7 @@ class OrderController extends Controller
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
                 SmsUtility::payment_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
-
+            } catch (Exception) {
             }
         }
 
@@ -341,7 +340,7 @@ class OrderController extends Controller
             foreach ($warehouses as $value) {
                 $stock = StockSummary::where([
                     'warehouse_id' => $value['warehouse_id'],
-                    'variant_id' => $request->product
+                    'variant_id' => $request->product,
                 ])->first();
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
