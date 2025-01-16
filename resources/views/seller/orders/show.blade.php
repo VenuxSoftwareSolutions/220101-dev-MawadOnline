@@ -156,7 +156,10 @@
                                     <td>
                                         <div class="row align-items-center justify-content-center">
                                             @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                                <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
+                                            @php
+                                                $shippers = explode(",", $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
+                                            @endphp
+                                                <select onchange="handleDeliveryStatusChanged(this,@if(in_array("third_party", $shippers)) true @else false @endif)" class="form-control"
                                                     data-user_id="{{ $orderDetail->seller->id }}"
                                                     data-product_id="{{ $orderDetail->product->id }}"
                                                     data-orderdetail_id="{{ $orderDetail->id }}"
@@ -394,10 +397,10 @@
 
 @section('script')
     <script>
-        const handleDeliveryStatusChanged = (event) => {
+        const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
                 handleUpdateWarehouse(event)
-            } else if (event.value === "ready_for_shipment") {
+            } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
                 $("#shipment-modal").modal("show");
                 $("#shipment-modal").on('shown.bs.modal', function(e) {
                     let orderDetailId = $(event).data("orderdetail_id");
