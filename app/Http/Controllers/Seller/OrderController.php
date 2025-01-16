@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\AramexController;
+use App\Models\BusinessInformation;
+use App\Models\ContactPerson;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductStock;
@@ -108,6 +110,32 @@ class OrderController extends Controller
 
             if ($request->status === 'ready_for_shipment') {
                 $controller = new AramexController;
+
+                $warehouses = session()->get('warehouses');
+                $selectedWarehouse = Warehouse::findOrFail($warehouses[0]['warehouse_id']);
+
+                $vendorBusinessInfo = BusinessInformation::where('user_id', auth()->user()->id)->first();
+                $contactPerson = ContactPerson::where('user_id', auth()->user()->id)->first();
+
+                $request->merge([
+                    'pickup_address_line1' => $selectedWarehouse->address_street,
+                    'pickup_address_line2' => $selectedWarehouse->address_building,
+                    'pickup_address_line3' => $selectedWarehouse->address_unit,
+                    'pickup_city' => $selectedWarehouse->area_id,
+                    'pickup_state' => $selectedWarehouse->emirate_id,
+                    'full_name' => "$contactPerson->first_name $contactPerson->last_name",
+                    'phone' => $contactPerson->mobile_phone,
+                    'shipper_address_line1' => $vendorBusinessInfo->street,
+                    'shipper_address_line2' => null,
+                    'shipper_address_line3' => null,
+                    'shipper_building_name' => $vendorBusinessInfo->building,
+                    'shipper_building_number' => $vendorBusinessInfo->unit,
+                    'shipper_post_code' => $vendorBusinessInfo->po_box,
+                    'state' => $vendorBusinessInfo->state,
+                    'city' => $vendorBusinessInfo->area_id,
+                    'email' => $contactPerson->email,
+                ]);
+
                 $pickup_input = $controller->transformNewPickupData($request->all());
 
                 $pickup = $controller->createPickup($pickup_input);
