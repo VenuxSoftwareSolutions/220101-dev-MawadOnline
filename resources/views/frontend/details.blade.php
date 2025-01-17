@@ -88,7 +88,8 @@
                 </div>
             @endif
 
-            @if (count($previewData['detailedProduct']['sampleDetails']) > 0 &&
+            @if (isset($previewData['detailedProduct']['sampleDetails']) &&
+                    count($previewData['detailedProduct']['sampleDetails']) > 0 &&
                     $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
                 <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
                     <span
@@ -118,7 +119,7 @@
             </p>
 
             <p id="product-sample-description" class="d-none">
-                @if (count($previewData['detailedProduct']['sampleDetails']) > 0)
+                @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0)
                     {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
                 @endif
             </p>
@@ -192,7 +193,7 @@
 
             <div id="product-sample-price" class="d-none align-items-center">
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
-                    <span>{{ single_price(count($previewData['detailedProduct']['sampleDetails']) > 0 ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span>
+                    <span>{{ single_price(isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0 ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span>
                     /
                     {{ __('Sample') }}
                 </strong>
@@ -629,8 +630,8 @@
         <button type="button" id="product-sample-add-to-cart-btn"
             class="d-none btn btn-secondary-base add-sample-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
             @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif
-            @if (count($previewData['detailedProduct']['sampleDetails']) === 0) disabled : "" @endif>
-            @if (count($previewData['detailedProduct']['sampleDetails']) > 0)
+            @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) === 0) disabled : "" @endif>
+            @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0)
                 <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
                     onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
                     <span
