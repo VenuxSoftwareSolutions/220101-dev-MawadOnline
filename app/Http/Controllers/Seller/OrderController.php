@@ -290,7 +290,7 @@ class OrderController extends Controller
         } catch (Exception $e) {
             Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
 
-            return response()->json(['error' => true, 'message' => __('Something went wrong!')]);
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         }
     }
 
