@@ -56,20 +56,20 @@
                         @csrf
                         <input type="hidden" name="owner_id" value="{{ $carts[0]['owner_id'] }}">
 
-                        <div class="card rounded-0 border shadow-none">
+                        <div class="card border shadow-none border-radius-16">
                             <!-- Additional Info -->
                             <div class="card-header p-4 border-bottom-0">
-                                <h3 class="fs-16 fw-700 text-dark mb-0">
+                                <h3 class="fs-16 dark-c3 font-prompt-md mb-0">
                                     {{ translate('Any additional info?') }}
                                 </h3>
                             </div>
                             <div class="form-group px-4">
-                                <textarea name="additional_info" rows="5" class="form-control rounded-0"
+                                <textarea name="additional_info" rows="5" class="form-control border-radius-12 no-resize-txtarea font-prompt"
                                     placeholder="{{ translate('Type your text...') }}"></textarea>
                             </div>
 
                             <div class="d-none card-header p-4 border-bottom-0">
-                                <h3 class="fs-16 fw-700 text-dark mb-0">
+                                <h3 class="fs-16 font-prompt-md dark-c3 mb-0">
                                     {{ translate('Select a payment option') }}
                                 </h3>
                             </div>
@@ -86,7 +86,7 @@
                                                     <img src="{{ static_asset('assets/img/cards/paypal.png') }}"
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
-                                                        <span class="d-block fw-600 fs-15">{{ translate('Paypal') }}</span>
+                                                        <span class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Paypal') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -102,7 +102,7 @@
                                                     <img src="{{ static_asset('assets/img/cards/stripe.png') }}"
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
-                                                        <span class="d-block fw-600 fs-15">{{ translate('Stripe') }}</span>
+                                                        <span class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Stripe') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -119,7 +119,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Mercadopago') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Mercadopago') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -136,7 +136,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('sslcommerz') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('sslcommerz') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -153,7 +153,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Instamojo') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Instamojo') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -170,7 +170,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Razorpay') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Razorpay') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -187,7 +187,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Paystack') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Paystack') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -204,7 +204,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('VoguePay') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('VoguePay') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -221,7 +221,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('payhere') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('payhere') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -238,7 +238,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('ngenius') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('ngenius') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -255,7 +255,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Iyzico') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Iyzico') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -271,7 +271,7 @@
                                                     <img src="{{ static_asset('assets/img/cards/nagad.png') }}"
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
-                                                        <span class="d-block fw-600 fs-15">{{ translate('Nagad') }}</span>
+                                                        <span class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Nagad') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -287,7 +287,7 @@
                                                     <img src="{{ static_asset('assets/img/cards/bkash.png') }}"
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
-                                                        <span class="d-block fw-600 fs-15">{{ translate('Bkash') }}</span>
+                                                        <span class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Bkash') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -304,7 +304,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Aamarpay') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Aamarpay') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -321,7 +321,7 @@
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
                                                         <span
-                                                            class="d-block fw-600 fs-15">{{ translate('Authorize Net') }}</span>
+                                                            class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Authorize Net') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -337,7 +337,7 @@
                                                     <img src="{{ static_asset('assets/img/cards/payku.png') }}"
                                                         class="img-fit mb-2">
                                                     <span class="d-block text-center">
-                                                        <span class="d-block fw-600 fs-15">{{ translate('Payku') }}</span>
+                                                        <span class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Payku') }}</span>
                                                     </span>
                                                 </span>
                                             </label>
@@ -356,7 +356,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('flutterwave') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('flutterwave') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -373,7 +373,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('payfast') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('payfast') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -393,7 +393,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('Paytm') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Paytm') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -410,7 +410,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('ToyyibPay') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('ToyyibPay') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -427,7 +427,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('MyFatoorah') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('MyFatoorah') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -444,7 +444,7 @@
                                                             class="img-fluid mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('Khalti') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Khalti') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -461,7 +461,7 @@
                                                             class="img-fluid mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('Phonepe') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Phonepe') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -493,7 +493,7 @@
                                                             class="img-fit mb-2">
                                                         <span class="d-block text-center">
                                                             <span
-                                                                class="d-block fw-600 fs-15">{{ translate('Cash on Delivery') }}</span>
+                                                                class="d-block font-prompt-md dark-c3 fs-15">{{ translate('Cash on Delivery') }}</span>
                                                         </span>
                                                     </span>
                                                 </label>
@@ -515,7 +515,7 @@
                                                                 class="img-fit mb-2">
                                                             <span class="d-block text-center">
                                                                 <span
-                                                                    class="d-block fw-600 fs-15">{{ $method->heading }}</span>
+                                                                    class="d-block font-prompt-md dark-c3 fs-15">{{ $method->heading }}</span>
                                                             </span>
                                                         </span>
                                                     </label>
@@ -552,11 +552,11 @@
                                         <br>
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <label>{{ translate('Transaction ID') }} <span
+                                                <label class="font-prompt">{{ translate('Transaction ID') }} <span
                                                         class="text-danger">*</span></label>
                                             </div>
                                             <div class="col-md-9">
-                                                <input type="text" class="form-control mb-3" name="trx_id"
+                                                <input type="text" class="form-control mb-3 font-prompt" name="trx_id"
                                                     id="trx_id" placeholder="{{ translate('Transaction ID') }}"
                                                     required>
                                             </div>
@@ -566,7 +566,7 @@
                                             <div class="col-md-9">
                                                 <div class="input-group" data-toggle="aizuploader" data-type="image">
                                                     <div class="input-group-prepend">
-                                                        <div class="input-group-text bg-soft-secondary font-weight-medium">
+                                                        <div class="input-group-text font-prompt bg-soft-secondary font-weight-medium">
                                                             {{ translate('Browse') }}</div>
                                                     </div>
                                                     <div class="form-control file-amount">{{ translate('Choose image') }}
@@ -584,16 +584,16 @@
                                 @if (Auth::check() && get_setting('wallet_system') == 1)
                                     <div class="py-4 px-4 text-center bg-soft-secondary-base mt-4">
                                         <div class="fs-14 mb-3">
-                                            <span class="opacity-80">{{ translate('Or, Your wallet balance :') }}</span>
-                                            <span class="fw-700">{{ single_price(Auth::user()->balance) }}</span>
+                                            <span class="opacity-80 font-prompt">{{ translate('Or, Your wallet balance :') }}</span>
+                                            <span class="font-prompt-md">{{ single_price(Auth::user()->balance) }}</span>
                                         </div>
                                         @if (Auth::user()->balance < $total)
-                                            <button type="button" class="btn btn-secondary" disabled>
+                                            <button type="button" class="btn btn-secondary font-prompt" disabled>
                                                 {{ translate('Insufficient balance') }}
                                             </button>
                                         @else
                                             <button type="button" onclick="use_wallet()"
-                                                class="btn btn-primary fs-14 fw-700 px-5 rounded-0">
+                                                class="btn btn-primary fs-14 font-prompt-md px-5 rounded-0">
                                                 {{ translate('Pay with wallet') }}
                                             </button>
                                         @endif
@@ -602,7 +602,7 @@
                             </div>
 
                             <!-- Agree Box -->
-                            <div class="pt-3 px-4 fs-14">
+                            <div class="pt-3 px-4 fs-14 font-prompt">
                                 <label class="aiz-checkbox">
                                     <input type="checkbox" required id="agree_checkbox">
                                     <span class="aiz-square-check"></span>
@@ -615,19 +615,29 @@
                                 <a href="{{ route('privacypolicy') }}"
                                     class="fw-700">{{ translate('privacy policy') }}</a>
                             </div>
-
-                            <div class="row align-items-center pt-3 px-4 mb-4">
+                            <hr class="pt-3 px-4 mx-3 mb-0">
+                            <div class="row align-items-center pb-3 px-4">
                                 <!-- Return to shop -->
-                                <div class="col-6">
-                                    <a href="{{ route('home') }}" class="btn btn-link fs-14 fw-700 px-0">
-                                        <i class="las la-arrow-left fs-16"></i>
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
+                                    <a href="{{ route('home') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
                                         {{ translate('Return to shop') }}
                                     </a>
                                 </div>
-                                <!-- Complete Ordert -->
-                                <div class="col-6 text-right">
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-block d-md-none">
+                                    <a href="{{ route('home') }}" class="btn btn-link fs-16 text-secondary-base font-prompt pt-3 px-0">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        {{ translate('Return to shop') }}
+                                    </a>
+                                </div>
+                                <!-- Continue to Delivery Info -->
+                                <div class="col-md-6 text-center text-md-right">
                                     <button type="button" onclick="submitOrder(this)"
-                                        class="btn btn-primary fs-14 fw-700 rounded-0 px-4">{{ translate('Complete Order') }}</button>
+                                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2">{{ translate('Complete Order') }}</a>
                                 </div>
                             </div>
                         </div>
