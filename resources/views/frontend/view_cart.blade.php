@@ -1,7 +1,20 @@
 @extends('frontend.layouts.app')
 
 @section('content')
-    <!-- Steps -->
+<section class="pt-5 mb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-8 mx-auto">
+                <div class="row gutters-5 sm-gutters-10 px-2">
+                    <div class="col-11 col-xl-10 p-0 fs-48 register-shop-title d-flex justify-content-start font-prompt pb-0 text-center">My Cart</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Steps
     <section class="pt-5 mb-4">
         <div class="container">
             <div class="row">
@@ -45,8 +58,7 @@
             </div>
         </div>
     </section>
-
-    <!-- Cart Details -->
+    --> <!-- Cart Details -->
     <section class="mb-4" id="cart-summary">
         @include('frontend.'.get_setting('homepage_select').'.partials.cart_details', ['carts' => $carts])
     </section>
@@ -54,8 +66,9 @@
 @endsection
 
 @section('script')
+
     <script type="text/javascript">
-        function removeFromCartView(e, key) {
+    /*    function removeFromCartView(e, key) {
             e.preventDefault();
             removeFromCart(key);
         }
@@ -69,6 +82,6 @@
                 updateNavCart(data.nav_cart_view, data.cart_count);
                 $('#cart-summary').html(data.cart_view);
             });
-        }
+        }*/
     </script>
 @endsection

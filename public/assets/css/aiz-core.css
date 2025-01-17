@@ -13720,3 +13720,56 @@ border:none !important;
 .done-mwd .border-bottom-6px {
     border-bottom-color: #82B5A6 !important;
 }
+.add-loc-icon{
+    font-size: 1.55em;
+    position: relative;
+    top: 1px;
+}
+.no-resize-txtarea{
+    resize: none;
+}
+.btn-ori-40{
+    border: none;
+    height: 40px;
+}
+input[type="radio"].radio-shipping {
+    display: none;
+  }
+
+  /* Style the label to mimic a custom radio button */
+  input[type="radio"].radio-shipping + .custom-radio-label {
+    position: relative;
+    padding-left: 25px; /* Space for the custom radio */
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Create the custom radio button */
+  input[type="radio"].radio-shipping + .custom-radio-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 4px solid #E0E0E0; /* Border color */
+    background-color: #fff; /* Background color */
+    transition: background-color 0.6s, border-color 0.6s;
+  }
+  input[type="radio"].radio-shipping:checked + .custom-radio-label::before {
+    background-color: #E0E0E0; /* Checked background color */
+    border-color: #E0E0E0; /* Checked border color */
+  }
+
+  /* Inner circle when checked */
+  input[type="radio"].radio-shipping:checked + .custom-radio-label::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #cb774b; /* Inner circle color */
+  }

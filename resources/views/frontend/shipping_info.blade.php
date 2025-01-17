@@ -55,12 +55,30 @@
                         action="{{ route('checkout.store_shipping_infostore') }}" role="form" method="POST">
                         @csrf
                         @if (Auth::check())
-                            <div class="border bg-white p-4 mb-4">
+                            <div class="border bg-white p-4 mb-4 border-radius-16">
+                                @if (Auth::user()->addresses->isEmpty())
+                                <div class="row">
+                                    <div class="col-xl-8 mx-auto">
+                                        <div class="px-4 py-0">
+                                            <!-- Empty cart -->
+                                            <div class="text-center p-3">
+                                                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M10.4209 12.9999C9.50086 12.4599 8.88086 11.4599 8.88086 10.3099C8.88086 8.58994 10.2709 7.18994 12.0009 7.18994C13.1509 7.18994 14.1509 7.80994 14.6909 8.73994" stroke="#DBDCDF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M5.9891 17.8101C4.1491 15.3001 2.8091 12.0901 3.6291 8.49011C5.2791 1.23011 14.5691 0.0601072 18.6791 4.98011" stroke="#DBDCDF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M20.3806 8.5C21.5306 13.58 18.3706 17.88 15.6006 20.54C13.5906 22.48 10.4106 22.48 8.39062 20.54" stroke="#DBDCDF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M22 2L2 22" stroke="#DBDCDF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        </svg>
+                                                <h3 class="h4 font-prompt-md dark-c3 mt-3">No addresses found.</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @else
                                 @foreach (Auth::user()->addresses as $key => $address)
-                                    <div class="border mb-4">
+                                    <div class="border mb-4  border-radius-12">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <label class="aiz-megabox d-block bg-white mb-0">
+                                                <label class="aiz-megabox d-block mb-0">
                                                     <input type="radio" name="address_id" value="{{ $address->id }}"
                                                         @if ($address->set_default) checked @endif required>
                                                     <span class="d-flex p-3 aiz-megabox-elem border-0">
@@ -70,51 +88,53 @@
                                                         <span class="flex-grow-1 pl-3 text-left">
                                                             <div class="row">
                                                                 <span
-                                                                    class="fs-14 text-secondary col-3">{{ translate('Address') }}</span>
+                                                                    class="fs-14 font-prompt text-secondary col-3">{{ translate('Address') }}</span>
                                                                 <span
-                                                                    class="fs-14 text-dark fw-500 ml-2 col">{{ $address->address }}</span>
+                                                                    class="fs-14 font-prompt text-dark fw-500 ml-2 col">{{ $address->address }}</span>
                                                             </div>
                                                             {{-- <div class="row">
                                                             <span class="fs-14 text-secondary col-3">{{ translate('Postal Code') }}</span>
                                                             <span class="fs-14 text-dark fw-500 ml-2 col">{{ $address->postal_code }}</span>
                                                         </div> --}}
                                                         <div class="row">
-                                                            <span class="fs-14 text-secondary col-3">{{ translate('City') }}</span>
-                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->emirate)->name }}</span>
+                                                            <span class="fs-14 font-prompt text-secondary col-3">{{ translate('City') }}</span>
+                                                            <span class="fs-14 font-prompt text-dark fw-500 ml-2 col">{{ optional($address->emirate)->name }}</span>
                                                         </div>
                                                         <div class="row">
-                                                            <span class="fs-14 text-secondary col-3">{{ translate('State') }}</span>
-                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->state)->name }}</span>
+                                                            <span class="fs-14 font-prompt text-secondary col-3">{{ translate('State') }}</span>
+                                                            <span class="fs-14 font-prompt text-dark fw-500 ml-2 col">{{ optional($address->state)->name }}</span>
                                                         </div>
                                                         <div class="row">
-                                                            <span class="fs-14 text-secondary col-3">{{ translate('Country') }}</span>
-                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ optional($address->country)->name }}</span>
+                                                            <span class="fs-14 font-prompt text-secondary col-3">{{ translate('Country') }}</span>
+                                                            <span class="fs-14 font-prompt text-dark fw-500 ml-2 col">{{ optional($address->country)->name }}</span>
                                                         </div>
                                                         <div class="row">
-                                                            <span class="fs-14 text-secondary col-3">{{ translate('Phone') }}</span>
-                                                            <span class="fs-14 text-dark fw-500 ml-2 col">{{ $address->phone }}</span>
+                                                            <span class="fs-14 font-prompt text-secondary col-3">{{ translate('Phone') }}</span>
+                                                            <span class="fs-14 font-prompt text-dark fw-500 ml-2 col">{{ $address->phone }}</span>
                                                         </div>
                                                     </span>
                                                 </label>
                                             </div>
                                             <!-- Edit Address Button -->
                                             <div class="col-md-4 p-3 text-right">
-                                                <a class="btn btn-sm btn-secondary-base text-white mr-4 rounded-0 px-4"
+                                                <a class="btn btn-secondary-base btn-ori-40 text-white border-radius-12 fs-15 font-prompt py-2 mr-4 px-4"
                                                     onclick="edit_address('{{ $address->id }}')">{{ translate('Change') }}</a>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
+                                @endif
 
                                 <input type="hidden" name="checkout_type" value="logged">
                                 <!-- Add New Address -->
-                                <div class="mb-5">
-                                    <div class="border p-3 c-pointer text-center bg-light has-transition hov-bg-soft-light h-100 d-flex flex-column justify-content-center"
+                                <div class="mb-4 d-flex justify-content-center">
+                                    <div class="col-6 col-md-4 btn c-pointer bg-light has-transition hov-bg-soft-light dark-c3 border-radius-12 py-2 d-flex justify-content-center h-45px"
                                         onclick="add_new_address()">
-                                        <i class="las la-plus la-2x mb-3"></i>
-                                        <div class="alpha-7 fw-700">{{ translate('Add New Address') }}</div>
+                                        <i class="las la-plus add-loc-icon"></i>
+                                        <div class="fs-16 font-prompt ml-2">{{ translate('Add New Address') }}</div>
                                     </div>
                                 </div>
+                                <hr>
                                 <div class="row align-items-center">
                                     <!-- Return to shop -->
                                     <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
