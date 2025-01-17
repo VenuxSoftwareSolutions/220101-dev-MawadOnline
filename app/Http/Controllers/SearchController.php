@@ -437,7 +437,7 @@ class SearchController extends Controller
         foreach ($products as $key => $product) {
             foreach (explode(',', $product->tags) as $key => $tag) {
                 if (stripos($tag, $query) !== false) {
-                    if (sizeof($keywords) > 5) {
+                    if (sizeof($keywords) > 3) {
                         break;
                     } else {
                         if (!in_array(strtolower($tag), $keywords)) {
