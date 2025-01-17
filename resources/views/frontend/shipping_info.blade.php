@@ -116,8 +116,12 @@
                                                 </label>
                                             </div>
                                             <!-- Edit Address Button -->
-                                            <div class="col-md-4 p-3 text-right">
-                                                <a class="btn btn-secondary-base btn-ori-40 text-white border-radius-12 fs-15 font-prompt py-2 mr-4 px-4"
+                                            <div class="col-12 col-md-4 p-3 text-right d-flex justify-content-center d-md-none">
+                                                <a class="col-6 btn btn-secondary-base btn-ori-45 text-white border-radius-12 fs-16 font-prompt py-2 px-4"
+                                                    onclick="edit_address('{{ $address->id }}')">{{ translate('Change') }}</a>
+                                            </div>
+                                            <div class="col-12 col-md-4 p-3 text-right d-none d-md-block">
+                                                <a class="btn btn-secondary-base btn-ori-40 text-white border-radius-12 fs-15 font-prompt py-2 px-4 mr-3"
                                                     onclick="edit_address('{{ $address->id }}')">{{ translate('Change') }}</a>
                                             </div>
                                         </div>
