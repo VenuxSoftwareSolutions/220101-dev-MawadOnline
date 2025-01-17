@@ -1,5 +1,15 @@
 @extends('seller.layouts.app')
 
+@push('styles')
+    <style>
+        .swal2-icon .swal2-icon-content {
+            display: flex;
+            align-items: center;
+            font-size: 0.75em !important;
+        }
+    </style>
+@endpush
+
 @section('panel_content')
     <div class="card">
         <div class="card-header">
@@ -156,11 +166,12 @@
                                     <td>
                                         <div class="row align-items-center justify-content-center">
                                             @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                            @php
-                                                $shippers = explode(",", $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
-                                            @endphp
-                                                <select onchange="handleDeliveryStatusChanged(this,@if(in_array("third_party", $shippers)) true @else false @endif)" class="form-control"
-                                                    data-user_id="{{ $orderDetail->seller->id }}"
+                                                @php
+                                                    $shippers = explode(',', $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
+                                                @endphp
+                                                <select
+                                                    onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"
+                                                    class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
                                                     data-product_id="{{ $orderDetail->product->id }}"
                                                     data-orderdetail_id="{{ $orderDetail->id }}"
                                                     data-minimum-results-for-search="Infinity" id="update_delivery_status"
@@ -304,28 +315,10 @@
                             @endif
                             <input type="hidden" name="product_id" />
                             <div class="row">
-                                <div class="col-md-4">
-                                    <label for="recipient-name" class="col-form-label">{{ __('Pickup Address') }}
-                                        *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control my-2" name="pickup_post_code"
-                                        placeholder="{{ __('Post code') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_building_name"
-                                        placeholder="{{ __('Building name') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_building_number"
-                                        placeholder="{{ __('Building number') }}">
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-4">{{ __('Pickup date') }} *</div>
                                 <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
                                         id="pickup_datetime" name="pickup_datetime"
                                         value="{{ old('pickup_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
-                            </div>
-                            <div class="row" style="display: none;">
-                                <div class="col-md-4">{{ __('Generated printable label') }}</div>
-                                <div class="col-md-8" id="printable-label-wrapper"></div>
                             </div>
 
                             <div class="modal-footer form-group text-right">
@@ -396,18 +389,34 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
         const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
                 handleUpdateWarehouse(event)
             } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
-                $("#shipment-modal").modal("show");
-                $("#shipment-modal").on('shown.bs.modal', function(e) {
-                    let orderDetailId = $(event).data("orderdetail_id");
-                    let productId = $(event).data("product_id");
-                    let modal = $(this);
-                    modal.find('.modal-body #order_detail_id').val(orderDetailId);
-                    modal.find('.modal-body [name=product_id]').val(productId);
+                Swal.fire({
+                    title: '{{ __('Pickup address') }}',
+                    text: '{{ __('The pickup address will be the same as the selected warehouse in the last step.') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed === true) {
+                        $("#shipment-modal").modal("show");
+                        $("#shipment-modal").on('shown.bs.modal', function(e) {
+                            let orderDetailId = $(event).data("orderdetail_id");
+                            let productId = $(event).data("product_id");
+                            let modal = $(this);
+                            modal.find('.modal-body #order_detail_id').val(orderDetailId);
+                            modal.find('.modal-body [name=product_id]').val(productId);
+                        });
+                    } else {
+                        $(event).val("in_preparation");
+                    }
                 });
             } else {
                 updateDeliveryStatus(event);
@@ -526,15 +535,18 @@
                         $('#shipment_modal').modal('hide');
 
                         if (data.link !== undefined) {
-                            $("#printable-label-wrapper").parent().show();
-                            $("#printable-label-wrapper").html(
-                                `<a href="${data.link}" target="_blank">{{ __('Printable label') }}</a>`
-                            );
+                            $("#shipment-modal").modal("hide");
+                            Swal.fire({
+                                title: "{{ __("Sub-order status") }}",
+                                text: "{{ __("Sub-order status has been updated, a printable label has been generated, it will be opened in a new tab to download.") }}",
+                                icon: "success"
+                            }).then(() => {
+                                window.open(data.link, "_blank");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            });
                         }
-
-                        AIZ.plugins.notify('success',
-                            '{{ translate('Order status has been updated') }}');
-                        location.reload().setTimeOut(1000);
                     }).catch((e) => {
                         $("#save_shippment_btn .spinner-border").hide();
                         AIZ.plugins.notify(
