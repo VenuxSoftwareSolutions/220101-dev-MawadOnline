@@ -50,16 +50,16 @@
         <div class="container">
             <div class="row">
                 <div class="col-xxl-8 col-xl-10 mx-auto">
-                    <div class="border bg-white p-4 mb-4">
+                    <div class="border bg-white p-4 mb-4 border-radius-16">
                         <form class="form-default" action="{{ route('checkout.store_delivery_info') }}" role="form"
                             method="POST">
                             @csrf
 
                             @if (!empty($admin_products))
-                                <div class="inhouse-products-wrapper__clz card mb-5 border-0 rounded-0 shadow-none">
+                                <div class="inhouse-products-wrapper__clz card mb-3 border-0 rounded-0 shadow-none">
                                     <div class="card-body p-0">
                                         <!-- Product List -->
-                                        <ul class="list-group list-group-flush border p-3 mb-3">
+                                        <ul class="list-group list-group-flush border p-3 mb-3 border-radius-16">
                                             @php
                                                 $physical = false;
                                             @endphp
@@ -74,22 +74,22 @@
                                                     <div class="d-flex align-items-center">
                                                         <span class="mr-2 mr-md-3">
                                                             <img src="{{ get_image($product->thumbnail) }}"
-                                                                class="img-fit size-60px"
+                                                                class="img-fit size-60px border-radius-8px"
                                                                 alt="{{ $product->getTranslation('name') }}"
                                                                 onerror="this.onerror=null;this.src='{{ static_asset('assets/img/placeholder.jpg') }}';">
                                                         </span>
-                                                        <span class="fs-14 fw-400 text-dark">
+                                                        <span class="fs-15 dark-c3 font-prompt">
                                                             {{ $product->getTranslation('name') }}
                                                             <br>
                                                             @if ($admin_product_variation[$key] != '')
                                                                 <span
-                                                                    class="fs-12 text-secondary">{{ translate('Variation') }}:
+                                                                    class="fs-13 text-secondary font-prompt">{{ translate('Variation') }}:
                                                                     {{ $admin_product_variation[$key] }}</span>
                                                             @endif
                                                         </span>
                                                     </div>
                                                     <div class="mt-3">
-                                                        <h6 class="fs-14 fw-500">{{ translate('Shipping Options') }}</h6>
+                                                        <h6 class="fs-14 font-prompt-md">{{ translate('Shipping Options') }}</h6>
                                                         @php
                                                             $shippers = [];
                                                             $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
@@ -101,18 +101,18 @@
                                                             $productWeight = getProductWeightGeneralAttribute($product->id);
                                                         @endphp
                                                         <div
-                                                            class="border p-2 mb-2 @if (in_array("third_party", $shippers) && $productWeight === null) d-none @endif">
+                                                            class="border border-radius-12 p-3 mb-2 @if (in_array("third_party", $shippers) && $productWeight === null) d-none @endif">
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <label for="shipping_method_{{ $product->id }}"
-                                                                        class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
+                                                                        class="fs-14 text-secondary font-prompt">{{ translate('Shipping Method') }} :</label>
                                                                     <script>
                                                                         window.shippingMethodSelectFirstChange_{{ $product->id }} = true;
                                                                     </script>
                                                                     <select data-prod="{{ $product->id }}"
                                                                         name="shipping_method_{{ $product->id }}"
                                                                         id="shipping_method_{{ $product->id }}"
-                                                                        class="form-control fs-14 text-dark fw-500"
+                                                                        class="form-control fs-14 dark-c3 font-prompt border-radius-8px"
                                                                         @if ($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
                                                                         <option value="">
                                                                             {{ translate('Please choose shipper') }}
@@ -129,7 +129,7 @@
                                                                     id="shippers_area_container_{{ $product->id }}"
                                                                     style="display: none;">
                                                                     <label
-                                                                        class="fs-14 text-secondary">{{ translate('Shippers') }}:</label>
+                                                                        class="fs-14 text-secondary font-prompt">{{ translate('Shippers') }}:</label>
 
                                                                     @foreach ($shippers_areas as $area)
                                                                         <div class="form-check">
@@ -139,7 +139,7 @@
                                                                                 value="{{ $area->id }}"
                                                                                 @if ($shippers_areas->count() === 1) checked @endif>
                                                                             <label
-                                                                                class="form-check-label fs-14 text-dark fw-500"
+                                                                                class="form-check-label fs-14 dark-c3 font-prompt"
                                                                                 for="shippers_area_{{ $area->id }}">
                                                                                 {{ $area->shipper->name }}
                                                                             </label>
@@ -147,19 +147,19 @@
                                                                     @endforeach
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
+                                                            <div class="row mt-2">
                                                                 <div class="col-md-6">
                                                                     <span
-                                                                        class="fs-14 text-secondary">{{ translate('Duration') }}:</span>
+                                                                        class="fs-14 text-secondary font-prompt">{{ translate('Duration') }} :</span>
                                                                     <span id="shipping_duration_{{ $product->id }}"
-                                                                        class="fs-14 text-dark fw-500">N/A</span>
+                                                                        class="fs-14 dark-c3 font-prompt-md">N/A</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row charge-wrapper-{{ $product->id }}__clz">
+                                                            <div class="row mt-1 charge-wrapper-{{ $product->id }}__clz">
                                                                 <div class="col-md-12">
                                                                     <span
-                                                                        class="fs-14 text-secondary">{{ translate('Charge') }}:</span>
-                                                                    <span class="fs-14 text-dark"
+                                                                        class="fs-14 text-secondary font-prompt">{{ translate('Charge') }} :</span>
+                                                                    <span class="fs-14 dark-c3 font-prompt-md"
                                                                         id="charge-result_{{ $product->id }}">N/A</span>
                                                                 </div>
                                                             </div>
@@ -528,16 +528,30 @@
                                     </div>
                                 @endforeach
                             @endif
-
-                            <div class="pt-4 d-flex justify-content-between align-items-center">
+                            <hr>
+                            <div class="row align-items-center">
                                 <!-- Return to shop -->
-                                <a href="{{ route('home') }}" class="btn btn-link fs-14 fw-700 px-0">
-                                    <i class="la la-arrow-left fs-16"></i>
-                                    {{ translate('Return to shop') }}
-                                </a>
-                                <!-- Continue to Payment -->
-                                <button type="submit"
-                                    class="btn btn-primary fs-14 fw-700 rounded-0 px-4">{{ translate('Continue to Payment') }}</button>
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
+                                    <a href="{{ route('home') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        {{ translate('Return to shop') }}
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-block d-md-none">
+                                    <a href="{{ route('home') }}" class="btn btn-link fs-16 text-secondary-base font-prompt pt-3 px-0">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        {{ translate('Return to shop') }}
+                                    </a>
+                                </div>
+                                <!-- Continue to Delivery Info -->
+                                <div class="col-md-6 text-center text-md-right">
+                                    <button type="submit"
+                                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2">{{ translate('Continue to Payment') }}</a>
+                                </div>
                             </div>
                         </form>
                     </div>
