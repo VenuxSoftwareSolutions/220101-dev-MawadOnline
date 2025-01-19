@@ -13717,6 +13717,9 @@ border:none !important;
 .text-success-mwd{
     color: #82B5A6 !important;
 }
+.bg-success-mwd{
+    background: #82B5A6 !important;
+}
 .done-mwd .border-bottom-6px {
     border-bottom-color: #82B5A6 !important;
 }
@@ -13777,3 +13780,6 @@ input[type="radio"].radio-shipping {
     border-radius: 50%;
     background-color: #cb774b; /* Inner circle color */
   }
+.border-radius-6{
+    border-radius: 6px;
+}

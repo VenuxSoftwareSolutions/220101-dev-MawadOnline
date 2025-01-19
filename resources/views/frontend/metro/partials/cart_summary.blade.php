@@ -1,9 +1,9 @@
-<div class="card rounded-0 border shadow-none">
+<div class="card border shadow-none border-radius-16">
     <div class="card-header pt-4 pb-1 border-bottom-0">
-        <h3 class="fs-16 fw-700 mb-0">{{ translate('Summary') }}</h3>
+        <h3 class="fs-16 font-prompt-md dark-c3 mb-0">{{ translate('Summary') }}</h3>
         <div class="text-right">
             <!-- Items Count -->
-            <span class="badge badge-inline badge-primary fs-12 rounded-0 px-2">
+            <span class="badge badge-inline badge-primary fs-13 border-radius-6 px-2 font-prompt">
                 {{ count($carts) . " " . translate('Items') }}
             </span>
 
@@ -92,9 +92,9 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th class="product-name border-top-0 border-bottom-1 pl-0 fs-12 fw-400 opacity-60">
+                    <th class="product-name border-top-0 border-bottom-1 pl-0 fs-13 opacity-60 font-prompt dark-c3">
                         {{ translate('Product') }}</th>
-                    <th class="product-total text-right border-top-0 border-bottom-1 pr-0 fs-12 fw-400 opacity-60">
+                    <th class="product-total text-right border-top-0 border-bottom-1 pr-0 fs-13 opacity-60 font-prompt dark-c3">
                         {{ translate('Total') }}</th>
                 </tr>
             </thead>
@@ -122,15 +122,15 @@
                         }
                     @endphp
                     <tr class="cart_item">
-                        <td class="product-name pl-0 fs-14 text-dark fw-400 border-top-0 border-bottom">
+                        <td class="product-name pl-0 fs-14 font-prompt dark-c3 border-top-0 border-bottom">
                             {{ $product_name_with_choice }}
                             <strong class="product-quantity">
                                 × {{ $cartItem['quantity'] }}
                             </strong>
                         </td>
-                        <td class="product-total text-right pr-0 fs-14 text-primary fw-600 border-top-0 border-bottom">
+                        <td class="product-total text-right pr-0 fs-14 text-primary font-prompt dark-c3 border-top-0 border-bottom">
                             <span
-                                class="pl-4 pr-0" id="product_{{ $cartItem->product->id }}">{{ single_price(cart_product_price($cartItem, $cartItem->product, false, false) * $cartItem['quantity']) }}</span>
+                                class="pl-4 pr-0 font-prompt-md" id="product_{{ $cartItem->product->id }}">{{ single_price(cart_product_price($cartItem, $cartItem->product, false, false) * $cartItem['quantity']) }}</span>
                         </td>
                     </tr>
                 @endforeach
@@ -143,43 +143,43 @@
             <tfoot>
                 <!-- Subtotal -->
                 <tr class="cart-subtotal">
-                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Subtotal') }}</th>
+                    <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Subtotal') }}</th>
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
-                        <span class="fw-600">{{ single_price($subtotal) }}</span>
+                        <span class="font-prompt">{{ single_price($subtotal) }}</span>
                     </td>
                 </tr>
                 <!-- Tax -->
                 <tr class="cart-tax">
-                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Tax') }}</th>
+                    <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Tax') }}</th>
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
-                        <span class="fw-600">{{ single_price($tax) }}</span>
+                        <span class="font-prompt">{{ single_price($tax) }}</span>
                     </td>
                 </tr>
                 <!-- Total Shipping -->
                 <tr class="cart-shipping">
-                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Total Shipping') }}
+                    <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Total Shipping') }}
                     </th>
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
-                        <span class="fw-600">{{ single_price($shipping) }}</span>
+                        <span class="font-prompt">{{ single_price($shipping) }}</span>
                     </td>
                 </tr>
                 <!-- Redeem point -->
                 @if (Session::has('club_point'))
                     <tr class="cart-shipping">
-                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Redeem point') }}
+                        <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Redeem point') }}
                         </th>
-                        <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
-                            <span class="fw-600">{{ single_price(Session::get('club_point')) }}</span>
+                        <td class="text-right pr-0 fs-14 pt-0 pb-2 font-prompt text-primary border-top-0">
+                            <span class="font-prompt">{{ single_price(Session::get('club_point')) }}</span>
                         </td>
                     </tr>
                 @endif
                 <!-- Coupon Discount -->
                 @if ($coupon_discount > 0)
                     <tr class="cart-shipping">
-                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                        <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">
                             {{ translate('Coupon Discount') }}</th>
-                        <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
-                            <span class="fw-600">{{ single_price($coupon_discount) }}</span>
+                        <td class="text-right pr-0 fs-14 pt-0 pb-2 font-prompt text-primary border-top-0">
+                            <span class="font-prompt">{{ single_price($coupon_discount) }}</span>
                         </td>
                     </tr>
                 @endif
@@ -195,9 +195,9 @@
                 @endphp
                 <!-- Total -->
                 <tr class="cart-total">
-                    <th class="pl-0 fs-14 text-dark fw-600"><span class="strong-600">{{ translate('Total') }}</span>
+                    <th class="pl-0 fs-16 dark-c3 font-prompt"><span class="strong-600">{{ translate('Total') }}</span>
                     </th>
-                    <td class="text-right pr-0 fs-14 fw-600 text-primary">
+                    <td class="text-right pr-0 fs-16 font-prompt-md text-primary">
                         <strong><span>{{ single_price($total) }}</span></strong>
                     </td>
                 </tr>
