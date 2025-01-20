@@ -104,6 +104,8 @@
                                     <th data-breakpoints="md">{{ translate('Refund') }}</th>
                                 @endif
                                 <th data-breakpoints="md" class="text-right pr-0">{{ translate('Review') }}</th>
+                                <th data-breakpoints="md" class="text-right pr-0">
+                                    {{ translate('Ticket') }}</th>
                             </tr>
                         </thead>
                         <tbody class="fs-14">
@@ -178,6 +180,27 @@
                                         @else
                                             <span class="text-danger {{ $orderDetail->delivery_status }}__clz">{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}</span>
                                         @endif
+                                    </td>
+                                    <td>
+
+                                       <select onchange="handleTicket(this)" class="form-control"
+                                                data-user_id="{{ $orderDetail->seller->id }}"
+                                                data-product_id="{{ $orderDetail->product->id }}"
+                                                data-orderdetail_id="{{ $orderDetail->id }}"
+                                                data-minimum-results-for-search="Infinity" id="ticket_management"
+                                                style="width:100px;">
+                                                 <option value="add_new_ticket" readonly disabled selected>
+                                                    {{ translate('choose') }}
+                                                </option>
+                                                <option value="add_new_ticket">
+                                                    {{ translate('Create a Ticket') }}
+                                                </option>
+                                                @foreach ($orderDetail->tickets()->where('status','!=','resolved')->latest()->take(10)->get() as $key => $ticket)
+                                                    <option value="{{route('support_ticket.show', encrypt($ticket->id))}}">
+                                                        {{$ticket->code}}-{{$ticket->subject}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                     </td>
                                 </tr>
                             @endforeach
@@ -259,6 +282,8 @@
             </div>
         </div>
     </div>
+
+    @include('modals.ticket_modal')
 @endsection
 
 
@@ -286,6 +311,16 @@
                 });
                 AIZ.extra.inputRating();
             });
+        }
+
+        const handleTicket = (event) =>{
+            console.log(event.dataset.orderdetail_id);
+            if(event.value == "add_new_ticket"){
+                $('#ticket_modal').modal("show");
+                document.getElementById('order_details_id').value = event.dataset.orderdetail_id;
+            }else{
+                window.location.href = event.value;
+            }
         }
     </script>
 @endsection
