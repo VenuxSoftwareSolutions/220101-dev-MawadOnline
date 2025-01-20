@@ -79,6 +79,15 @@
               <div class="modal-body px-3 pt-3">
                   <form class="" action="{{ route('seller.support_ticket.store') }}" method="post" enctype="multipart/form-data">
                       @csrf
+
+                      <div class="row">
+                          <div class="col-md-2">
+                              <label>{{ translate('order')}}</label>
+                          </div>
+                          <div class="col-md-10">
+                              <input type="text" class="form-control mb-3" placeholder="{{ translate('Subject')}}" name="subject" required>
+                          </div>
+                      </div>
                       <div class="row">
                           <div class="col-md-2">
                               <label>{{ translate('Subject')}}</label>
@@ -118,7 +127,7 @@
               </div>
             </div>
         </div>
-    </div>
+</div>
 @endsection
 
 @section('script')
