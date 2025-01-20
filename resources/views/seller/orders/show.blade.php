@@ -105,7 +105,9 @@
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
-                                    {{ translate('Status') }}</th>
+                                {{ translate('Status') }}</th>
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                    {{ translate('Ticket') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -223,6 +225,28 @@
                                                         class="las la-print"></i></a>
                                             @endif
                                         </div>
+                                    </td>
+
+                                    <td>
+
+                                       <select onchange="handleTicket(this)" class="form-control"
+                                                data-user_id="{{ $orderDetail->seller->id }}"
+                                                data-product_id="{{ $orderDetail->product->id }}"
+                                                data-orderdetail_id="{{ $orderDetail->id }}"
+                                                data-minimum-results-for-search="Infinity" id="ticket_management"
+                                                style="width:200px;">
+                                                 <option value="add_new_ticket" readonly disabled selected>
+                                                    {{ translate('choose') }}
+                                                </option>
+                                                <option value="add_new_ticket">
+                                                    {{ translate('Create a Ticket') }}
+                                                </option>
+                                                @foreach ($orderDetail->tickets()->where('status','!=','resolved')->latest()->take(10)->get() as $key => $ticket)
+                                                    <option value="{{route('seller.support_ticket.show', encrypt($ticket->id))}}">
+                                                        {{$ticket->code}}-{{$ticket->subject}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                     </td>
                                 </tr>
                             @endforeach
@@ -426,6 +450,10 @@
     @endforeach
 @endsection
 
+@section('modal')
+    <!-- Add Ticket Modal -->
+    @include('modals.ticket_modal')
+@endsection
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
@@ -601,5 +629,15 @@
                 });
             });
         });
+
+        const handleTicket = (event) =>{
+            console.log(event.value);
+            if(event.value == "add_new_ticket"){
+                $('#ticket_modal').modal("show");
+                document.getElementById('order_details_id').value = event.dataset.orderdetail_id;
+            }else{
+                window.location.href = event.value;
+            }
+        }
     </script>
 @endsection
