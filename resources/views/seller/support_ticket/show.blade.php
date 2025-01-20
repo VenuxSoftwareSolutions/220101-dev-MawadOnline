@@ -39,41 +39,43 @@
             </form>
             <div class="pad-top">
                 <ul class="list-group list-group-flush">
-                    @foreach($ticket->ticketReplies as $ticketReply)
-                        <li class="list-group-item px-0">
-                            <div class="media">
-                                <a class="media-left" href="#">
-                                    @if($ticketReply->user->avatar_original != null)
-                                        <span class="avatar avatar-sm mr-3">
-                                            <img src="{{ uploaded_asset($ticketReply->user->avatar_original) }}" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
-                                        </span>
-                                    @else
-                                        <span class="avatar avatar-sm mr-3">
-                                            <img src="{{ static_asset('assets/img/avatar-place.png') }}">
-                                        </span>
-                                    @endif
-                                </a>
-                                <div class="media-body">
-                                    <div class="comment-header">
-                                        <span class="text-bold h6 text-muted">{{ $ticketReply->user->name }}</span>
-                                        <p class="text-muted text-sm fs-11">{{$ticketReply->created_at}}</p>
+                    @foreach($ticket->ticketreplies as $ticketreply)
+                        @if(auth()->user()->id == $ticketreply->user_id || ($ticketreply->user->user_type ==  "admin" && auth()->user()->id == $ticketreply->reply_to))
+                            <li class="list-group-item px-0">
+                                <div class="media">
+                                    <a class="media-left" href="#">
+                                        @if($ticketreply->user->avatar_original != null)
+                                            <span class="avatar avatar-sm mr-3">
+                                                <img src="{{ uploaded_asset($ticketreply->user->avatar_original) }}" onerror="this.onerror=null;this.src='{{ static_asset('assets/img/avatar-place.png') }}';">
+                                            </span>
+                                        @else
+                                            <span class="avatar avatar-sm mr-3">
+                                                <img src="{{ static_asset('assets/img/avatar-place.png') }}">
+                                            </span>
+                                        @endif
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="comment-header">
+                                            <span class="text-bold h6 text-muted">{{ $ticketreply->user->name }}</span>
+                                            <p class="text-muted text-sm fs-11">{{$ticketreply->created_at}}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                {!! clean($ticketReply->reply) !!}
-                                <br>
-                                @foreach ((explode(",",$ticketReply->files)) as $key => $file)
-                                    @php $file_detail = \App\Models\Upload::where('id', $file)->first(); @endphp
-                                    @if($file_detail != null)
-                                        <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">
-                                            <i class="las la-download text-muted">{{ $file_detail->file_original_name.'.'.$file_detail->extension }}</i>
-                                        </a>
-                                        <br>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </li>
+                                <div>
+                                    @php echo $ticketreply->reply; @endphp
+                                    <br>
+                                    @foreach ((explode(",",$ticketreply->files)) as $key => $file)
+                                        @php $file_detail = \App\Models\Upload::where('id', $file)->first(); @endphp
+                                        @if($file_detail != null)
+                                            <a href="{{ uploaded_asset($file) }}" download="" class="badge badge-lg badge-inline badge-light mb-1">
+                                                <i class="las la-download text-muted">{{ $file_detail->file_original_name.'.'.$file_detail->extension }}</i>
+                                            </a>
+                                            <br>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </li>
+                        @endif
                     @endforeach
                     <li class="list-group-item px-0">
                         <div class="media">
