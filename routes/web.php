@@ -377,9 +377,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
 
-    //compare list sync after login 
+    //compare list sync after login
     Route::post('/compare/sync', [CompareController::class, 'syncCompareList'])->name('compare.syncCompareList');
-
+    Route::post('vendor/support_ticket/saveTicket', [SupportTicketController::class, 'saveTicketRelatedToOrder'])->name('support_ticket.save_ticket');
 });
 
 Route::resource('shops', ShopController::class)->middleware('handle-demo-login');
