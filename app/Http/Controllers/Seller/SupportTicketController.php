@@ -11,6 +11,8 @@ use App\Models\TicketReply;
 use Illuminate\Http\Request;
 use App\Mail\SupportMailManager;
 use Spatie\Permission\Models\Role;
+use App\Models\OrderDetail;
+use App\Models\Order;
 
 class SupportTicketController extends Controller
 {
@@ -31,7 +33,24 @@ class SupportTicketController extends Controller
     public function index()
     {
         seller_lease_creation($user=Auth::user());
+        $orderDetails = new OrderDetail;
+        $order = new Order;
+        $order = $order->where('user_id',$user->id)->get();
+        if(isset($user->owner_id)){
+            $orderDetails =  $orderDetails->where('seller_id',$user->owner_id);
+        }else{
+             $orderIds = $order->where('user_id',$user->id)->pluck('id') ;
 
+
+            $orderDetails = $orderDetails->whereIn('order_id',$orderIds);
+
+            // $orderDetails =  DB::table('order_details as d')
+            //                     ->join('orders as o', 'order.id', '=', 'order_details.order_id')
+            //                     ->where('o.user_id',$user->id)
+            //                     ->select('d.*');
+        }
+        // dd($orderDetails->get());
+        // dd($orderDetails->get());
         $tour_steps=Tour::orderBy('step_number')->get();
         $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
         return view('seller.support_ticket.index', compact('tickets','tour_steps'));
@@ -121,4 +140,22 @@ class SupportTicketController extends Controller
         }
     }
 
+    public function saveTicketRelatedToOrder(Request $request){
+        $ticket = new Ticket;
+        $ticket->code    = max(100000, (Ticket::latest()->first() != null ? Ticket::latest()->first()->code + 1 : 0)).date('s');
+        $ticket->user_id = Auth::user()->owner_id;
+        $ticket->subject = $request->subject;
+        $ticket->details = $request->details;
+        $ticket->files   = $request->attachments;
+        $ticket->order_details_id = $request->order_details;
+        dd($ticket);
+        if($ticket->save()){
+            $this->send_support_mail_to_admin($ticket);
+            flash(translate('Ticket has been sent successfully'))->success();
+            return redirect()->route('seller.support_ticket.index');
+        }
+        else{
+            flash(translate('Something went wrong'))->error();
+        }
+    }
 }
