@@ -43,6 +43,9 @@ class SupportTicketController extends Controller
         $search_sub_order_status = null;
 
         $isSearchStatusQueryParamExists = $search_status !== null;
+        $tickets = Ticket::orderBy('created_at', 'desc')
+            ->orderByRaw("FIELD(status , 'pending', 'submitted', 'resolved', 'rejected') ASC");
+
 
         $tickets = Ticket::when(
             $isSearchStatusQueryParamExists,
@@ -163,6 +166,7 @@ class SupportTicketController extends Controller
 
     public function admin_store(Request $request)
     {
+        $ticket = Ticket::findOrFail($request->ticket_id);
         $ticket_reply = new TicketReply;
         $ticket_reply->ticket_id = $request->ticket_id;
         $ticket_reply->user_id = Auth::user()->id;
@@ -170,6 +174,7 @@ class SupportTicketController extends Controller
         $ticket_reply->files = $request->attachments;
         $ticket_reply->ticket->client_viewed = 0;
         $ticket_reply->ticket->status = $request->status;
+        $ticket_reply->reply_to = $request->submit_to == "vendor" ? $ticket->orderDetails->seller->id : $ticket->orderDetails->order->user->id ;
         $ticket_reply->ticket->save();
 
         if ($ticket_reply->save()) {
@@ -219,9 +224,50 @@ class SupportTicketController extends Controller
     public function admin_show($id)
     {
         $ticket = Ticket::findOrFail(decrypt($id));
+        if($ticket->is_locked == "no"){
+            $ticket->is_locked = "yes";
+            $ticket->locked_for =  Auth::user()->id;
+        }
         $ticket->viewed = 1;
         $ticket->save();
-
         return view('backend.support.support_tickets.show', compact('ticket'));
+    }
+
+    public function adminClose(Ticket $ticket){
+        $ticket->is_locked = "no";
+        $ticket->locked_for =  null;
+        $ticket->save();
+        return redirect()->route('support_ticket.admin_index');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    public function saveTicketRelatedToOrder(Request $request){
+        $ticket = new Ticket;
+        $ticket->code    = max(100000, (Ticket::latest()->first() != null ? Ticket::latest()->first()->code + 1 : 0)).date('s');
+        $ticket->user_id = is_null(Auth::user()->owner_id) ? Auth::user()->id : Auth::user()->owner_id ;
+        $ticket->subject = $request->subject;
+        $ticket->details = $request->details;
+        $ticket->files   = $request->attachments;
+        $ticket->order_details_id = $request->order_details;
+        if($ticket->save()){
+            $this->send_support_mail_to_admin($ticket);
+            flash(translate('Ticket has been sent successfully'))->success();
+            return is_null(Auth::user()->owner_id)
+             ? redirect()->route('support_ticket.index')
+             : redirect()->route('seller.support_ticket.index');
+        }
+        else{
+            flash(translate('Something went wrong'))->error();
+        }
     }
 }
