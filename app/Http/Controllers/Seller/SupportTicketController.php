@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Seller;
 
-use Auth;
-use Mail;
-use App\Models\Tour;
-use App\Models\User;
+use App\Mail\SupportMailManager;
 use App\Models\Ticket;
 use App\Models\TicketReply;
+use App\Models\Tour;
+use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use App\Mail\SupportMailManager;
 use Spatie\Permission\Models\Role;
 use App\Models\OrderDetail;
 use App\Models\Order;
+use Mail;
 
 class SupportTicketController extends Controller
 {
@@ -47,7 +48,6 @@ class SupportTicketController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -60,17 +60,18 @@ class SupportTicketController extends Controller
         $ticket->details = $request->details;
         $ticket->files = $request->attachments;
 
-        if($ticket->save()){
+        if ($ticket->save()) {
             $this->send_support_mail_to_admin($ticket);
             flash(translate('Ticket has been sent successfully'))->success();
+
             return redirect()->route('seller.support_ticket.index');
-        }
-        else{
+        } else {
             flash(translate('Something went wrong'))->error();
         }
     }
 
-    public function send_support_mail_to_admin($ticket){
+    public function send_support_mail_to_admin($ticket)
+    {
         $array['view'] = 'emails.support';
         $array['subject'] = translate('Support ticket Code is').':- '.$ticket->code;
         $array['from'] = env('MAIL_FROM_ADDRESS');
@@ -99,7 +100,8 @@ class SupportTicketController extends Controller
         $ticket->client_viewed = 1;
         $ticket->save();
         $ticket_replies = $ticket->ticketReplies;
-        return view('seller.support_ticket.show', compact('ticket','ticket_replies'));
+
+        return view('seller.support_ticket.show', compact('ticket', 'ticket_replies'));
     }
 
     public function ticket_reply_store(Request $request)
@@ -112,12 +114,12 @@ class SupportTicketController extends Controller
         $ticket_reply->ticket->viewed = 0;
         $ticket_reply->ticket->status = 'pending';
         $ticket_reply->ticket->save();
-        if($ticket_reply->save()){
+        if ($ticket_reply->save()) {
 
             flash(translate('Reply has been sent successfully'))->success();
+
             return back();
-        }
-        else{
+        } else {
             flash(translate('Something went wrong'))->error();
         }
     }
