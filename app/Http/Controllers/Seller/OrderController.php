@@ -35,13 +35,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        /* seller_lease_creation($user=Auth::user()); */
-
-        /*  $step=7; */
-        /*  $tour_steps=Tour::orderBy('step_number')->get(); */
-        /*  return view('seller.coming_soon',compact('step','tour_steps')); */
-
-        $payment_status = null;
+        $payment_status = "paid";
         $delivery_status = null;
         $sort_search = null;
         $orders = Order::orderBy('id', 'desc')
