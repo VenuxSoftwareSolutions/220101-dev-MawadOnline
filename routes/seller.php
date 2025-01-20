@@ -231,6 +231,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/support_ticket/store', 'store')->name('support_ticket.store');
         Route::get('/support_ticket/show/{id}', 'show')->name('support_ticket.show');
         Route::post('/support_ticket/reply', 'ticket_reply_store')->name('support_ticket.reply_store');
+        Route::post('vendor/support_ticket/saveTicket', 'saveTicketRelatedToOrder')->name('support_ticket.save_ticket_vendor');
     });
 
     // Notifications
