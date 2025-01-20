@@ -1,5 +1,15 @@
 @extends('seller.layouts.app')
 
+@push('styles')
+    <style>
+        .swal2-icon .swal2-icon-content {
+            display: flex;
+            align-items: center;
+            font-size: 0.75em !important;
+        }
+    </style>
+@endpush
+
 @section('panel_content')
     <div class="card">
         <div class="card-header">
@@ -10,60 +20,11 @@
             <div class="row gutters-5">
                 <div class="col text-md-left text-center">
                 </div>
-                @php
-                    $delivery_status = $order->delivery_status;
-                    $payment_status = $order->orderDetails->where('seller_id', Auth::user()->owner_id)->first()->payment_status;
-                @endphp
-                @if (get_setting('product_manage_by_admin') == 0)
-                    <!-- <div class="col-md-3 ml-auto">
-                        <label for="update_payment_status">{{ translate('Payment Status') }}</label>
-                        @if (
-                            ($order->payment_type == 'cash_on_delivery' ||
-                                (addon_is_activated('offline_payment') == 1 && $order->manual_payment == 1)) &&
-                                $payment_status == 'unpaid')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_payment_status">
-                                <option value="unpaid" @if ($payment_status == 'unpaid') selected @endif>
-                                    {{ translate('Unpaid') }}</option>
-                                <option value="paid" @if ($payment_status == 'paid') selected @endif>
-                                    {{ translate('Paid') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate($payment_status) }}" disabled>
-                        @endif
-                    </div> -->
-                    <!-- <div class="col-md-3 ml-auto">
-                        <label for="update_delivery_status">{{ translate('Delivery Status') }}</label>
-                        @if ($delivery_status != 'delivered' && $delivery_status != 'cancelled')
-                            <select class="form-control aiz-selectpicker" data-minimum-results-for-search="Infinity"
-                                id="update_delivery_status">
-                                <option value="pending" @if ($delivery_status == 'pending') selected @endif>
-                                    {{ translate('Pending') }}</option>
-                                <option value="confirmed" @if ($delivery_status == 'confirmed') selected @endif>
-                                    {{ translate('Confirmed') }}</option>
-                                <option value="picked_up" @if ($delivery_status == 'picked_up') selected @endif>
-                                    {{ translate('Picked Up') }}</option>
-                                <option value="on_the_way" @if ($delivery_status == 'on_the_way') selected @endif>
-                                    {{ translate('On The Way') }}</option>
-                                <option value="delivered" @if ($delivery_status == 'delivered') selected @endif>
-                                    {{ translate('Delivered') }}</option>
-                                <option value="cancelled" @if ($delivery_status == 'cancelled') selected @endif>
-                                    {{ translate('Cancel') }}</option>
-                            </select>
-                        @else
-                            <input type="text" class="form-control" value="{{ translate(ucfirst(str_replace('_', ' ', $delivery_status))) }}" disabled>
-                        @endif
-                    </div> -->
-                @endif
             </div>
             <div class="row gutters-5 mt-2">
                 <div class="col text-md-left text-center">
                     @if (json_decode($order->shipping_address))
                         <address>
-                            <!-- <strong class="text-main">
-                                {{ json_decode($order->shipping_address)->name }}
-                            </strong><br> -->
-                            <!-- {{ json_decode($order->shipping_address)->email }}<br> -->
                             {{ json_decode($order->shipping_address)->phone }}<br>
                             {{ json_decode($order->shipping_address)->address }},
                             {{ json_decode($order->shipping_address)->city }}, @if (isset(json_decode($order->shipping_address)->state))
@@ -143,7 +104,7 @@
                                     {{ translate('Price') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
-                                    <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Status') }}</th>
                             </tr>
                         </thead>
@@ -203,45 +164,58 @@
                                         {{ single_price($orderDetail->price / $orderDetail->quantity) }}</td>
                                     <td class="text-center">{{ single_price($orderDetail->price) }}</td>
                                     <td>
+                                        <div class="row align-items-center justify-content-center">
+                                            @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
+                                                @php
+                                                    $shippers = explode(',', $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
+                                                @endphp
+                                                <select
+                                                    onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"
+                                                    class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
+                                                    data-product_id="{{ $orderDetail->product->id }}"
+                                                    data-orderdetail_id="{{ $orderDetail->id }}"
+                                                    data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                    style="width:200px;">
+                                                    <option value="pending"
+                                                        @if ($orderDetail->delivery_status == 'pending') selected @endif
+                                                        @if (
+                                                            $orderDetail->delivery_status == 'in_preparation' ||
+                                                                $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                                $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ translate('Pending') }}</option>
+                                                    <option value="in_preparation"
+                                                        @if ($orderDetail->delivery_status == 'in_preparation') selected @endif
+                                                        @if (
+                                                            $orderDetail->delivery_status == 'in_preparation' ||
+                                                                $orderDetail->delivery_status == 'ready_for_shipment' ||
+                                                                $orderDetail->delivery_status == 'on_the_way') disabled @endif>
+                                                        {{ __('order.in_preparation') }}</option>
+                                                    <option value="ready_for_shipment"
+                                                        @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif>
+                                                        {{ __('order.ready_for_shipment') }}</option>
+                                                    <option value="on_the_way"
+                                                        @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
+                                                        {{ __('order.on_the_way') }}</option>
+                                                    <option value="delivered"
+                                                        @if ($orderDetail->delivery_status == 'delivered') selected @endif>
+                                                        {{ translate('Delivered') }}</option>
+                                                    <option value="cancelled"
+                                                        @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
+                                                        {{ translate('Canceled') }}</option>
+                                                </select>
+                                            @else
+                                                <input type="text" class="form-control"
+                                                    value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
+                                                    disabled>
+                                            @endif
 
-                                        @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
-                                            <select onchange="handleDeliveryStatusChanged(this)" class="form-control"
-                                                data-user_id="{{ $orderDetail->seller->id }}"
-                                                data-product_id="{{ $orderDetail->product->id }}"
-                                                data-orderdetail_id="{{ $orderDetail->id }}"
-                                                data-minimum-results-for-search="Infinity" id="update_delivery_status"
-                                                style="width:200px;">
-                                                <option value="pending" @if ($orderDetail->delivery_status == 'pending') selected @endif
-                                                    @if (
-                                                        $orderDetail->delivery_status == 'in_preparation' ||
-                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
-                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                    {{ translate('Pending') }}</option>
-                                                <option value="in_preparation"
-                                                    @if ($orderDetail->delivery_status == 'in_preparation') selected @endif
-                                                    @if (
-                                                        $orderDetail->delivery_status == 'in_preparation' ||
-                                                            $orderDetail->delivery_status == 'ready_for_shipment' ||
-                                                            $orderDetail->delivery_status == 'on_the_way') disabled @endif>
-                                                    {{ __('order.in_preparation') }}</option>
-                                                <option value="ready_for_shipment"
-                                                    @if ($orderDetail->delivery_status == 'ready_for_shipment') selected @endif>
-                                                    {{ __('order.ready_for_shipment') }}</option>
-                                                <option value="on_the_way"
-                                                    @if ($orderDetail->delivery_status == 'on_the_way') selected @endif>
-                                                    {{ __('order.on_the_way') }}</option>
-                                                <option value="delivered"
-                                                    @if ($orderDetail->delivery_status == 'delivered') selected @endif>
-                                                    {{ translate('Delivered') }}</option>
-                                                <option value="cancelled"
-                                                    @if ($orderDetail->delivery_status == 'cancelled') selected @endif>
-                                                    {{ translate('Canceled') }}</option>
-                                            </select>
-                                        @else
-                                            <input type="text" class="form-control"
-                                                value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
-                                                disabled>
-                                        @endif
+                                            @if ($orderDetail->trackingShipment !== null)
+                                                <a class="mx-3" href="{{ $orderDetail->trackingShipment->label_url }}"
+                                                    target="_blank" data-toggle="tooltip"
+                                                    title="{{ translate('Printable Label') }}"><i
+                                                        class="las la-print"></i></a>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -302,7 +276,6 @@
         </div>
     </div>
 
-
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="shipment-modal" tabindex="-1"
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -317,67 +290,6 @@
                     <div class="p-3">
                         <form id="shipment_form">
                             <div class="row">
-                                <div class="col-md-4">
-                                    <label>{{ translate('Full Name') }} *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control mb-3 rounded-0"
-                                        placeholder="{{ translate('Your Full Name') }}" name="full_name" required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>{{ translate('Mobile Number') }} *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control mb-3 rounded-0"
-                                        placeholder="{{ translate('+971') }}" name="phone"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>{{ translate('Email') }} *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control mb-3 rounded-0"
-                                        placeholder="{{ translate('Your email') }}" name="email" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for="recipient-name" class="col-form-label">{{ __('Address') }} *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control my-2" name="shipper_address_line1"
-                                        placeholder="{{ __('Line 1') }}">
-                                    <input type="text" class="form-control my-2" name="shipper_address_line2"
-                                        placeholder="{{ __('Line 2') }}">
-                                    <input type="text" class="form-control my-2" name="shipper_address_line3"
-                                        placeholder="{{ __('Line 3') }}">
-                                    <select class="form-control my-2" name="state" name="shipper_state">
-                                        <option>{{ __('Choose an emirate') }}</option>
-                                        @php
-                                            $emirates = \App\Models\Emirate::all();
-                                        @endphp
-                                        @foreach ($emirates as $emirate)
-                                            <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <select class="form-control my-2" name="city" name="shipper_city">
-                                        <option>{{ __('Choose a city') }}</option>
-                                    </select>
-                                    <input type="text" class="form-control my-2" name="shipper_post_code"
-                                        placeholder="{{ __('Post code') }}">
-                                    <input type="text" class="form-control my-2" name="shipper_building_name"
-                                        placeholder="{{ __('Building name') }}">
-                                    <input type="text" class="form-control my-2" name="shipper_building_number"
-                                        placeholder="{{ __('Building number') }}">
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-md-4">{{ __('Shipping date') }} *</div>
                                 <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
                                         id="shipping_datetime" name="shipping_datetime"
@@ -387,70 +299,37 @@
                                 <input type="hidden" name="consignee_email"
                                     value="{{ json_decode($order->shipping_address)->email }}">
                                 <input type="hidden" name="consignee_name"
-                                    value="{{ json_decode($order->shipping_address)->name }}">                                                        <input type="hidden" name="consignee_phone"
-                                    value="{{ json_decode($order->shipping_address)->phone }}"> <input type="hidden"
-                                    name="consignee_city" value="{{ json_decode($order->shipping_address)->city }}">
+                                    value="{{ json_decode($order->shipping_address)->name }}"> <input type="hidden"
+                                    name="consignee_phone" value="{{ json_decode($order->shipping_address)->phone }}">
+                                <input type="hidden" name="consignee_city"
+                                    value="{{ json_decode($order->shipping_address)->city }}">
                                 <input type="hidden" name="consignee_state"
                                     value="{{ json_decode($order->shipping_address)->state }}">
                                 <input type="hidden" name="consignee_post_code"
                                     value="{{ json_decode($order->shipping_address)->postal_code }}">
                                 <input type="hidden" name="consignee_address"
-                                    value="{{ json_decode($order->shipping_address)->address }}">                                                     <input type="hidden" name="consignee_country_code" value="AE">
+                                    value="{{ json_decode($order->shipping_address)->address }}"> <input type="hidden"
+                                    name="consignee_country_code" value="AE">
                                 <input type="hidden" id="order_detail_id" name="order_id" value="">
                                 <input type="hidden" name="status" value="ready_for_shipment">
                             @endif
                             <input type="hidden" name="product_id" />
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label for="recipient-name" class="col-form-label">{{ __('Pickup Address') }} *</label>
-                                </div>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control my-2" name="pickup_address_line1"
-                                        placeholder="{{ __('Line 1') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_address_line2"
-                                        placeholder="{{ __('Line 2') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_address_line3"
-                                        placeholder="{{ __('Line 3') }}">
-                                    <select class="form-control my-2" name="pickup_state" name="pickup_state">
-                                        <option>{{ __('Choose an emirate') }}</option>
-                                        @php
-                                            $emirates = \App\Models\Emirate::all();
-                                        @endphp
-                                        @foreach ($emirates as $emirate)
-                                            <option value="{{ $emirate->id }}">{{ $emirate->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <select class="form-control my-2" name="pickup_city" name="pickup_city">
-                                        <option>{{ __('Choose a city') }}</option>
-                                    </select>
-                                    <input type="text" class="form-control my-2" name="pickup_post_code"
-                                        placeholder="{{ __('Post code') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_building_name"
-                                        placeholder="{{ __('Building name') }}">
-                                    <input type="text" class="form-control my-2" name="pickup_building_number"
-                                        placeholder="{{ __('Building number') }}">
-                                </div>
-                            </div>
                             <div class="row">
                                 <div class="col-md-4">{{ __('Pickup date') }} *</div>
                                 <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
                                         id="pickup_datetime" name="pickup_datetime"
                                         value="{{ old('pickup_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
                             </div>
-                            <div class="row" style="display: none;">
-                                <div class="col-md-4">{{ __("Generated printable label")}}</div>
-                                <div class="col-md-8" id="printable-label-wrapper"></div>
-                            </div>
 
                             <div class="modal-footer form-group text-right">
                                 <button type="button" class="btn btn-secondary rounded-0 w-150px"
                                     data-dismiss="modal">{{ __('Close') }}</button>
-                                <button type="submit" id="save_shippment_btn"
-                                    class="btn btn-primary rounded-0 w-150px">
+                                <button type="submit" id="save_shippment_btn" class="btn btn-primary rounded-0 w-150px">
                                     {{ __('Save') }}
-                                  <div style="display: none;" class="spinner-border spinner-border-sm float-right" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                  </div>
+                                    <div style="display: none;" class="spinner-border spinner-border-sm float-right"
+                                        role="status">
+                                        <span class="sr-only">Loading...</span>
+                                    </div>
                                 </button>
                             </div>
                         </form>
@@ -489,14 +368,17 @@
                         <div class="row">
                             <div class=" text-left col-6">
                                 <div class="form-group row">
-                                    <label class="col-md-4">{{__('order.total_quantity')}}</label>
+                                    <label class="col-md-4">{{ __('order.total_quantity') }}</label>
                                     <input class="form-control col-md-8" type="number" id="quantity_requested" />
                                 </div>
                             </div>
                             <!-- Save button -->
                             <div class="form-group text-right col-6">
-                                <button onClick="window.location.reload();"  class="btn btn-danger rounded-0 w-150px">{{translate('Cancel')}}</button>
-                                <button id="save-stock-movment" data-quantity_requested onclick="handleSaveStockMovement(this)"  class="btn btn-primary rounded-0 w-150px">{{__('order.confirm_order')}}</button>
+                                <button onClick="window.location.reload();"
+                                    class="btn btn-danger rounded-0 w-150px">{{ translate('Cancel') }}</button>
+                                <button id="save-stock-movment" data-quantity_requested
+                                    onclick="handleSaveStockMovement(this)"
+                                    class="btn btn-primary rounded-0 w-150px">{{ __('order.confirm_order') }}</button>
                             </div>
                         </div>
                     </div>
@@ -507,18 +389,34 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
-        const handleDeliveryStatusChanged = (event) => {
+        const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
                 handleUpdateWarehouse(event)
-            } else if (event.value === "ready_for_shipment") {
-                $("#shipment-modal").modal("show");
-                $("#shipment-modal").on('shown.bs.modal', function(e) {
-                    let orderDetailId = $(event).data("orderdetail_id");
-                    let productId = $(event).data("product_id");
-                    let modal = $(this);
-                    modal.find('.modal-body #order_detail_id').val(orderDetailId);
-                    modal.find('.modal-body [name=product_id]').val(productId);
+            } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
+                Swal.fire({
+                    title: '{{ __('Pickup address') }}',
+                    text: '{{ __('The pickup address will be the same as the selected warehouse in the last step.') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed === true) {
+                        $("#shipment-modal").modal("show");
+                        $("#shipment-modal").on('shown.bs.modal', function(e) {
+                            let orderDetailId = $(event).data("orderdetail_id");
+                            let productId = $(event).data("product_id");
+                            let modal = $(this);
+                            modal.find('.modal-body #order_detail_id').val(orderDetailId);
+                            modal.find('.modal-body [name=product_id]').val(productId);
+                        });
+                    } else {
+                        $(event).val("in_preparation");
+                    }
                 });
             } else {
                 updateDeliveryStatus(event);
@@ -591,7 +489,7 @@
             } else {
                 document.getElementById('alert-quantity').style.display = 'none';
                 $.post('{{ route('seller.orders.stock_movement') }}', {
-                    _token: '{{ @csrf_token() }}',
+                    _token: '{{ csrf_token() }}',
                     order: order,
                     warehouses: warehouses,
                     product: product,
@@ -606,7 +504,7 @@
             let order_id = {{ $order->id }};
             let status = $('#update_payment_status').val();
             $.post('{{ route('seller.orders.update_payment_status') }}', {
-                _token: '{{ @csrf_token() }}',
+                _token: '{{ csrf_token() }}',
                 order_id: order_id,
                 status: status
             }, function(data) {
@@ -630,18 +528,25 @@
                         },
                         body: formData
                     }).then(response => response.json())
-                    .then(function({ data }) {
+                    .then(function({
+                        data
+                    }) {
                         $("#save_shippment_btn .spinner-border").hide();
                         $('#shipment_modal').modal('hide');
 
                         if (data.link !== undefined) {
-                            $("#printable-label-wrapper").parent().show();
-                            $("#printable-label-wrapper").html(`<a href="${data.link}" target="_blank">{{ __("Printable label") }}</a>`);
+                            $("#shipment-modal").modal("hide");
+                            Swal.fire({
+                                title: "{{ __("Sub-order status") }}",
+                                text: "{{ __("Sub-order status has been updated, a printable label has been generated, it will be opened in a new tab to download.") }}",
+                                icon: "success"
+                            }).then(() => {
+                                window.open(data.link, "_blank");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            });
                         }
-
-                        AIZ.plugins.notify('success',
-                            '{{ translate('Order status has been updated') }}');
-                        location.reload().setTimeOut(1000);
                     }).catch((e) => {
                         $("#save_shippment_btn .spinner-border").hide();
                         AIZ.plugins.notify(
@@ -668,7 +573,8 @@
                                 let id = response['data'][i].id;
                                 let name = response['data'][i].name;
 
-                                $(`${parent === "state" ? "[name=city]" : "[name=pickup_city]"}`).append(`
+                                $(`${parent === "state" ? "[name=city]" : "[name=pickup_city]"}`)
+                                    .append(`
                                     <option value='${id}'>
                                         ${name}
                                     </option>

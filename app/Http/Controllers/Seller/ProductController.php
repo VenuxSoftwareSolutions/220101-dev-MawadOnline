@@ -98,7 +98,11 @@ class ProductController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $products = $products->where('name', 'like', '%'.$search.'%');
+            $products = $products->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                      ->orWhere('sku', 'like', '%'.$search.'%')
+                      ->orWhere('short_description', 'like', '%'.$search.'%');
+            });
         }
         $products = $products->paginate(10);
         $tour_steps = Tour::orderBy('step_number')->get();

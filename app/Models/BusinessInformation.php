@@ -18,8 +18,6 @@ class BusinessInformation extends Model
         'trade_name',
         'trade_license_doc',
         'eshop_name',
-        'eshop_name',
-        'eshop_desc',
         'eshop_desc',
         'license_issue_date',
         'license_expiry_date',
