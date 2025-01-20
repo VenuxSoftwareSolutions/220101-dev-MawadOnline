@@ -4,19 +4,7 @@
     <div class="aiz-titlebar mt-2 mb-4">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="h3">{{ translate('Support Ticket') }}</h1>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-4 mx-auto mb-3">
-            <div id="step2" class="p-3 rounded mb-3 c-pointer text-center bg-white shadow-sm hov-shadow-lg has-transition"
-                data-toggle="modal" data-target="#ticket_modal">
-                <span
-                    class="size-70px rounded-circle mx-auto bg-secondary d-flex align-items-center justify-content-center mb-3">
-                    <i class="las la-plus la-3x text-white"></i>
-                </span>
-                <div class="fs-20 text-primary">{{ translate('Create a Ticket') }}</div>
+                <h1 class="h3">{{ translate('Support Tickets') }}</h1>
             </div>
         </div>
     </div>
@@ -24,6 +12,14 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0 h6">{{ translate('Tickets') }}</h5>
+            <div class="row">
+                <div class="col mx-auto mb-3">
+                    <div id="step2" class="btn btn-primary btn-lg" data-toggle="modal"
+                        data-target="#ticket_modal">
+                        <i class="las la-plus la-1x text-white"></i> {{ translate('Create ticket') }}
+                    </div>
+                </div>
+            </div>
         </div>
           <div class="card-body">
               <table  id="step1" class="table aiz-table mb-0">
