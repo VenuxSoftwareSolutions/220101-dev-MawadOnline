@@ -24,10 +24,6 @@ thead tr{
     padding: 0 !important;
     margin: 0 !important;
 }
-/* thead th{
-    padding: 0 !important;
-    margin: 0 !important;
-} */
 
 .aiz-table th {
     padding: 0 !important;
