@@ -38,7 +38,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $payment_status = null;
+        $payment_status = "paid";
         $delivery_status = null;
         $sort_search = null;
         $orders = Order::orderBy('id', 'desc')

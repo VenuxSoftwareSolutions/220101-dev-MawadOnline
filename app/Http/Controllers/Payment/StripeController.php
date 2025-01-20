@@ -19,6 +19,7 @@ use Session;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\StripeClient;
+use App\Models\Cart;
 
 class StripeController extends Controller
 {
@@ -136,6 +137,13 @@ class StripeController extends Controller
 
             if ($paymentIntentId === null) {
                 flash(translate('Payment failed, Please try again later!'))->error();
+
+                Cart::where('user_id', auth()->user()->id)
+                    ->get()
+                    ->each(function($cart) {
+                        $cart->delete();
+                    });
+
                 return redirect()->route('home');
             }
 
@@ -164,11 +172,26 @@ class StripeController extends Controller
                 }
             } else {
                 flash(translate('Payment incomplete'))->error();
+
+                Cart::where('user_id', auth()->user()->id)
+                    ->get()
+                    ->each(function($cart) {
+                        $cart->delete();
+                    });
+
                 return redirect()->route('home');
             }
         } catch (Exception $e) {
             flash(translate('Payment failed'))->error();
+
+            Cart::where('user_id', auth()->user()->id)
+                ->get()
+                ->each(function($cart) {
+                    $cart->delete();
+                });
+
             Log::error("Error while redirecting to stripe success, with message: {$e->getMessage()}");
+
             return redirect()->route('home');
         }
     }
@@ -212,6 +235,13 @@ class StripeController extends Controller
             return response()->json(['client_secret' => $intent->client_secret]);
         } catch(Exception $e) {
             Log::error("Error while processing stripe payment intent, with message: {$e->getMessage()}");
+
+            Cart::where('user_id', auth()->user()->id)
+                ->get()
+                ->each(function($cart) {
+                    $cart->delete();
+                });
+
             return response()->json([
                 "error" => true,
                 "message" => __("Something went wrong!")

@@ -1432,7 +1432,7 @@
                                                     <table class="table" class="bloc_pricing_configuration_variant">
                                                         <thead>
                                                             <tr>
-                                                                <th>{{ translate('Fromm Quantity') }}</th>
+                                                                <th>{{ translate('From Quantity') }}</th>
                                                                 <th>{{ translate('To Quantity') }}</th>
                                                                 <th>{{ translate('Unit Price (VAT Exclusive)') }}</th>
                                                                 <th>{{ translate('Discount(Start/End)') }}</th>
