@@ -11,7 +11,10 @@
                     <div class="input-group input-group-sm">
                         <select class="select2 form-control" multiple="multiple" id="search_status" name="search_status[]">
                             <option value="pending" selected>{{ __('Pending') }}</option>
-                            <option value="solved">{{ __('Solved') }}</option>
+                            <option value="Resolved">{{ __('Resolved') }}</option>
+                            <option value="Submitted">{{ __('Submitted') }}</option>
+                            <option value="Under Review">{{ __('Under Review') }}</option>
+                            <option value="Rejected">{{ __('Rejected') }}</option>
                         </select>
                     </div>
                     <div class="input-group input-group-sm">
