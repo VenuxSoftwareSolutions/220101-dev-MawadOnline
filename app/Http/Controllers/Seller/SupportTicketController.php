@@ -34,7 +34,13 @@ class SupportTicketController extends Controller
     {
         seller_lease_creation($user=Auth::user());
         $tour_steps=Tour::orderBy('step_number')->get();
-        $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
+        $tickets = Ticket::where(function ($query)  {
+                $query->where('user_id', Auth::user()->owner_id)
+                    ->orWhereHas('ticketReplies', function ($q) {
+                        $q->where('reply_to', Auth::user()->owner_id);
+                    });
+                })->orderBy('created_at', 'desc')->paginate(10);
+        // $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
         return view('seller.support_ticket.index', compact('tickets','tour_steps'));
     }
 
