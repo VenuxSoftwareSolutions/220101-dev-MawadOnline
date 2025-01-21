@@ -465,42 +465,42 @@ class SearchController extends Controller
                 //$attributes = Attribute::all();
         }   
 
-    $id_products = [];
+        $id_products = [];
 
-    $query_price = $products->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
-    $max_all_price = $query_price->max('pricing_configurations.unit_price');
-    $min_all_price = $query_price->min('pricing_configurations.unit_price');
+        $query_price = $products->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
+        $max_all_price = $query_price->max('pricing_configurations.unit_price');
+        $min_all_price = $query_price->min('pricing_configurations.unit_price');
 
-    if (!$max_all_price) {
-        $max_all_price = 1;
-        $min_all_price = 0;
-    }
+        if (!$max_all_price) {
+            $max_all_price = 1;
+            $min_all_price = 0;
+        }
 
-    if ($max_all_price == $min_all_price) {
-        $max_all_price = $min_all_price + 1;
-    }
+        if ($max_all_price == $min_all_price) {
+            $max_all_price = $min_all_price + 1;
+        }
 
-    $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
+        $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
 
-    $shops = $products->join('users', 'users.id', '=', 'products.user_id')
-        ->join('shops', 'shops.user_id', 'users.id')
-        ->where('users.banned', '!=', 1)
-        ->where('shops.verification_status', '!=', 0);
+        $shops = $products->join('users', 'users.id', '=', 'products.user_id')
+            ->join('shops', 'shops.user_id', 'users.id')
+            ->where('users.banned', '!=', 1)
+            ->where('shops.verification_status', '!=', 0);
 
-    $brands = $brands->select('brands.*')->distinct('brands.id')->get();
-    $shops = $shops->select('shops.*')->distinct('shops.id')->get();
+        $brands = $brands->select('brands.*')->distinct('brands.id')->get();
+        $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
-    $products = Product::where('published', '1')
-        ->where('auction_product', 0)
-        ->where('approved', '1');
+        $products = Product::where('published', '1')
+            ->where('auction_product', 0)
+            ->where('approved', '1');
 
-    if ($query) {
-        $products->where("products.name", 'like', "%" . $query . "%");
-    }
+        if ($query) {
+            $products->where("products.name", 'like', "%" . $query . "%");
+        }
 
-    if ($category_id != null) {
-        $products->whereIn('category_id', $category_ids);
-    }
+        if ($category_id != null) {
+            $products->whereIn('category_id', $category_ids);
+        }
 
     $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
 
