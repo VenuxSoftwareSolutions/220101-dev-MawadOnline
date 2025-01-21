@@ -486,6 +486,16 @@
         $('#search').on('focus', function(){
             search();
         });
+        $('form').on('submit', function (e) {
+            let inputField = $('#search');
+            let value = inputField.val();
+            value = value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+            inputField.val(value);
+            if (value.length < 3) {
+                e.preventDefault();
+                AIZ.plugins.notify('warning', "{{ translate('Search keyword must be at least 3 characters long.') }}");
+            }
+        });
 
         function escapeHtml(text) {
     let map = {
