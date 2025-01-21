@@ -177,7 +177,7 @@ class SupportTicketController extends Controller
         $ticket_reply->reply = $request->reply;
         $ticket_reply->files = $request->attachments;
         $ticket_reply->ticket->client_viewed = 0;
-        $ticket_reply->ticket->status = $request->status;
+        $ticket_reply->ticket->status = ($request->submit_as ? $request->submit_as :  ($ticket_reply->ticket->status == "pending" ? "Submitted" : $ticket_reply->ticket->status));
         $ticket_reply->reply_to = $request->submit_to == "vendor" ? $ticket->orderDetails->seller->id : $ticket->orderDetails->order->user->id ;
         $ticket_reply->ticket->save();
 
