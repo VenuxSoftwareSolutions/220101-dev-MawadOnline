@@ -33,24 +33,6 @@ class SupportTicketController extends Controller
     public function index()
     {
         seller_lease_creation($user=Auth::user());
-        $orderDetails = new OrderDetail;
-        $order = new Order;
-        $order = $order->where('user_id',$user->id)->get();
-        if(isset($user->owner_id)){
-            $orderDetails =  $orderDetails->where('seller_id',$user->owner_id);
-        }else{
-             $orderIds = $order->where('user_id',$user->id)->pluck('id') ;
-
-
-            $orderDetails = $orderDetails->whereIn('order_id',$orderIds);
-
-            // $orderDetails =  DB::table('order_details as d')
-            //                     ->join('orders as o', 'order.id', '=', 'order_details.order_id')
-            //                     ->where('o.user_id',$user->id)
-            //                     ->select('d.*');
-        }
-        // dd($orderDetails->get());
-        // dd($orderDetails->get());
         $tour_steps=Tour::orderBy('step_number')->get();
         $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
         return view('seller.support_ticket.index', compact('tickets','tour_steps'));
