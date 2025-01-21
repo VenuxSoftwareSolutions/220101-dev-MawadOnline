@@ -129,6 +129,7 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{ static_asset("assets/js/helpers.js") }}"></script>
     <script>
         $(document).ready(function() {
             $('#search_status').select2({
@@ -164,19 +165,5 @@
                 updateUrl('search_sub_order_status', $(this).val());
             });
         });
-
-        function updateUrl(param, value) {
-            const url = new URL(window.location.href);
-            const params = new URLSearchParams(url.search);
-
-            if (value.length > 0) {
-                params.set(param, value);
-            } else {
-                params.delete(param);
-            }
-
-            url.search = params.toString();
-            location.href = url.toString();
-        }
     </script>
 @endsection
