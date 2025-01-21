@@ -9,9 +9,6 @@ use App\Models\Tour;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use App\Models\OrderDetail;
-use App\Models\Order;
 use Mail;
 
 class SupportTicketController extends Controller
@@ -123,21 +120,22 @@ class SupportTicketController extends Controller
         }
     }
 
-    public function saveTicketRelatedToOrder(Request $request){
+    public function saveTicketRelatedToOrder(Request $request)
+    {
         $ticket = new Ticket;
-        $ticket->code    = max(100000, (Ticket::latest()->first() != null ? Ticket::latest()->first()->code + 1 : 0)).date('s');
+        $ticket->code = max(100000, (Ticket::latest()->first() != null ? Ticket::latest()->first()->code + 1 : 0)).date('s');
         $ticket->user_id = Auth::user()->owner_id;
         $ticket->subject = $request->subject;
         $ticket->details = $request->details;
-        $ticket->files   = $request->attachments;
+        $ticket->files = $request->attachments;
         $ticket->order_details_id = $request->order_details;
         dd($ticket);
-        if($ticket->save()){
+        if ($ticket->save()) {
             $this->send_support_mail_to_admin($ticket);
             flash(translate('Ticket has been sent successfully'))->success();
+
             return redirect()->route('seller.support_ticket.index');
-        }
-        else{
+        } else {
             flash(translate('Something went wrong'))->error();
         }
     }
