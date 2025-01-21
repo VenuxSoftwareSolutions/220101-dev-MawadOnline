@@ -37,12 +37,11 @@
                 <form action="{{ route('support_ticket.admin_store') }}" method="post" id="ticket-reply-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="ticket_id" value="{{$ticket->id}}" required>
-                    <input type="hidden" name="status" value="{{ $ticket->status }}" required>
                     <div class="form-group">
                         <textarea class="aiz-text-editor" data-buttons='[["font", ["bold", "underline", "italic"]],["para", ["ul", "ol"]],["view", ["undo","redo"]]]' name="reply" required></textarea>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="true">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
@@ -53,40 +52,62 @@
                             <div class="file-preview box sm">
                             </div>
                         </div>
+
+                    </div>
+                    <div class="form-group row">
                         <div class="col-md-6">
-                            <select  class="form-control" name="submit_to"
-                            data-minimum-results-for-search="Infinity" id="submit_to"
-                            style="" required>
-                                <option value="" readonly disabled selected>
-                                {{ translate('submit to') }}
-                            </option>
-                            <option value="vendor">
-                                {{ translate('vendor') }}
-                            </option>
-                            <option value="buyer">
-                                {{ translate('buyer') }}
-                            </option>
-                        </select>
-                     </div>
+                                <select  class="form-control" name="submit_to"
+                                data-minimum-results-for-search="Infinity" id="submit_to"
+                                style="" required>
+                                    <option value="" readonly disabled selected>
+                                    {{ translate('submit to') }}
+                                </option>
+                                <option value="vendor">
+                                    {{ translate('vendor') }}
+                                </option>
+                                <option value="buyer">
+                                    {{ translate('buyer') }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select  class="form-control" name="submit_as"
+                                data-minimum-results-for-search="Infinity" id="submit_as"
+                                style="">
+                                    <option value="" readonly disabled selected>
+                                    {{ translate('submit as') }}
+                                </option>
+                                <option value="Under Review">
+                                    {{ translate('Under Review') }}
+                                </option>
+                                <option value="Resolved">
+                                    {{ translate('Resolved') }}
+                                </option>
+                                <option value="Rejeced">
+                                    {{ translate('Rejected') }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                     @if($ticket->is_locked == "no" || auth()->user()->id == $ticket->locked_for)
                     <div class="form-group mb-0 text-right">
+
                         <a href="{{route('support_ticket.admin_close',$ticket->id)}}" class="btn btn-sm btn-danger ml-2 text-capitalize">
                                 {{ translate("close") }}
                         </a>
                         <button type="submit" class="btn btn-sm btn-dark" onclick="submit_reply('pending')">
-                            {{ translate('Submit as') }}
-                            <strong>
+                            {{ translate('Submit') }}
+                            <!-- <strong>
                                 <span class="text-capitalize">
                                     {{ translate($ticket->status) }}
                                 </span>
-                            </strong>
+                            </strong> -->
                         </button>
-                        <button type="submit" class="btn btn-icon btn-sm btn-dark" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"><i class="las la-angle-down"></i></button>
+                        <!-- <button type="submit" class="btn btn-icon btn-sm btn-dark" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"><i class="las la-angle-down"></i></button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="#" onclick="submit_reply('open')">sss{{ translate('Submit as') }} <strong>{{ translate('Open') }}</strong></a>
                             <a class="dropdown-item" href="#" onclick="submit_reply('solved')">{{ translate('Submit as') }} <strong>{{ translate('Solved') }}</strong></a>
-                        </div>
+                        </div> -->
                     </div>
                     @endif
                 </form>
@@ -168,7 +189,6 @@
     <script type="text/javascript">
         function submit_reply(status){
             let submitTo = document.getElementById('submit_to').value;
-            console.log(submitTo);
             $('input[name=status]').val(status);
             if($('textarea[name=reply]').val().length > 0 && submitTo){
                 $('#ticket-reply-form').submit();
