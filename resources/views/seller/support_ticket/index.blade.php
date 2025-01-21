@@ -12,92 +12,135 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0 h6">{{ translate('Tickets') }}</h5>
-            <div class="row">
-                <div class="col mx-auto mb-3">
-                    <div id="step2" class="btn btn-primary btn-lg" data-toggle="modal"
-                        data-target="#ticket_modal">
+            <div class="row" style="gap: 5px;">
+                <div class="col px-0">
+                    <div class="input-group input-group-sm">
+                        <select id="tickets_status" class="select2 form-control" multiple="multiple">
+                            <option value="pending"
+                                @isset($ticket_status) @if ($ticket_status == 'pending') selected @endif @endisset>
+                                {{ __('Pending') }}</option>
+                            <option value="resolved"
+                                @isset($ticket_status) @if ($ticket_status == 'resolved') selected @endif @endisset>
+                                {{ __('Resolved') }}</option>
+                            <option value="submitted"
+                                @isset($ticket_status) @if ($ticket_status == 'submitted') selected @endif @endisset>
+                                {{ __('Submitted') }}</option>
+                            <option value="under review"
+                                @isset($ticket_status) @if ($ticket_status == 'under review') selected @endif @endisset>
+                                {{ __('Under Review') }}</option>
+                            <option value="rejected"
+                                @isset($ticket_status) @if ($ticket_status == 'rejected') selected @endif @endisset>
+                                {{ __('Rejected') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col px-0">
+                    <div class="input-group input-group-sm">
+                        <select id="sub_order_status" class="select2 form-control" multiple="multiple">
+                            <option value="pending"
+                                @isset($sub_order_status) @if ($sub_order_status == 'pending') selected @endif @endisset>
+                                {{ translate('Pending') }}</option>
+                            <option value="confirmed"
+                                @isset($sub_order_status) @if ($sub_order_status == 'confirmed') selected @endif @endisset>
+                                {{ translate('Confirmed') }}</option>
+                            <option value="on_the_way"
+                                @isset($sub_order_status) @if ($sub_order_status == 'on_the_way') selected @endif @endisset>
+                                {{ translate('On The Way') }}</option>
+                            <option value="delivered"
+                                @isset($sub_order_status) @if ($sub_order_status == 'delivered') selected @endif @endisset>
+                                {{ translate('Delivered') }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col d-none">
+                    <div id="step2" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ticket_modal">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Create ticket') }}
                     </div>
                 </div>
             </div>
         </div>
-          <div class="card-body">
-              <table  id="step1" class="table aiz-table mb-0">
-                  <thead>
-                      <tr>
-                          <th data-breakpoints="lg">{{ translate('Ticket ID') }}</th>
-                          <th data-breakpoints="lg">{{ translate('Sending Date') }}</th>
-                          <th>{{ translate('Subject')}}</th>
-                          <th>{{ translate('Status')}}</th>
-                          <th data-breakpoints="lg">{{ translate('Options')}}</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      @foreach ($tickets as $key => $ticket)
-                          <tr>
-                              <td>#{{ $ticket->code }}</td>
-                              <td>{{ $ticket->created_at }}</td>
-                              <td>{{ $ticket->subject }}</td>
-                              <td>
-                                  @if ($ticket->status == 'pending')
-                                      <span class="badge badge-inline badge-danger">{{ translate('Pending')}}</span>
-                                  @elseif ($ticket->status == 'Submitted')
-                                      <span class="badge badge-inline badge-secondary">{{ translate('Submitted')}}</span>
-                                  @elseif ($ticket->status == 'Resolved')
-                                      <span class="badge badge-inline badge-success">{{ translate('Resolved')}}</span>
-                                  @elseif ($ticket->status == 'Under Review')
-                                      <span class="badge badge-inline badge-warning">{{ translate('Under Review')}}</span>
-                                  @elseif ($ticket->status == 'Rejected')
-                                      <span class="badge badge-inline badge-info">{{ translate('Rejected')}}</span>
-                                  @endif
-                              </td>
-                              <td>
-                                  <a href="{{route('seller.support_ticket.show', encrypt($ticket->id))}}" class="btn btn-styled btn-link py-1 px-0 icon-anim text-underline--none">
-                                      {{ translate('View Details')}}
-                                      <i class="la la-angle-right text-sm"></i>
-                                  </a>
-                              </td>
-                          </tr>
-                      @endforeach
-                  </tbody>
-              </table>
-              <div class="aiz-pagination">
-                  {{ $tickets->links() }}
-              </div>
-          </div>
+        <div class="card-body">
+            <table id="step1" class="table aiz-table mb-0">
+                <thead>
+                    <tr>
+                        <th data-breakpoints="lg">{{ translate('Ticket ID') }}</th>
+                        <th data-breakpoints="lg">{{ translate('Sending Date') }}</th>
+                        <th>{{ translate('Subject') }}</th>
+                        <th>{{ translate('Status') }}</th>
+                        <th data-breakpoints="lg">{{ translate('Options') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($tickets as $key => $ticket)
+                        <tr>
+                            <td>#{{ $ticket->code }}</td>
+                            <td>{{ $ticket->created_at }}</td>
+                            <td>{{ $ticket->subject }}</td>
+                            <td>
+                                @if (str()->lower($ticket->status) === 'pending')
+                                    <span class="badge badge-inline badge-danger">{{ translate('Pending') }}</span>
+                                @elseif ($ticket->status == 'Submitted')
+                                    <span class="badge badge-inline badge-secondary">{{ translate('Submitted') }}</span>
+                                @elseif (str()->lower($ticket->status) === 'resolved')
+                                    <span class="badge badge-inline badge-success">{{ translate('Resolved') }}</span>
+                                @elseif ($ticket->status == 'Under Review')
+                                    <span class="badge badge-inline badge-warning">{{ translate('Under Review') }}</span>
+                                @elseif (str()->lower($ticket->status) === 'rejected')
+                                    <span class="badge badge-inline badge-info">{{ translate('Rejected') }}</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('seller.support_ticket.show', encrypt($ticket->id)) }}"
+                                    class="btn btn-styled btn-link py-1 px-0 icon-anim text-underline--none">
+                                    {{ translate('View Details') }}
+                                    <i class="la la-angle-right text-sm"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="aiz-pagination">
+                {{ $tickets->links() }}
+            </div>
+        </div>
     </div>
 @endsection
 
 @section('modal')
-<div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                  <h5 class="modal-title strong-600 heading-5">{{ translate('Create a Ticket')}}</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                  </button>
-              </div>
-              <div class="modal-body px-3 pt-3">
-                  <form class="" action="{{ route('seller.support_ticket.store') }}" method="post" enctype="multipart/form-data">
-                      @csrf
+    <div class="modal fade" id="ticket_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title strong-600 heading-5">{{ translate('Create a Ticket') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body px-3 pt-3">
+                    <form class="" action="{{ route('seller.support_ticket.store') }}" method="post"
+                        enctype="multipart/form-data">
+                        @csrf
 
-                      <div class="row">
-                          <div class="col-md-2">
-                              <label>{{ translate('order')}}</label>
-                          </div>
-                          <div class="col-md-10">
-                              <input type="text" class="form-control mb-3" placeholder="{{ translate('Subject')}}" name="subject" required>
-                          </div>
-                      </div>
-                      <div class="row">
-                          <div class="col-md-2">
-                              <label>{{ translate('Subject')}}</label>
-                          </div>
-                          <div class="col-md-10">
-                              <input type="text" class="form-control mb-3" placeholder="{{ translate('Subject')}}" name="subject" required>
-                          </div>
-                      </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>{{ translate('order') }}</label>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control mb-3" placeholder="{{ translate('Subject') }}"
+                                    name="subject" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label>{{ translate('Subject') }}</label>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control mb-3" placeholder="{{ translate('Subject') }}"
+                                    name="subject" required>
+                            </div>
+                        </div>
 
                         <div class="row">
                             <div class="col-md-2">
@@ -133,23 +176,52 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 @endsection
 
 @section('script')
+    <script src="{{ static_asset('assets/js/helpers.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            $('#tickets_status').select2({
+                placeholder: "{{ __('Choose ticket status') }}"
+            });
+
+            $('#sub_order_status').select2({
+                placeholder: "{{ __('Choose sub-order status') }}"
+            });
+
+            @if (is_null($ticket_status) === false && is_string($ticket_status) === false)
+                const selectedTicketsOptions = @json($ticket_status->toArray());
+                $('#tickets_status').val(selectedTicketsOptions).trigger('change');
+            @endif
+
+            @if (is_null($sub_order_status) === false && is_string($sub_order_status) === false)
+                const selectedSubOrderStatusOptions = @json($sub_order_status->toArray());
+                $('#sub_order_status').val(selectedSubOrderStatusOptions).trigger('change');
+            @endif
+
+            $("#tickets_status").on('change', function() {
+                updateUrl('ticket_status', $(this).val());
+            });
+
+            $("#sub_order_status").on('change', function() {
+                updateUrl('sub_order_status', $(this).val());
+            });
+
             document.getElementById('startTourButton').addEventListener('click', function(event) {
                 event.preventDefault();
                 localStorage.setItem('guide_tour', '0');
                 window.location.href = '{{ route('seller.dashboard') }}';
             });
+
             if (localStorage.getItem('guide_tour') != '0') {
                 if ({{ Auth::user()->tour }} == true | {{ Auth::user()->id }} != {{ Auth::user()->owner_id }}) {
                     return;
                 }
             }
-            var tour_steps = [
+
+            let tour_steps = [
                 @foreach ($tour_steps as $key => $step)
                     {
                         element: document.querySelector('#{{ $step->element_id }}'),
@@ -159,7 +231,7 @@
                     },
                 @endforeach
             ];
-            var lang = '{{ $tour_steps[0]->getTranslation('lang') }}';
+            let lang = '{{ $tour_steps[0]->getTranslation('lang') }}';
             let tour = introJs();
             let step_number = 0;
             tour.setOptions({
@@ -182,7 +254,7 @@
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}'
-                    }, // Include CSRF token for Laravel
+                    },
                     success: function(response) {
                         console.log('User tour status updated successfully');
                     },
@@ -190,7 +262,7 @@
                         console.error('Error updating user tour status:', error);
                     }
                 });
-                localStorage.setItem('guide_tour', '1'); // Set local storage as required
+                localStorage.setItem('guide_tour', '1');
                 setTimeout(function() {
                     window.location.href = '{{ route('seller.dashboard') }}';
                 }, 500);
@@ -198,7 +270,7 @@
 
             tour.onbeforechange(function(targetElement) {
                 if (this._direction === 'backward') {
-                    window.location.href = '{{ route('seller.sales.index') }}'; // Redirect to another page
+                    window.location.href = '{{ route('seller.sales.index') }}';
                     sleep(60000);
                 }
                 step_number += 1;

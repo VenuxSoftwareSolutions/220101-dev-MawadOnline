@@ -29,16 +29,51 @@ class SupportTicketController extends Controller
      */
     public function index()
     {
-        seller_lease_creation($user=Auth::user());
-        $tour_steps=Tour::orderBy('step_number')->get();
-        $tickets = Ticket::where(function ($query)  {
-                $query->where('user_id', Auth::user()->owner_id)
-                    ->orWhereHas('ticketReplies', function ($q) {
-                        $q->where('reply_to', Auth::user()->owner_id);
-                    });
-                })->orderBy('created_at', 'desc')->paginate(10);
-        // $tickets = Ticket::where('user_id', Auth::user()->owner_id)->orderBy('created_at', 'desc')->paginate(9);
-        return view('seller.support_ticket.index', compact('tickets','tour_steps'));
+        seller_lease_creation($user = Auth::user());
+        $ticket_status = request()->has('ticket_status') ? (
+            str(request()->ticket_status)->contains(',') === true ?
+            str(request()->ticket_status)->explode(',')
+            : request()->ticket_status
+        ) : null;
+        $sub_order_status = request()->has('sub_order_status') ? (
+            str(request()->sub_order_status)->contains(',') === true ?
+            str(request()->sub_order_status)->explode(',')
+            : request()->sub_order_status
+        ) : null;
+
+        $tickets = Ticket::where('user_id', Auth::user()->owner_id);
+
+        $tour_steps = Tour::orderBy('step_number')->get();
+
+        if ($ticket_status !== null) {
+            $tickets->where(function ($query) use ($ticket_status) {
+                if (is_string($ticket_status)) {
+                    $query->where('status', $ticket_status);
+                } else {
+                    $query->whereIn('status', $ticket_status->toArray());
+                }
+            });
+        }
+
+        if ($sub_order_status !== null) {
+            $tickets = $tickets->whereHas(
+                'orderDetails', function ($query) use ($sub_order_status) {
+                    if (is_string($sub_order_status) === true) {
+                        $query->where('delivery_status', $sub_order_status);
+                    } else {
+                        $query->whereIn('delivery_status', $sub_order_status->toArray());
+                    }
+                },
+            );
+        }
+
+        $tickets = $tickets->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('seller.support_ticket.index', compact(
+            'tickets', 'tour_steps',
+            'ticket_status', 'sub_order_status'
+        ));
     }
 
     /**
