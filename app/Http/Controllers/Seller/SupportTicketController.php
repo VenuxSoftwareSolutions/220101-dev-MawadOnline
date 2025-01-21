@@ -9,7 +9,6 @@ use App\Models\Tour;
 use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
-use App\Mail\SupportMailManager;
 use Spatie\Permission\Models\Role;
 use App\Models\OrderDetail;
 use App\Models\Order;
