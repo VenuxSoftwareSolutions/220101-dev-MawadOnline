@@ -2,20 +2,23 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Http\Controllers\AramexController;
+use App\Models\BusinessInformation;
+use App\Models\ContactPerson;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductStock;
 use App\Models\SmsTemplate;
 use App\Models\StockSummary;
+use App\Models\TrackingShipment;
 use App\Models\User;
+use App\Models\Warehouse;
 use App\Utility\NotificationUtility;
 use App\Utility\SmsUtility;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AramexController;
 use Log;
-use App\Models\TrackingShipment;
 
 class OrderController extends Controller
 {
@@ -35,13 +38,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        /* seller_lease_creation($user=Auth::user()); */
-
-        /*  $step=7; */
-        /*  $tour_steps=Tour::orderBy('step_number')->get(); */
-        /*  return view('seller.coming_soon',compact('step','tour_steps')); */
-
-        $payment_status = null;
+        $payment_status = "paid";
         $delivery_status = null;
         $sort_search = null;
         $orders = Order::orderBy('id', 'desc')
@@ -76,16 +73,32 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::findOrFail(decrypt($id));
-        $order_shipping_address = json_decode($order->shipping_address);
-        $delivery_boys = User::where('city', $order_shipping_address->city)
-            ->where('user_type', 'delivery_boy')
-            ->get();
+        $id = decrypt($id);
 
-        $order->viewed = 1;
-        $order->save();
+        try {
+            $order = Order::with('orderDetails.product')->findOrFail($id);
+            $order_shipping_address = json_decode($order->shipping_address);
+            $delivery_boys = User::where('city', $order_shipping_address->city)
+                ->where('user_type', 'delivery_boy')
+                ->get();
 
-        return view('seller.orders.show', compact('order', 'delivery_boys'));
+            $delivery_status = $order->delivery_status;
+            $payment_status = $order->orderDetails
+                ->where('seller_id', Auth::user()->owner_id)
+                ->first()
+                ->payment_status;
+
+            $order->viewed = 1;
+            $order->save();
+
+            return view('seller.orders.show', compact(
+                'order', 'delivery_status',
+                'payment_status', 'delivery_boys'
+            ));
+        } catch (Exception $e) {
+            Log::error("Error while showing order {$id}, with message: {$e->getMessage()}");
+            abort(500);
+        }
     }
 
     public function update_delivery_status(Request $request)
@@ -96,20 +109,69 @@ class OrderController extends Controller
             $order->delivery_status = $request->status;
             $order->save();
 
-            if ($request->status === "ready_for_shipment") {
+            $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
+
+            if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
                 $controller = new AramexController;
+
+                $warehouses = session()->get('warehouses');
+                $selectedWarehouse = Warehouse::findOrFail($warehouses[0]['warehouse_id']);
+
+                $vendorBusinessInfo = BusinessInformation::where('user_id', auth()->user()->id)->first();
+                $contactPerson = ContactPerson::where('user_id', auth()->user()->id)->first();
+
+                $request->merge([
+                    'pickup_address_line1' => $selectedWarehouse->address_street,
+                    'pickup_address_line2' => $selectedWarehouse->address_building,
+                    'pickup_address_line3' => $selectedWarehouse->address_unit,
+                    'pickup_city' => $selectedWarehouse->area_id,
+                    'pickup_state' => $selectedWarehouse->emirate_id,
+                    'full_name' => "$contactPerson->first_name $contactPerson->last_name",
+                    'phone' => $contactPerson->mobile_phone,
+                    'shipper_address_line1' => $vendorBusinessInfo->street,
+                    'shipper_address_line2' => null,
+                    'shipper_address_line3' => null,
+                    'shipper_building_name' => $vendorBusinessInfo->building,
+                    'shipper_building_number' => $vendorBusinessInfo->unit,
+                    'shipper_post_code' => $vendorBusinessInfo->po_box,
+                    'state' => $vendorBusinessInfo->state,
+                    'city' => $vendorBusinessInfo->area_id,
+                    'email' => $contactPerson->email,
+                ]);
+
                 $pickup_input = $controller->transformNewPickupData($request->all());
 
                 $pickup = $controller->createPickup($pickup_input);
 
-                if ($pickup !== null && $pickup["HasErrors"] === true) {
+                if ($pickup !== null && $pickup['HasErrors'] === true) {
+                    Log::error(sprintf(
+                        'Error while creating pickup for order %d, with message: %s',
+                        $order->id, json_encode($pickup)
+                    ));
+
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
+
                     return response()->json([
-                        "error" => true,
-                        "message" => __("There's an error while processing pickup creation! Please try again later!")
+                        'error' => true,
+                        'message' => __("There's an error while processing pickup creation! Please try again later!"),
                     ], 500);
                 }
 
                 $product = get_single_product($request->product_id);
+
+                $package_weight = $product->weight !== null ? (
+                    str()->lower($product->unit_weight) === 'kilograms' ?
+                    $product->weight
+                    : $product->weight * POUNDS_TO_KG_RATIO
+                ) : null;
+
+                $actualWeightValue = $package_weight !== null ? (
+                    (float) ($package_weight * $order->quantity * WEIGHT_MARGIN)
+                ) : ((float) $controller->calculateShipmentActualWeight(
+                    $product->only(['length', 'width', 'height']),
+                    $order->quantity
+                ));
 
                 $dimensions = [
                     'Length' => $product->length,
@@ -118,28 +180,42 @@ class OrderController extends Controller
                     'Unit' => 'cm',
                 ];
 
+                $weight = [
+                    'Value' => $actualWeightValue,
+                    'Unit' => 'KG',
+                ];
+
                 $request->merge([
-                    "pickup_guid" => $pickup["ProcessedPickup"]["GUID"],
-                    "dimensions" => $dimensions
+                    'pickup_guid' => $pickup['ProcessedPickup']['GUID'],
+                    'dimensions' => $dimensions,
+                    'weight' => $weight,
                 ]);
 
                 $shipment_input = $controller->transformNewShipmentsData($request->all());
                 $shipment = $controller->createShipments($shipment_input);
 
-                if ($shipment !== null && $shipment["HasErrors"] === true) {
+                if ($shipment !== null && $shipment['HasErrors'] === true) {
+                    Log::error(sprintf(
+                        'Error while creating shipment for order %d, with message: %s',
+                        $order->id, json_encode($shipment)
+                    ));
+
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
+
                     return response()->json([
-                        "error" => true,
-                        "message" => __("There's an error while processing shipment creation! Please try again later!")
+                        'error' => true,
+                        'message' => __("There's an error while processing shipment creation! Please try again later!"),
                     ], 500);
                 }
 
-                $link = $shipment["Shipments"][0]["ShipmentLabel"]["LabelURL"];
+                $link = $shipment['Shipments'][0]['ShipmentLabel']['LabelURL'];
 
                 TrackingShipment::firstOrCreate([
-                    "user_id" => auth()->user()->id,
-                    "order_detail_id" => $order->id,
-                    "shipment_id" => $shipment["Shipments"][0]["ID"],
-                    "label_url" => $link
+                    'user_id' => auth()->user()->id,
+                    'order_detail_id' => $order->id,
+                    'shipment_id' => $shipment['Shipments'][0]['ID'],
+                    'label_url' => $link,
                 ]);
             }
 
@@ -173,7 +249,8 @@ class OrderController extends Controller
             ) {
                 try {
                     SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
-                } catch (Exception) {}
+                } catch (Exception) {
+                }
             }
 
             NotificationUtility::sendNotification($order->order, $request->status);
@@ -181,13 +258,13 @@ class OrderController extends Controller
             if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
                 $status = str_replace('_', '', $order->delivery_status);
                 $request->merge([
-                    "device_token" => $order->order->user->device_token,
-                    "title" => 'Order updated !',
-                    "status" => $status,
-                    "text" => " Your order {$order->order->code} has been {$status}",
-                    "type" => 'order',
-                    "id" => $order->id,
-                    "user_id" => $order->order->user->id
+                    'device_token' => $order->order->user->device_token,
+                    'title' => 'Order updated !',
+                    'status' => $status,
+                    'text' => " Your order {$order->order->code} has been {$status}",
+                    'type' => 'order',
+                    'id' => $order->id,
+                    'user_id' => $order->order->user->id,
                 ]);
 
                 NotificationUtility::sendFirebaseNotification($request);
@@ -200,21 +277,22 @@ class OrderController extends Controller
                 }
             }
 
-           if ($request->status === "ready_for_shipment") {
+            if ($request->status === 'ready_for_shipment') {
                 return response()->json([
-                    "error" => false,
-                    "data" => [
-                        "link" => $link
-                    ]
+                    'error' => false,
+                    'data' => [
+                        'link' => $link,
+                    ],
                 ], 200);
             }
 
             return 1;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
-            return response()->json(["error" => true, "message" => __("Something went wrong!")]);
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         }
-     }
+    }
 
     // Update Payment Status
     public function update_payment_status(Request $request)
@@ -229,7 +307,7 @@ class OrderController extends Controller
         }
 
         $status = 'paid';
-        foreach ($order->orderDetails as $key => $orderDetail) {
+        foreach ($order->orderDetails as $orderDetail) {
             if ($orderDetail->payment_status != 'paid') {
                 $status = 'unpaid';
             }
@@ -259,26 +337,28 @@ class OrderController extends Controller
         if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'payment_status_change')->first()->status == 1) {
             try {
                 SmsUtility::payment_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (\Exception $e) {
-
+            } catch (Exception) {
             }
         }
 
         return 1;
     }
 
-    public function getWarhouses(Request $request)
+    public function getWarehouses(Request $request)
     {
         try {
             $quantity = OrderDetail::find($request->order_id)->quantity;
-            $data = StockSummary::where(['seller_id' => $request->seller, 'variant_id' => $request->product])
+            $data = StockSummary::where([
+                'seller_id' => $request->seller,
+                'variant_id' => $request->product,
+            ])->where('current_total_quantity', '>', 0)
                 ->with(['productVariant', 'warehouse'])->get();
 
             return response()->json(['error' => false, 'data' => $data, 'quantity' => $quantity]);
         } catch (Exception $e) {
             Log::error($e->getMessage());
 
-            return response()->json(['error' => true, 'message' => $e->getMessage()]);
+            return response()->json(['error' => true, 'message' => __('Something went wrong')]);
         }
 
     }
@@ -293,12 +373,17 @@ class OrderController extends Controller
             $globalOrder->save();
             $order->delivery_status = 'in_preparation';
             $order->save();
-            foreach ($warehouses as $key => $value) {
-                $stock = StockSummary::where(['warehouse_id' => $value['warehouse_id'], 'variant_id' => $request->product])
-                    ->first();
+
+            foreach ($warehouses as $value) {
+                $stock = StockSummary::where([
+                    'warehouse_id' => $value['warehouse_id'],
+                    'variant_id' => $request->product,
+                ])->first();
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }
+
+            session()->put('warehouses', $warehouses);
 
             return response()->json(['error' => false, 'message' => translate('Order status has been updated')]);
         } catch (Exception $e) {
