@@ -89,16 +89,18 @@
         <div class="py-3 text-center border-top mx-4" style="border-color: #e5e5e5 !important;">
             <div class="row gutters-10 justify-content-center">
                 @if (Auth::check())
-                <div class="col-sm-6">
+                <div class="col-12 d-flex justify-content-between px-3">
+                <div class="col-5 p-0 float-left">
                     <a href="{{ route('checkout.shipping_info') }}"
-                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-18 font-prompt py-2">
+                        class="col-12 btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-18 font-prompt py-2 px-2">
                         {{ translate('Checkout') }}
                     </a>
                 </div>
-                <div class="col-sm-6 mb-2">
-                    <a href="{{ route('cart') }}" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-18 font-prompt py-2">
+                <div class="col-5 mb-2 p-0 float-right">
+                    <a href="{{ route('cart') }}" class="col-12 btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-18 font-prompt py-2 px-2">
                         {{ translate('View cart') }}
                     </a>
+                </div>
                 </div>
                 @else
                 <div class="col-sm-6 mb-2">

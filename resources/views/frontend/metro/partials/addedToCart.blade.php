@@ -24,7 +24,7 @@
                 {{ $product->getTranslation('name') }}
             </h6>
             <div class="row mt-2">
-                <div class="col-2 pr-0 fs-16 font-prompt text-secondary">
+                <div class="col-3 col-md-2 pr-0 fs-16 font-prompt text-secondary">
                     <div>{{ translate('Price') }}</div>
                 </div>
                 <div class="col-9 p-0">
@@ -86,15 +86,32 @@
     @endif
 
     <!-- Back to shopping & Checkout buttons -->
-    <div class="row gutters-5">
-        <div class="col-6">
-            <button class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2 w-210px"
-                data-dismiss="modal">{{ translate('Back to shopping') }}</button>
-        </div>
-        <div class="col-6">
-            <a href="{{ route('cart') }}"
-                class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2 float-right w-210px">{{ translate('Proceed to Checkout') }}</a>
-        </div>
-
-    </div>
+                            <div class="row align-items-center">
+                                <!-- Return to shop -->
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-none d-md-block">
+                                    <button data-dismiss="modal" class="btn btn-white cart-drop-btn-checkout text-secondary-base border-radius-12 fs-16 font-prompt py-2 w-210px">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        {{ translate('Return to shop') }}
+                                    </button>
+                                </div>
+                                <div class="col-md-6 text-center text-md-left order-1 order-md-0 d-block d-md-none">
+                                    <button data-dismiss="modal" class="btn btn-link fs-16 text-secondary-base font-prompt pt-3 px-0">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#cb774b" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        {{ translate('Return to shop') }}
+                                    </button>
+                                </div>
+                                <!-- Continue to Delivery Info -->
+                                <div class="col-md-6 text-center text-md-right d-none d-md-block">
+                                    <a href="{{ route('cart') }}"
+                                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2 w-210px">{{ translate('Continue to Payment') }}</a>
+                                </div>
+                                <div class="col-md-6 text-center text-md-right d-block d-md-none">
+                                    <a href="{{ route('cart') }}"
+                                        class="btn btn-secondary-base cart-drop-btn-vcart text-white border-radius-12 fs-16 font-prompt py-2">{{ translate('Continue to Payment') }}</a>
+                                </div>
+                            </div>
 </div>
