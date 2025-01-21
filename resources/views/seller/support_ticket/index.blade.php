@@ -43,10 +43,14 @@
                               <td>
                                   @if ($ticket->status == 'pending')
                                       <span class="badge badge-inline badge-danger">{{ translate('Pending')}}</span>
-                                  @elseif ($ticket->status == 'open')
-                                      <span class="badge badge-inline badge-secondary">{{ translate('Open')}}</span>
-                                  @else
-                                      <span class="badge badge-inline badge-success">{{ translate('Solved')}}</span>
+                                  @elseif ($ticket->status == 'Submitted')
+                                      <span class="badge badge-inline badge-secondary">{{ translate('Submitted')}}</span>
+                                  @elseif ($ticket->status == 'Resolved')
+                                      <span class="badge badge-inline badge-success">{{ translate('Resolved')}}</span>
+                                  @elseif ($ticket->status == 'Under Review')
+                                      <span class="badge badge-inline badge-warning">{{ translate('Under Review')}}</span>
+                                  @elseif ($ticket->status == 'Rejected')
+                                      <span class="badge badge-inline badge-info">{{ translate('Rejected')}}</span>
                                   @endif
                               </td>
                               <td>
