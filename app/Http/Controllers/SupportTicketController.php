@@ -48,9 +48,7 @@ class SupportTicketController extends Controller
         $search_sub_order_status = null;
 
         $isSearchStatusQueryParamExists = $search_status !== null;
-        $tickets = Ticket::orderBy('created_at', 'desc')
-            ->orderByRaw("FIELD(status , 'pending', 'submitted', 'resolved', 'rejected') ASC");
-
+        $tickets = Ticket::orderByRaw("FIELD(status , 'pending', 'submitted', 'resolved', 'rejected') ASC");
 
         $tickets = Ticket::when(
             $isSearchStatusQueryParamExists,
