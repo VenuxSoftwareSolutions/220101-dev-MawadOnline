@@ -289,12 +289,6 @@
                 <div class="modal-body c-scrollbar-light">
                     <div class="p-3">
                         <form id="shipment_form">
-                            <div class="row">
-                                <div class="col-md-4">{{ __('Shipping date') }} *</div>
-                                <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
-                                        id="shipping_datetime" name="shipping_datetime"
-                                        value="{{ old('shipping_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
-                            </div>
                             @if (json_decode($order->shipping_address))
                                 <input type="hidden" name="consignee_email"
                                     value="{{ json_decode($order->shipping_address)->email }}">
@@ -320,7 +314,6 @@
                                         id="pickup_datetime" name="pickup_datetime"
                                         value="{{ old('pickup_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
                             </div>
-
                             <div class="modal-footer form-group text-right">
                                 <button type="button" class="btn btn-secondary rounded-0 w-150px"
                                     data-dismiss="modal">{{ __('Close') }}</button>
