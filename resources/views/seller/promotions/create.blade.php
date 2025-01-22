@@ -709,6 +709,8 @@
                 const orderAmount = form.querySelector("#order_amount").value;
                 const generatedCode = document.getElementById("code").value;
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
+                const maxQty = form.querySelector("input[name='max_qty']").value;
+                const minQty = form.querySelector("input[name='min_qty']").value;
 
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
@@ -729,6 +731,13 @@
                 if (offerType === "coupon" && (!generatedCode)) {
                     return showError ("Please generate a coupon code before submitting.");
                 }
+                if (minQty === "" || isNaN(minQty) || minQty <= 0)
+                    return showError("Minimum quantity must be a positive number.");
+                if (maxQty === "" || isNaN(maxQty) || maxQty <= 0)
+                    return showError("Maximum quantity must be a positive number.");
+                if (Number(maxQty) < Number(minQty))
+                    return showError("Maximum quantity must be greater than or equal to the minimum quantity.");
+
                 return true;
             }
 
