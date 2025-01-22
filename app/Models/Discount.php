@@ -10,7 +10,8 @@ class Discount extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['scope', 'product_id', 'category_id', 'user_id', 'min_order_amount', 'discount_percentage', 'max_discount', 'start_date', 'end_date', 'status'];
+    protected $fillable = ['scope', 'product_id', 'category_id', 'user_id', 'min_order_amount', 'discount_percentage', 'max_discount','min_qty',
+    'max_qty','start_date', 'end_date', 'status'];
 
     protected $casts = [
         'start_date' => 'date',
