@@ -182,4 +182,16 @@ class Discount extends Model
             'max_discount_amount' => $highestDiscount->max_discount,
         ];
     }
+    
+    public function isApplicableForQuantity($qty)
+    {
+        if ((!is_null($this->min_qty) && $qty < $this->min_qty) ||
+            (!is_null($this->max_qty) && $qty > $this->max_qty)) {
+            return false;
+        }
+    
+        return true;
+    }
+    
+
 }
