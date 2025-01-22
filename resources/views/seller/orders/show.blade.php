@@ -537,8 +537,8 @@
                         if (data.link !== undefined) {
                             $("#shipment-modal").modal("hide");
                             Swal.fire({
-                                title: "{{ __("Sub-order status") }}",
-                                text: "{{ __("Sub-order status has been updated, a printable label has been generated, it will be opened in a new tab to download.") }}",
+                                title: "{{ __('Sub-order status') }}",
+                                text: "{{ __('Sub-order status has been updated, a printable label has been generated, it will be opened in a new tab to download.') }}",
                                 icon: "success"
                             }).then(() => {
                                 window.open(data.link, "_blank");
