@@ -789,8 +789,8 @@ class AramexController extends Controller
                         ],
                     ],
                     'ThirdParty' => null,
-                    'ShippingDateTime' => '/Date('.Carbon::parse($input['shipping_datetime'])->valueOf().')/',
-                    'DueDate' => '/Date('.Carbon::parse($input['shipping_datetime'])->addDays(3)->valueOf().')/',
+                    'ShippingDateTime' => '/Date('.Carbon::now()->valueOf().')/',
+                    'DueDate' => '/Date('.Carbon::parse($input["pickup_datetime"])->valueOf().')/',
                     'Comments' => null,
                     'PickupLocation' => sprintf(
                         '%s %s, %s %s %s',
