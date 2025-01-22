@@ -311,8 +311,12 @@
                             <div class="row">
                                 <div class="col-md-4">{{ __('Pickup date') }} *</div>
                                 <div class="col-md-8"><input type="datetime-local" class="form-control my-2"
-                                        id="pickup_datetime" name="pickup_datetime"
-                                        value="{{ old('pickup_datetime', now()->format('Y-m-d\TH:i')) }}"></div>
+                                        id="pickup_datetime" name="pickup_datetime" /></div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    {{ __('Note: reverting to previous step is not possible after creating pickup/shipment') }}.
+                                </div>
                             </div>
                             <div class="modal-footer form-group text-right">
                                 <button type="button" class="btn btn-secondary rounded-0 w-150px"
