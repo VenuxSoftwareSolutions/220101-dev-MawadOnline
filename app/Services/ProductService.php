@@ -519,9 +519,19 @@ class ProductService
             }
 
             if (! isset($data['activate_attributes'])) {
-                return $this->storeProductWithDependencies($data, $pricing, $general_attributes_data, $ids_attributes_list, $ids_attributes_numeric, $unit_general_attributes_data, $shipping);
+                return $this->storeProductWithDependencies(
+                    $data, $pricing, $general_attributes_data,
+                    $ids_attributes_list, $ids_attributes_numeric,
+                    $unit_general_attributes_data, $shipping
+                );
             } else {
-                return $this->storeParentProductWithDependencies($data, $pricing, $shipping, $vat, $variants_data, $shipping_sample_parent, $ids_attributes_list, $ids_attributes_color, $ids_attributes_numeric, $vat_user, $general_attributes_data, $unit_general_attributes_data);
+                return $this->storeParentProductWithDependencies(
+                    $data, $pricing, $shipping,
+                    $vat, $variants_data, $shipping_sample_parent,
+                    $ids_attributes_list, $ids_attributes_color,
+                    $ids_attributes_numeric, $vat_user,
+                    $general_attributes_data, $unit_general_attributes_data
+                );
             }
         } catch (Exception $e) {
             Log::error('Error while store product data, with message: '.$e->getMessage());
