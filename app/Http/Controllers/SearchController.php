@@ -407,7 +407,7 @@ class SearchController extends Controller
   
 
     public function index(Request $request, $category_id = null, $brand_id = null)
-{
+    {
         $language = App::getLocale();
         $query = $request->keyword;
         $sort_by = $request->sort_by;
@@ -562,43 +562,73 @@ class SearchController extends Controller
         });
     }
 
+    $products = Product::query();
+
+
     if ($min_price || $max_price) {
         $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
             $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
-                if ($max_price) {
+                if ($min_price) {
                     $q->whereRaw('
-                        (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
-                                THEN CASE 
-                                    WHEN discount_type = "amount" THEN unit_price - discount_amount 
-                                    WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
-                                    ELSE unit_price 
-                                END 
-                            ELSE unit_price 
-                        END AS effective_price
-                        FROM pricing_configurations
-                        WHERE pricing_configurations.id_products = products.id
-                        ORDER BY pricing_configurations.from DESC
-                        LIMIT 1) >= ?', [$min_price]);
+                        (SELECT 
+                            CASE 
+                                WHEN EXISTS (
+                                    SELECT 1 
+                                    FROM discounts 
+                                    WHERE discounts.product_id = pricing_configurations.id_products
+                                )
+                                THEN (
+                                    pricing_configurations.unit_price - 
+                                    (pricing_configurations.unit_price * 
+                                        COALESCE(
+                                            (SELECT discount_percentage  
+                                             FROM discounts 
+                                             WHERE discounts.product_id = pricing_configurations.id_products
+                                             ORDER BY discounts.created_at DESC
+                                             LIMIT 1), 
+                                            0
+                                        )
+                                    )
+                                )
+                                ELSE pricing_configurations.unit_price
+                            END
+                        ) >= ?', [$min_price]);
                 }
-
+    
                 if ($max_price) {
                     $q->whereRaw('
-                        (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
-                                THEN CASE 
-                                    WHEN discount_type = "amount" THEN unit_price - discount_amount 
-                                    WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
-                                    ELSE unit_price 
-                                END 
-                            ELSE unit_price 
-                        END AS effective_price
-                        FROM pricing_configurations
-                        WHERE pricing_configurations.id_products = products.id
-                        ORDER BY pricing_configurations.from ASC
-                        LIMIT 1) <= ?', [$max_price]);
+                        (SELECT 
+                            CASE 
+                                WHEN EXISTS (
+                                    SELECT 1 
+                                    FROM discounts 
+                                    WHERE discounts.product_id = pricing_configurations.id_products
+                                )
+                                THEN (
+                                    pricing_configurations.unit_price - 
+                                    (pricing_configurations.unit_price * 
+                                        COALESCE(
+                                            (SELECT discount_percentage / 100 
+                                             FROM discounts 
+                                             WHERE discounts.product_id = pricing_configurations.id_products
+                                             ORDER BY discounts.created_at DESC
+                                             LIMIT 1), 
+                                            0
+                                        )
+                                    )
+                                )
+                                ELSE pricing_configurations.unit_price
+                            END
+                        ) <= ?', [$max_price]);
                 }
             });
         });
     }
+    
+    
+    
+
+
     
     
     
