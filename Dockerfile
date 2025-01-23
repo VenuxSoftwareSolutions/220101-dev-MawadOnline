@@ -57,10 +57,10 @@ COPY --chown=www-data:www-data . /var/www
 
 
 # Copy Apache configuration file
-COPY docker/apache/mawad.conf /etc/apache2/sites-available/mawad.conf
+COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 
-RUN a2ensite mawad.conf
+RUN a2ensite 000-default.conf
 
 # Expose port 80
 EXPOSE 80
