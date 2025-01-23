@@ -12,8 +12,11 @@ class StockDetails extends Model
 
     protected $fillable = [
         'operation_type', 'variant_id', 'warehouse_id',
-        'before_quantity', 'transaction_quantity', 'after_quantity', 'user_comment', 'seller_id',
+        'before_quantity', 'transaction_quantity',
+        'after_quantity', 'user_comment',
+        'order_id', 'seller_id',
     ];
+
     protected $with = ["warehouse"];
 
     public function warehouse()
