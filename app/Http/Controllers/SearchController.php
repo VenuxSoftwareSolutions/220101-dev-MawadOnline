@@ -12,6 +12,8 @@ use App\Models\Shop;
 use App\Models\Unity;
 use App\Models\Attribute;
 use App\Models\ColorGroup;
+USE App\Models\Discount;
+use App\Models\PricingConfiguration;
 use App\Models\AttributeCategory;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\App;
@@ -427,7 +429,6 @@ class SearchController extends Controller
         $products = Product::where('published', '1')
             ->where('auction_product', 0)
             ->where('approved', '1');
-
         if ($category_id != null) {
                 // Fetch category hierarchy and filter products
                 $category_ids = CategoryUtility::children_ids($category_id);
@@ -479,7 +480,7 @@ class SearchController extends Controller
         if ($max_all_price == $min_all_price) {
             $max_all_price = $min_all_price + 1;
         }
-
+        
         $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
 
         $shops = $products->join('users', 'users.id', '=', 'products.user_id')
@@ -491,9 +492,8 @@ class SearchController extends Controller
         $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
         $products = Product::where('published', '1')
-            ->where('auction_product', 0)
+            ->where('auction_product', operator: 0)
             ->where('approved', '1');
-
         if ($query) {
             $products->where("products.name", 'like', "%" . $query . "%");
         }
@@ -503,7 +503,6 @@ class SearchController extends Controller
         }
 
     $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
-
     $brand_ids = [];
     if ($brand_id != null) {
         $brand_ids[] = $brand_id;
@@ -525,7 +524,6 @@ class SearchController extends Controller
     if ($request->colors) {
         $selected_color = $request->colors;
     }
-
     switch ($sort_by) {
         case 'newest':
             $products->orderBy('created_at', 'desc');
@@ -601,10 +599,13 @@ class SearchController extends Controller
             });
         });
     }
-
+    
+    
+    
+    
     $request_all = request()->input();
 
-    foreach ($request->all() as $key => $attribute_value) {
+    /*foreach ($request->all() as $key => $attribute_value) {
         $attribute = Attribute::find($key);
         if ($attribute) {
             $units_id = $request['units_' . $attribute->id];
@@ -677,9 +678,9 @@ class SearchController extends Controller
                 });
             });
         }
-    }
-
+    }*/
     $products = $products->select('products.*')->paginate(6);
+
 
     if ($request->ajax()) {
         $html = '';
@@ -888,4 +889,45 @@ class SearchController extends Controller
             $search->save();
         }
     }
+
+public function getProductsInPriceRange($minPrice, $maxPrice): array
+{
+    // Retrieve all products with their pricing configurations
+    $products = Product::with('pricingConfiguration')->get();
+
+    $filteredProducts = [];
+
+    foreach ($products as $product) {
+        // Get the unit price from the pricing configuration
+        $unitPrice = $product->pricingConfiguration->unit_price;
+
+        // Initialize the final price with the unit price
+        $finalPrice = $unitPrice;
+
+        try {
+            // Check if there is a discount for the product
+            $discountInfo = Discount::getDiscountPercentage($product->id);
+
+            // Calculate the final price if a discount is applicable
+            $discountPercentage = $discountInfo['discount_percentage'];
+            $maxDiscountAmount = $discountInfo['max_discount_amount'];
+
+            $discountAmount = min($unitPrice * $discountPercentage / 100, $maxDiscountAmount);
+            $finalPrice = $unitPrice - $discountAmount;
+        } catch (\Exception $e) {
+            // No discount applicable, use the unit price as the final price
+            $finalPrice = $unitPrice;
+        }
+
+        // Check if the final price is within the specified range
+        if ($finalPrice >= $minPrice && $finalPrice <= $maxPrice) {
+            $filteredProducts[] = [
+                'product' => $product,
+                'final_price' => $finalPrice,
+            ];
+        }
+    }
+
+    return $filteredProducts;
+}
 }
