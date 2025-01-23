@@ -33,4 +33,9 @@ class StockDetails extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+
+    public function orderDetail()
+    {
+        return $this->belongsTo(OrderDetail::class, 'order_detail_id');
+    }
 }
