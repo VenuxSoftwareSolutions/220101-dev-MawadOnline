@@ -437,14 +437,13 @@
                         </div>
                     </div>
                 </div>
-                {{-- Bloc Pricing configuration --}}
                 <div class="card default-pricing-wrapper__clz">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Default Pricing Configuration') }}</h5>
                     </div>
                     <div class="card-body">
                         <div>
-                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
+                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style d-none">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration"
@@ -2094,7 +2093,7 @@
 
             $('body').on('change', '#attributes', function() {
                 var ids_attributes = $(this).val();
-                
+
                 var clicked = ids_attributes.diff(initial_attributes);
                 if (clicked.length == 0) {
                     clicked = initial_attributes.diff(ids_attributes);
