@@ -279,6 +279,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ old('unit_sale_price') }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{ translate('Country of origin') }}</label>
                                     <div class="col-md-8">
                                         <div class="form-item">
