@@ -208,7 +208,14 @@
                                                     value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
                                                     disabled>
                                             @endif
-
+                                            @if ($orderDetail->delivery_status === 'in_preparation')
+                                                <button type="button" class="btn btn-sm"
+                                                    onclick="handleUpdateWarehouse({{ $orderDetail->id }})"
+                                                    data-user_id="{{ $orderDetail->seller->id }}"
+                                                    data-product_id="{{ $orderDetail->product->id }}"
+                                                    data-orderdetail_id="{{ $orderDetail->id }}"><img
+                                                        src="{{ static_asset('Edit.svg') }}"></button>
+                                            @endif
                                             @if ($orderDetail->trackingShipment !== null)
                                                 <a class="mx-3" href="{{ $orderDetail->trackingShipment->label_url }}"
                                                     target="_blank" data-toggle="tooltip"
@@ -336,61 +343,99 @@
         </div>
     </div>
 
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="warehouse-modal" tabindex="-1"
-        role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">{{ translate('Warehouses') }}</h5>
-                </div>
-                <div class="modal-body c-scrollbar-light">
-                    <div class="p-3">
-                        <div class="col-lg-12 table-responsive">
-                            <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
-                                {{ __('order.quantity_entered_must_be_equal_to_the_quantity_requested') }}
-                            </div>
-                            <table class="table-bordered   table">
-                                <thead>
-                                    <tr class="bg-trans-dark">
-                                        <th data-breakpoints="lg" class="min-col">#</th>
-                                        <th>{{ translate('warehouses') }}</th>
-                                        <th>{{ translate('product') }}</th>
-                                        <th>{{ translate('current quantity') }}</th>
-                                        <th>{{ translate('quantity') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="warehouses_table"></tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class=" text-left col-6">
-                                <div class="form-group row">
-                                    <label class="col-md-4">{{ __('order.total_quantity') }}</label>
-                                    <input class="form-control col-md-8" type="number" id="quantity_requested" />
+    @foreach ($order->orderDetails as $orderDetail)
+        <div class="modal fade" data-backdrop="static" data-keyboard="false"
+            id="warehouse-modal_{{ $orderDetail->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">{{ translate('Warehouses') }}</h5>
+                    </div>
+                    <div class="modal-body c-scrollbar-light">
+                        <div class="p-3">
+                            <div class="col-lg-12 table-responsive">
+                                <div class="alert alert-warning"id="alert-quantity" style="display:none;" role="alert">
+                                    {{ __('order.quantity_entered_must_be_equal_to_the_quantity_requested') }}
                                 </div>
+                                <table class="table-bordered table">
+                                    <thead>
+                                        <tr class="bg-trans-dark">
+                                            <th data-breakpoints="lg" class="min-col">#</th>
+                                            <th>{{ translate('warehouses') }}</th>
+                                            <th>{{ translate('product') }}</th>
+                                            <th>{{ translate('current quantity') }}</th>
+                                            <th>{{ translate('quantity') }}</th>
+                                        </tr>
+                                    </thead>
+                                    @php
+                                        $stock = \App\Models\StockSummary::where([
+                                            'seller_id' => auth()->user()->owner_id,
+                                            'variant_id' => $orderDetail->product->id,
+                                        ])
+                                            ->where('current_total_quantity', '>', 0)
+                                            ->with(['productVariant', 'warehouse'])
+                                            ->get();
+                                    @endphp
+                                    <tbody>
+                                        @foreach ($stock as $key => $entry)
+                                        @php
+                                            if($orderDetail->delivery_status === "in_preparation") {
+                                                $stockDetails = \App\Models\StockDetails::where('warehouse_id',$entry->warehouse->id)
+                                                ->where('variant_id', $entry->productVariant->id)
+                                                ->where('seller_id', auth()->user()->owner_id)
+                                                ->where('order_detail_id', $orderDetail->id)
+                                                ->first();
+                                            }
+                                        @endphp
+                                            <tr>
+                                                <td>{{ $key + 1 }}</td>
+                                                <td>{{ $entry->warehouse->warehouse_name }}</td>
+                                                <td>{{ $entry->productVariant->name }}</td>
+                                                <td>{{ $entry->current_total_quantity }}</td>
+                                                <td><input class="form-control" type="number" name="quantity"
+                                                        id="{{ $entry->warehouse->id }}" value="{{ isset($stockDetails) && $stockDetails !== null ? $stockDetails->transaction_quantity : 0 }}" /></td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                            <!-- Save button -->
-                            <div class="form-group text-right col-6">
-                                <button onClick="window.location.reload();"
-                                    class="btn btn-danger rounded-0 w-150px">{{ translate('Cancel') }}</button>
-                                <button id="save-stock-movment" data-quantity_requested
-                                    onclick="handleSaveStockMovement(this)"
-                                    class="btn btn-primary rounded-0 w-150px">{{ __('order.confirm_order') }}</button>
+                            <div class="row">
+                                <div class=" text-left col-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4">{{ __('order.total_quantity') }}</label>
+                                        <input class="form-control col-md-8" type="number" id="quantity_requested"
+                                            value={{ $orderDetail->quantity }} />
+                                    </div>
+                                </div>
+                                <div class="form-group text-right col-6">
+                                    <button onclick="window.location.reload();"
+                                        class="btn btn-danger rounded-0 w-150px">{{ translate('Cancel') }}</button>
+                                    <button id="save-stock-movment" data-order="{{ $orderDetail->id }}"
+                                        data-product="{{ $orderDetail->product->id }}"
+                                        data-quantity_requested="{{ $orderDetail->quantity }}"
+                                        onclick="handleSaveStockMovement(this)"
+                                        class="btn btn-primary rounded-0 w-150px">{{ __('order.confirm_order') }}</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endforeach
 @endsection
 
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script>
+        function handleUpdateWarehouse(id) {
+            $(`#warehouse-modal_${id}`).modal("show");
+        }
+
         const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
-                handleUpdateWarehouse(event)
+                handleUpdateWarehouse($(event).data("orderdetail_id"));
             } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
                 Swal.fire({
                     title: '{{ __('Pickup address') }}',
@@ -435,42 +480,11 @@
             });
         }
 
-        const handleUpdateWarehouse = (event) => {
-            let order_id = event.dataset.orderdetail_id;
-            let seller = event.dataset.user_id;
-            let product = event.dataset.product_id;
-            $.post('{{ route('seller.orders.get_warehouses') }}', {
-                _token: '{{ csrf_token() }}',
-                order_id: order_id,
-                seller: seller,
-                product: product,
-            }, function(data) {
-                let stock = data.data;
-                let tr = '';
-                stock.forEach((element, key) => {
-                    tr += `<tr>
-                            <td>${key}</td>
-                            <td>${element.warehouse.warehouse_name}</td>
-                            <td>${element.product_variant.name}</td>
-                            <td>${element.current_total_quantity}</td>
-                            <td><input class="form-control" type="number" name="quantity" id="${element.warehouse.id}" value="0"/></td>
-                        </tr>`;
-                });
-                document.getElementById('save-stock-movment').dataset.order = order_id;
-                document.getElementById('save-stock-movment').dataset.product = product;
-                document.getElementById('save-stock-movment').dataset.quantity_requested = data.quantity;
-                document.getElementById('quantity_requested').value = data.quantity;
-                $('#warehouses_table').html('');
-                $('#warehouses_table').append(tr);
-                $('#warehouse-modal').modal("show");
-            });
-        }
-
         const handleSaveStockMovement = (event) => {
             let order = event.dataset.order;
             let product = event.dataset.product;
             let quantity = event.dataset.quantity_requested;
-            let inputs = document.getElementsByName('quantity');
+            let inputs = document.querySelectorAll(`#warehouse-modal_${order} [name=quantity]`);
             let warehouses = [];
             let totalQuantity = 0
             inputs.forEach(element => {
