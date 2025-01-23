@@ -38,7 +38,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $payment_status = "paid";
+        $payment_status = 'paid';
         $delivery_status = null;
         $sort_search = null;
         $orders = Order::orderBy('id', 'desc')
@@ -109,9 +109,9 @@ class OrderController extends Controller
             $order->delivery_status = $request->status;
             $order->save();
 
-            $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
+            $shippers = explode(',', $order->product->shippingOptions($order->quantity)->shipper);
 
-            if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
+            if ($request->status === 'ready_for_shipment' && in_array('third_party', $shippers)) {
                 $controller = new AramexController;
 
                 $warehouses = session()->get('warehouses');
@@ -149,7 +149,7 @@ class OrderController extends Controller
                         $order->id, json_encode($pickup)
                     ));
 
-                    $order->delivery_status = "in_preparation";
+                    $order->delivery_status = 'in_preparation';
                     $order->save();
 
                     return response()->json([
@@ -200,7 +200,7 @@ class OrderController extends Controller
                         $order->id, json_encode($shipment)
                     ));
 
-                    $order->delivery_status = "in_preparation";
+                    $order->delivery_status = 'in_preparation';
                     $order->save();
 
                     return response()->json([
