@@ -96,7 +96,7 @@
                         @if (get_setting('vendor_system_activation') == 1)
                             @unless (Auth::check() && Auth::user()->user_type == 'seller')
                                 <li class="list-inline-item mr-0 pl-0 py-2">
-                                    <a href="https://business.mawadonline.com"
+                                    <a href="https://business.mawad.ae"
                                         class="text-secondary-base fs-13 pr-3 d-inline-block border-width-2 border-right">{{ translate('Become a Seller') }}</a>
                                 </li>
                                 <li class="list-inline-item mr-0 pl-0 py-2">

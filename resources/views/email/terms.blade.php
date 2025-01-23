@@ -91,7 +91,7 @@
                                 but not limited to payment details and other information we collect from
                                 you or other sources or that you provide to us ("Information") will be
                                 handled   by   us   in   connection   with   your   access   and   use   of
-                                www.mawadonline.com,   and/or   the   MawadOnline   mobile   application
+                                www.mawad.ae,   and/or   the   MawadOnline   mobile   application
                                 (collectively, the "Platform"), services and applications (collectively, the
                                 "Services"). We understand the importance you place on the Information,
                                 and we are committed to protecting and respecting your privacy. Please
@@ -397,7 +397,7 @@
                                     <ul class="ul-box-2"><b>8. How you can contact us </b>
                                         <li class="li-ul-box-2">
                                             8.1 If you have any concerns about your Information on the Platform, please
-                                            contact us through email (hello@mawadonline.com) social media, live chat
+                                            contact us through email (hello@mawad.ae) social media, live chat
                                             on the Site, and we will try to resolve it.
                                         </li>
                                     </ul>

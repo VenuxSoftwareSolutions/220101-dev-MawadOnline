@@ -55,11 +55,11 @@
                                                         Effortlessly buy and sell on one convenient platform.
                                                     </div>
                                                     <div class="col-12 pt-4 p-0">
-                                                        <a href="https://business.mawadonline.com/"><button type="button"
+                                                        <a href="https://business.mawad.ae/"><button type="button"
                                                                 class="btn btn-secondary-base slider-register-vendor text-white border-radius-16 fs-16 font-prompt py-2">
                                                                 {{ __('Register as Vendor') }}
                                                             </button></a>
-                                                        <a href="https://about.mawadonline.com/"><button type="button"
+                                                        <a href="https://about.mawad.ae/"><button type="button"
                                                                 class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
                                                                 {{ __('Join Buyer Waitlist') }}
                                                                 <svg width="24" height="24" viewBox="0 0 24 24"

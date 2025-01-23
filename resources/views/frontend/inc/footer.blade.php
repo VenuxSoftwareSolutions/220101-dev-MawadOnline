@@ -502,7 +502,7 @@
                     <div class="container">
                         <ul class="list-unstyled mt-3">
                             <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'], ' active') }}">
-                                <a href="https://business.mawadonline.com"
+                                <a href="https://business.mawad.ae"
                                     class="fs-13 text-sm-secondary animate-underline-white">{{ translate('Become A Seller') }}</a>
                             </li>
                             <li class="mb-2 pb-2 {{ areActiveRoutes(['shops.create'], ' active') }}">
@@ -599,7 +599,7 @@
                             stroke="#F3F4F5" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
-                    hello@mawadonline.com
+                    hello@mawad.ae
                 </span>
             </div>
         </div>
