@@ -421,7 +421,7 @@
                         </div>
                         <hr> --}}
                         <div>
-                            <div class="bloc-default-shipping-style">
+                            <div class="bloc-default-shipping-style d-none">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration" class="bloc_pricing_configuration_variant">
