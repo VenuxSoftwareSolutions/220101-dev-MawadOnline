@@ -554,6 +554,7 @@ class Product extends Model
 
     public function getPriceRange()
     {
+        return single_price($this->unit_price);
         $firstPrice = PricingConfiguration::where('id_products', $this->id)
             ->orderBy('unit_price', 'asc')
             ->pluck('unit_price')
