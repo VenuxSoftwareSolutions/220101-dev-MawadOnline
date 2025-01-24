@@ -3106,6 +3106,8 @@ class ProductService
         if (! isset($data['activate_attributes'])) {
             //Create product without variants
             $collection = $collection->toArray();
+            unset($collection["unit_price"]);
+            $collection["unit_price"] = $collection["unit_sale_price"];
             $product_draft->update($collection);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
 
