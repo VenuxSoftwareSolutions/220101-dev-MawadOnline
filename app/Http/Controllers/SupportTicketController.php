@@ -180,7 +180,10 @@ class SupportTicketController extends Controller
         $ticket_reply->ticket->status = ($request->submit_as ? $request->submit_as :  ($ticket_reply->ticket->status == "pending" ? "Submitted" : $ticket_reply->ticket->status));
         $ticket_reply->reply_to = $request->submit_to == "vendor" ? $ticket->orderDetails->seller->id : $ticket->orderDetails->order->user->id ;
         $ticket_reply->ticket->save();
-
+        if($request->submit_as && $request->submit_as == "Under Review" ){
+            $ticket->orderDetails->delivery_status = "In-Claim";
+            $ticket->orderDetails->save();
+        }
         if ($ticket_reply->save()) {
             flash(translate('Reply has been sent successfully'))->success();
             $this->send_support_reply_email_to_user($ticket_reply->ticket, $ticket_reply);
