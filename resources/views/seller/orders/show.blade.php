@@ -167,7 +167,7 @@
                                     <td class="text-center">{{ single_price($orderDetail->price) }}</td>
                                     <td>
                                         <div class="row align-items-center justify-content-center">
-                                            @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
+                                            @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled' && $orderDetail->delivery_status != 'In-Claim')
                                                 @php
                                                     $shippers = $orderDetail->product->shippingOptions($orderDetail->quantity)->map(fn($option) => $option->shipper)->toArray();
                                                 @endphp
@@ -228,7 +228,6 @@
                                     </td>
 
                                     <td>
-
                                        <select onchange="handleTicket(this)" class="form-control"
                                                 data-user_id="{{ $orderDetail->seller->id }}"
                                                 data-product_id="{{ $orderDetail->product->id }}"
@@ -246,7 +245,7 @@
                                                         {{$ticket->code}}-{{$ticket->subject}}
                                                     </option>
                                                 @endforeach
-                                            </select>
+                                        </select>
                                     </td>
                                 </tr>
                             @endforeach
@@ -631,7 +630,6 @@
         });
 
         const handleTicket = (event) =>{
-            console.log(event.value);
             if(event.value == "add_new_ticket"){
                 $('#ticket_modal').modal("show");
                 document.getElementById('order_details_id').value = event.dataset.orderdetail_id;
