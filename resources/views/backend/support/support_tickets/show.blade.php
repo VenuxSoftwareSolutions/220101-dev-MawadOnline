@@ -26,6 +26,7 @@
 
         <div class="card-body">
             @can('reply_to_support_tickets')
+                @if(!in_array($ticket->status,['Resolved','Rejected']) )
                 <form action="{{ route('support_ticket.admin_store') }}" method="post" id="ticket-reply-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="ticket_id" value="{{$ticket->id}}" required>
@@ -104,6 +105,7 @@
                     </div>
                     @endif
                 </form>
+                @endif
             @endcan
             <div class="pad-top">
                 <ul class="list-group list-group-flush">
