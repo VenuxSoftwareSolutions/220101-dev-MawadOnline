@@ -29,11 +29,31 @@
                 <form action="{{ route('support_ticket.admin_store') }}" method="post" id="ticket-reply-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="ticket_id" value="{{$ticket->id}}" required>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <select  class="form-control" name="submit_as"
+                                data-minimum-results-for-search="Infinity" id="submit_as"
+                                style="">
+                                    <option value="" readonly disabled selected>
+                                    {{ translate('Ticket Status') }}
+                                </option>
+                                <option value="Under Review">
+                                    {{ translate('Under Review') }}
+                                </option>
+                                <option value="Resolved">
+                                    {{ translate('Resolved') }}
+                                </option>
+                                <option value="Rejeced">
+                                    {{ translate('Rejected') }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <textarea class="aiz-text-editor" data-buttons='[["font", ["bold", "underline", "italic"]],["para", ["ul", "ol"]],["view", ["undo","redo"]]]' name="reply" required></textarea>
                     </div>
                     <div class="form-group row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="true">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text bg-soft-secondary font-weight-medium">{{ translate('Browse')}}</div>
@@ -45,8 +65,6 @@
                             </div>
                         </div>
 
-                    </div>
-                    <div class="form-group row">
                         <div class="col-md-6">
                                 <select  class="form-control" name="submit_to"
                                 data-minimum-results-for-search="Infinity" id="submit_to"
@@ -62,24 +80,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <select  class="form-control" name="submit_as"
-                                data-minimum-results-for-search="Infinity" id="submit_as"
-                                style="">
-                                    <option value="" readonly disabled selected>
-                                    {{ translate('submit as') }}
-                                </option>
-                                <option value="Under Review">
-                                    {{ translate('Under Review') }}
-                                </option>
-                                <option value="Resolved">
-                                    {{ translate('Resolved') }}
-                                </option>
-                                <option value="Rejeced">
-                                    {{ translate('Rejected') }}
-                                </option>
-                            </select>
-                        </div>
+
                     </div>
                     @if($ticket->is_locked == "no" || auth()->user()->id == $ticket->locked_for)
                     <div class="form-group mb-0 text-right">
