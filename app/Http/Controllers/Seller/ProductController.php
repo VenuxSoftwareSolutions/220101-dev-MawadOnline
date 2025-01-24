@@ -788,13 +788,7 @@ class ProductController extends Controller
         $is_shipping = true;
 
         $rules = [
-            'from' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from'), $request->input('to')),
-            ],
-            'to' => ['required', 'array'],
-            'from.*' => 'numeric',
-            'to.*' => 'numeric',
+            'unit_sale_price' => ['required', 'numeric'],
             'from_shipping' => [
                 'required', 'array',
                 new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
