@@ -798,8 +798,6 @@ class ProductService
                     $variants_data[$key]['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
 
-                //////////////////////////////////////////////////////////////////////////
-
                 if (array_key_exists('estimated_sample', $data['variant'])) {
                     if (array_key_exists($key, $data['variant']['estimated_sample'])) {
                         $variants_data[$key]['estimated_sample'] = $data['variant']['estimated_sample'][$key];
