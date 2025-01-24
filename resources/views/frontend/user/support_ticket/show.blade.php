@@ -17,6 +17,7 @@
 
         <div class="card-body">
             <!-- Reply form -->
+            @if(!in_array($ticket->status,['Resolved','Rejected']) )
             <form action="{{route('support_ticket.seller_store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="ticket_id" value="{{$ticket->id}}" required>
@@ -41,7 +42,7 @@
                     <button type="submit" class="btn btn-sm btn-primary rounded-0 w-150px" onclick="submit_reply('pending')">{{ translate('Send Reply') }}</button>
                 </div>
             </form>
-
+            @endif
             <div class="pad-top">
                 <ul class="list-group list-group-flush mt-3">
                     <!-- Replies -->
