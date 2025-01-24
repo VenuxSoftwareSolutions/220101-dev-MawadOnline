@@ -238,6 +238,19 @@
                                         <input type="text" class="form-control" name="unit" value="{{ $product->unit }}" placeholder="{{ translate('Unit (e.g. KG, Pc etc)') }}" >
                                     </div>
                                 </div>
+
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ $product->unit_price }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{translate('Country of origin')}}</label>
                                     <div class="col-md-8">
