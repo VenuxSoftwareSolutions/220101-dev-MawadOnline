@@ -18,7 +18,7 @@
 
                 <!--Assign Delivery Boy-->
                 @if ($order->seller_id == $admin_user_id || get_setting('product_manage_by_admin') == 1)
-                    
+
                     @if (addon_is_activated('delivery_boy'))
                         <div class="col-md-3 ml-auto">
                             <label for="assign_deliver_boy">{{ translate('Assign Deliver Boy') }}</label>
@@ -197,6 +197,10 @@
                                     {{ translate('Price') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                {{ translate('Status') }}</th>
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                    {{ translate('Ticket') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -231,7 +235,7 @@
                                             <small>
                                                 @php
                                                     $product_stock = json_decode($orderDetail->product->stocks->first(), true);
-                                                @endphp
+                                                    @endphp
                                                 {{translate('SKU')}}: {{ $product_stock['sku'] }}
                                             </small>
                                         @elseif ($orderDetail->product != null && $orderDetail->product->auction_product == 1)
@@ -273,6 +277,26 @@
                                     </td>
                                     <td class="text-center">
                                         {{ single_price($orderDetail->price) }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ $orderDetail->delivery_status }}
+                                    </td>
+                                    <td class="text-center">
+                                        <select onchange="handleTicket(this)" class="form-control"
+                                                data-user_id="{{ $orderDetail->seller->id }}"
+                                                data-product_id="{{ $orderDetail->product->id }}"
+                                                data-orderdetail_id="{{ $orderDetail->id }}"
+                                                data-minimum-results-for-search="Infinity" id="ticket_management"
+                                                style="width:200px;">
+                                                 <option value="add_new_ticket" readonly disabled selected>
+                                                    {{ translate('choose') }}
+                                                </option>
+                                                @foreach ($orderDetail->tickets()->where('status','!=','resolved')->latest()->take(10)->get() as $key => $ticket)
+                                                    <option value="{{route('support_ticket.admin_show', encrypt($ticket->id))}}">
+                                                        {{$ticket->code}}-{{$ticket->subject}}
+                                                    </option>
+                                                @endforeach
+                                        </select>
                                     </td>
                                 </tr>
                             @endforeach
