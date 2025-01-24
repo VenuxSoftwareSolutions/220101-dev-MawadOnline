@@ -15,15 +15,7 @@
                    </span>
                </div>
             </div>
-            @if(auth()->user()->id == $ticket->locked_for)
-            <div class="text-center text-md-left">
-               <div class="mt-2">
-                   <a href="{{route('support_ticket.admin_close',$ticket->id)}}" class="btn btn-sm btn-danger ml-2 text-capitalize">
-                       {{ translate("close") }}
-                   </a>
-               </div>
-            </div>
-            @else
+            @if(auth()->user()->id !== $ticket->locked_for)
             <div class="text-center text-md-left">
                 <div class="alert alert-danger" role="alert">
                   {{ translate("ticket open for read only because another admin is working on this ticket") }}
