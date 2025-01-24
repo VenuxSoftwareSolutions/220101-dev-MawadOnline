@@ -13,6 +13,7 @@
             </div>
         </div>
         <div class="card-body">
+            @if(!in_array($ticket->status,['Resolved','Rejected']) )
             <form action="{{route('seller.support_ticket.reply_store')}}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="ticket_id" value="{{$ticket->id}}" required>
@@ -37,6 +38,7 @@
                     <button type="submit" class="btn btn-sm btn-primary" onclick="submit_reply('pending')">{{ translate('Send Reply') }}</button>
                 </div>
             </form>
+            @endif
             <div class="pad-top">
                 <ul class="list-group list-group-flush">
                     @foreach($ticket->ticketreplies as $ticketreply)
