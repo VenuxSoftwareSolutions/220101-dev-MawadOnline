@@ -4284,6 +4284,8 @@ class ProductService
         $ids_attributes_list, $ids_attributes_numeric,
         $unit_general_attributes_data, $shipping
     ) {
+        $data["unit_price"] = $data['unit_sale_price'];
+
         $product = Product::create($data);
 
         $this->storePricingConfiguration($product->id, $pricing);
@@ -4309,6 +4311,7 @@ class ProductService
         // Create Parent Product
         $data['is_parent'] = 1;
         $data['sku'] = $data['name'];
+        $data["unit_price"] = $data["unit_sale_price"];
         $product_parent = Product::create($data);
         $all_data_to_insert_parent = [];
 
@@ -4472,7 +4475,7 @@ class ProductService
                 $data['sku'] = $variant['sku'];
                 $randomString = Str::random(5);
                 $data['slug'] = $data['slug'].'-'.$randomString;
-
+                $data["unit_price"] = $data["unit_sale_price"];
                 $product = Product::create($data);
 
                 //attributes of variant
