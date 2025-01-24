@@ -171,7 +171,7 @@
     <style>
         .multi-select-menuitem input {
             position: relative !important;
-            margin-left: 0 !important; 
+            margin-left: 0 !important;
         }
     </style>
 @endif
@@ -2480,7 +2480,7 @@
                                 });
                             }
                         }
-                        
+
                     });
 
                     $("#general_attributes div").each(function(index, element) {
@@ -2700,7 +2700,7 @@
                     if(check == false){
                         $(element).attr('name', 'attributes-' + dataIdValue + '-' + numbers_variant);
                     }
-                    
+
                 });
 
                 clonedDiv.find('.attributes-units').each(function(index, element) {
@@ -2859,7 +2859,7 @@
                         else if ($(this).is('select')) {
                             $(this).val(''); // Reset to the first option (index 0)
                         }
-                    }); 
+                    });
 
                     $('#variant_informations').find('.filter-option-inner-inner').each(function() {
                         $(this).text('Nothing selected')
@@ -4110,7 +4110,7 @@
             }
         })
 
-        
+
 
         //Shipping script
         $('body').on('click', '#third_party_activate', function() {
@@ -5761,7 +5761,7 @@
                             isEmpty = true;
                             return false; // Exit the loop early if an empty Tagify input is found
                         }
-                    }); 
+                    });
 
                     //Validation of images
                     var check_images = true;
@@ -5922,11 +5922,11 @@
                                         check_sample_price_variant = false;
                                     }
                                 }
-                                
+
                             });
                         });
                     }
-                    
+
                     if(check_sample_price_variant == false){
                         var message = "{{ translate('The sample price variant is required and must be greater than or equal to 0.1 AED.')}}";
                         remarks.push(message);
@@ -5946,7 +5946,7 @@
                             var message = "{{ translate('You need to choose at least one attribute.')}}";
                             remarks.push(message);
                         }
-                        
+
                         if(check_price == false){
                             //console.log('ok1');
                             var message = "{{ translate('Please check your pricing configuration.')}}";
@@ -6001,39 +6001,39 @@
 
                         if(isEmpty){
                             var message = "{{translate('tags input cannot be empty.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_short_description == false){
                             //console.log('ok9');
                             var message = "{{ translate('The short description is required.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_long_description == false){
                             //console.log('ok10');
                             var message = "{{ translate('The description is required.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_attributes_empty == false){
                             var message = "{{ translate('All attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_units_empty == false){
                             var message = "{{ translate('All units must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_attributes_generale_empty == false){
                             var message = "{{ translate('All attributes in section General Attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
 
                         if(check_units_generale_empty == false){
                             var message = "{{ translate('All units in section General Attributes must have values.')}}";
-                            remarks.push(message); 
+                            remarks.push(message);
                         }
                     }else{
                         var message = '{{ translate("A minimum of one attribute must be selected in order to create your product.")}}';
