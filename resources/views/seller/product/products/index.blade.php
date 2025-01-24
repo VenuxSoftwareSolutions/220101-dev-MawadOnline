@@ -157,11 +157,11 @@ thead tr{
 
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
-                            <th>{{ translate('Base Price')}}</th>
-                            <th data-breakpoints="md">{{ translate('Status')}}</th>
+                            <th class="text-nowrap">{{ translate('Unit of Sale Price') }}</th>
+                            <th class="text-center" data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Published')}}</th>
-                            <th data-breakpoints="md" style="text-align: center;">{{ translate('Actions')}}</th>
+                            <th class="text-center" data-breakpoints="md">{{ translate('Actions')}}</th>
                         </tr>
                     </thead>
 
