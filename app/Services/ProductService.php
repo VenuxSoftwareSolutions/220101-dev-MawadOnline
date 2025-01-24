@@ -2140,6 +2140,7 @@ class ProductService
 
                     $randomString = Str::random(5);
                     $collection['slug'] = $collection['slug'].'-'.$randomString;
+                    $collection["unit_price"] = $collection['unit_sale_price'];
 
                     $new_product = Product::create($collection);
 
@@ -3843,6 +3844,7 @@ class ProductService
 
                     $randomString = Str::random(5);
                     $collection['slug'] = $collection['slug'].'-'.$randomString;
+                    $collection["unit_price"] = $collection['unit_sale_price'];
 
                     $new_product = Product::create($collection);
 
