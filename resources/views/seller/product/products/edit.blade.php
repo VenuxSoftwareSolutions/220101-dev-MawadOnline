@@ -6464,10 +6464,6 @@
                             remarks.push(message);
                         }
 
-                        if (check_price == false) {
-                            var message = "{{ translate('Please check your pricing configuration.') }}";
-                            remarks.push(message);
-                        }
                         if ($('#sample_description_parent').val() != '') {
                             if (check_sample_price == false) {
                                 var message =
