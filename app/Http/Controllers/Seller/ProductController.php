@@ -239,11 +239,16 @@ class ProductController extends Controller
 
     public function store_draft(Request $request)
     {
-        //dd($request->all());
         $parent = Product::find($request->product_id);
+
         if ($parent != null) {
             $product = $this->productService->draft($request->except([
-                'category_ids', 'photosThumbnail', 'main_photos', 'product', 'documents', 'document_names', '_token', 'sku', 'choice', 'tax_id', 'tax', 'tax_type', 'flash_deal_id', 'flash_discount', 'flash_discount_type',
+                'category_ids', 'photosThumbnail', 'main_photos',
+                'product', 'documents', 'document_names',
+                '_token', 'sku', 'choice',
+                'tax_id', 'tax', 'tax_type',
+                'flash_deal_id', 'flash_discount',
+                'flash_discount_type',
             ]), $parent);
 
             //Product categories
@@ -255,6 +260,7 @@ class ProductController extends Controller
                     }
                 }
             }
+
             $product->categories()->attach($request->parent_id);
 
             //Upload documents, images and thumbnails
@@ -272,16 +278,19 @@ class ProductController extends Controller
 
             Artisan::call('view:clear');
             Artisan::call('cache:clear');
+
             if ($product->is_draft == 1) {
-                return redirect()->route('seller.products.edit', ['id' => $product->id, 'lang' => env('DEFAULT_LANGUAGE')]);
+                return redirect()->route(
+                    'seller.products.edit', [
+                    'id' => $product->id,
+                    'lang' => env('DEFAULT_LANGUAGE')
+                ]);
             } else {
                 return redirect()->route('seller.products');
             }
-
         } else {
             return redirect()->back();
         }
-
     }
 
     public function getAttributeCategorie(Request $request)
