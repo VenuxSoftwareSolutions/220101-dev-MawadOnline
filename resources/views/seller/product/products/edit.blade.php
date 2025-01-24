@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+
 <style>
     #image-preview {
         display: flex;
@@ -6447,26 +6448,22 @@
                     var remarks = [];
                     if (check_attributes_selected != false) {
                         if (check_attributes == false) {
-                            //console.log('ok');
                             var message = "{{ translate('You need to choose at least one attribute.') }}";
                             remarks.push(message);
                         }
 
                         if (check_price == false) {
-                            //console.log('ok1');
                             var message = "{{ translate('Please check your pricing configuration.') }}";
                             remarks.push(message);
                         }
                         if ($('#sample_description_parent').val() != '') {
                             if (check_sample_price == false) {
-                                //console.log('ok2');
                                 var message =
                                     "{{ translate('The sample price must be greater than or equal to 0.1 AED.') }}";
                                 remarks.push(message);
                             }
 
                             if (check_sample_price_undefined == false) {
-                                //console.log('ok3');
                                 var message =
                                     "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.') }}";
                                 remarks.push(message);
