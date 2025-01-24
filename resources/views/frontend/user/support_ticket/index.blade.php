@@ -8,7 +8,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Create a Ticket -->
     <div class="p-4 mb-3 c-pointer text-center bg-light has-transition border h-100 hov-bg-soft-light" data-toggle="modal" data-target="#ticket_modal">
         <i class="las la-plus la-3x mb-2"></i>
@@ -38,12 +38,16 @@
                               <td>{{ date('Y.m.d h:i:m', strtotime($ticket->created_at)) }}</td>
                               <td>{{ $ticket->subject }}</td>
                               <td>
-                                  @if ($ticket->status == 'pending')
-                                      <span class="badge badge-inline badge-danger p-3 fs-12" style="border-radius: 25px; min-width: 80px !important;">{{ translate('Pending')}}</span>
-                                  @elseif ($ticket->status == 'open')
-                                      <span class="badge badge-inline badge-secondary p-3 fs-12" style="border-radius: 25px; min-width: 80px !important;">{{ translate('Open')}}</span>
-                                  @else
-                                      <span class="badge badge-inline badge-success p-3 fs-12" style="border-radius: 25px; min-width: 80px !important;">{{ translate('Solved')}}</span>
+                                   @if ($ticket->status == 'pending')
+                                      <span class="badge badge-inline badge-danger">{{ translate('Pending')}}</span>
+                                  @elseif ($ticket->status == 'Submitted')
+                                      <span class="badge badge-inline badge-secondary">{{ translate('Submitted')}}</span>
+                                  @elseif ($ticket->status == 'Resolved')
+                                      <span class="badge badge-inline badge-success">{{ translate('Resolved')}}</span>
+                                  @elseif ($ticket->status == 'Under Review')
+                                      <span class="badge badge-inline badge-warning">{{ translate('Under Review')}}</span>
+                                  @elseif ($ticket->status == 'Rejected')
+                                      <span class="badge badge-inline badge-info">{{ translate('Rejected')}}</span>
                                   @endif
                               </td>
                               <td class="text-right pr-0">
