@@ -405,5 +405,9 @@
                 AIZ.plugins.notify('success', '{{ translate('Order tracking code has been updated') }}');
             });
         });
+
+        const handleTicket = (event) =>{
+                window.location.href = event.value;
+        }
     </script>
 @endsection
