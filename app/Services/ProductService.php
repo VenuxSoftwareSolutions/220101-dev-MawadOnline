@@ -5578,13 +5578,14 @@ class ProductService
                 $minimum = min($valuesFrom);
             }
 
-            $total = $qty * $unitPrice;
+            $total = $qty * ($unitPrice ?? $data['detailedProduct']["price"]);
+
             if (isset($discountPrice) && $discountPrice > 0) {
                 $totalDiscount = $qty * $discountPrice;
             }
 
             return response()->json([
-                'unit_price' => $unitPrice,
+                'unit_price' => $unitPrice ?? $data['detailedProduct']["price"],
                 'qty' => $qty,
                 'total' => single_price($total),
                 'sampleTotal' => single_price($data['detailedProduct']['sampleDetails']["sample_price"] * $qty),
