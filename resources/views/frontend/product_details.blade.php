@@ -2831,10 +2831,12 @@
             let quantityInput = $(this);
             let currentQuantity = parseInt(quantityInput.val());
             let variationId = $('#variationId').val();
+            let qtyMin = parseInt(quantityInput.attr("min"));
+            let qtyMax = parseInt(quantityInput.attr("max"));
 
             if (
-                currentQuantity >= quantityInput.attr("min") &&
-                currentQuantity <= quantityInput.attr("max")
+                currentQuantity >= qtyMin &&
+                currentQuantity <= qtyMax
             ) {
                 $.ajax({
                     url: '{{ route('seller.update-price-preview') }}',
@@ -2870,14 +2872,12 @@
                             }
 
                             $("#quantity").val(response.qty)
-                            $('#quantity').attr('min', response.minimum); // Minimum value
-                            $('#quantity').attr('max', response.maximum); // Maximum value
 
                             $('.aiz-plus-minus input').each(function() {
-                                var $this = $(this);
-                                var min = parseInt($(this).attr("min"));
-                                var max = parseInt($(this).attr("max"));
-                                var value = parseInt($(this).val());
+                                let $this = $(this);
+                                let min = parseInt($(this).attr("min"));
+                                let max = parseInt($(this).attr("max"));
+                                let value = parseInt($(this).val());
 
                                 if (value <= min) {
                                     $this.siblings('[data-type="minus"]').attr('disabled', true)
@@ -2894,7 +2894,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        AIZ.plugins.notify("warning", "Error while updating quantity");
+                        AIZ.plugins.notify("warning", "{{ __("Error while updating quantity") }}");
                         console.error('Error updating quantity:', error);
                     }
                 });
@@ -3189,21 +3189,16 @@
             const quantityButton = document.getElementById("quantity-button");
             const minusQuantityButton = document.querySelector("button[data-type='minus']");
 
-            // Get the outStock status from data attribute
             const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton
                 .getAttribute("data-out-stock") === "true";
 
-            // Disable the button if out of stock
             if (isOutOfStock) {
                 quantityButton.disabled = true;
             }
 
             quantityButton?.addEventListener("click", function(event) {
-                // Check if the button is disabled
                 if (quantityButton.disabled) {
-                    // Display warning message
                     AIZ.plugins.notify('warning', '{{ __('messages.out_of_stock') }}');
-                    // Prevent default behavior (if needed)
                     event.preventDefault();
                 }
             });
