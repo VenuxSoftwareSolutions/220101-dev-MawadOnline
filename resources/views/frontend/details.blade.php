@@ -600,8 +600,8 @@
                     <input type="number" id="quantity" name="quantity"
                         class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md"
                         placeholder="1" value="{{ $previewData['detailedProduct']['quantity'] }}"
-                        min="{{ $previewData['detailedProduct']['min'] }}"
-                        max="{{ $previewData['detailedProduct']['max'] }}" lang="en">
+                        min="1"
+                        max="9999" lang="en" />
                     <button id="quantity-button"
                         class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
                         type="button" data-type="plus" data-field="quantity"
