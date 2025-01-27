@@ -685,7 +685,7 @@ class CartController extends Controller
             $product_stock = StockSummary::where('variant_id', $request['variationId'])
                 ->sum('current_total_quantity');
 
-            $quantity = $request['quantity'];
+            $quantity = (int) $request->quantity;
 
             if ($product_stock < $request['quantity']) {
                 return array(
