@@ -599,7 +599,8 @@
                     </button>
                     <input type="number" id="quantity" name="quantity"
                         class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md"
-                        placeholder="1" value="{{ $previewData['detailedProduct']['quantity'] }}"
+                        placeholder="1"
+                        value="1"
                         min="1"
                         max="9999" lang="en" />
                     <button id="quantity-button"
