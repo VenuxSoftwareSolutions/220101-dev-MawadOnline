@@ -705,6 +705,7 @@ class SearchController extends Controller
     foreach ($attributes as $attribute) {
         $value = DB::table('attribute_values')
             ->where('attribute_id', $attribute->id)
+            ->orderBy('value', 'asc') 
             ->pluck('value') 
             ->toArray(); 
     
