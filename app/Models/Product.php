@@ -4,10 +4,10 @@ namespace App\Models;
 
 use App;
 use App\Traits\EnhancedRevisionableTrait;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Exception;
 
 class Product extends Model
 {
@@ -169,7 +169,6 @@ class Product extends Model
         'shippingRelation', 'product_translations',
         'taxes', 'thumbnail', 'stockSummaries',
     ];
-
 
     protected static function booted()
     {
@@ -520,7 +519,7 @@ class Product extends Model
     {
         try {
             $productVariantName = ' ';
-            $colors = __("Colors") . ": ";
+            $colors = __('Colors').': ';
 
             foreach ($this->productAttributeValues as $productAttributeValue) {
                 if ($productAttributeValue->attribute->type_value == 'numeric') {
@@ -534,9 +533,9 @@ class Product extends Model
                 }
             }
 
-             $productVariantName .= str()->length($colors) > 0 ? $colors : "";
+            $productVariantName .= str()->length($colors) > 0 ? $colors : '';
 
-            return str()->replaceLast(", ", "", $productVariantName);
+            return str()->replaceLast(', ', '', $productVariantName);
         } catch (Exception) {
             return ' ';
         }
@@ -555,6 +554,7 @@ class Product extends Model
     public function getPriceRange()
     {
         return single_price($this->unit_price);
+
         $firstPrice = PricingConfiguration::where('id_products', $this->id)
             ->orderBy('unit_price', 'asc')
             ->pluck('unit_price')
@@ -675,7 +675,8 @@ class Product extends Model
         return $this->hasMany(StockDetails::class, 'variant_id', 'id');
     }
 
-    public function getSampleDetails() {
+    public function getSampleDetails()
+    {
         if ($this->sample_price === 0) {
             return [];
         }
@@ -687,8 +688,8 @@ class Product extends Model
             return str_contains($column, 'sample');
         });
 
-        if (!empty($sampleColumns)) {
-            return Product::where("id", $this->id)
+        if (! empty($sampleColumns)) {
+            return Product::where('id', $this->id)
                 ->select($sampleColumns)
                 ->first()
                 ->toArray();
