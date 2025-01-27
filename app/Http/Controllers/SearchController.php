@@ -432,7 +432,7 @@ class SearchController extends Controller
         if ($category_id != null) {
                 // Fetch category hierarchy and filter products
                 $category_ids = CategoryUtility::children_ids($category_id);
-
+                
                 $category_ids[] = $category_id;
                 $products->whereIn('category_id', $category_ids);
             
@@ -608,7 +608,7 @@ class SearchController extends Controller
                                     pricing_configurations.unit_price - 
                                     (pricing_configurations.unit_price * 
                                         COALESCE(
-                                            (SELECT discount_percentage / 100 
+                                            (SELECT discount_percentage 
                                              FROM discounts 
                                              WHERE discounts.product_id = pricing_configurations.id_products
                                              ORDER BY discounts.created_at DESC
@@ -623,20 +623,13 @@ class SearchController extends Controller
                 }
             });
         });
-    }
-    
-    
-    
+    } 
 
-
-    
-    
-    
-    
     $request_all = request()->input();
 
-    /*foreach ($request->all() as $key => $attribute_value) {
+   /* foreach ($request->all() as $key => $attribute_value) {
         $attribute = Attribute::find($key);
+       // dd( $attribute );
         if ($attribute) {
             $units_id = $request['units_' . $attribute->id];
             $unit = Unity::find($units_id);
@@ -709,6 +702,14 @@ class SearchController extends Controller
             });
         }
     }*/
+    foreach ($attributes as $attribute) {
+        $value = DB::table('attribute_values')
+            ->where('attribute_id', $attribute->id)
+            ->pluck('value') 
+            ->toArray(); 
+    
+        $selected_attribute_values[$attribute->id] = $value;
+    }
     $products = $products->select('products.*')->paginate(6);
 
 
@@ -718,7 +719,6 @@ class SearchController extends Controller
             $html_product = view('frontend.' . get_setting('homepage_select') . '.partials.product_box_1', ['product' => $product])->render();
             $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
         }
-
         $pagination = str_replace("href", "data-href", $products->appends($request->input())->links()->render());
         $filter = view('frontend.product_listing_filter', [
             'conditions' => $conditions,
