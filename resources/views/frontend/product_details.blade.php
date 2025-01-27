@@ -2790,21 +2790,16 @@
             var product_id = $("#variationId").val() || {{ $previewData['detailedProduct']['product_id'] }};
 
             @if (isCustomer())
-                @if (/* $review_status */ 1 == 1)
-                    $.post('{{ route('product_review_modal') }}', {
-                        _token: '{{ @csrf_token() }}',
-                        product_id: product_id
-                    }, function(data) {
-                        $('#product-review-modal-content').html(data);
-                        $('#product-review-modal').modal('show', {
-                            backdrop: 'static'
-                        });
-                        AIZ.extra.inputRating();
+                $.post('{{ route('product_review_modal') }}', {
+                    _token: '{{ @csrf_token() }}',
+                    product_id: product_id
+                }, function(data) {
+                    $('#product-review-modal-content').html(data);
+                    $('#product-review-modal').modal('show', {
+                        backdrop: 'static'
                     });
-                @else
-                    AIZ.plugins.notify('warning',
-                    '{{ translate('Sorry, You need to buy this product to give review.') }}');
-                @endif
+                    AIZ.extra.inputRating();
+                });
             @elseif (Auth::check() && !isCustomer())
                 AIZ.plugins.notify('warning', '{{ translate('Sorry, Only customers can give review.') }}');
             @else
