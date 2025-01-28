@@ -1177,6 +1177,7 @@ class ProductService
 
             $product_update->update($collection);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
+
             if (count($pricing) > 0) {
                 $all_data_to_insert = [];
                 foreach ($pricing['from'] as $key => $from) {
@@ -1258,8 +1259,8 @@ class ProductService
 
             $ids = [];
             $ids_product_attribute_values = [];
-            if (count($general_attributes_data) > 0) {
 
+            if (count($general_attributes_data) > 0) {
                 foreach ($general_attributes_data as $attr => $value) {
                     if ($value != null) {
                         if (in_array($attr, $ids_attributes_color)) {
@@ -1312,7 +1313,6 @@ class ProductService
                                     }
                                 }
                             }
-
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
                             $check_add = false;
                             if ($attribute_product == null) {
@@ -1359,9 +1359,11 @@ class ProductService
                 }
             }
 
-            ProductAttributeValues::whereNotIn('id_attribute', $ids)->where('id_products', $product_update->id)->delete();
+            ProductAttributeValues::whereNotIn('id_attribute', $ids)
+                ->where('id_products', $product_update->id)
+                ->delete();
 
-            $shipping_to_delete = Shipping::where('product_id', $product_update->id)->delete();
+            Shipping::where('product_id', $product_update->id)->delete();
 
             if (count($shipping) > 0) {
                 $id = $product_update->id;
@@ -1374,7 +1376,10 @@ class ProductService
                 Shipping::insert($shipping);
             }
 
-            $childrens = Product::where('parent_id', $product_update->id)->pluck('id')->toArray();
+            $childrens = Product::where('parent_id', $product_update->id)
+                ->pluck('id')
+                ->toArray();
+
             if (count($childrens) > 0) {
                 Shipping::whereIn('product_id', $childrens)->delete();
                 PricingConfiguration::whereIn('id_products', $childrens)->delete();
@@ -1385,10 +1390,23 @@ class ProductService
                 $product_update->save();
             }
 
-            $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
+            $historique = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_id', $product_update->id)
+                ->where('revisionable_type', 'App\Models\Product')
+                ->get();
 
-            $historique_attributes = DB::table('revisions')->whereNull('deleted_at')->whereIn('revisionable_id', $ids_product_attribute_values)->where('revisionable_type', 'App\Models\ProductAttributeValues')->get();
-            if (($product_update->product_added_from_catalog == 1) && (count($historique) == 0) && (count($historique_attributes) == 0)) {
+            $historique_attributes = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->whereIn('revisionable_id', $ids_product_attribute_values)
+                ->where('revisionable_type', 'App\Models\ProductAttributeValues')
+                ->get();
+
+            if (
+                ($product_update->product_added_from_catalog == 1) &&
+                (count($historique) == 0) &&
+                (count($historique_attributes) == 0)
+            ) {
                 $product_update->approved = 1;
                 $product_update->save();
             } else {
@@ -1398,11 +1416,17 @@ class ProductService
 
             return $product_update;
         } else {
-            // //Create Parent Product
+            // Create Parent Product
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
             $product_update->update($collection);
-            $historique = DB::table('revisions')->whereNull('deleted_at')->where('revisionable_id', $product_update->id)->where('revisionable_type', 'App\Models\Product')->get();
+
+            $historique = DB::table('revisions')
+                ->whereNull('deleted_at')
+                ->where('revisionable_id', $product_update->id)
+                ->where('revisionable_type', 'App\Models\Product')
+                ->get();
+
             if (($product_update->product_added_from_catalog == 1) && (count($historique) == 0)) {
                 $product_update->approved = 1;
                 $product_update->save();
@@ -1410,7 +1434,9 @@ class ProductService
                 $product_update->approved = 0;
                 $product_update->save();
             }
-            $old_shipping = Shipping::where('product_id', $product_update->id)->delete();
+
+            Shipping::where('product_id', $product_update->id)->delete();
+
             if (count($shipping) > 0) {
                 $id = $product_update->id;
                 $keyToPush = 'product_id';
@@ -1427,7 +1453,11 @@ class ProductService
 
                 foreach ($pricing['from'] as $key => $from) {
                     $current_data = [];
-                    if (($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)) {
+                    if (
+                        ($from != null) &&
+                        ($pricing['to'][$key] != null) &&
+                        ($pricing['unit_price'][$key] != null)
+                    ) {
                         if (isset($pricing['date_range_pricing'])) {
                             if ($pricing['date_range_pricing'] != null) {
                                 if ($pricing['date_range_pricing'][$key] != null) {
@@ -1462,7 +1492,6 @@ class ProductService
                                     $current_data['discount_amount'] = null;
                                     $current_data['discount_percentage'] = null;
                                 }
-
                             } else {
                                 $current_data['discount_start_datetime'] = null;
                                 $current_data['discount_end_datetime'] = null;
@@ -1530,7 +1559,6 @@ class ProductService
 
             if (count($variants_data) > 0) {
                 foreach ($variants_data as $id => $variant) {
-
                     $collection['low_stock_quantity'] = $variant['low_stock_quantity'];
                     $collection['sku'] = $variant['sku'];
                     $collection['vat_sample'] = $vat_user->vat_registered;
@@ -1575,19 +1603,19 @@ class ProductService
                     }
 
                     $product = Product::find($id);
+
                     if ($product != null) {
                         $product->update($collection);
 
                         //attributes of variant
-                        //$sku = "";
                         $ids_product_attribute_values = [];
                         foreach ($variant['attributes'] as $key => $value_attribute) {
                             if ($value_attribute != null) {
-                                // $attribute_name = Attribute::find($key)->name;
-                                // $sku .= "_".$attribute_name;
-                                // $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
                                 if (in_array($key, $ids_attributes_color)) {
-                                    ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->whereNotIn('value', $value_attribute)->delete();
+                                    ProductAttributeValues::where('id_products', $id)
+                                        ->where('id_attribute', $key)
+                                        ->whereNotIn('value', $value_attribute)
+                                        ->delete();
                                 } else {
                                     $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
                                 }
@@ -1678,11 +1706,11 @@ class ProductService
                             }
                         }
 
-                        // $product->sku = $product_update->name . $sku;
-                        // $product->save();
-
                         $new_ids_attributes = array_keys($variant['attributes']);
-                        $deleted_attributes = ProductAttributeValues::where('id_products', $id)->where('is_variant', 1)->whereNotIn('id_attribute', $new_ids_attributes)->delete();
+                        ProductAttributeValues::where('id_products', $id)
+                            ->where('is_variant', 1)
+                            ->whereNotIn('id_attribute', $new_ids_attributes)
+                            ->delete();
 
                         //Images of variant
                         $ids_images = [];
@@ -1877,7 +1905,7 @@ class ProductService
                             PricingConfiguration::insert($all_data_to_insert);
                         }
 
-                        $shipping_to_delete = Shipping::where('product_id', $product->id)->delete();
+                        Shipping::where('product_id', $product->id)->delete();
                         $shipping_details = [];
 
                         if (array_key_exists('shipping_details', $variant)) {
@@ -1914,9 +1942,8 @@ class ProductService
                             }
                         } else {
                             if (count($shipping) > 0) {
-                                $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
+                                $keyToRemove = 'product_id';
 
-                                // Using array_map() and array_filter()
                                 $shipping = array_map(function ($arr) use ($keyToRemove) {
                                     return array_filter($arr, function ($k) use ($keyToRemove) {
                                         return $k !== $keyToRemove;
@@ -1955,7 +1982,6 @@ class ProductService
                             $product_update->children()->update(['approved' => 0, 'published' => $collection['last_version']]);
                         }
                     }
-
                 }
             }
 
@@ -2079,7 +2105,7 @@ class ProductService
             }
 
             $new_ids_attributes_general = array_keys($general_attributes_data);
-            $deleted_attributes_general = ProductAttributeValues::where('id_products', $product_update->id)->where('is_general', 1)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
+            ProductAttributeValues::where('id_products', $product_update->id)->where('is_general', 1)->whereNotIn('id_attribute', $new_ids_attributes_general)->delete();
 
             if (count($variants_new_data)) {
                 foreach ($variants_new_data as $id => $variant) {
