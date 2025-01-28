@@ -3038,7 +3038,6 @@ class ProductService
                 if ($value != null) {
                     $variants_new_data[$ids[1]]['sample_price'] = $value;
                 }
-
             }
 
             if (strpos($key, 'estimated_sample-') === 0) {
@@ -3118,7 +3117,11 @@ class ProductService
 
                 foreach ($pricing['from'] as $key => $from) {
                     $current_data = [];
-                    if (($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)) {
+                    if (
+                        ($from != null) &&
+                        ($pricing['to'][$key] != null) &&
+                        ($pricing['unit_price'][$key] != null)
+                    ) {
                         if (isset($pricing['date_range_pricing'])) {
                             if ($pricing['date_range_pricing'] != null) {
                                 if ($pricing['date_range_pricing'][$key] != null) {
@@ -3153,7 +3156,6 @@ class ProductService
                                     $current_data['discount_amount'] = null;
                                     $current_data['discount_percentage'] = null;
                                 }
-
                             } else {
                                 $current_data['discount_start_datetime'] = null;
                                 $current_data['discount_end_datetime'] = null;
