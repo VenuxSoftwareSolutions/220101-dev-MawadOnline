@@ -3287,6 +3287,7 @@ class ProductService
             $collection = $collection->toArray();
             $product_draft->update($collection);
             Shipping::where('product_id', $product_draft->id)->delete();
+
             if (count($shipping) > 0) {
                 $id = $product_draft->id;
                 $keyToPush = 'product_id';
@@ -3303,7 +3304,11 @@ class ProductService
 
                 foreach ($pricing['from'] as $key => $from) {
                     $current_data = [];
-                    if (($from != null) && ($pricing['to'][$key] != null) && ($pricing['unit_price'][$key] != null)) {
+                    if (
+                        ($from != null) &&
+                        ($pricing['to'][$key] != null) &&
+                        ($pricing['unit_price'][$key] != null)
+                    ) {
                         if (isset($pricing['date_range_pricing'])) {
                             if ($pricing['date_range_pricing'] != null) {
                                 if ($pricing['date_range_pricing'][$key] != null) {
@@ -3338,7 +3343,6 @@ class ProductService
                                     $current_data['discount_amount'] = null;
                                     $current_data['discount_percentage'] = null;
                                 }
-
                             } else {
                                 $current_data['discount_start_datetime'] = null;
                                 $current_data['discount_end_datetime'] = null;
@@ -3445,10 +3449,14 @@ class ProductService
                         foreach ($variant['attributes'] as $key => $value_attribute) {
                             if ($value_attribute != null) {
                                 if (in_array($key, $ids_attributes_color)) {
-
-                                    ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->whereNotIn('value', $value_attribute)->delete();
+                                    ProductAttributeValues::where('id_products', $id)
+                                        ->where('id_attribute', $key)
+                                        ->whereNotIn('value', $value_attribute)
+                                        ->delete();
                                 } else {
-                                    $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->first();
+                                    $attribute_product = ProductAttributeValues::where('id_products', $id)
+                                        ->where('id_attribute', $key)
+                                        ->first();
                                 }
 
                                 if (in_array($key, $ids_attributes_list)) {
