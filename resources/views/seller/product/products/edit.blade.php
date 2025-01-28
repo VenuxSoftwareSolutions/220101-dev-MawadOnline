@@ -1276,15 +1276,14 @@
                             </div>
                             <div class="row mb-3" style="display: none">
                                 <label
-                                    class="col-md-2 col-from-label">{{ translate('Use default pricing configuration') }}</label>
+                                    class="col-md-2 col-from-label">{{ translate('Use parent unit of sale price') }}</label>
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-pricing" checked>
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant" class="bloc_pricing_configuration_variant">
-
+                                <div id="bloc_pricing_configuration_variant" class="row bloc_pricing_configuration_variant">
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
@@ -1430,18 +1429,35 @@
                                         </div>
                                         <div class="row mb-3">
                                             <label
-                                                class="col-md-2 col-from-label">{{ translate('Use default pricing configuration') }}</label>
+                                                class="col-md-2 col-from-label">{{ translate('Use parent unit of sale price') }}</label>
                                             <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox"
                                                         name="variant-pricing-{{ $children->id }}"
-                                                        data-old_variant="{{ $children->id }}" class="variant-pricing"
-                                                        @if (count($children->getPricingConfiguration()) == 0) checked @endif>
+                                                        data-old_variant="{{ $children->id }}"
+                                                        data-unit_price="{{ $children->unit_price }}"
+                                                        class="variant-pricing"
+                                                        @if ($children->unit_price === 0) checked @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
-                                            <div class="bloc_pricing_configuration_variant">
-                                                @if (count($children->getPricingConfiguration()) > 0)
+                                            {{-- <div class="bloc_pricing_configuration_variant"> --}}
+                                            @if ($children->unit_price !== 0)
+                                                <div class="mx-0 row bloc_pricing_configuration_variant">
+                                                    <label class="col-md-2 col-from-label">
+                                                        {{ __('Unit of Sale Price') }}
+                                                        <small>({{ __('VAT Exclusive') }})</small>
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <input type="number" class="form-control" name="variant[unit_sale_price][{{ $children->id }}]"
+                                                            value="{{ $children->unit_price }}"
+                                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                                {{-- @if (count($children->getPricingConfiguration()) > 0)
                                                     <table class="table" class="bloc_pricing_configuration_variant">
                                                         <thead>
                                                             <tr>
@@ -1538,7 +1554,7 @@
                                                             @endforeach
                                                         </tbody>
                                                     </table>
-                                                @endif
+                                                @endif --}}
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -3215,8 +3231,6 @@
                     // Add some unique identifier to the cloned div (optional)
                     clonedDiv.attr('class', 'clonedDiv');
                     clonedDiv.attr('data-id', numbers_variant);
-                    // Disable all input elements in the cloned div
-                    //clonedDiv.find('input').prop('readonly', true);
 
                     // Append the cloned div to the container
                     var count = numbers_variant + 1;
@@ -3229,7 +3243,6 @@
                             '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
                     @endif
                     clonedDiv.find('h3').after(html_to_add);
-                    //clonedDiv.find('.fa-circle-xmark').hide();
                     clonedDiv.find('.fa-circle-check').hide();
                     clonedDiv.find('#btn-add-pricing-variant').hide();
                     clonedDiv.find('div.row').each(function() {
@@ -3358,6 +3371,11 @@
                             }
                         })
                     });
+
+                    clonedDiv.find("#bloc_pricing_configuration_variant input[type=number]")
+                        .attr("name", `variant-unit-price${numbers_variant}`);
+                    clonedDiv.find('#bloc_pricing_configuration_variant input[type=number]')
+                        .attr('data-id_newvariant', numbers_variant);
 
                     clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
                         numbers_variant);
@@ -3599,6 +3617,27 @@
                     var is_variant = $(this).data("variant");
                     var old_variant = $(this).data("old_variant");
                     var clonedElement = $("#table_pricing_configuration").clone();
+
+                    let oldVariantUnitPrice = $(this).data("unit_price") ?? 0;
+                    let numbers_variant = parseInt("{{ count($product->getChildrenProducts()) }}");
+
+                    let unitPriceElement = $(`
+                        <label class="col-md-2 col-from-label">
+                            {{ __("Unit of Sale Price") }}
+                            <small>({{ __("VAT Exclusive") }})</small>
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <input
+                               type="number"
+                               class="form-control"
+                               name="${numbers_variant > 0 ? `variant_unit_price-${numbers_variant}` : `variant[unit_sale_price][${old_variant}]`}"
+                               value="${oldVariantUnitPrice}"
+                               placeholder="{{ __("Unit of Sale Price") }}"
+                            />
+                        </div>
+                    `);
+
                     clonedElement.find('.min-qty').each(function(index, element) {
                         $(element).removeClass("min-qty").addClass("min-qty-variant");
                         if (is_variant != undefined) {
@@ -3719,11 +3758,9 @@
                             old_variant);
                     }
 
-
-
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(
-                        clonedElement);
+                        unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
                 }
