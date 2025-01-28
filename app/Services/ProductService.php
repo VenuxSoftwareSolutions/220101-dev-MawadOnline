@@ -847,6 +847,10 @@ class ProductService
                     $variants_data[$key]['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                 }
 
+                if (array_key_exists("unit_sale_price", $data["variant"])) {
+                    $variants_data[$key]["unit_price"] = $data["variant"]["unit_sale_price"][$key];
+                }
+
                 //check if the variant has sample pricing
                 if (array_key_exists('sample_pricing', $data['variant'])) {
                     if (array_key_exists($key, $data['variant']['sample_pricing'])) {
@@ -991,6 +995,16 @@ class ProductService
 
                     $variants_new_data[$ids[2]]['sample_available'] = 0;
                 }
+            }
+
+            if (strpos($key, 'variant_unit_price') === 0) {
+                $ids = explode('-', $key);
+
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
+                }
+
+                $variants_new_data[$ids[1]]['unit_price'] = $value;
             }
 
             if (strpos($key, 'variant-published-') === 0) {
@@ -1565,6 +1579,10 @@ class ProductService
                     $collection['sample_description'] = $variant['sample_description'];
                     $collection['sample_price'] = $variant['sample_price'];
                     $collection['published'] = $variant['published'];
+
+                    if (isset($variant["unit_price"])) {
+                        $collection["unit_price"] = $variant["unit_price"];
+                    }
 
                     if (isset($variant['shipper_sample'])) {
                         $collection['shipper_sample'] = implode(',', $variant['shipper_sample']);
@@ -2175,7 +2193,12 @@ class ProductService
 
                     $randomString = Str::random(5);
                     $collection['slug'] = $collection['slug'].'-'.$randomString;
-                    $collection["unit_price"] = $collection['unit_sale_price'];
+
+                    if (! array_key_exists('unit_price', $variant)) {
+                        $collection["unit_price"] = $collection['unit_sale_price'];
+                    } else {
+                        $collection["unit_price"] = $variant["unit_price"];
+                    }
 
                     $new_product = Product::create($collection);
 
