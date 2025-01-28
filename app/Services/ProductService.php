@@ -1441,7 +1441,10 @@ class ProductService
                 ->where('revisionable_type', 'App\Models\Product')
                 ->get();
 
-            if (($product_update->product_added_from_catalog == 1) && (count($historique) == 0)) {
+            if (
+                ($product_update->product_added_from_catalog == 1) &&
+                (count($historique) == 0)
+            ) {
                 $product_update->approved = 1;
                 $product_update->save();
             } else {
