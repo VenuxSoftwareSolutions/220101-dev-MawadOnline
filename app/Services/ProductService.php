@@ -2890,6 +2890,10 @@ class ProductService
                 } else {
                     $variants_data[$key]['attributes'] = [];
                 }
+
+                if (array_key_exists("unit_sale_price", $data["variant"])) {
+                    $variants_data[$key]["unit_price"] = $data["variant"]["unit_sale_price"][$key];
+                }
             }
 
             unset($collection['variant']);
@@ -3403,6 +3407,10 @@ class ProductService
                     $collection['sample_description'] = $variant['sample_description'];
                     $collection['sample_price'] = $variant['sample_price'];
                     $collection['published'] = $variant['published'];
+
+                    if (isset($variant["unit_price"])) {
+                        $collection["unit_price"] = $variant["unit_price"];
+                    }
 
                     if (isset($variant['shipper_sample'])) {
                         $collection['shipper_sample'] = implode(',', $variant['shipper_sample']);
