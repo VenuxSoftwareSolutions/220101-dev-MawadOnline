@@ -942,7 +942,7 @@ class ProductService
             unset($collection['variant']);
         }
 
-        //Check if porduct has new variants
+        //Check if product has new variants
         foreach ($data as $key => $value) {
             if (strpos($key, 'attributes-') === 0) {
                 //Check if the new variant has attributes. If it does, a table will be generated containing all attributes, with each attribute having its own value.
