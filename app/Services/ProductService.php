@@ -546,7 +546,8 @@ class ProductService
         $collection['user_id'] = Auth::user()->owner_id;
 
         $collection['rejection_reason'] = null;
-        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)->first();
+        $vat_user = BusinessInformation::where('user_id', Auth::user()->owner_id)
+            ->first();
 
         $slug = Str::slug($collection['name']);
         $same_slug_count = Product::where('slug', 'LIKE', $slug.'%')->count();
@@ -575,7 +576,11 @@ class ProductService
         }
 
         $pricing = [];
-        if ((isset($collection['from'])) && (isset($collection['to'])) && (isset($collection['unit_price']))) {
+        if (
+            (isset($collection['from'])) &&
+            (isset($collection['to'])) &&
+            (isset($collection['unit_price']))
+        ) {
             $pricing = [
                 'from' => $collection['from'],
                 'to' => $collection['to'],
@@ -627,9 +632,13 @@ class ProductService
         }
 
         $shipping = [];
-        if ((isset($collection['from_shipping'])) && (isset($collection['to_shipping'])) && (isset($collection['shipper'])) && (isset($collection['estimated_order']))) {
+        if (
+            (isset($collection['from_shipping'])) &&
+            (isset($collection['to_shipping'])) &&
+            (isset($collection['shipper'])) &&
+            (isset($collection['estimated_order']))
+        ) {
             foreach ($collection['from_shipping'] as $key => $from_shipping) {
-
                 if ((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))) {
                     if (($from_shipping != null) && ($collection['to_shipping'][$key] != null) && ($collection['shipper'][$key] != null) && ($collection['estimated_order'][$key] != null)) {
                         $current_data = [];
