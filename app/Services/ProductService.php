@@ -4682,7 +4682,6 @@ class ProductService
                                     $attribute_product->save();
                                 }
                             }
-
                         } elseif (in_array($key, $ids_attributes_numeric)) {
                             $attribute_product = new ProductAttributeValues;
                             $attribute_product->id_products = $product->id;
@@ -4895,7 +4894,6 @@ class ProductService
                     if (count($all_data_to_insert) > 0) {
                         PricingConfiguration::insert($all_data_to_insert);
                     }
-
                 }
 
                 //Shipping of variant
@@ -4931,7 +4929,7 @@ class ProductService
                     }
                 } else {
                     if (count($shipping) > 0) {
-                        $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
+                        $keyToRemove = 'product_id';
 
                         $shipping = array_map(function ($arr) use ($keyToRemove) {
                             return array_filter($arr, function ($k) use ($keyToRemove) {
