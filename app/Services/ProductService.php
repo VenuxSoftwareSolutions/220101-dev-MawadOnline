@@ -996,15 +996,19 @@ class ProductService
 
                 //check if the variant activated the variant pricing
                 $key_pricing = 'variant-pricing-'.$ids[2];
+
                 if (! isset($data[$key_pricing])) {
                     if (! array_key_exists($ids[2], $variants_new_data)) {
                         $variants_new_data[$ids[2]] = [];
                     }
 
-                    $variants_new_data[$ids[2]]['pricing'] = $data['variant_pricing-from'.$ids[2]];
+                    if (isset($data['variant_pricing-from'.$ids[2]]) === true) {
+                        $variants_new_data[$ids[2]]['pricing'] = $data['variant_pricing-from'.$ids[2]];
+                    }
                 }
 
                 $key_shipping = 'variant_shipping-'.$ids[2];
+
                 if (isset($data[$key_shipping])) {
                     if (! array_key_exists($ids[2], $variants_new_data)) {
                         $variants_new_data[$ids[2]] = [];
