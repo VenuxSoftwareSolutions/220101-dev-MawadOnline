@@ -298,7 +298,9 @@ class ProductService
                             $variants_data[$ids[2]] = [];
                         }
 
-                        $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from'.$ids[2]];
+                        if (isset($data['variant_pricing-from'.$ids[2]])) {
+                            $variants_data[$ids[2]]['pricing'] = $data['variant_pricing-from'.$ids[2]];
+                        }
                     }
 
                     $key_shipping = 'variant_shipping-'.$ids[2];
