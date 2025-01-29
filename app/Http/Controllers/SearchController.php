@@ -429,10 +429,11 @@ class SearchController extends Controller
         $products = Product::where('published', '1')
             ->where('auction_product', 0)
             ->where('approved', '1');
+        
+        //Filter attributes based on selected category
         if ($category_id != null) {
                 // Fetch category hierarchy and filter products
-                $category_ids = CategoryUtility::children_ids($category_id);
-                
+                $category_ids = CategoryUtility::children_ids($category_id);                
                 $category_ids[] = $category_id;
                 $products->whereIn('category_id', $category_ids);
             
@@ -467,11 +468,12 @@ class SearchController extends Controller
         }   
 
         $id_products = [];
-
+        //retrieve minimum and maximum price
         $query_price = $products->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
         $max_all_price = $query_price->max('pricing_configurations.unit_price');
         $min_all_price = $query_price->min('pricing_configurations.unit_price');
 
+        //if no price is found
         if (!$max_all_price) {
             $max_all_price = 1;
             $min_all_price = 0;
@@ -481,8 +483,9 @@ class SearchController extends Controller
             $max_all_price = $min_all_price + 1;
         }
         
+        //retrieve brands 
         $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
-
+        //retrieve shops
         $shops = $products->join('users', 'users.id', '=', 'products.user_id')
             ->join('shops', 'shops.user_id', 'users.id')
             ->where('users.banned', '!=', 1)
@@ -491,9 +494,7 @@ class SearchController extends Controller
         $brands = $brands->select('brands.*')->distinct('brands.id')->get();
         $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
-        $products = Product::where('published', '1')
-            ->where('auction_product', operator: 0)
-            ->where('approved', '1');
+     
         if ($query) {
             $products->where("products.name", 'like', "%" . $query . "%");
         }
@@ -503,6 +504,8 @@ class SearchController extends Controller
         }
 
     $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
+    
+    //filter products by brand
     $brand_ids = [];
     if ($brand_id != null) {
         $brand_ids[] = $brand_id;
@@ -511,7 +514,7 @@ class SearchController extends Controller
         $brand_ids = Brand::whereIn('slug', $request->brand)->pluck('id')->toArray();
         $products->whereIn('brand_id', $brand_ids);
     }
-
+    //Filter products by Shop
     $vender_user_ids = [];
     if ($request->shops) {
         $vender_user_ids = Shop::whereIn('slug', $request->shops)->pluck('user_id')->toArray();
@@ -521,9 +524,12 @@ class SearchController extends Controller
         $products->whereIn('user_id', $vender_user_ids);
     }
 
+    //filter products by colors
     if ($request->colors) {
         $selected_color = $request->colors;
     }
+
+    //apply sorting
     switch ($sort_by) {
         case 'newest':
             $products->orderBy('created_at', 'desc');
@@ -553,7 +559,7 @@ class SearchController extends Controller
     } else {
         $category_parent_parent = null;
     }
-
+    //filter by rating
     if ($rating) {
         $products->when($rating && $rating > 0, function ($query) use ($rating) {
             $query->whereHas('reviews', function ($q) use ($rating) {
@@ -564,7 +570,7 @@ class SearchController extends Controller
 
     $products = Product::query();
 
-
+    //filter based on the price range
     if ($min_price || $max_price) {
         $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
             $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
@@ -626,82 +632,109 @@ class SearchController extends Controller
     } 
 
     $request_all = request()->input();
+    if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
 
-   /* foreach ($request->all() as $key => $attribute_value) {
-        $attribute = Attribute::find($key);
-       // dd( $attribute );
-        if ($attribute) {
-            $units_id = $request['units_' . $attribute->id];
-            $unit = Unity::find($units_id);
-            $attribute_id = $attribute->id;
-            $attribute_type_value = $attribute->type_value;
-
-            if (isset($request_all['units_old_' . $attribute_id])) {
-                $rate_old = $request_all['units_old_' . $attribute_id];
-                $request_all['new_min_value_' . $attribute_id] = $attribute_value[0] / $unit->rate * $rate_old;
-                $request_all['new_max_value_' . $attribute_id] = $attribute_value[1] / $unit->rate * $rate_old;
-            }
-
-            $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                    if ($attribute_type_value == "text") {
-                        $q->where('id_attribute', $attribute_id)
+        foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
+            $attribute = Attribute::find($attribute_id);
+            if($attribute){
+                // dump($attribute->id);
+                $units_id = $request['units_'.$attribute->id];
+                $unit = Unity::find($units_id);
+                $attribute_id = $attribute->id;
+                $attribute_type_value = $attribute->type_value;
+                if(isset($request_all['units_old_'.$attribute_id])){
+                    $rate_old = $request_all['units_old_'.$attribute_id];
+                    $request_all['new_min_value_'.$attribute_id] = $attribute_value[0] / $unit->rate * $rate_old ;
+                    $request_all['new_max_value_'.$attribute_id] = $attribute_value[1] / $unit->rate * $rate_old ;
+                }
+                
+                // $products = $products->join('product_attribute_values','products.id','product_attribute_values.id_products');
+                $products->when($attribute, function ($query) use ($attribute_type_value,$attribute_id,$attribute_value,$language,$units_id) {
+                    $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value,$attribute_id,$attribute_value,$language,$units_id) {
+                        if($attribute_type_value == "text"){
+                            $q->where('id_attribute', $attribute_id)
                             ->whereIn('value', $attribute_value);
-                    } elseif ($attribute_type_value == "color") {
-                        $list_colors = Color::whereHas('groupColors', function ($query) use ($attribute_value) {
-                            $query->whereIn('color_group_id', $attribute_value);
-                        })->pluck('id')->toArray();
-                        $q->where('id_attribute', $attribute_id)
-                            ->whereIn('id_colors', $list_colors);
-                    } elseif ($attribute_type_value == "list") {
-                        $q->where('id_attribute', $attribute_id)
-                            ->whereIn('id_values', $attribute_value);
-                    } elseif ($attribute_type_value == "numeric") {
-                        if (count($attribute_value) > 1) {
-                            $unit = Unity::find($units_id);
-                            $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
+                        }elseif($attribute_type_value == "color"){
+                            
+                            $list_colors = Color::whereHas('groupColors', function ($query) use ($attribute_value) {
+                                $query->whereIn('color_group_id', $attribute_value);
+                            })->pluck('id')->toArray();
+                            $q->where('id_attribute', $attribute_id)
+                            ->whereIn('id_colors',$list_colors);
+                        }elseif($attribute_type_value == "list"){
+                            $q->where('id_attribute', $attribute_id)
+                            ->whereIn('id_values',$attribute_value);
+                        }
+                        elseif($attribute_type_value == "numeric"){
+                            if(count($attribute_value)>1 ){
+                                $unit = Unity::find($units_id);
+                                $childrens_units = Unity::where('default_unit',$unit->default_unit)->get();
 
-                            if (!is_null($attribute_value[0]) && !is_null($attribute_value[1])) {
-                                $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->where([
-                                    ['id_attribute', '=', $attribute_id],
-                                    ['id_units', '=', intval($units_id)],
-                                ])
-                                    ->whereRaw('CAST(value AS DECIMAL(10,2)) >= ?', [floatval($attribute_value[0])])
-                                    ->whereRaw('CAST(value AS DECIMAL(10,2)) <= ?', [floatval($attribute_value[1])]);
-
-                                foreach ($childrens_units as $childrens_unit) {
-                                    $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->orWhere([
-                                        ['id_attribute', '=', $attribute_id],
-                                        ['id_units', '=', intval($childrens_unit->id)],
-                                    ])
+                                if (!is_null($attribute_value[0]) && !is_null($attribute_value[1])) {
+                                    // $q->where('id_attribute', $attribute_id)
+                                    //     ->where('id_units', $units_id)
+                                    //     ->whereBetween('value',$attribute_value);
+                                    // dump(intval($attribute_value[0]),intval($attribute_value[1]),$attribute_id,$units_id);
+                                    
+                                    // dump($attribute_id,intval($units_id),floatval($attribute_value[0]),floatval($attribute_value[1]));
+                                    $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->where([
+                                            ['id_attribute', '=', $attribute_id],
+                                            ['id_units', '=', intval($units_id)],
+                                            // ['value', '>=', floatval($attribute_value[0])],
+                                            // ['value', '<=', floatval($attribute_value[1]) ],
+                                            // ['value', '=', 90 ]
+                                        ])
                                         ->whereRaw('CAST(value AS DECIMAL(10,2)) >= ?', [floatval($attribute_value[0])])
                                         ->whereRaw('CAST(value AS DECIMAL(10,2)) <= ?', [floatval($attribute_value[1])]);
-                                }
-                            } elseif (!is_null($attribute_value[0])) {
-                                $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
-                                    ->where('id_units', $units_id)
-                                    ->where('value', '>=', floatval($attribute_value[0]));
-                                foreach ($childrens_units as $childrens_unit) {
-                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
+                                        ;
+                                    foreach ($childrens_units as $childrens_unit) {
+                                        // dump($attribute_id,$childrens_unit->id,$attribute_value[1] / $unit->rate * $childrens_unit->rate);
+                                        // $q->orwhere('id_attribute', $attribute_id)
+                                        // ->where('id_units', $childrens_unit->id)
+                                        // ->where('value','>=',$attribute_value[0] / $unit->rate * $childrens_unit->rate)
+                                        // ->where('value','<=',$attribute_value[1] / $unit->rate * $childrens_unit->rate);
+                                        // dump($attribute_id, $childrens_unit->id,$attribute_value[1] * $unit->rate / $childrens_unit->rate,$attribute_value[0] * $unit->rate / $childrens_unit->rate);
+                                        $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->orWhere([
+                                            ['id_attribute', '=', $attribute_id],
+                                            ['id_units', '=', intval($childrens_unit->id)],
+                                            // ['value', '>=', floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate],
+                                            // ['value', '<=', floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate]
+                                        ])
+                                        ->whereRaw('CAST(value AS DECIMAL(10,2)) >= ?', [floatval($attribute_value[0])])
+                                        ->whereRaw('CAST(value AS DECIMAL(10,2)) <= ?', [floatval($attribute_value[1])])
+                                        ;
+                                    }
+                                } 
+                                elseif (!is_null($attribute_value[0])) {
+                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
+                                        ->where('id_units', $units_id)
+                                        ->where('value','>=',floatval($attribute_value[0]));
+                                    foreach ($childrens_units as $childrens_unit) {
+                                        $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
                                         ->where('id_units', $childrens_unit->id)
-                                        ->where('value', '>=', floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate);
-                                }
-                            } elseif (!is_null($attribute_value[1])) {
-                                $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
-                                    ->where('id_units', $units_id)
-                                    ->where('value', '<=', floatval($attribute_value[1]));
-                                foreach ($childrens_units as $childrens_unit) {
-                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
+                                        ->where('value','>=',floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate);
+                                    }
+                                } elseif (!is_null($attribute_value[1])) {
+                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
+                                        ->where('id_units', $units_id)
+                                        ->where('value','<=',floatval($attribute_value[1]));
+                                    foreach ($childrens_units as $childrens_unit) {
+                                        $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
                                         ->where('id_units', $childrens_unit->id)
-                                        ->where('value', '<=', floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate);
+                                        ->where('value','<=',floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate);
+                                    }
                                 }
+                                
                             }
                         }
-                    }
-                });
-            });
+                        
+                    });
+                }); 
+            }
+            
         }
-    }*/
+    
+    }   
     foreach ($attributes as $attribute) {
         $value = DB::table('attribute_values')
             ->where('attribute_id', $attribute->id)

@@ -392,8 +392,7 @@
             }
         });
     </script>
-    <script>
-    </script>
+  
     <script>
         function slide_refresh(){
             if ($(".aiz-range-slider")[0]) {
