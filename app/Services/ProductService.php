@@ -38,6 +38,7 @@ class ProductService
     {
         try {
             $collection = collect($data);
+
             $vat_user = BusinessInformation::where('user_id', auth()->user()->owner_id)->first();
 
             $approved = 1;
@@ -152,7 +153,11 @@ class ProductService
 
             $pricing = [];
 
-            if ((isset($collection['from'])) && (isset($collection['to'])) && (isset($collection['unit_price']))) {
+            if (
+                (isset($collection['from'])) &&
+                (isset($collection['to'])) &&
+                (isset($collection['unit_price']))
+            ) {
                 $pricing = [
                     'from' => $collection['from'],
                     'to' => $collection['to'],
