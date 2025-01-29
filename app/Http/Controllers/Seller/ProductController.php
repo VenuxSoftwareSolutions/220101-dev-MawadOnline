@@ -8,6 +8,7 @@ use App\Models\AttributeValue;
 use App\Models\Brand;
 use App\Models\BusinessInformation;
 use App\Models\Category;
+use App\Models\CategoryHasAttribute;
 use App\Models\Color;
 use App\Models\ColorGroup;
 use App\Models\ColorGroupColor;
@@ -38,7 +39,7 @@ use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use App\Models\CategoryHasAttribute;
+use Log;
 
 class ProductController extends Controller
 {
@@ -100,8 +101,8 @@ class ProductController extends Controller
             $search = $request->search;
             $products = $products->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
-                      ->orWhere('sku', 'like', '%'.$search.'%')
-                      ->orWhere('short_description', 'like', '%'.$search.'%');
+                    ->orWhere('sku', 'like', '%'.$search.'%')
+                    ->orWhere('short_description', 'like', '%'.$search.'%');
             });
         }
         $products = $products->paginate(10);
@@ -282,9 +283,9 @@ class ProductController extends Controller
             if ($product->is_draft == 1) {
                 return redirect()->route(
                     'seller.products.edit', [
-                    'id' => $product->id,
-                    'lang' => env('DEFAULT_LANGUAGE')
-                ]);
+                        'id' => $product->id,
+                        'lang' => env('DEFAULT_LANGUAGE'),
+                    ]);
             } else {
                 return redirect()->route('seller.products');
             }
@@ -810,7 +811,7 @@ class ProductController extends Controller
                 $to = $variant['to'];
 
                 $rules[$key] = [
-                    new NoPricingOverlap($from, $to, false, $index)
+                    new NoPricingOverlap($from, $to, false, $index),
                 ];
             }
         }
@@ -862,6 +863,7 @@ class ProductController extends Controller
             return redirect()->route('seller.products');
         } else {
             flash(translate('Error while updating product'))->error();
+
             return redirect()->back();
         }
     }
@@ -1082,9 +1084,10 @@ class ProductController extends Controller
             }
 
             return 1;
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             \Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
-            return response()->json(["error" => true, "message" => __("There's an error")], 500);
+
+            return response()->json(['error' => true, 'message' => __("There's an error")], 500);
         }
     }
 
