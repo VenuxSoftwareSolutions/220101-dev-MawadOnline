@@ -292,6 +292,16 @@ class ProductService
                         }
                     }
 
+                    $key_unit_price = "variant-unit_sale_price-" . $ids[2];
+
+                     if (isset($data[$key_unit_price])) {
+                        if (! array_key_exists($ids[2], $variants_data)) {
+                            $variants_data[$ids[2]] = [];
+                        }
+
+                        $variants_data[$ids[2]]['unit_price'] = $data[$key_unit_price];
+                    }
+
                     $key_pricing = 'variant-pricing-'.$ids[2];
                     if (! isset($data[$key_pricing])) {
                         if (! array_key_exists($ids[2], $variants_data)) {
@@ -465,6 +475,15 @@ class ProductService
                     }
 
                     $variants_data[$ids[1]]['paid_sample'] = $value;
+                }
+
+                if (strpos($key, 'variant-unit-price') === 0) {
+                    $ids = explode('-', $key);
+                    if (! array_key_exists($ids[1], $variants_data)) {
+                        $variants_data[$ids[1]] = [];
+                    }
+
+                    $variants_data[$ids[1]]['unit_price'] = $value;
                 }
             }
 
@@ -4651,10 +4670,16 @@ class ProductService
                     }
                 }
 
+                if (isset($variant["unit_price"])) {
+                    $data["unit_price"] = $variant["unit_price"];
+                } else {
+                    $data["unit_price"] = $data["unit_sale_price"];
+                }
+
                 $data['sku'] = $variant['sku'];
                 $randomString = Str::random(5);
                 $data['slug'] = $data['slug'].'-'.$randomString;
-                $data["unit_price"] = $data["unit_sale_price"];
+
                 $product = Product::create($data);
 
                 //attributes of variant
