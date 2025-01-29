@@ -197,44 +197,50 @@ class ProductController extends Controller
             'flash_discount_type',
         ]));
 
-        $request->merge(['product_id' => $product->id]);
+        if ($product !== null) {
+            $request->merge(['product_id' => $product->id]);
 
-        //Product categories
-        if ($product->is_parent == 1) {
-            $products = Product::where('parent_id', $product->id)->get();
-            if (count($products) > 0) {
-                foreach ($products as $child) {
-                    $child->categories()->attach($request->parent_id);
+            //Product categories
+            if ($product->is_parent == 1) {
+                $products = Product::where('parent_id', $product->id)->get();
+                if (count($products) > 0) {
+                    foreach ($products as $child) {
+                        $child->categories()->attach($request->parent_id);
+                    }
                 }
             }
-        }
 
-        $product->categories()->attach($request->parent_id);
+            $product->categories()->attach($request->parent_id);
 
-        //Upload documents, images and thumbnails
-        if ($request->document_names) {
-            $data['document_names'] = $request->document_names;
-            $data['documents'] = $request->documents;
-            $data['product'] = $product;
-            $data['main_photos'] = $request->main_photos;
-            $data['photosThumbnail'] = $request->photosThumbnail;
-            $update = false;
-            $this->productUploadsService->store_uploads($data, $update);
-        }
-
-        flash(translate('Product has been inserted successfully'))->success();
-
-        Artisan::call('view:clear');
-        Artisan::call('cache:clear');
-
-        if ($product->is_draft == 1) {
-            return redirect()->route('seller.products.edit', ['id' => $product->id, 'lang' => env('DEFAULT_LANGUAGE')]);
-        } else {
-            if ($product->stock_after_create) {
-                return redirect()->route('seller.stocks.index');
-            } else {
-                return redirect()->route('seller.products');
+            //Upload documents, images and thumbnails
+            if ($request->document_names) {
+                $data['document_names'] = $request->document_names;
+                $data['documents'] = $request->documents;
+                $data['product'] = $product;
+                $data['main_photos'] = $request->main_photos;
+                $data['photosThumbnail'] = $request->photosThumbnail;
+                $update = false;
+                $this->productUploadsService->store_uploads($data, $update);
             }
+
+            flash(translate('Product has been inserted successfully'))->success();
+
+            Artisan::call('view:clear');
+            Artisan::call('cache:clear');
+
+            if ($product->is_draft == 1) {
+                return redirect()->route('seller.products.edit', ['id' => $product->id, 'lang' => env('DEFAULT_LANGUAGE')]);
+            } else {
+                if ($product->stock_after_create) {
+                    return redirect()->route('seller.stocks.index');
+                } else {
+                    return redirect()->route('seller.products');
+                }
+            }
+        } else {
+            Log::error('Error while storing product: product is null');
+            flash()->error(__("Something went wrong!"));
+            return redirect()->route('seller.products');
         }
     }
 
