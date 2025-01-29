@@ -1441,7 +1441,6 @@
                                                     <span></span>
                                                 </label>
                                             </div>
-                                            {{-- <div class="bloc_pricing_configuration_variant"> --}}
                                             @if ($children->unit_price !== 0)
                                                 <div class="mx-0 row bloc_pricing_configuration_variant">
                                                     <label class="col-md-2 col-from-label">
@@ -1456,106 +1455,6 @@
                                                     </div>
                                                 </div>
                                             @endif
-
-                                                {{-- @if (count($children->getPricingConfiguration()) > 0)
-                                                    <table class="table" class="bloc_pricing_configuration_variant">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>{{ translate('From Quantity') }}</th>
-                                                                <th>{{ translate('To Quantity') }}</th>
-                                                                <th>{{ translate('Unit Price (VAT Exclusive)') }}</th>
-                                                                <th>{{ translate('Discount(Start/End)') }}</th>
-                                                                <th>{{ translate('Discount Type') }}</th>
-                                                                <th>{{ translate('Discount Amount') }}</th>
-                                                                <th>{{ translate('Discount Percentage') }}</th>
-                                                                <th>{{ translate('Action') }}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="bloc_pricing_configuration">
-                                                            @foreach ($children->getPricingConfiguration() as $pricing)
-                                                                <tr>
-                                                                    <td><input type="number"
-                                                                            name="variant[from][{{ $children->id }}][]"
-                                                                            class="form-control min-qty-variant"
-                                                                            id="" value="{{ $pricing->from }}">
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            name="variant[to][{{ $children->id }}][]"
-                                                                            class="form-control max-qty-variant"
-                                                                            id="" value="{{ $pricing->to }}">
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            name="variant[unit_price][{{ $children->id }}][]"
-                                                                            class="form-control unit-price-variant"
-                                                                            id=""
-                                                                            value="{{ $pricing->unit_price }}"></td>
-                                                                    @php
-                                                                        $date_range = '';
-                                                                        if ($pricing->discount_start_datetime) {
-                                                                            $start_date = new DateTime($pricing->discount_start_datetime);
-                                                                            $start_date_formatted = $start_date->format('d-m-Y H:i:s');
-
-                                                                            $end_date = new DateTime($pricing->discount_end_datetime);
-                                                                            $end_date_formatted = $end_date->format('d-m-Y H:i:s');
-
-                                                                            $date_range = $start_date_formatted . ' to ' . $end_date_formatted;
-                                                                        }
-                                                                    @endphp
-                                                                    <td><input type="text"
-                                                                            class="form-control aiz-date-range discount-range-variant"
-                                                                            value="{{ $date_range }}"
-                                                                            name="variant[date_range_pricing][{{ $children->id }}][]"
-                                                                            placeholder="{{ translate('Select Date') }}"
-                                                                            data-time-picker="true" data-separator=" to "
-                                                                            data-format="DD-MM-Y HH:mm:ss"
-                                                                            autocomplete="off"></td>
-                                                                    <td>
-                                                                        <select class="form-control discount_type-variant"
-                                                                            name="variant[discount_type][{{ $children->id }}][]">
-                                                                            <option value="" selected>
-                                                                                {{ translate('Choose type') }}</option>
-                                                                            <option value="amount"
-                                                                                @selected($pricing->discount_type == 'amount')>
-                                                                                {{ translate('Flat') }}</option>
-                                                                            <option value="percent"
-                                                                                @selected($pricing->discount_type == 'percent')>
-                                                                                {{ translate('Percent') }}</option>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            class="form-control discount_amount-variant"
-                                                                            value="{{ $pricing->discount_amount }}"
-                                                                            @if ($pricing->discount_type != 'amount') readonly @endif
-                                                                            name="variant[discount_amount][{{ $children->id }}][]">
-                                                                    </td>
-                                                                    <td style="width: 19% !important;">
-                                                                        <div class="col-md-9 input-group">
-                                                                            <input type="number"
-                                                                                class="form-control discount_percentage-variant"
-                                                                                value="{{ $pricing->discount_percentage }}"
-                                                                                @if ($pricing->discount_type != 'percent') readonly @endif
-                                                                                name="variant[discount_percentage][{{ $children->id }}][]">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">%</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <i class="las la-plus btn-add-pricing"
-                                                                            data-id_variant="{{ $children->id }}"
-                                                                            style="margin-left: 5px; margin-top: 17px;"
-                                                                            title="Add another ligne"></i>
-                                                                        <i class="las la-trash delete_pricing_canfiguration"
-                                                                            data-pricing_id="{{ $pricing->id }}"
-                                                                            style="margin-left: 5px; margin-top: 17px;"
-                                                                            title="Delete this ligne"></i>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                @endif --}}
-                                            </div>
                                         </div>
                                         <div class="row mb-3">
                                             <label
