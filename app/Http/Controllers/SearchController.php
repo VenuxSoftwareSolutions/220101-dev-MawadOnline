@@ -42,6 +42,9 @@ class SearchController extends Controller
         $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
 
         $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+
+
+
         //Filter attributes based on selected category
         if ($category_id != null) {
             // Fetch category hierarchy and filter products
@@ -75,27 +78,27 @@ class SearchController extends Controller
 
         $id_products = [];
         //retrieve minimum and maximum price
-        $query_price = $products->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
-        $max_all_price = $query_price->max('pricing_configurations.unit_price');
-        $min_all_price = $query_price->min('pricing_configurations.unit_price');
+        $baseQuery = clone $products;
+        $priceQuery = clone $baseQuery;
+        $priceQuery->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
 
-        //if no price is found
-        if (!$max_all_price) {
-            $max_all_price = 1;
-            $min_all_price = 0;
-        }
-
-        if ($max_all_price == $min_all_price) {
-            $max_all_price = $min_all_price + 1;
-        }
+        $max_all_price = $priceQuery->max('pricing_configurations.unit_price') ?? 1;
+        $min_all_price = $priceQuery->min('pricing_configurations.unit_price') ?? 0;
+        $brandQuery = clone $baseQuery;
 
         //retrieve brands
-        $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
-        //retrieve shops
-        $shops = $products->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0);
-
-        $brands = $brands->select('brands.*')->distinct('brands.id')->get();
-        $shops = $shops->select('shops.*')->distinct('shops.id')->get();
+        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')
+        ->select('brands.*')
+        ->distinct()
+        ->get();
+        $shopQuery = clone $baseQuery;
+        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')
+        ->join('shops', 'shops.user_id', '=', 'users.id')
+        ->where('users.banned', '!=', 1)
+        ->where('shops.verification_status', '!=', 0)
+        ->select('shops.*')
+        ->distinct()
+        ->get();
 
         if ($query) {
             $products->where('products.name', 'like', '%' . $query . '%');
@@ -235,8 +238,9 @@ class SearchController extends Controller
 
             $selected_attribute_values[$attribute->id] = $value;
         }
-        $products = $products->select('products.*')->paginate(6);
 
+
+        $products = $products->paginate(6);
         if ($request->ajax()) {
             $html = '';
             foreach ($products as $product) {
