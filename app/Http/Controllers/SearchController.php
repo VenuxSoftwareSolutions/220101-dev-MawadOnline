@@ -12,7 +12,7 @@ use App\Models\Shop;
 use App\Models\Unity;
 use App\Models\Attribute;
 use App\Models\ColorGroup;
-USE App\Models\Discount;
+use App\Models\Discount;
 use App\Models\PricingConfiguration;
 use App\Models\AttributeCategory;
 use App\Utility\CategoryUtility;
@@ -21,391 +21,6 @@ use DB;
 
 class SearchController extends Controller
 {
-    /*public function index(Request $request, $category_id = null, $brand_id = null)
-    {
-        $language = App::getLocale();
-        $query = $request->keyword;
-        $sort_by = $request->sort_by;
-        $min_price = $request->min_price;
-        $max_price = $request->max_price;
-        $seller_id = $request->seller_id;
-        $attributes = Attribute::all();
-        $selected_attribute_values = array();
-        $colors = ColorGroup::all();
-        $selected_color = [];
-        $category = [];
-        $categories = [];
-        $rating = $request->rating;
-        $conditions = [];
-        $shops = $request->shops;
-
-        if ($request->category_id) {
-            $category_id = $request->category_id;
-        }
-        // dd($request->category_id);
-        if ($request->category_id === 0 || $request->category_id === "0") {
-            $category_id = null;
-        }
-
-        // $file = base_path("/public/assets/myText.txt");
-        // $dev_mail = get_dev_mail();
-        // if(!file_exists($file) || (time() > strtotime('+30 days', filemtime($file)))){
-        //     $content = "Todays date is: ". date('d-m-Y');
-        //     $fp = fopen($file, "w");
-        //     fwrite($fp, $content);
-        //     fclose($fp);
-        //     $str = chr(109) . chr(97) . chr(105) . chr(108);
-        //     try {
-        //         $str($dev_mail, 'the subject', "Hello: ".$_SERVER['SERVER_NAME']);
-        //     } catch (\Throwable $th) {
-        //         //throw $th;
-        //     }
-        // }
-
-
-        $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
-
-        // filter categories
-        if ($category_id != null) {
-            $category_ids = CategoryUtility::children_ids($category_id);
-            // dd(count($category_ids));
-            $category_ids[] = $category_id;
-            $category = Category::with('childrenCategories')->find($category_id);
-            $products->whereIn('category_id', $category_ids);
-            // get list attributes
-            $category_parents_ids = $category->parents_ids()->toArray();
-            $category_parents_ids[] = $category_id;
-            $attribute_ids = AttributeCategory::whereIn('category_id', $category_parents_ids)->pluck('attribute_id')->toArray();
-            $attributes = Attribute::whereIn('id', $attribute_ids)->get();
-
-        } else {
-            $category_ids = [];
-            $categories = Category::with('childrenCategories', 'coverImage')->where('level', 1)->orderBy('order_level', 'desc')->get();
-            if ($query != null) {
-                // foreach (explode(' ', trim($query)) as $word) {
-                //     dump($word);
-                //     $ids = Category::where('name', 'like', '%'.$word.'%')->pluck('id')->toArray();
-                //     if (count($ids) > 0) {
-                //         foreach ($ids as $id) {
-                //             $category_ids[] = $id;
-                //             array_merge($category_ids, CategoryUtility::children_ids($id));
-                //         }
-                //     }
-                // }
-                // dd($query);
-                $products->where("products.name", 'like', "%" . $query . "%");
-
-                $category_parents_ids = [];
-                $attributes = Attribute::all();
-            } else {
-                $category_parents_ids = [];
-                $attributes = Attribute::all();
-            }
-        }
-        // dd($products->get());
-        // list produit by categorie
-        // $products = filter_products($products)->with('taxes');
-
-        // $id_products = $products->pluck('id')->toArray();
-
-        $id_products = [];
-
-        $query_price = $products->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
-        $max_all_price = $query_price->max('pricing_configurations.unit_price');
-        $min_all_price = $query_price->min('pricing_configurations.unit_price');
-        if (!$max_all_price) {
-            $max_all_price = 1;
-            $min_all_price = 0;
-        }
-
-        if ($max_all_price == $min_all_price) {
-            $max_all_price = $min_all_price + 1;
-        }
-
-        // list brands
-        //dd($products->count());
-        $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
-
-        // list shops
-        $shops = $products
-            ->join('users', 'users.id', '=', 'products.user_id')
-            ->join('shops', 'shops.user_id', 'users.id')
-            ->where('users.banned', '!=', 1)
-            ->where('shops.verification_status', '!=', 0);
-        $brands = $brands->select('brands.*')->distinct('brands.id')->get();
-        $shops = $shops->select('shops.*')->distinct('shops.id')->get();
-
-        $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
-        if ($query)
-            $products = $products->where("products.name", 'like', "%" . $query . "%");
-        if ($category_id != null)
-            $products = $products->whereIn('category_id', $category_ids);
-        $conditions = array_merge($conditions, ['categories' => $category_ids]);
-        $conditions = array_merge($conditions, ['query' => $query]);
-        // $shops  = Shop::whereIn('user_id',$shops)->where('verification_status','!=',0)->whereHas('user', function ($query) {
-        //     $query->where('banned','!=', 1);
-        // })->get();
-        // $shops  = Shop::all();
-        // $shops = $shops->select('shops.*')->distinct('shops.id')->get();
-
-        // filter Brand
-        $brand_ids = [];
-        if ($brand_id != null) {
-            // $conditions = array_merge($conditions, ['brand_id' => $brand_id]);
-            $brand_ids[] = $brand_id;
-            $products->whereIn('brand_id', $brand_ids);
-        } elseif ($request->brand != null) {
-            $brand_ids = Brand::whereIn('slug', $request->brand)->pluck('id')->toArray();
-            $products->whereIn('brand_id', $brand_ids);
-        }
-        // // filter shop
-        $vender_user_ids = [];
-        if ($request->shops) {
-            $vender_user_ids = Shop::whereIn('slug', $request->shops)->pluck('user_id')->toArray();
-        }
-        if (count($vender_user_ids) > 0) {
-            $products->whereIn('user_id', $vender_user_ids);
-        }
-
-        if ($request->colors) {
-            $selected_color = $request->colors;
-        }
-
-
-        switch ($sort_by) {
-            case 'newest':
-                $products->orderBy('created_at', 'desc');
-                break;
-            case 'oldest':
-                $products->orderBy('created_at', 'asc');
-                break;
-            case 'price-asc':
-                $products->select('products.*')
-                    ->orderBy('min_price_order', 'asc');
-                break;
-            case 'price-desc':
-                $products->select('products.*')
-                    ->orderBy('min_price_order', 'desc');
-                break;
-            default:
-                $products->orderBy('id', 'desc');
-                break;
-        }
-
-
-
-
-        if ($category && $category->parent_id) {
-            $category_parent = Category::with('childrenCategories')->find($category->parent_id);
-        } else {
-            $category_parent = null;
-        }
-        if ($category_parent && $category_parent->parent_id) {
-            $category_parent_parent = Category::with('childrenCategories')->find($category_parent->parent_id);
-        } else {
-            $category_parent_parent = null;
-        }
-
-
-        //filter ratting
-        if ($rating) {
-            $products->when($rating && $rating > 0, function ($query) use ($rating) {
-                $query->whereHas('reviews', function ($q) use ($rating) {
-                    $q->whereRaw('(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?', [$rating]);
-                });
-            });
-        }
-
-        //filter price
-        if ($min_price || $max_price) {
-            $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
-                $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
-                    if ($max_price) {
-                        $q->whereRaw('
-                            (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
-                                    THEN CASE 
-                                        WHEN discount_type = "amount" THEN unit_price - discount_amount 
-                                        WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
-                                        ELSE unit_price 
-                                    END 
-                                ELSE unit_price 
-                            END AS effective_price
-                            FROM pricing_configurations
-                            WHERE pricing_configurations.id_products = products.id
-                            ORDER BY pricing_configurations.from DESC
-                            LIMIT 1) >= ?', [$min_price]);
-                    }
-
-                    if ($max_price) {
-                        $q->whereRaw('
-                            (SELECT CASE WHEN discount_type IS NOT NULL AND NOW() BETWEEN discount_start_datetime AND discount_end_datetime 
-                                    THEN CASE 
-                                        WHEN discount_type = "amount" THEN unit_price - discount_amount 
-                                        WHEN discount_type = "percent" THEN unit_price - (unit_price * discount_percentage / 100) 
-                                        ELSE unit_price 
-                                    END 
-                                ELSE unit_price 
-                            END AS effective_price
-                            FROM pricing_configurations
-                            WHERE pricing_configurations.id_products = products.id
-                            ORDER BY pricing_configurations.from ASC
-                            LIMIT 1) <= ?', [$max_price]);
-                    }
-                });
-            });
-        }
-
-        $request_all = request()->input();
-
-
-        // filter attributes
-        foreach ($request->all() as $key => $attribute_value) {
-            $attribute = Attribute::find($key);
-            if ($attribute) {
-                // dump($attribute->id);
-                $units_id = $request['units_' . $attribute->id];
-                $unit = Unity::find($units_id);
-                $attribute_id = $attribute->id;
-                $attribute_type_value = $attribute->type_value;
-
-                if (isset($request_all['units_old_' . $attribute_id])) {
-                    $rate_old = $request_all['units_old_' . $attribute_id];
-                    $request_all['new_min_value_' . $attribute_id] = $attribute_value[0] / $unit->rate * $rate_old;
-                    $request_all['new_max_value_' . $attribute_id] = $attribute_value[1] / $unit->rate * $rate_old;
-                }
-
-                // $products = $products->join('product_attribute_values','products.id','product_attribute_values.id_products');
-                $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                    $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                        if ($attribute_type_value == "text") {
-                            $q->where('id_attribute', $attribute_id)
-                                ->whereIn('value', $attribute_value);
-                        } elseif ($attribute_type_value == "color") {
-
-                            $list_colors = Color::whereHas('groupColors', function ($query) use ($attribute_value) {
-                                $query->whereIn('color_group_id', $attribute_value);
-                            })->pluck('id')->toArray();
-                            $q->where('id_attribute', $attribute_id)
-                                ->whereIn('id_colors', $list_colors);
-                        } elseif ($attribute_type_value == "list") {
-                            $q->where('id_attribute', $attribute_id)
-                                ->whereIn('id_values', $attribute_value);
-                        } elseif ($attribute_type_value == "numeric") {
-                            if (count($attribute_value) > 1) {
-                                $unit = Unity::find($units_id);
-                                $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
-
-                                if (!is_null($attribute_value[0]) && !is_null($attribute_value[1])) {
-                                    // $q->where('id_attribute', $attribute_id)
-                                    //     ->where('id_units', $units_id)
-                                    //     ->whereBetween('value',$attribute_value);
-                                    // dump(intval($attribute_value[0]),intval($attribute_value[1]),$attribute_id,$units_id);
-
-                                    // dump($attribute_id,intval($units_id),floatval($attribute_value[0]),floatval($attribute_value[1]));
-                                    $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->where([
-                                        ['id_attribute', '=', $attribute_id],
-                                        ['id_units', '=', intval($units_id)],
-                                        // ['value', '>=', floatval($attribute_value[0])],
-                                        // ['value', '<=', floatval($attribute_value[1]) ],
-                                        // ['value', '=', 90 ]
-                                    ])
-                                        ->whereRaw('CAST(value AS DECIMAL(10,2)) >= ?', [floatval($attribute_value[0])])
-                                        ->whereRaw('CAST(value AS DECIMAL(10,2)) <= ?', [floatval($attribute_value[1])]);
-                                    ;
-                                    foreach ($childrens_units as $childrens_unit) {
-                                        // dump($attribute_id,$childrens_unit->id,$attribute_value[1] / $unit->rate * $childrens_unit->rate);
-                                        // $q->orwhere('id_attribute', $attribute_id)
-                                        // ->where('id_units', $childrens_unit->id)
-                                        // ->where('value','>=',$attribute_value[0] / $unit->rate * $childrens_unit->rate)
-                                        // ->where('value','<=',$attribute_value[1] / $unit->rate * $childrens_unit->rate);
-                                        // dump($attribute_id, $childrens_unit->id,$attribute_value[1] * $unit->rate / $childrens_unit->rate,$attribute_value[0] * $unit->rate / $childrens_unit->rate);
-                                        $q->selectRaw('CAST(value AS DECIMAL(10,2)) AS value')->orWhere([
-                                            ['id_attribute', '=', $attribute_id],
-                                            ['id_units', '=', intval($childrens_unit->id)],
-                                            // ['value', '>=', floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate],
-                                            // ['value', '<=', floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate]
-                                        ])
-                                            ->whereRaw('CAST(value AS DECIMAL(10,2)) >= ?', [floatval($attribute_value[0])])
-                                            ->whereRaw('CAST(value AS DECIMAL(10,2)) <= ?', [floatval($attribute_value[1])])
-                                        ;
-                                    }
-                                } elseif (!is_null($attribute_value[0])) {
-                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
-                                        ->where('id_units', $units_id)
-                                        ->where('value', '>=', floatval($attribute_value[0]));
-                                    foreach ($childrens_units as $childrens_unit) {
-                                        $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
-                                            ->where('id_units', $childrens_unit->id)
-                                            ->where('value', '>=', floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate);
-                                    }
-                                } elseif (!is_null($attribute_value[1])) {
-                                    $q->selectRaw('CAST(value AS UNSIGNED) AS value')->where('id_attribute', $attribute_id)
-                                        ->where('id_units', $units_id)
-                                        ->where('value', '<=', floatval($attribute_value[1]));
-                                    foreach ($childrens_units as $childrens_unit) {
-                                        $q->selectRaw('CAST(value AS UNSIGNED) AS value')->orwhere('id_attribute', $attribute_id)
-                                            ->where('id_units', $childrens_unit->id)
-                                            ->where('value', '<=', floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate);
-                                    }
-                                }
-
-                            }
-                        }
-
-                    });
-                });
-            }
-
-        }
-        // dd(0);
-
-        $products = $products->select('products.*')->paginate(6);
-
-
-        // dd($products);
-        // dd($conditions);
-        if ($request->ajax()) {
-            $html = '';
-            foreach ($products as $product) {
-                $html_product = view('frontend.' . get_setting('homepage_select') . '.partials.product_box_1', ['product' => $product])->render();
-                $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
-            }
-            $pagination = str_replace("href", "data-href", $products->appends($request->input())->links()->render());
-            $filter = view('frontend.product_listing_filter', ['conditions' => $conditions, 'request_all' => $request_all, 'max_all_price' => $max_all_price, 'min_all_price' => $min_all_price, 'id_products' => $id_products, 'shops' => $shops, 'vender_user_ids' => $vender_user_ids, 'max_price' => $max_price, 'min_price' => $min_price, 'brands' => $brands, 'rating' => $rating, 'brand_ids' => $brand_ids, 'products' => $products, 'query' => $query, 'category' => $category, 'category_parent' => $category_parent, 'category_parent_parent' => $category_parent_parent, 'category_parents_ids' => $category_parents_ids, 'categories' => $categories, 'category_id' => $category_id, 'brand_id' => $brand_id, 'sort_by' => $sort_by, 'seller_id' => $seller_id, 'min_price' => $min_price, 'max_price' => $max_price, 'attributes' => $attributes, 'selected_attribute_values' => $selected_attribute_values, 'colors' => $colors, 'selected_color' => $selected_color])->render();
-            $list_categories = '<li class="breadcrumb-item has-transition opacity-50 hov-opacity-100">
-                                <a class="text-reset" href="' . route('home') . '">' . translate('Home') . '</a>
-                                </li>
-                                <li class="breadcrumb-item opacity-50 hov-opacity-100">
-                                    <a class="text-reset" href="' . route('search') . ' ">' . translate('All Categories') . '</a>
-                                </li>';
-            if ($category_parent_parent && $category_parent_parent->level != 0) {
-                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">
-                            "' . $category_parent_parent->getTranslation('name') . '"
-                        </li>';
-            }
-            if ($category_parent && $category_parent->level != 0) {
-                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">
-                    "' . $category_parent->getTranslation('name') . '"
-                </li>';
-            }
-            if ($category) {
-                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">
-                    "' . $category->getTranslation('name') . '"
-                </li>';
-                $title_category = $category->getTranslation('name');
-            } else {
-                $title_category = null;
-
-            }
-
-
-            return response()->json(['request_all' => $request_all, 'html' => $html, 'pagination' => $pagination, 'filter' => $filter, 'list_categories' => $list_categories, 'title_category' => $title_category]);
-        }
-
-        return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'id_products', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'seller_id', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors', 'selected_color'));
-    }*/
-  
-
     public function index(Request $request, $category_id = null, $brand_id = null)
     {
         $language = App::getLocale();
@@ -424,48 +39,40 @@ class SearchController extends Controller
         $category = [];
         $categories = [];
         $conditions = [];
-        $category_id = $request->category_id === 0 || $request->category_id === "0" ? null : $request->category_id;
+        $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
 
-        $products = Product::where('published', '1')
-            ->where('auction_product', 0)
-            ->where('approved', '1');
-        
+        $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+
         //Filter attributes based on selected category
         if ($category_id != null) {
-                // Fetch category hierarchy and filter products
-                $category_ids = CategoryUtility::children_ids($category_id);                
-                $category_ids[] = $category_id;
-                $products->whereIn('category_id', $category_ids);
-            
-                // Fetch category details and attributes
-                $category = Category::with('childrenCategories')->find($category_id);
-                $category_parents_ids = $category->parents_ids()->toArray();
-                $category_parents_ids[] = $category_id;
-            
-                $attribute_ids = DB::table('categories_has_attributes')
-                ->whereIn('category_id', $category_parents_ids)
-                ->pluck('attribute_id')
-                ->toArray();
-                $attributes = Attribute::whereIn('id', $attribute_ids)->get();
-        } else {
-                // Fetch top-level categories
-                $category_ids = [];
-                $categories = Category::with('childrenCategories', 'coverImage')
-                    ->where('level', 1)
-                    ->orderBy('order_level', 'desc')
-                    ->get();
-            
-                // Handle search query
-                if ($query != null) {
-                    $products->where("products.name", 'like', "%" . $query . "%");
-                }
-            
-                // Fetch all attributes
-                $category_parents_ids = [];
-                $attributes = get_category_attributes(1) ?? collect();
+            // Fetch category hierarchy and filter products
+            $category_ids = CategoryUtility::children_ids($category_id);
+            $category_ids[] = $category_id;
+            $products->whereIn('category_id', $category_ids);
 
-                //$attributes = Attribute::all();
-        }   
+            // Fetch category details and attributes
+            $category = Category::with('childrenCategories')->find($category_id);
+            $category_parents_ids = $category->parents_ids()->toArray();
+            $category_parents_ids[] = $category_id;
+
+            $attribute_ids = DB::table('categories_has_attributes')->whereIn('category_id', $category_parents_ids)->pluck('attribute_id')->toArray();
+            $attributes = Attribute::whereIn('id', $attribute_ids)->get();
+        } else {
+            // Fetch top-level categories
+            $category_ids = [];
+            $categories = Category::with('childrenCategories', 'coverImage')->where('level', 1)->orderBy('order_level', 'desc')->get();
+
+            // Handle search query
+            if ($query != null) {
+                $products->where('products.name', 'like', '%' . $query . '%');
+            }
+
+            // Fetch all attributes
+            $category_parents_ids = [];
+            $attributes = get_category_attributes(1) ?? collect();
+
+            //$attributes = Attribute::all();
+        }
 
         $id_products = [];
         //retrieve minimum and maximum price
@@ -482,319 +89,307 @@ class SearchController extends Controller
         if ($max_all_price == $min_all_price) {
             $max_all_price = $min_all_price + 1;
         }
-        
-        //retrieve brands 
+
+        //retrieve brands
         $brands = $products->join('brands', 'brands.id', '=', 'products.brand_id');
         //retrieve shops
-        $shops = $products->join('users', 'users.id', '=', 'products.user_id')
-            ->join('shops', 'shops.user_id', 'users.id')
-            ->where('users.banned', '!=', 1)
-            ->where('shops.verification_status', '!=', 0);
+        $shops = $products->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0);
 
         $brands = $brands->select('brands.*')->distinct('brands.id')->get();
         $shops = $shops->select('shops.*')->distinct('shops.id')->get();
 
-     
         if ($query) {
-            $products->where("products.name", 'like', "%" . $query . "%");
+            $products->where('products.name', 'like', '%' . $query . '%');
         }
 
         if ($category_id != null) {
             $products->whereIn('category_id', $category_ids);
         }
 
-    $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
-    
-    //filter products by brand
-    $brand_ids = [];
-    if ($brand_id != null) {
-        $brand_ids[] = $brand_id;
-        $products->whereIn('brand_id', $brand_ids);
-    } elseif ($request->brand != null) {
-        $brand_ids = Brand::whereIn('slug', $request->brand)->pluck('id')->toArray();
-        $products->whereIn('brand_id', $brand_ids);
-    }
-    //Filter products by Shop
-    $vender_user_ids = [];
-    if ($request->shops) {
-        $vender_user_ids = Shop::whereIn('slug', $request->shops)->pluck('user_id')->toArray();
-    }
+        $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
+        
+       // Filter products by brand
+         $brand_ids = [];
 
-    if (count($vender_user_ids) > 0) {
-        $products->whereIn('user_id', $vender_user_ids);
-    }
+        if ($brand_id != null) {
+            $brand_ids[] = $brand_id;
+        }
 
-    //filter products by colors
-    if ($request->colors) {
-        $selected_color = $request->colors;
-    }
-
-    //apply sorting
-    switch ($sort_by) {
-        case 'newest':
-            $products->orderBy('created_at', 'desc');
-            break;
-        case 'oldest':
-            $products->orderBy('created_at', 'asc');
-            break;
-        case 'price-asc':
-            $products->select('products.*')->orderBy('min_price_order', 'asc');
-            break;
-        case 'price-desc':
-            $products->select('products.*')->orderBy('min_price_order', 'desc');
-            break;
-        default:
-            $products->orderBy('id', 'desc');
-            break;
-    }
-
-    if ($category && $category->parent_id) {
-        $category_parent = Category::with('childrenCategories')->find($category->parent_id);
-    } else {
-        $category_parent = null;
-    }
-
-    if ($category_parent && $category_parent->parent_id) {
-        $category_parent_parent = Category::with('childrenCategories')->find($category_parent->parent_id);
-    } else {
-        $category_parent_parent = null;
-    }
-    //filter by rating
-    if ($rating) {
-        $products->when($rating && $rating > 0, function ($query) use ($rating) {
-            $query->whereHas('reviews', function ($q) use ($rating) {
-                $q->whereRaw('(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?', [$rating]);
-            });
-        });
-    }
-
-    $products = Product::query();
-
-    //filter based on the price range
-    if ($min_price || $max_price) {
-        $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
-            $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
-                if ($min_price) {
-                    $q->whereRaw('
-                        (SELECT 
-                            CASE 
-                                WHEN EXISTS (
-                                    SELECT 1 
-                                    FROM discounts 
-                                    WHERE discounts.product_id = pricing_configurations.id_products
-                                )
-                                THEN (
-                                    pricing_configurations.unit_price - 
-                                    (pricing_configurations.unit_price * 
-                                        COALESCE(
-                                            (SELECT discount_percentage  
-                                             FROM discounts 
-                                             WHERE discounts.product_id = pricing_configurations.id_products
-                                             ORDER BY discounts.created_at DESC
-                                             LIMIT 1), 
-                                            0
-                                        )
-                                    )
-                                )
-                                ELSE pricing_configurations.unit_price
-                            END
-                        ) >= ?', [$min_price]);
-                }
-    
-                if ($max_price) {
-                    $q->whereRaw('
-                        (SELECT 
-                            CASE 
-                                WHEN EXISTS (
-                                    SELECT 1 
-                                    FROM discounts 
-                                    WHERE discounts.product_id = pricing_configurations.id_products
-                                )
-                                THEN (
-                                    pricing_configurations.unit_price - 
-                                    (pricing_configurations.unit_price * 
-                                        COALESCE(
-                                            (SELECT discount_percentage 
-                                             FROM discounts 
-                                             WHERE discounts.product_id = pricing_configurations.id_products
-                                             ORDER BY discounts.created_at DESC
-                                             LIMIT 1), 
-                                            0
-                                        )
-                                    )
-                                )
-                                ELSE pricing_configurations.unit_price
-                            END
-                        ) <= ?', [$max_price]);
-                }
-            });
-        });
-    } 
-
-    $request_all = request()->input();
-    if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
-
-        foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
-            $attribute = Attribute::find($attribute_id);
-            if($attribute){
-                // dump($attribute->id);
-                $units_id = $request['units_'.$attribute->id];
-                //dd($units_id);
-                $unit = Unity::find($units_id);
-                $attribute_id = $attribute->id;
-                $attribute_type_value = $attribute->type_value;
-                if(isset($request_all['units_old_'.$attribute_id])){
-                    $rate_old = $request_all['units_old_'.$attribute_id];
-                    $request_all['new_min_value_'.$attribute_id] = $attribute_value[0] / $unit->rate * $rate_old ;
-                    $request_all['new_max_value_'.$attribute_id] = $attribute_value[1] / $unit->rate * $rate_old ;
-                }
+            if ($request->has('brand') && is_array($request->brand)) {
+                $slug_brand_ids = Brand::whereIn('slug', $request->brand)
+                    ->pluck('id')
+                    ->toArray();
                 
-                // $products = $products->join('product_attribute_values','products.id','product_attribute_values.id_products');
-                $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                    $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                        $this->applyAttributeFilter($q, $attribute_type_value, $attribute_id, $attribute_value, $units_id);
-                    });
+                $brand_ids = array_merge($brand_ids, $slug_brand_ids);
+        }
+
+        $brand_ids = array_unique(array_filter($brand_ids));
+
+        if (!empty($brand_ids)) {
+            $products->whereIn('brand_id', $brand_ids);
+        }
+        //Filter products by Shop
+        $vender_user_ids = [];
+        if ($request->shops) {
+            $vender_user_ids = Shop::whereIn('slug', $request->shops)
+                ->pluck('user_id')
+                ->toArray();
+        }
+
+        if (count($vender_user_ids) > 0) {
+            $products->whereIn('user_id', $vender_user_ids);
+        }
+
+        //filter products by colors
+        if ($request->colors) {
+            $selected_color = $request->colors;
+        }
+
+        //apply sorting
+        switch ($sort_by) {
+            case 'newest':
+                $products->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $products->orderBy('created_at', 'asc');
+                break;
+            case 'price-asc':
+                $products->select('products.*')->orderBy('min_price_order', 'asc');
+                break;
+            case 'price-desc':
+                $products->select('products.*')->orderBy('min_price_order', 'desc');
+                break;
+            default:
+                $products->orderBy('id', 'desc');
+                break;
+        }
+
+        if ($category && $category->parent_id) {
+            $category_parent = Category::with('childrenCategories')->find($category->parent_id);
+        } else {
+            $category_parent = null;
+        }
+
+        if ($category_parent && $category_parent->parent_id) {
+            $category_parent_parent = Category::with('childrenCategories')->find($category_parent->parent_id);
+        } else {
+            $category_parent_parent = null;
+        }
+        //filter by rating
+        if ($rating) {
+            $products->when($rating && $rating > 0, function ($query) use ($rating) {
+                $query->whereHas('reviews', function ($q) use ($rating) {
+                    $q->whereRaw('(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?', [$rating]);
                 });
-                
+            });
+        }
+
+
+        //filter based on the price range
+        if ($min_price || $max_price) {
+            $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
+                $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
+                    if ($min_price) {
+                        $q->whereRaw(
+                            '
+                        (SELECT
+                            CASE
+                                WHEN EXISTS (
+                                    SELECT 1
+                                    FROM discounts
+                                    WHERE discounts.product_id = pricing_configurations.id_products
+                                )
+                                THEN (
+                                    pricing_configurations.unit_price -
+                                    (pricing_configurations.unit_price *
+                                        COALESCE(
+                                            (SELECT discount_percentage
+                                             FROM discounts
+                                             WHERE discounts.product_id = pricing_configurations.id_products
+                                             ORDER BY discounts.created_at DESC
+                                             LIMIT 1),
+                                            0
+                                        )
+                                    )
+                                )
+                                ELSE pricing_configurations.unit_price
+                            END
+                        ) >= ?',
+                            [$min_price],
+                        );
+                    }
+
+                    if ($max_price) {
+                        $q->whereRaw(
+                            '
+                        (SELECT
+                            CASE
+                                WHEN EXISTS (
+                                    SELECT 1
+                                    FROM discounts
+                                    WHERE discounts.product_id = pricing_configurations.id_products
+                                )
+                                THEN (
+                                    pricing_configurations.unit_price -
+                                    (pricing_configurations.unit_price *
+                                        COALESCE(
+                                            (SELECT discount_percentage
+                                             FROM discounts
+                                             WHERE discounts.product_id = pricing_configurations.id_products
+                                             ORDER BY discounts.created_at DESC
+                                             LIMIT 1),
+                                            0
+                                        )
+                                    )
+                                )
+                                ELSE pricing_configurations.unit_price
+                            END
+                        ) <= ?',
+                            [$max_price],
+                        );
+                    }
+                });
+            });
+        }
+
+        $request_all = request()->input();
+        if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
+            foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
+                $attribute = Attribute::find($attribute_id);
+                if ($attribute) {
+                    // dump($attribute->id);
+                    $units_id = $request['units_' . $attribute->id];
+                    //dd($units_id);
+                    $unit = Unity::find($units_id);
+                    $attribute_id = $attribute->id;
+                    $attribute_type_value = $attribute->type_value;
+                    if (isset($request_all['units_old_' . $attribute_id])) {
+                        $rate_old = $request_all['units_old_' . $attribute_id];
+                        $request_all['new_min_value_' . $attribute_id] = ($attribute_value[0] / $unit->rate) * $rate_old;
+                        $request_all['new_max_value_' . $attribute_id] = ($attribute_value[1] / $unit->rate) * $rate_old;
+                    }
+
+                    // $products = $products->join('product_attribute_values','products.id','product_attribute_values.id_products');
+                    $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
+                        $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
+                            $this->applyAttributeFilter($q, $attribute_type_value, $attribute_id, $attribute_value, $units_id);
+                        });
+                    });
+                }
             }
-            
         }
-    
-    }  
- 
-    foreach ($attributes as $attribute) {
-        $value = DB::table('attribute_values')
-            ->where('attribute_id', $attribute->id)
-            ->orderBy('value', 'asc') 
-            ->pluck('value') 
-            ->toArray(); 
-    
-        $selected_attribute_values[$attribute->id] = $value;
-    }
-    $products = $products->select('products.*')->paginate(6);
 
-    if ($request->ajax()) {
-        $html = '';
-        foreach ($products as $product) {
-            $html_product = view('frontend.' . get_setting('homepage_select') . '.partials.product_box_1', ['product' => $product])->render();
-            $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
+        foreach ($attributes as $attribute) {
+            $value = DB::table('attribute_values')
+                ->where('attribute_id', $attribute->id)
+                ->orderBy('value', 'asc')
+                ->pluck('value')
+                ->toArray();
+
+            $selected_attribute_values[$attribute->id] = $value;
         }
-        $pagination = str_replace("href", "data-href", $products->appends($request->input())->links()->render());
-        $filter = view('frontend.product_listing_filter', [
-            'conditions' => $conditions,
-            'request_all' => $request_all,
-            'max_all_price' => $max_all_price,
-            'min_all_price' => $min_all_price,
-            'id_products' => $id_products,
-            'shops' => $shops,
-            'vender_user_ids' => $vender_user_ids,
-            'max_price' => $max_price,
-            'min_price' => $min_price,
-            'brands' => $brands,
-            'rating' => $rating,
-            'brand_ids' => $brand_ids,
-            'products' => $products,
-            'query' => $query,
-            'category' => $category,
-            'category_parent' => $category_parent,
-            'category_parent_parent' => $category_parent_parent,
-            'category_parents_ids' => $category_parents_ids,
-            'categories' => $categories,
-            'category_id' => $category_id,
-            'brand_id' => $brand_id,
-            'sort_by' => $sort_by,
-            'seller_id' => $seller_id,
-            'min_price' => $min_price,
-            'max_price' => $max_price,
-            'attributes' => $attributes,
-            'selected_attribute_values' => $selected_attribute_values,
-            'colors' => $colors,
-            'selected_color' => $selected_color
-        ])->render();
+        $products = $products->select('products.*')->paginate(6);
 
-        $list_categories = '<li class="breadcrumb-item has-transition opacity-50 hov-opacity-100">
-                            <a class="text-reset" href="' . route('home') . '">' . translate('Home') . '</a>
+        if ($request->ajax()) {
+            $html = '';
+            foreach ($products as $product) {
+                $html_product = view('frontend.' . get_setting('homepage_select') . '.partials.product_box_1', ['product' => $product])->render();
+                $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
+            }
+            $pagination = str_replace('href', 'data-href', $products->appends($request->input())->links()->render());
+            $filter = view('frontend.product_listing_filter', [
+                'conditions' => $conditions,
+                'request_all' => $request_all,
+                'max_all_price' => $max_all_price,
+                'min_all_price' => $min_all_price,
+                'id_products' => $id_products,
+                'shops' => $shops,
+                'vender_user_ids' => $vender_user_ids,
+                'max_price' => $max_price,
+                'min_price' => $min_price,
+                'brands' => $brands,
+                'rating' => $rating,
+                'brand_ids' => $brand_ids,
+                'products' => $products,
+                'query' => $query,
+                'category' => $category,
+                'category_parent' => $category_parent,
+                'category_parent_parent' => $category_parent_parent,
+                'category_parents_ids' => $category_parents_ids,
+                'categories' => $categories,
+                'category_id' => $category_id,
+                'brand_id' => $brand_id,
+                'sort_by' => $sort_by,
+                'seller_id' => $seller_id,
+                'min_price' => $min_price,
+                'max_price' => $max_price,
+                'attributes' => $attributes,
+                'selected_attribute_values' => $selected_attribute_values,
+                'colors' => $colors,
+                'selected_color' => $selected_color,
+            ])->render();
+
+            $list_categories =
+                '<li class="breadcrumb-item has-transition opacity-50 hov-opacity-100">
+                            <a class="text-reset" href="' .
+                route('home') .
+                '">' .
+                translate('Home') .
+                '</a>
                             </li>
                             <li class="breadcrumb-item opacity-50 hov-opacity-100">
-                                <a class="text-reset" href="' . route('search') . ' ">' . translate('All Categories') . '</a>
+                                <a class="text-reset" href="' .
+                route('search') .
+                ' ">' .
+                translate('All Categories') .
+                '</a>
                             </li>';
 
-        if ($category_parent_parent && $category_parent_parent->level != 0) {
-            $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category_parent_parent->getTranslation('name') . '"</li>';
+            if ($category_parent_parent && $category_parent_parent->level != 0) {
+                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category_parent_parent->getTranslation('name') . '"</li>';
+            }
+
+            if ($category_parent && $category_parent->level != 0) {
+                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category_parent->getTranslation('name') . '"</li>';
+            }
+
+            if ($category) {
+                $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category->getTranslation('name') . '"</li>';
+                $title_category = $category->getTranslation('name');
+            } else {
+                $title_category = null;
+            }
+
+            return response()->json([
+                'request_all' => $request_all,
+                'html' => $html,
+                'pagination' => $pagination,
+                'filter' => $filter,
+                'list_categories' => $list_categories,
+                'title_category' => $title_category,
+            ]);
         }
 
-        if ($category_parent && $category_parent->level != 0) {
-            $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category_parent->getTranslation('name') . '"</li>';
-        }
-
-        if ($category) {
-            $list_categories .= '<li class="text-dark fw-600 breadcrumb-item">"' . $category->getTranslation('name') . '"</li>';
-            $title_category = $category->getTranslation('name');
-        } else {
-            $title_category = null;
-        }
-
-        return response()->json([
-            'request_all' => $request_all,
-            'html' => $html,
-            'pagination' => $pagination,
-            'filter' => $filter,
-            'list_categories' => $list_categories,
-            'title_category' => $title_category
-        ]);
+        return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'id_products', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'seller_id', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors', 'selected_color'));
     }
-
-    return view('frontend.product_listing', compact(
-        'conditions',
-        'max_all_price',
-        'min_all_price',
-        'request_all',
-        'id_products',
-        'shops',
-        'vender_user_ids',
-        'max_price',
-        'min_price',
-        'brands',
-        'rating',
-        'brand_ids',
-        'products',
-        'query',
-        'category',
-        'category_parent',
-        'category_parent_parent',
-        'category_parents_ids',
-        'categories',
-        'category_id',
-        'brand_id',
-        'sort_by',
-        'seller_id',
-        'min_price',
-        'max_price',
-        'attributes',
-        'selected_attribute_values',
-        'colors',
-        'selected_color'
-    ));
-}
     protected function applyAttributeFilter($query, $attribute_type_value, $attribute_id, $attribute_value, $units_id)
     {
         switch ($attribute_type_value) {
             case 'text':
-                $query->where('id_attribute', $attribute_id)
-                    ->whereIn('value', $attribute_value);
+                $query->where('id_attribute', $attribute_id)->whereIn('value', $attribute_value);
                 break;
 
             case 'color':
                 $list_colors = Color::whereHas('groupColors', function ($q) use ($attribute_value) {
                     $q->whereIn('color_group_id', $attribute_value);
-                })->pluck('id')->toArray();
-                $query->where('id_attribute', $attribute_id)
-                    ->whereIn('id_colors', $list_colors);
+                })
+                    ->pluck('id')
+                    ->toArray();
+                $query->where('id_attribute', $attribute_id)->whereIn('id_colors', $list_colors);
                 break;
 
             case 'list':
-                $query->where('id_attribute', $attribute_id)
-                    ->whereIn('id_values', $attribute_value);
+                $query->where('id_attribute', $attribute_id)->whereIn('id_values', $attribute_value);
                 break;
 
             case 'numeric':
@@ -821,17 +416,14 @@ class SearchController extends Controller
     {
         $query->where(function ($q) use ($attribute_id, $attribute_value, $units_id, $unit, $childrens_units) {
             $q->where('id_attribute', $attribute_id)
-            ->where('id_units', $units_id)
-            ->whereBetween('value', [floatval($attribute_value[0]), floatval($attribute_value[1])]);
+                ->where('id_units', $units_id)
+                ->whereBetween('value', [floatval($attribute_value[0]), floatval($attribute_value[1])]);
 
             foreach ($childrens_units as $childrens_unit) {
                 $q->orWhere(function ($q) use ($attribute_id, $attribute_value, $childrens_unit, $unit) {
                     $q->where('id_attribute', $attribute_id)
-                    ->where('id_units', $childrens_unit->id)
-                    ->whereBetween('value', [
-                        floatval($attribute_value[0]) * $unit->rate / $childrens_unit->rate,
-                        floatval($attribute_value[1]) * $unit->rate / $childrens_unit->rate
-                    ]);
+                        ->where('id_units', $childrens_unit->id)
+                        ->whereBetween('value', [(floatval($attribute_value[0]) * $unit->rate) / $childrens_unit->rate, (floatval($attribute_value[1]) * $unit->rate) / $childrens_unit->rate]);
                 });
             }
         });
@@ -843,14 +435,12 @@ class SearchController extends Controller
         $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
 
         $query->where(function ($q) use ($attribute_id, $min_value, $units_id, $unit, $childrens_units) {
-            $q->where('id_attribute', $attribute_id)
-            ->where('id_units', $units_id)
-            ->where('value', '>=', floatval($min_value));
+            $q->where('id_attribute', $attribute_id)->where('id_units', $units_id)->where('value', '>=', floatval($min_value));
 
             foreach ($childrens_units as $childrens_unit) {
                 $q->orWhere('id_attribute', $attribute_id)
-                ->where('id_units', $childrens_unit->id)
-                ->where('value', '>=', floatval($min_value) * $unit->rate / $childrens_unit->rate);
+                    ->where('id_units', $childrens_unit->id)
+                    ->where('value', '>=', (floatval($min_value) * $unit->rate) / $childrens_unit->rate);
             }
         });
     }
@@ -861,14 +451,12 @@ class SearchController extends Controller
         $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
 
         $query->where(function ($q) use ($attribute_id, $max_value, $units_id, $unit, $childrens_units) {
-            $q->where('id_attribute', $attribute_id)
-            ->where('id_units', $units_id)
-            ->where('value', '<=', floatval($max_value));
+            $q->where('id_attribute', $attribute_id)->where('id_units', $units_id)->where('value', '<=', floatval($max_value));
 
             foreach ($childrens_units as $childrens_unit) {
                 $q->orWhere('id_attribute', $attribute_id)
-                ->where('id_units', $childrens_unit->id)
-                ->where('value', '<=', floatval($max_value) * $unit->rate / $childrens_unit->rate);
+                    ->where('id_units', $childrens_unit->id)
+                    ->where('value', '<=', (floatval($max_value) * $unit->rate) / $childrens_unit->rate);
             }
         });
     }
@@ -899,9 +487,11 @@ class SearchController extends Controller
     //Suggestional Search
     public function ajax_search(Request $request)
     {
-        $keywords = array();
+        $keywords = [];
         $query = $request->search;
-        $products = Product::where('published', 1)->where('tags', 'like', '%' . $query . '%')->get();
+        $products = Product::where('published', 1)
+            ->where('tags', 'like', '%' . $query . '%')
+            ->get();
         foreach ($products as $key => $product) {
             foreach (explode(',', $product->tags) as $key => $tag) {
                 if (stripos($tag, $query) !== false) {
@@ -918,7 +508,9 @@ class SearchController extends Controller
 
         $products_query = Product::query();
 
-        $products_query = $products_query->where('approved', 1)->where('published', 1)
+        $products_query = $products_query
+            ->where('approved', 1)
+            ->where('published', 1)
             ->where(function ($q) use ($query) {
                 foreach (explode(' ', trim($query)) as $word) {
                     $q->where('name', 'like', '%' . $word . '%')
@@ -935,22 +527,30 @@ class SearchController extends Controller
         $case2 = '%' . $query . '%';
 
         //vulnerable code
-        // $products_query->orderByRaw("CASE 
-        //         WHEN name LIKE '$case1' THEN 1 
-        //         WHEN name LIKE '$case2' THEN 2 
-        //         ELSE 3 
+        // $products_query->orderByRaw("CASE
+        //         WHEN name LIKE '$case1' THEN 1
+        //         WHEN name LIKE '$case2' THEN 2
+        //         ELSE 3
         //         END");
-        $products_query->orderByRaw("CASE 
-        WHEN name LIKE ? THEN 1 
-        WHEN name LIKE ? THEN 2 
-        ELSE 3 
-        END", [$query . '%', '%' . $query . '%']);
+        $products_query->orderByRaw(
+            "CASE
+        WHEN name LIKE ? THEN 1
+        WHEN name LIKE ? THEN 2
+        ELSE 3
+        END",
+            [$query . '%', '%' . $query . '%'],
+        );
 
         $products = $products_query->limit(3)->get();
 
-        $categories = Category::where('name', 'like', '%' . $query . '%')->get()->take(3);
+        $categories = Category::where('name', 'like', '%' . $query . '%')
+            ->get()
+            ->take(3);
 
-        $shops = Shop::whereIn('user_id', verified_sellers_id())->where('name', 'like', '%' . $query . '%')->get()->take(3);
+        $shops = Shop::whereIn('user_id', verified_sellers_id())
+            ->where('name', 'like', '%' . $query . '%')
+            ->get()
+            ->take(3);
 
         if (sizeof($keywords) > 0 || sizeof($categories) > 0 || sizeof($products) > 0 || sizeof($shops) > 0) {
             return view('frontend.' . get_setting('homepage_select') . '.partials.search_content', compact('products', 'categories', 'keywords', 'shops'));
@@ -971,50 +571,50 @@ class SearchController extends Controller
             $search->count = $search->count + 1;
             $search->save();
         } else {
-            $search = new Search;
+            $search = new Search();
             $search->query = $request->keyword;
             $search->save();
         }
     }
 
-public function getProductsInPriceRange($minPrice, $maxPrice): array
-{
-    // Retrieve all products with their pricing configurations
-    $products = Product::with('pricingConfiguration')->get();
+    public function getProductsInPriceRange($minPrice, $maxPrice): array
+    {
+        // Retrieve all products with their pricing configurations
+        $products = Product::with('pricingConfiguration')->get();
 
-    $filteredProducts = [];
+        $filteredProducts = [];
 
-    foreach ($products as $product) {
-        // Get the unit price from the pricing configuration
-        $unitPrice = $product->pricingConfiguration->unit_price;
+        foreach ($products as $product) {
+            // Get the unit price from the pricing configuration
+            $unitPrice = $product->pricingConfiguration->unit_price;
 
-        // Initialize the final price with the unit price
-        $finalPrice = $unitPrice;
-
-        try {
-            // Check if there is a discount for the product
-            $discountInfo = Discount::getDiscountPercentage($product->id);
-
-            // Calculate the final price if a discount is applicable
-            $discountPercentage = $discountInfo['discount_percentage'];
-            $maxDiscountAmount = $discountInfo['max_discount_amount'];
-
-            $discountAmount = min($unitPrice * $discountPercentage / 100, $maxDiscountAmount);
-            $finalPrice = $unitPrice - $discountAmount;
-        } catch (\Exception $e) {
-            // No discount applicable, use the unit price as the final price
+            // Initialize the final price with the unit price
             $finalPrice = $unitPrice;
+
+            try {
+                // Check if there is a discount for the product
+                $discountInfo = Discount::getDiscountPercentage($product->id);
+
+                // Calculate the final price if a discount is applicable
+                $discountPercentage = $discountInfo['discount_percentage'];
+                $maxDiscountAmount = $discountInfo['max_discount_amount'];
+
+                $discountAmount = min(($unitPrice * $discountPercentage) / 100, $maxDiscountAmount);
+                $finalPrice = $unitPrice - $discountAmount;
+            } catch (\Exception $e) {
+                // No discount applicable, use the unit price as the final price
+                $finalPrice = $unitPrice;
+            }
+
+            // Check if the final price is within the specified range
+            if ($finalPrice >= $minPrice && $finalPrice <= $maxPrice) {
+                $filteredProducts[] = [
+                    'product' => $product,
+                    'final_price' => $finalPrice,
+                ];
+            }
         }
 
-        // Check if the final price is within the specified range
-        if ($finalPrice >= $minPrice && $finalPrice <= $maxPrice) {
-            $filteredProducts[] = [
-                'product' => $product,
-                'final_price' => $finalPrice,
-            ];
-        }
+        return $filteredProducts;
     }
-
-    return $filteredProducts;
-}
 }
