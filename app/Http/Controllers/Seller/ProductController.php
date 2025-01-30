@@ -1712,6 +1712,8 @@ class ProductController extends Controller
                 if ($pickedAnyVariation == false) {
                     $variationId = $variationIdKey;
 
+                    $product = get_single_product($variationId);
+
                     if (isset($data['detailedProduct']['product_id'])) {
                         $reviewStats = Review::where('product_id', $variationId)
                             ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
@@ -1730,8 +1732,13 @@ class ProductController extends Controller
 
                     $sku = $variation['sku'] ?? null;
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
-                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? '';
-                    $total = isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : '';
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? $product->unit_price;
+                    $total = (
+                        isset($variation['variant_pricing-from']['from'][0]) &&
+                        isset($variation['variant_pricing-from']['unit_price'][0])
+                    ) ? (
+                        $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0]
+                    ) : $product->unit_price;
 
                     if (
                         isset($variation['variant_pricing-from']['discount']['date']) &&
@@ -1749,7 +1756,6 @@ class ProductController extends Controller
 
                         // Check if the current date/time is within the specified date interval
                         if ($currentDate >= $startDateTime && $currentDate <= $endDateTime) {
-                            // Assuming $lastItem is your array containing the pricing information
                             $unitPrice = $variation['variant_pricing-from']['unit_price'][0]; // Assuming 'unit_price' is the price per unit
 
                             // Calculate the total price based on quantity and unit price
