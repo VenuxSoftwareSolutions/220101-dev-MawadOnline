@@ -93,55 +93,7 @@
             </ul>
         </div>
     </div>
-    <!-- Price range -->
-    {{-- <div class="bg-white border mb-3">
-        <div class="fs-16 fw-700 p-3">
-            {{ translate('Price range')}}
-        </div>
-        123
-        <div class="p-3 mr-3">
-            @php
-                $product_count = get_products_count()
-            @endphp
-            <div class="aiz-range-slider">
-                <div
-                    id="input-slider-range"
-                    data-range-value-min="@if($product_count < 1) 0 @else {{ get_product_min_unit_price() }} @endif"
-                    data-range-value-max="@if($product_count < 1) 0 @else {{ get_product_max_unit_price() }} @endif"
-                ></div>
-    
-                <div class="row mt-2">
-                    <div class="col-6">
-                        <span class="range-slider-value value-low fs-14 fw-600 opacity-70"
-                            @if (isset($min_price))
-                                data-range-value-low="{{ $min_price }}"
-                            @elseif($products->min('unit_price') > 0)
-                                data-range-value-low="{{ $products->min('unit_price') }}"
-                            @else
-                                data-range-value-low="0"
-                            @endif
-                            id="input-slider-range-value-low"
-                        ></span>
-                    </div>
-                    <div class="col-6 text-right">
-                        <span class="range-slider-value value-high fs-14 fw-600 opacity-70"
-                            @if (isset($max_price))
-                                data-range-value-high="{{ $max_price }}"
-                            @elseif($products->max('unit_price') > 0)
-                                data-range-value-high="{{ $products->max('unit_price') }}"
-                            @else
-                                data-range-value-high="0"
-                            @endif
-                            id="input-slider-range-value-high"
-                        ></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Hidden Items -->
-        <input type="hidden" name="min_price" value="">
-        <input type="hidden" name="max_price" value="">
-    </div> --}}
+  
     <div class="bg-white border mb-3">
         <div class="fs-16 fw-700 p-3">
             {{ translate('Price range')}}
@@ -191,44 +143,46 @@
     </div>
     
     <!-- Brand -->
-    @php
-        $show = '';
-        if(count($brand_ids)>0){
-            $show = 'show';
-        }
-    @endphp
-    <div class="bg-white border mb-3">
-        <div class="fs-16 fw-700 p-3">
-            <a href="#" class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between" 
-                data-toggle="collapse" data-target="#collapse_brand" style="white-space: normal;">
-                {{ translate('Brand')}}
-            </a>
-        </div>
+    @if(count($brands) > 0)
+        @php
+            $show = '';
+            if(count($brand_ids)>0){
+                $show = 'show';
+            }
+        @endphp
+        <div class="bg-white border mb-3">
+            <div class="fs-16 fw-700 p-3">
+                <a href="#" class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between" 
+                    data-toggle="collapse" data-target="#collapse_brand" style="white-space: normal;">
+                    {{ translate('Brand')}}
+                </a>
+            </div>
+            
+            <div class="collapse {{ $show }}" id="collapse_brand">
+                <div class="p-3 aiz-checkbox-list">
+                    @foreach ($brands as $key => $brand)
         
-        <div class="collapse {{ $show }}" id="collapse_brand">
-            <div class="p-3 aiz-checkbox-list">
-                @foreach ($brands as $key => $brand)
-    
-                    <label class="aiz-checkbox mb-3 @if($key>4 && count($brands)>7) hide_attribute display_none @endif">
-                        <input
-                            type="checkbox"
-                            name="brand[]"
-                            value="{{ $brand->slug }}" 
-                            @if(in_array($brand->id, $brand_ids)) checked @endif
-                            onchange="filter()"
-                        >
-                        <span class="aiz-square-check"></span>
-                        <span class="fs-14 fw-400 text-dark">{{ $brand->name }}</span>
-                    </label>
-                @endforeach
-                @if(count($brands)>7)
-                    <a href="javascript:void(1)"
-                    class="show-hide-attribute text-primary hov-text-primary fs-12 fw-700">{{ translate('More') }}
-                    <i class="las la-angle-down"></i></a>
-                @endif
+                        <label class="aiz-checkbox mb-3 @if($key>4 && count($brands)>7) hide_attribute display_none @endif">
+                            <input
+                                type="checkbox"
+                                name="brand[]"
+                                value="{{ $brand->slug }}" 
+                                @if(in_array($brand->id, $brand_ids)) checked @endif
+                                onchange="filter()"
+                            >
+                            <span class="aiz-square-check"></span>
+                            <span class="fs-14 fw-400 text-dark">{{ $brand->name }}</span>
+                        </label>
+                    @endforeach
+                    @if(count($brands)>7)
+                        <a href="javascript:void(1)"
+                        class="show-hide-attribute text-primary hov-text-primary fs-12 fw-700">{{ translate('More') }}
+                        <i class="las la-angle-down"></i></a>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
+    @endif
     <!-- Rating -->
     @php
         $show = '';
@@ -274,12 +228,15 @@
         </div>
     </div>
     <!-- Vendor -->
-    @php
-        $show = '';
-        if(count($vender_user_ids)>0){
-            $show = 'show';
-        }
-    @endphp
+    @if(count($shops) > 0)
+        @php
+            $show = '';
+            if(count($vender_user_ids)>0){
+                $show = 'show';
+            }
+        @endphp
+    @endif
+
     <div class="bg-white border mb-3">
         <div class="fs-16 fw-700 p-3">
             <a href="#" class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between" 
@@ -345,7 +302,7 @@
                     </select>
                 </div>
                 @php
-                    // dd($request_all[$attribute->id]);
+                    // frequest_all[$attribute->id]);
                     $show = '';
                     if (isset($selected_attribute_values[$attribute->id] ) && !empty($selected_attribute_values[$attribute->id])) {
                         $show = 'show';
