@@ -80,45 +80,21 @@ class Attribute extends Model
         return $units;
     }
 
-    public function max_min_value($conditions = null, $unit = null)
-    {
-        $productAttributeValues = $this->attribute_values_filter($conditions);
-
-        $attribute_max = 1;
-        $attribute_min = 0;
-        $unit_select = Unity::find($unit);
-
-        foreach ($productAttributeValues as $value) {
-            $unit = Unity::find($value->id_units);
-
-            if ($unit_select && $unit) {
-                $attribute_value = intval($value->value) * $unit->rate / $unit_select->rate;
-            } else {
-                $attribute_value = intval($value->value);
-            }
-            if ($attribute_value > $attribute_max) {
-                $attribute_max = $attribute_value;
-            } elseif ($attribute_min == 0) {
-                $attribute_min = $attribute_value;
-            } elseif ($attribute_value < $attribute_min) {
-                $attribute_min = $attribute_value;
-            }
-        }
-
-        if ($attribute_max) {
-            $attribute_max = $attribute_max;
-        } else {
-            $attribute_max = 9999;
-        }
-        if ($attribute_min && ! ($attribute_max == $attribute_min)) {
-            $attribute_min = $attribute_min;
-        } else {
-            $attribute_min = 0;
-        }
-
+    function max_min_value($conditions, $unit_id) {
+        // Assuming $this refers to the Attribute model
+        $min_value = \DB::table('product_attribute_values')
+            ->where('id_attribute', $this->id)
+            ->where('id_units', $unit_id)
+            ->min('value');
+    
+        $max_value = \DB::table('product_attribute_values')
+            ->where('id_attribute', $this->id)
+            ->where('id_units', $unit_id)
+            ->max('value');
+    
         return [
-            'min' => $attribute_min,
-            'max' => $attribute_max,
+            'min' => $min_value ?? 0, // Default to 0 if no value is found
+            'max' => $max_value ?? 1, // Default to 1 if no value is found
         ];
     }
 }

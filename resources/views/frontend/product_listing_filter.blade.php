@@ -291,11 +291,25 @@
                         $unit_active_model = $default_unit;
                         $unit_active = $unit_active_model ? $unit_active_model->id : null;
                     }
-                $rate = $unit_active_model ? $unit_active_model->rate : null;
+                    $rate = $unit_active_model ? $unit_active_model->rate : null;
+                    $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
+                    $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
+                    if (isset($request_all['new_min_value_' . $attribute->id])) {
+                        $min_value = $request_all['new_min_value_' . $attribute->id];
+                    } else {
+                        $min_value = $min_attribute_value;
+                    }
+
+                    if (isset($request_all['new_max_value_' . $attribute->id])) {
+                        $max_value = $request_all['new_max_value_' . $attribute->id];
+                    } else {
+                        $max_value = $max_attribute_value;
+                    }
+
 
                 @endphp
                 <div class="bg-white border mb-3">
-                    <div class="fs-16 fw-700 p-3 width">
+                    <div class="fs-16 fw-700 p-3 ">
                         <a href="#"
                         class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
                         data-toggle="collapse"
@@ -303,56 +317,11 @@
                         style="white-space: normal;">
                         {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
                         </a>
-                     @php
-                            if (isset($request_all['units_' . $attribute->id])) {
-                                $unit_active = $request_all['units_' . $attribute->id];
-                                $unit_active_model = \App\Models\Unity::find($unit_active);
-                            } else {
-                                $default_unit = $attribute->get_units()->where('default_unit', 1)->first();
-                                if (!$default_unit) {
-                                    $default_unit = $attribute->get_units()->first(); 
-                                }
-                                $unit_active_model = $default_unit;
-                                $unit_active = $unit_active_model ? $unit_active_model->id : null;
-                            }
-                        $rate = $unit_active_model ? $unit_active_model->rate : null;
-
-                        @endphp
+                   
                         <input type="hidden" name="units_old_{{ $attribute->id }}" value="{{ $rate }}">
-                        <select class="form-control units_fil" name="units_{{ $attribute->id }}" id=""
-                            onchange="filter_attribute()" disabled>
-                            @foreach ($attribute->get_units() as $unit)
-                                <option @if ($unit_active == $unit->id) selected @endif
-                                    data-rate="{{ $unit->rate }}" value="{{ $unit->id }}">{{ $unit->name }}
-                                </option>
-                            @endforeach
-                        </select>
+
                     </div>
-                    @php
-                        // frequest_all[$attribute->id]);
-                        $show = '';
-                        if (
-                            isset($selected_attribute_values[$attribute->id]) &&
-                            !empty($selected_attribute_values[$attribute->id])
-                        ) {
-                            $show = 'show';
-                        }
-                        $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
-                        $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
-
-                        if (isset($request_all['new_min_value_' . $attribute->id])) {
-                            $min_value = $request_all['new_min_value_' . $attribute->id];
-                        } else {
-                            $min_value = $min_attribute_value;
-                        }
-
-                        if (isset($request_all['new_max_value_' . $attribute->id])) {
-                            $max_value = $request_all['new_max_value_' . $attribute->id];
-                        } else {
-                            $max_value = $max_attribute_value;
-                        }
-
-                    @endphp
+                    
                     <div class="collapse {{ $show }}"
                         id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
                         <div class="p-3 mr-3">
@@ -477,7 +446,7 @@
                             @endforeach
 
 
-                            @if (count($attribute->attribute_values_filter($conditions)) > 7)
+                            @if (count($attribute_values) > 7)
                                 <a href="javascript:void(1)"
                                     class="show-hide-attribute text-primary hov-text-primary fs-12 fw-700">{{ translate('More') }}
                                     <i class="las la-angle-down"></i></a>
