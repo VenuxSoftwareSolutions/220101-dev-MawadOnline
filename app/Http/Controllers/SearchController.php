@@ -42,7 +42,6 @@ class SearchController extends Controller
         $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
 
         $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
-
         //Filter attributes based on selected category
         if ($category_id != null) {
             // Fetch category hierarchy and filter products
@@ -181,75 +180,25 @@ class SearchController extends Controller
             });
         }
 
-
-
-        //filter based on the price range
+        
+        // Filter based on the price range
         if ($min_price || $max_price) {
-            $products->when($min_price || $max_price, function ($query) use ($min_price, $max_price) {
-                $query->whereHas('pricingConfiguration', function ($q) use ($min_price, $max_price) {
-                    if ($min_price) {
-                        $q->whereRaw(
-                            '
-                        (SELECT
-                            CASE
-                                WHEN EXISTS (
-                                    SELECT 1
-                                    FROM discounts
-                                    WHERE discounts.product_id = pricing_configurations.id_products
-                                )
-                                THEN (
-                                    pricing_configurations.unit_price -
-                                    (pricing_configurations.unit_price *
-                                        COALESCE(
-                                            (SELECT discount_percentage
-                                             FROM discounts
-                                             WHERE discounts.product_id = pricing_configurations.id_products
-                                             ORDER BY discounts.created_at DESC
-                                             LIMIT 1),
-                                            0
-                                        )
-                                    )
-                                )
-                                ELSE pricing_configurations.unit_price
-                            END
-                        ) >= ?',
-                            [$min_price],
-                        );
-                    }
-
-                    if ($max_price) {
-                        $q->whereRaw(
-                            '
-                        (SELECT
-                            CASE
-                                WHEN EXISTS (
-                                    SELECT 1
-                                    FROM discounts
-                                    WHERE discounts.product_id = pricing_configurations.id_products
-                                )
-                                THEN (
-                                    pricing_configurations.unit_price -
-                                    (pricing_configurations.unit_price *
-                                        COALESCE(
-                                            (SELECT discount_percentage
-                                             FROM discounts
-                                             WHERE discounts.product_id = pricing_configurations.id_products
-                                             ORDER BY discounts.created_at DESC
-                                             LIMIT 1),
-                                            0
-                                        )
-                                    )
-                                )
-                                ELSE pricing_configurations.unit_price
-                            END
-                        ) <= ?',
-                            [$max_price],
-                        );
-                    }
-                });
+            $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
+                $query->whereRaw("
+                    (pricing_configurations.unit_price - 
+                        (pricing_configurations.unit_price * 
+                            COALESCE((
+                                SELECT discount_percentage 
+                                FROM discounts 
+                                WHERE discounts.product_id = pricing_configurations.id_products 
+                                ORDER BY discounts.created_at DESC 
+                                LIMIT 1
+                            ), 0)
+                        )
+                    ) BETWEEN ? AND ?
+                ", [$min_price ?? 0, $max_price ?? PHP_INT_MAX]);
             });
         }
-
         $request_all = request()->input();
         if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
             foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
