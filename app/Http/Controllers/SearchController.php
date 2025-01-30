@@ -108,23 +108,19 @@ class SearchController extends Controller
 
         $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
         
-       // Filter products by brand
+        // Filter products by brand
          $brand_ids = [];
-
         if ($brand_id != null) {
             $brand_ids[] = $brand_id;
         }
-
-            if ($request->has('brand') && is_array($request->brand)) {
+        if ($request->has('brand') && is_array($request->brand)) {
                 $slug_brand_ids = Brand::whereIn('slug', $request->brand)
                     ->pluck('id')
                     ->toArray();
                 
                 $brand_ids = array_merge($brand_ids, $slug_brand_ids);
         }
-
         $brand_ids = array_unique(array_filter($brand_ids));
-
         if (!empty($brand_ids)) {
             $products->whereIn('brand_id', $brand_ids);
         }
@@ -136,10 +132,10 @@ class SearchController extends Controller
                 ->toArray();
         }
 
-        if (count($vender_user_ids) > 0) {
-            $products->whereIn('user_id', $vender_user_ids);
+        if (!empty($vender_user_ids)) {
+            $products->whereIn('products.user_id', $vender_user_ids);
         }
-
+    
         //filter products by colors
         if ($request->colors) {
             $selected_color = $request->colors;
