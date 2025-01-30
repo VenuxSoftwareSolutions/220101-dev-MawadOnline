@@ -289,6 +289,7 @@
                     $('#filter').html(response.filter); 
                     $('#list_categories').html(response.list_categories); 
                     $('.title_category').html(response.title_category); 
+                    updateSelectedValues(response.selected_values);
 
                     slide_refresh();
                     rating_refresh();
@@ -326,6 +327,8 @@
                     slide_refresh();
                     rating_refresh();
                     $("#spinner-div").hide();
+                    updateSelectedValues(response.selected_values);
+
                 },
                 error: function(xhr) {
                     let errors = xhr.responseJSON.errors;
@@ -347,6 +350,32 @@
             $('#max_attribute_numeric_'+id).val(arg[1]);
             filter();
         }
+        
+        function updateSelectedValues(selected_values) {
+            if (selected_values) {
+            if (selected_values.numeric_attributes) {
+                Object.keys(selected_values.numeric_attributes).forEach(function(attribute_id) {
+                    $('#min_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].min);
+                    $('#max_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].max);
+                });
+            }
+
+            if (selected_values.boolean_attributes) {
+                Object.keys(selected_values.boolean_attributes).forEach(function(attribute_id) {
+                    $('input[name="attributes[' + attribute_id + '][]"]').prop('checked', selected_values.boolean_attributes[attribute_id]);
+                });
+            }
+
+            if (selected_values.list_attributes) {
+                Object.keys(selected_values.list_attributes).forEach(function(attribute_id) {
+                    selected_values.list_attributes[attribute_id].forEach(function(value) {
+                        $('input[name="attributes[' + attribute_id + '][]"][value="' + value + '"]').prop('checked', true);
+                    });
+                });
+            }
+        }
+        }
+
     </script>
     
     <script>

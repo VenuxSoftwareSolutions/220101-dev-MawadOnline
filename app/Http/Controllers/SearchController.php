@@ -195,6 +195,7 @@ class SearchController extends Controller
             });
         }
         $request_all = request()->input();
+        
         if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
             foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
                 $attribute = Attribute::find($attribute_id);
@@ -236,6 +237,8 @@ class SearchController extends Controller
                 $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
             }
             $pagination = str_replace('href', 'data-href', $products->appends($request->input())->links()->render());
+            
+        
             $filter = view('frontend.product_listing_filter', [
                 'conditions' => $conditions,
                 'request_all' => $request_all,
@@ -298,7 +301,29 @@ class SearchController extends Controller
             } else {
                 $title_category = null;
             }
-
+            $selected_values = [
+                'numeric_attributes' => [],
+                'boolean_attributes' => [],
+                'list_attributes' => [],
+            ];
+            if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
+                foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
+                    $attribute = Attribute::find($attribute_id);
+                    if ($attribute) {
+                        if ($attribute->type_value == 'numeric') {
+                            $selected_values['numeric_attributes'][$attribute_id] = [
+                                'min' => $request_all['new_min_value_' . $attribute_id] ?? $attribute_value[0],
+                                'max' => $request_all['new_max_value_' . $attribute_id] ?? $attribute_value[1],
+                            ];
+                        } elseif ($attribute->type_value == 'boolean') {
+                            $selected_values['boolean_attributes'][$attribute_id] = in_array('yes', $attribute_value);
+                        } elseif ($attribute->type_value == 'text' || ($attribute->type_value == 'list')) {
+                            $selected_values['list_attributes'][$attribute_id] = $attribute_value;
+                        }
+                    }
+                }
+            }
+        
             return response()->json([
                 'request_all' => $request_all,
                 'html' => $html,
@@ -306,6 +331,8 @@ class SearchController extends Controller
                 'filter' => $filter,
                 'list_categories' => $list_categories,
                 'title_category' => $title_category,
+                'selected_values' => $selected_values, 
+
             ]);
         }
 
