@@ -31,6 +31,8 @@ use Illuminate\Support\Str;
 use Mail;
 use App\Services\ProductService;
 use App\Models\Emirate;
+use Exception;
+use Log;
 
 class HomeController extends Controller
 {
@@ -277,20 +279,25 @@ class HomeController extends Controller
 
     public function product(Request $request, $slug)
     {
-        if (! auth()->check()) {
-            session(['link' => url()->current()]);
+        try {
+            if (! auth()->check()) {
+                session(['link' => url()->current()]);
+            }
+
+            $parent = Product::where('slug', $slug)->where('approved', 1)->first();
+
+            if ($parent != null) {
+                $previewData['detailedProduct'] = $this->productService->getProductDetailsBySlug($parent, $slug);
+                session(['productPreviewData' => $previewData]);
+
+                return view('frontend.product_details', compact('previewData'));
+            }
+
+            abort(404);
+        } catch(Exception $e) {
+            Log::error("Error while getting product for preview, with message: {$e->getMessage()}");
+            abort(500);
         }
-
-        $parent = Product::where('slug', $slug)->where('approved', 1)->first();
-
-        if ($parent != null) {
-            $previewData['detailedProduct'] = $this->productService->getProductDetailsBySlug($parent, $slug);
-            session(['productPreviewData' => $previewData]);
-
-            return view('frontend.product_details', compact('previewData'));
-        }
-
-        abort(404);
     }
 
     public function loadMore(Request $request)
