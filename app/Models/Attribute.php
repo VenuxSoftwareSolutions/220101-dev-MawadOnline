@@ -93,8 +93,8 @@ class Attribute extends Model
             ->max('value');
     
         return [
-            'min' => $min_value ?? 0, // Default to 0 if no value is found
-            'max' => $max_value ?? 1, // Default to 1 if no value is found
+            'min' => $min_value ?? 0, 
+            'max' => $max_value ?? 1, 
         ];
     }
 }

@@ -398,6 +398,40 @@
                         </div>
                     </div>
                 </div>
+            @elseif($attribute->type_value == 'boolean')
+                <div class="bg-white border mb-3">
+                    <div class="fs-16 fw-700 p-3">
+                        <a href="#"
+                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                            data-toggle="collapse"
+                            data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
+                            style="white-space: normal;">
+                            {{ $attribute->getTranslation('name') }}
+                        </a>
+                    </div>
+                    @php
+                        $show = '';
+                        if (
+                            isset($selected_attribute_values[$attribute->id]) &&
+                            !empty($selected_attribute_values[$attribute->id])
+                        ) {
+                            $show = 'show';
+                        }
+                    @endphp
+                    <div class="collapse {{ $show }}"
+                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                        <div class="p-3 aiz-checkbox-list">
+                            <label class="aiz-checkbox mb-3">
+                                <input type="checkbox" name="attributes[{{ $attribute->id }}][]"
+                                    value="1" onchange="filter()">
+                                <span class="aiz-square-check"></span>
+                                <span class="fs-14 fw-400 text-dark">
+                                    {{ translate('Yes') }} <!-- You can customize this label -->
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
             @else
                 <div class="bg-white border mb-3">
                     <div class="fs-16 fw-700 p-3">
