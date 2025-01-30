@@ -3011,7 +3011,6 @@
                         $(".aiz-carousel").not(".slick-initialized").each(function() {
                             var $this = $(this);
 
-
                             var slidesPerViewXs = $this.data("xs-items");
                             var slidesPerViewSm = $this.data("sm-items");
                             var slidesPerViewMd = $this.data("md-items");
@@ -3031,7 +3030,6 @@
                             var focusOnSelect = $this.data("focus-select");
                             var adaptiveHeight = $this.data("auto-height");
 
-
                             var vertical = $this.data("vertical");
                             var verticalXs = $this.data("vertical-xs");
                             var verticalSm = $this.data("vertical-sm");
@@ -3046,14 +3044,12 @@
                             slidesPerViewSm = !slidesPerViewSm ? slidesPerViewMd : slidesPerViewSm;
                             slidesPerViewXs = !slidesPerViewXs ? slidesPerViewSm : slidesPerViewXs;
 
-
                             vertical = !vertical ? false : vertical;
                             verticalXl = (typeof verticalXl == 'undefined') ? vertical : verticalXl;
                             verticalLg = (typeof verticalLg == 'undefined') ? verticalXl : verticalLg;
                             verticalMd = (typeof verticalMd == 'undefined') ? verticalLg : verticalMd;
                             verticalSm = (typeof verticalSm == 'undefined') ? verticalMd : verticalSm;
                             verticalXs = (typeof verticalXs == 'undefined') ? verticalSm : verticalXs;
-
 
                             slidesCenterMode = !slidesCenterMode ? false : slidesCenterMode;
                             slidesArrows = !slidesArrows ? false : slidesArrows;
@@ -3066,7 +3062,6 @@
                             infinite = !infinite ? false : infinite;
                             focusOnSelect = !focusOnSelect ? false : focusOnSelect;
                             adaptiveHeight = !adaptiveHeight ? false : adaptiveHeight;
-
 
                             var slidesRtl = ($("html").attr("dir") === "rtl" && !vertical) ? true :
                                 false;
@@ -3148,7 +3143,6 @@
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
                                 var availableValues = response.availableAttributes[
                                 attributeId]; // Get the entire array
-                                console.log("Available Values for Attribute ID:", attributeId, availableValues);
 
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(
@@ -3172,8 +3166,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Handle error
-                    console.error(error);
+                    AIZ.plugins.notify("danger", "{{ __("Something went wrong!") }}");
                 }
             });
         }
