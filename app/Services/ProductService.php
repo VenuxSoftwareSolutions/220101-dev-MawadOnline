@@ -5184,6 +5184,7 @@ class ProductService
                 $product = Product::find($children_id);
                 $variations[$children_id]['sku'] = $product ? $product->sku : null;
                 $variations[$children_id]['slug'] = $product ? $product->slug : null;
+                $variations[$children_id]["unit_price"] = $product ? $product->unit_price : $parent->unit_price;
 
                 $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
                 $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
@@ -5353,7 +5354,13 @@ class ProductService
         if (count($variations) > 0) {
             foreach ($variations as $variation) {
                 foreach ($variation as $attributeId => $value) {
-                    if ($attributeId != 'storedFilePaths' && $attributeId != 'variant_pricing-from' && $attributeId != 'sku' && $attributeId != 'slug') {
+                    if (
+                        $attributeId !== "unit_price" &&
+                        $attributeId != 'storedFilePaths' &&
+                        $attributeId != 'variant_pricing-from' &&
+                        $attributeId != 'sku' &&
+                        $attributeId != 'slug'
+                    ) {
                         if (! isset($attributes[$attributeId])) {
                             $attributes[$attributeId] = [];
                         }
@@ -5453,7 +5460,7 @@ class ProductService
             }
         }
 
-        $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : '';
+        $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : ($lastItem["unit_price"] ?? $parent->unit_price);
 
         if (
             isset($lastItem['variant_pricing-from']['discount']['date']) &&
@@ -5592,7 +5599,7 @@ class ProductService
             'short_description' => $short_description,
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
-            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? $parent->unit_price,
+            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? ($lastItem["unit_price"] ?? $parent->unit_price),
             'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
             'general_attributes' => $attributesGeneralArray,
             'attributes' => $attributes ?? [],
