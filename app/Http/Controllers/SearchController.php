@@ -199,9 +199,7 @@ class SearchController extends Controller
             foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
                 $attribute = Attribute::find($attribute_id);
                 if ($attribute) {
-                    // dump($attribute->id);
                     $units_id = $request['units_' . $attribute->id];
-                    //dd($units_id);
                     $unit = Unity::find($units_id);
                     $attribute_id = $attribute->id;
                     $attribute_type_value = $attribute->type_value;
@@ -211,7 +209,6 @@ class SearchController extends Controller
                         $request_all['new_max_value_' . $attribute_id] = ($attribute_value[1] / $unit->rate) * $rate_old;
                     }
 
-                    // $products = $products->join('product_attribute_values','products.id','product_attribute_values.id_products');
                     $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
                         $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
                             $this->applyAttributeFilter($q, $attribute_type_value, $attribute_id, $attribute_value, $units_id);
@@ -338,8 +335,7 @@ class SearchController extends Controller
                 $this->applyNumericFilter($query, $attribute_id, $attribute_value, $units_id);
                 break;
             case 'boolean':
-                $boolean_value = $attribute_value == '1' ? '1' : '0'; 
-                $query->where('id_attribute', $attribute_id)->where('value', $boolean_value);
+                $query->where('id_attribute', $attribute_id)->whereIn('value', $attribute_value);
                 break;
         }
     }
