@@ -5632,7 +5632,7 @@ class ProductService
                 ->get(),
             'ratingPercentages' => $ratingPercentages,
             'unit_of_sale' => $parent->unit ?? null,
-            'outStock' => $outStock,
+            'outStock' => get_single_product($variationId)->getTotalQuantity() <= 0,
             "sampleDetails" => $parent->getSampleDetails(),
         ];
     }
