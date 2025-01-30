@@ -279,16 +279,31 @@
     @foreach ($attributes as $attribute)
         {{-- @if (!empty($selected_attribute_values[$attribute->id])) --}}
             @if ($attribute->type_value == 'numeric')
+                @php
+                    if (isset($request_all['units_' . $attribute->id])) {
+                        $unit_active = $request_all['units_' . $attribute->id];
+                        $unit_active_model = \App\Models\Unity::find($unit_active);
+                    } else {
+                        $default_unit = $attribute->get_units()->where('default_unit', 1)->first();
+                        if (!$default_unit) {
+                            $default_unit = $attribute->get_units()->first(); 
+                        }
+                        $unit_active_model = $default_unit;
+                        $unit_active = $unit_active_model ? $unit_active_model->id : null;
+                    }
+                $rate = $unit_active_model ? $unit_active_model->rate : null;
+
+                @endphp
                 <div class="bg-white border mb-3">
                     <div class="fs-16 fw-700 p-3 width">
                         <a href="#"
-                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
-                            data-toggle="collapse"
-                            data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
-                            style="white-space: normal;">
-                            {{ $attribute->getTranslation('name') }}
+                        class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                        data-toggle="collapse"
+                        data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
+                        style="white-space: normal;">
+                        {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
                         </a>
-                        @php
+                     @php
                             if (isset($request_all['units_' . $attribute->id])) {
                                 $unit_active = $request_all['units_' . $attribute->id];
                                 $unit_active_model = \App\Models\Unity::find($unit_active);
