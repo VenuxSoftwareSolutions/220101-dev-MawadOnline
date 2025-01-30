@@ -171,14 +171,16 @@ class SearchController extends Controller
         } else {
             $category_parent_parent = null;
         }
-        //filter by rating
-        if ($rating) {
-            $products->when($rating && $rating > 0, function ($query) use ($rating) {
-                $query->whereHas('reviews', function ($q) use ($rating) {
-                    $q->whereRaw('(SELECT AVG(reviews.rating) FROM reviews WHERE reviews.product_id = products.id) >= ?', [$rating]);
-                });
+
+        //filter by reviews 
+        if ($rating && $rating > 0) {
+            $products->whereHas('reviews', function ($query) use ($rating) {
+                $query->selectRaw('AVG(reviews.rating) as avg_rating')
+                    ->groupBy('reviews.product_id')
+                    ->havingRaw('AVG(reviews.rating) >= ?', [$rating]);
             });
         }
+
 
 
         //filter based on the price range
