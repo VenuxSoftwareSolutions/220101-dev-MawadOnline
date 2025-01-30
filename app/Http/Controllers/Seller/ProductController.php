@@ -1674,25 +1674,16 @@ class ProductController extends Controller
         $pickedAnyVariation = false;
         $maximum = 1;
         $minimum = 1;
-        // $totalDiscount = 0 ;
         $discountedPrice = 0;
-        foreach ($variations as $variationIdKey => $variation) {
 
+        foreach ($variations as $variationIdKey => $variation) {
             $matchesCheckedAttributes = true;
 
-            // Check if the variation matches the checked attributes
-            // foreach ($checkedAttributes as $attributeId => $value) {
-            //     if (!isset($variation[$attributeId]) || $variation[$attributeId] !== $value) {
-            //         $matchesCheckedAttributes = false;
-            //         break;
-            //     }
-            // }
             foreach ($checkedAttributes as $attributeId => $value) {
                 $valueString = '';
                 if (isset($variation[$attributeId]) && is_array($variation[$attributeId])) {
                     // Join array elements with a hyphen
                     $valueString = implode('-', $variation[$attributeId]);
-
                 }
 
                 // If the attribute doesn't exist in variation or the values don't match
@@ -1708,16 +1699,20 @@ class ProductController extends Controller
             // If the variation matches the checked attributes, collect other attributes
             if ($matchesCheckedAttributes) {
                 $anyMatched = true;
-                if (isset($variation['storedFilePaths']) && is_array($variation['storedFilePaths']) && count($matchedImages) == 0) {
+
+                if (
+                    isset($variation['storedFilePaths']) &&
+                    is_array($variation['storedFilePaths']) &&
+                    count($matchedImages) == 0
+                ) {
                     foreach ($variation['storedFilePaths'] as $image) {
                         $matchedImages[] = $image;
                     }
-
                 }
                 if ($pickedAnyVariation == false) {
                     $variationId = $variationIdKey;
-                    if (isset($data['detailedProduct']['product_id'])) {
 
+                    if (isset($data['detailedProduct']['product_id'])) {
                         $reviewStats = Review::where('product_id', $variationId)
                             ->selectRaw('COUNT(*) as total, SUM(rating) as sum')
                             ->first();
@@ -1729,18 +1724,21 @@ class ProductController extends Controller
                             $avgRating = $totalSum / $totalRating;
                             $renderStarRating = $this->renderStarRating($totalSum / $totalRating);
                         } else {
-
                             $renderStarRating = $this->renderStarRating(0);
                         }
                     }
+
                     $sku = $variation['sku'] ?? null;
                     $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
                     $price = $variation['variant_pricing-from']['unit_price'][0] ?? '';
                     $total = isset($variation['variant_pricing-from']['from'][0]) && isset($variation['variant_pricing-from']['unit_price'][0]) ? $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0] : '';
 
-                    if (isset($variation['variant_pricing-from']['discount']['date']) && is_array($variation['variant_pricing-from']['discount']['date']) && ! empty($variation['variant_pricing-from']['discount']['date'][0])) {
+                    if (
+                        isset($variation['variant_pricing-from']['discount']['date']) &&
+                        is_array($variation['variant_pricing-from']['discount']['date']) &&
+                        ! empty($variation['variant_pricing-from']['discount']['date'][0])
+                    ) {
                         // Extract start and end dates from the first date interval
-
                         $dateRange = $variation['variant_pricing-from']['discount']['date'][0];
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
@@ -1760,14 +1758,12 @@ class ProductController extends Controller
                             if ($variation['variant_pricing-from']['discount']['type'][0] == 'percent') {
                                 $percent = $variation['variant_pricing-from']['discount']['percentage'][0];
                                 if ($percent) {
-
                                     // Calculate the discount amount based on the given percentage
                                     $discountPercent = $percent; // Example: $percent = 5; // 5% discount
                                     $discountAmount = ($variantPricing * $discountPercent) / 100;
 
                                     // Calculate the discounted price
                                     $discountedPrice = $variantPricing - $discountAmount;
-
                                 }
                             } elseif ($variation['variant_pricing-from']['discount']['type'][0] == 'amount') {
                                 // Calculate the discount amount based on the given amount
@@ -1777,13 +1773,16 @@ class ProductController extends Controller
                                     $discountAmount = $amount;
                                     // Calculate the discounted price
                                     $discountedPrice = $variantPricing - $discountAmount;
-
                                 }
-
                             }
                         }
                     }
-                    if (isset($discountedPrice) && $discountedPrice > 0 && isset($variation['variant_pricing-from']['from'][0])) {
+
+                    if (
+                        isset($discountedPrice) &&
+                        $discountedPrice > 0 &&
+                        isset($variation['variant_pricing-from']['from'][0])
+                    ) {
                         $totalDiscount = $variation['variant_pricing-from']['from'][0] * $discountedPrice;
                     }
 
@@ -1819,13 +1818,13 @@ class ProductController extends Controller
                         }
                     }
                 }
+
                 if (isset($data['detailedProduct']['product_id'])) {
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $minimum) {
                         $outStock = true;
                     }
                 }
-
             }
         }
 
@@ -1850,7 +1849,6 @@ class ProductController extends Controller
                 'outStock' => false,
             ];
         } else {
-
             $response = [
                 'availableAttributes' => $availableAttributes,
                 'anyMatched' => $anyMatched,
