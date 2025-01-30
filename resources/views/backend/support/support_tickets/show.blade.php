@@ -122,7 +122,7 @@
                                 <div class="media-body">
                                     <div class="">
                                         <span class="text-bold h6">{{ $ticketReply->user->name }}</span>
-                                        <p class="text-muted text-sm fs-11">{{$ticketReply->created_at}}</p>
+                                        <p class="text-muted text-sm fs-11">{{$ticketReply->created_at}} - ({{$ticketReply->replyTo->owner_id ? "Vendor" : "buyer"}})</p>
                                     </div>
                                 </div>
                             </div>
