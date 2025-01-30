@@ -43,8 +43,6 @@ class SearchController extends Controller
 
         $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
 
-
-
         //Filter attributes based on selected category
         if ($category_id != null) {
             // Fetch category hierarchy and filter products
@@ -87,18 +85,9 @@ class SearchController extends Controller
         $brandQuery = clone $baseQuery;
 
         //retrieve brands
-        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')
-        ->select('brands.*')
-        ->distinct()
-        ->get();
+        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')->select('brands.*')->distinct()->get();
         $shopQuery = clone $baseQuery;
-        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')
-        ->join('shops', 'shops.user_id', '=', 'users.id')
-        ->where('users.banned', '!=', 1)
-        ->where('shops.verification_status', '!=', 0)
-        ->select('shops.*')
-        ->distinct()
-        ->get();
+        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
 
         if ($query) {
             $products->where('products.name', 'like', '%' . $query . '%');
@@ -109,18 +98,18 @@ class SearchController extends Controller
         }
 
         $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
-        
+
         // Filter products by brand
-         $brand_ids = [];
+        $brand_ids = [];
         if ($brand_id != null) {
             $brand_ids[] = $brand_id;
         }
         if ($request->has('brand') && is_array($request->brand)) {
-                $slug_brand_ids = Brand::whereIn('slug', $request->brand)
-                    ->pluck('id')
-                    ->toArray();
-                
-                $brand_ids = array_merge($brand_ids, $slug_brand_ids);
+            $slug_brand_ids = Brand::whereIn('slug', $request->brand)
+                ->pluck('id')
+                ->toArray();
+
+            $brand_ids = array_merge($brand_ids, $slug_brand_ids);
         }
         $brand_ids = array_unique(array_filter($brand_ids));
         if (!empty($brand_ids)) {
@@ -137,7 +126,7 @@ class SearchController extends Controller
         if (!empty($vender_user_ids)) {
             $products->whereIn('products.user_id', $vender_user_ids);
         }
-    
+
         //filter products by colors
         if ($request->colors) {
             $selected_color = $request->colors;
@@ -174,32 +163,35 @@ class SearchController extends Controller
             $category_parent_parent = null;
         }
 
-        //filter by reviews 
+        //filter by reviews
         if ($rating && $rating > 0) {
             $products->whereHas('reviews', function ($query) use ($rating) {
-                $query->selectRaw('AVG(reviews.rating) as avg_rating')
+                $query
+                    ->selectRaw('AVG(reviews.rating) as avg_rating')
                     ->groupBy('reviews.product_id')
                     ->havingRaw('AVG(reviews.rating) >= ?', [$rating]);
             });
         }
 
-        
         // Filter based on the price range
         if ($min_price || $max_price) {
             $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
-                $query->whereRaw("
-                    (pricing_configurations.unit_price - 
-                        (pricing_configurations.unit_price * 
+                $query->whereRaw(
+                    "
+                    (pricing_configurations.unit_price -
+                        (pricing_configurations.unit_price *
                             COALESCE((
-                                SELECT discount_percentage 
-                                FROM discounts 
-                                WHERE discounts.product_id = pricing_configurations.id_products 
-                                ORDER BY discounts.created_at DESC 
+                                SELECT discount_percentage
+                                FROM discounts
+                                WHERE discounts.product_id = pricing_configurations.id_products
+                                ORDER BY discounts.created_at DESC
                                 LIMIT 1
                             ), 0)
                         )
                     ) BETWEEN ? AND ?
-                ", [$min_price ?? 0, $max_price ?? PHP_INT_MAX]);
+                ",
+                    [$min_price ?? 0, $max_price ?? PHP_INT_MAX],
+                );
             });
         }
         $request_all = request()->input();
@@ -238,7 +230,6 @@ class SearchController extends Controller
 
             $selected_attribute_values[$attribute->id] = $value;
         }
-
 
         $products = $products->paginate(6);
         if ($request->ajax()) {
