@@ -572,7 +572,7 @@
                             @endphp
                         <li class="list-inline-item mr-0 animate-underline-white">
                             <a href="{{ route('products.category', $category->slug) }}"
-                                class="fs-16 px-3 py-3 d-inline-block fw-400 text-white header_menu_links hov-bg-black-10">
+                                class="fs-15 px-3 py-3 d-inline-block fw-400 text-white font-prompt header_menu_links hov-bg-black-10">
                                 {{ $category_name }}
                             </a>
                         </li>
