@@ -358,7 +358,7 @@
                                     <span class="aiz-megabox-elem d-flex align-items-center justify-content-center">
                                         <span class="d-inline-block product-color-style"
                                             style="background: {{ $color }};">
-                                            <svg width="24" height="24" class=" checked-color"
+                                            <svg width="24" height="24" class="checked-color"
                                                 viewBox="0 0 24 24" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -599,12 +599,14 @@
                     </button>
                     <input type="number" id="quantity" name="quantity"
                         class="col border-0 text-center flex-grow-1 fs-16 input-number fs-16 font-prompt-md"
-                        placeholder="1" value="{{ $previewData['detailedProduct']['quantity'] }}"
-                        min="{{ $previewData['detailedProduct']['min'] }}"
-                        max="{{ $previewData['detailedProduct']['max'] }}" lang="en">
+                        placeholder="1"
+                        value="1"
+                        min="1"
+                        max="9999" lang="en" />
                     <button id="quantity-button"
                         class="btn col-auto btn-icon btn-sm btn-light rounded-0 quantity-control fs-16 font-prompt-md product-quantity-btn"
                         type="button" data-type="plus" data-field="quantity"
+                        @if(isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock'] === true) disabled @endif
                         data-out-stock="{{ isset($previewData['detailedProduct']['outStock']) ? $previewData['detailedProduct']['outStock'] : false }}">
                         <i class="las la-plus"></i>
                     </button>
@@ -620,7 +622,10 @@
         @php
             $price = isset($previewData['detailedProduct']['discountedPrice']) ? $previewData['detailedProduct']['discountedPrice'] : $previewData['detailedProduct']['price'];
         @endphp
-        <button type="button" id="product-add-to-cart-btn"
+        <button
+            type="button"
+            @if(isset($previewData['detailedProduct']['outStock']) && $previewData['detailedProduct']['outStock'] === true) disabled @endif
+            id="product-add-to-cart-btn"
             class="btn btn-secondary-base add-to-cart col-8 col-md-8 text-white border-radius-16 fs-16 font-prompt py-2"
             @if (isset($isPreview) && $isPreview) onclick="addToCart({{ json_encode($isPreview) }})" @else onclick="addToCart()" @endif>
             <span id="product-add-to-cart-span" class="add-to-cart-style-txt"

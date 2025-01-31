@@ -285,6 +285,11 @@ class CartUtility
             }
         }
 
+        if (isset($unitPrice) === false) {
+            $product = get_single_product($id);
+            return $product->unit_price;
+        }
+
         return $unitPrice;
     }
 

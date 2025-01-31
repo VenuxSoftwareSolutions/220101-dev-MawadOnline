@@ -22,3 +22,6 @@ const compare_list_num_variants = 5;
 
 const DELIVERY_STATUS = ['ready_for_shipment','on_the_way'];
 const EVERY_EIGHT_HOURS = '0 */8 * * *';
+
+const MAX_STOCK_QTY_LIMIT = 9999;
+const MIN_STOCK_QTY_LIMIT = 1;

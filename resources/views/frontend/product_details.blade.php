@@ -2790,21 +2790,16 @@
             var product_id = $("#variationId").val() || {{ $previewData['detailedProduct']['product_id'] }};
 
             @if (isCustomer())
-                @if (/* $review_status */ 1 == 1)
-                    $.post('{{ route('product_review_modal') }}', {
-                        _token: '{{ @csrf_token() }}',
-                        product_id: product_id
-                    }, function(data) {
-                        $('#product-review-modal-content').html(data);
-                        $('#product-review-modal').modal('show', {
-                            backdrop: 'static'
-                        });
-                        AIZ.extra.inputRating();
+                $.post('{{ route('product_review_modal') }}', {
+                    _token: '{{ @csrf_token() }}',
+                    product_id: product_id
+                }, function(data) {
+                    $('#product-review-modal-content').html(data);
+                    $('#product-review-modal').modal('show', {
+                        backdrop: 'static'
                     });
-                @else
-                    AIZ.plugins.notify('warning',
-                    '{{ translate('Sorry, You need to buy this product to give review.') }}');
-                @endif
+                    AIZ.extra.inputRating();
+                });
             @elseif (Auth::check() && !isCustomer())
                 AIZ.plugins.notify('warning', '{{ translate('Sorry, Only customers can give review.') }}');
             @else
@@ -2836,10 +2831,12 @@
             let quantityInput = $(this);
             let currentQuantity = parseInt(quantityInput.val());
             let variationId = $('#variationId').val();
+            let qtyMin = parseInt(quantityInput.attr("min"));
+            let qtyMax = parseInt(quantityInput.attr("max"));
 
             if (
-                currentQuantity >= quantityInput.attr("min") &&
-                currentQuantity <= quantityInput.attr("max")
+                currentQuantity >= qtyMin &&
+                currentQuantity <= qtyMax
             ) {
                 $.ajax({
                     url: '{{ route('seller.update-price-preview') }}',
@@ -2875,14 +2872,12 @@
                             }
 
                             $("#quantity").val(response.qty)
-                            $('#quantity').attr('min', response.minimum); // Minimum value
-                            $('#quantity').attr('max', response.maximum); // Maximum value
 
                             $('.aiz-plus-minus input').each(function() {
-                                var $this = $(this);
-                                var min = parseInt($(this).attr("min"));
-                                var max = parseInt($(this).attr("max"));
-                                var value = parseInt($(this).val());
+                                let $this = $(this);
+                                let min = parseInt($(this).attr("min"));
+                                let max = parseInt($(this).attr("max"));
+                                let value = parseInt($(this).val());
 
                                 if (value <= min) {
                                     $this.siblings('[data-type="minus"]').attr('disabled', true)
@@ -2899,7 +2894,7 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        AIZ.plugins.notify("warning", "Error while updating quantity");
+                        AIZ.plugins.notify("warning", "{{ __("Error while updating quantity") }}");
                         console.error('Error updating quantity:', error);
                     }
                 });
@@ -2935,10 +2930,11 @@
                         sendCheckedAttributes($currentRadio);
                     } else {
                         if (response.price > 0) {
+                            $("#product-add-to-cart-btn").attr("disabled", response.outStock === true);
                             $('#variationId').val(response.variationId);
-                            $("#qty-interval").text(response.price)
-                            $("#quantity").val(response.quantity)
-                            $("#chosen_price").text(response.total)
+                            $("#qty-interval").text(response.price);
+                            $("#quantity").val(response.quantity === "" ? 0 : response.quantity);
+                            $("#chosen_price").text(response.total);
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
 
@@ -3016,7 +3012,6 @@
                         $(".aiz-carousel").not(".slick-initialized").each(function() {
                             var $this = $(this);
 
-
                             var slidesPerViewXs = $this.data("xs-items");
                             var slidesPerViewSm = $this.data("sm-items");
                             var slidesPerViewMd = $this.data("md-items");
@@ -3036,7 +3031,6 @@
                             var focusOnSelect = $this.data("focus-select");
                             var adaptiveHeight = $this.data("auto-height");
 
-
                             var vertical = $this.data("vertical");
                             var verticalXs = $this.data("vertical-xs");
                             var verticalSm = $this.data("vertical-sm");
@@ -3051,14 +3045,12 @@
                             slidesPerViewSm = !slidesPerViewSm ? slidesPerViewMd : slidesPerViewSm;
                             slidesPerViewXs = !slidesPerViewXs ? slidesPerViewSm : slidesPerViewXs;
 
-
                             vertical = !vertical ? false : vertical;
                             verticalXl = (typeof verticalXl == 'undefined') ? vertical : verticalXl;
                             verticalLg = (typeof verticalLg == 'undefined') ? verticalXl : verticalLg;
                             verticalMd = (typeof verticalMd == 'undefined') ? verticalLg : verticalMd;
                             verticalSm = (typeof verticalSm == 'undefined') ? verticalMd : verticalSm;
                             verticalXs = (typeof verticalXs == 'undefined') ? verticalSm : verticalXs;
-
 
                             slidesCenterMode = !slidesCenterMode ? false : slidesCenterMode;
                             slidesArrows = !slidesArrows ? false : slidesArrows;
@@ -3071,7 +3063,6 @@
                             infinite = !infinite ? false : infinite;
                             focusOnSelect = !focusOnSelect ? false : focusOnSelect;
                             adaptiveHeight = !adaptiveHeight ? false : adaptiveHeight;
-
 
                             var slidesRtl = ($("html").attr("dir") === "rtl" && !vertical) ? true :
                                 false;
@@ -3153,7 +3144,6 @@
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
                                 var availableValues = response.availableAttributes[
                                 attributeId]; // Get the entire array
-                                console.log("Available Values for Attribute ID:", attributeId, availableValues);
 
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(
@@ -3177,8 +3167,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Handle error
-                    console.error(error);
+                    AIZ.plugins.notify("danger", "{{ __("Something went wrong!") }}");
                 }
             });
         }
@@ -3194,21 +3183,16 @@
             const quantityButton = document.getElementById("quantity-button");
             const minusQuantityButton = document.querySelector("button[data-type='minus']");
 
-            // Get the outStock status from data attribute
             const isOutOfStock = quantityButton.getAttribute("data-out-stock") === "1" || quantityButton
                 .getAttribute("data-out-stock") === "true";
 
-            // Disable the button if out of stock
             if (isOutOfStock) {
                 quantityButton.disabled = true;
             }
 
             quantityButton?.addEventListener("click", function(event) {
-                // Check if the button is disabled
                 if (quantityButton.disabled) {
-                    // Display warning message
                     AIZ.plugins.notify('warning', '{{ __('messages.out_of_stock') }}');
-                    // Prevent default behavior (if needed)
                     event.preventDefault();
                 }
             });
