@@ -448,11 +448,9 @@
                     }
                     $attribute_values = $selected_attribute_values[$attribute->id] ?? [];
                     $attribute_id = $attribute->id;
-                    // dd($attribute->id,$attribute->attribute_values_filter());
                 @endphp
-                <div class="collapse {{ $show }}"
-                    id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
-                    <div class="p-3 aiz-checkbox-list">
+                <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                    <div class="p-3 aiz-checkbox-list" style="max-height: 300px; overflow-y: auto; position: relative;">
                         @foreach ($attribute_values as $attribute_value)
                             @php
                                 // Decode JSON values if needed
@@ -462,24 +460,18 @@
                                     $decoded_value = $attribute_value;
                                 }
                             @endphp
-
+        
                             <label class="aiz-checkbox mb-3">
                                 <input type="checkbox" name="attributes[{{ $attribute_id }}][]"
                                     value="{{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}"
-                                    onchange="filter()">
+                                    onchange="filter()"
+                                    @if (isset($request_all['attributes'][$attribute_id]) && in_array($decoded_value, $request_all['attributes'][$attribute_id])) checked @endif>
                                 <span class="aiz-square-check"></span>
                                 <span class="fs-14 fw-400 text-dark">
                                     {{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}
                                 </span>
                             </label>
                         @endforeach
-
-
-                        @if (count($attribute_values) > 7)
-                            <a href="javascript:void(1)"
-                                class="show-hide-attribute text-primary hov-text-primary fs-12 fw-700">{{ translate('More') }}
-                                <i class="las la-angle-down"></i></a>
-                        @endif
                     </div>
                 </div>
             </div>

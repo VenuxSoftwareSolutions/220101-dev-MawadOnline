@@ -126,6 +126,23 @@
             stroke-dashoffset: -124;
         }
         }
+        .aiz-checkbox-list {
+            scrollbar-width: thin; 
+            scrollbar-color: #ccc transparent; 
+        }
+
+        .aiz-checkbox-list::-webkit-scrollbar {
+            width: 8px; 
+        }
+
+        .aiz-checkbox-list::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+
+        .aiz-checkbox-list::-webkit-scrollbar-thumb {
+            background-color: #ccc; 
+            border-radius: 4px; 
+        }
 
     </style>
 @endsection
