@@ -277,7 +277,7 @@
     </div>
     <!-- Attributes -->
     @foreach ($attributes as $attribute)
-        {{-- @if (!empty($selected_attribute_values[$attribute->id])) --}}
+      @if (!empty($selected_attribute_values[$attribute->id])) 
         @if ($attribute->type_value == 'numeric')
             @php
                 if (isset($request_all['units_' . $attribute->id])) {
@@ -476,7 +476,7 @@
                 </div>
             </div>
         @endif
-        {{-- @endif --}}
+        @endif 
     @endforeach
 
 </div>
