@@ -47,4 +47,9 @@ class OrderDetail extends Model
     {
         return $this->hasOne(TrackingShipment::class, "order_detail_id");
     }
+
+    public function stockDetails()
+    {
+        return $this->hasMany(StockDetails::class, 'order_detail_id');
+    }
 }

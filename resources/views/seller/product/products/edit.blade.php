@@ -1,4 +1,5 @@
 @extends('seller.layouts.app')
+
 <style>
     #image-preview {
         display: flex;
@@ -280,6 +281,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ $product->unit_price }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{ translate('Country of origin') }}</label>
                                     <div class="col-md-8">
                                         <div class="form-item">
@@ -478,7 +491,7 @@
                         </div>
                         <hr> --}}
                         <div>
-                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
+                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style d-none">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration"
@@ -1263,15 +1276,14 @@
                             </div>
                             <div class="row mb-3" style="display: none">
                                 <label
-                                    class="col-md-2 col-from-label">{{ translate('Use default pricing configuration') }}</label>
+                                    class="col-md-2 col-from-label">{{ translate('Use parent unit of sale price') }}</label>
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-pricing" checked>
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant" class="bloc_pricing_configuration_variant">
-
+                                <div id="bloc_pricing_configuration_variant" class="row bloc_pricing_configuration_variant">
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
@@ -1417,116 +1429,32 @@
                                         </div>
                                         <div class="row mb-3">
                                             <label
-                                                class="col-md-2 col-from-label">{{ translate('Use default pricing configuration') }}</label>
+                                                class="col-md-2 col-from-label">{{ translate('Use parent unit of sale price') }}</label>
                                             <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox"
                                                         name="variant-pricing-{{ $children->id }}"
-                                                        data-old_variant="{{ $children->id }}" class="variant-pricing"
-                                                        @if (count($children->getPricingConfiguration()) == 0) checked @endif>
+                                                        data-old_variant="{{ $children->id }}"
+                                                        data-unit_price="{{ $children->unit_price }}"
+                                                        class="variant-pricing"
+                                                        @if ($children->unit_price === 0) checked @endif>
                                                     <span></span>
                                                 </label>
                                             </div>
-                                            <div class="bloc_pricing_configuration_variant">
-                                                @if (count($children->getPricingConfiguration()) > 0)
-                                                    <table class="table" class="bloc_pricing_configuration_variant">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>{{ translate('From Quantity') }}</th>
-                                                                <th>{{ translate('To Quantity') }}</th>
-                                                                <th>{{ translate('Unit Price (VAT Exclusive)') }}</th>
-                                                                <th>{{ translate('Discount(Start/End)') }}</th>
-                                                                <th>{{ translate('Discount Type') }}</th>
-                                                                <th>{{ translate('Discount Amount') }}</th>
-                                                                <th>{{ translate('Discount Percentage') }}</th>
-                                                                <th>{{ translate('Action') }}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="bloc_pricing_configuration">
-                                                            @foreach ($children->getPricingConfiguration() as $pricing)
-                                                                <tr>
-                                                                    <td><input type="number"
-                                                                            name="variant[from][{{ $children->id }}][]"
-                                                                            class="form-control min-qty-variant"
-                                                                            id="" value="{{ $pricing->from }}">
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            name="variant[to][{{ $children->id }}][]"
-                                                                            class="form-control max-qty-variant"
-                                                                            id="" value="{{ $pricing->to }}">
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            name="variant[unit_price][{{ $children->id }}][]"
-                                                                            class="form-control unit-price-variant"
-                                                                            id=""
-                                                                            value="{{ $pricing->unit_price }}"></td>
-                                                                    @php
-                                                                        $date_range = '';
-                                                                        if ($pricing->discount_start_datetime) {
-                                                                            $start_date = new DateTime($pricing->discount_start_datetime);
-                                                                            $start_date_formatted = $start_date->format('d-m-Y H:i:s');
-
-                                                                            $end_date = new DateTime($pricing->discount_end_datetime);
-                                                                            $end_date_formatted = $end_date->format('d-m-Y H:i:s');
-
-                                                                            $date_range = $start_date_formatted . ' to ' . $end_date_formatted;
-                                                                        }
-                                                                    @endphp
-                                                                    <td><input type="text"
-                                                                            class="form-control aiz-date-range discount-range-variant"
-                                                                            value="{{ $date_range }}"
-                                                                            name="variant[date_range_pricing][{{ $children->id }}][]"
-                                                                            placeholder="{{ translate('Select Date') }}"
-                                                                            data-time-picker="true" data-separator=" to "
-                                                                            data-format="DD-MM-Y HH:mm:ss"
-                                                                            autocomplete="off"></td>
-                                                                    <td>
-                                                                        <select class="form-control discount_type-variant"
-                                                                            name="variant[discount_type][{{ $children->id }}][]">
-                                                                            <option value="" selected>
-                                                                                {{ translate('Choose type') }}</option>
-                                                                            <option value="amount"
-                                                                                @selected($pricing->discount_type == 'amount')>
-                                                                                {{ translate('Flat') }}</option>
-                                                                            <option value="percent"
-                                                                                @selected($pricing->discount_type == 'percent')>
-                                                                                {{ translate('Percent') }}</option>
-                                                                        </select>
-                                                                    </td>
-                                                                    <td><input type="number"
-                                                                            class="form-control discount_amount-variant"
-                                                                            value="{{ $pricing->discount_amount }}"
-                                                                            @if ($pricing->discount_type != 'amount') readonly @endif
-                                                                            name="variant[discount_amount][{{ $children->id }}][]">
-                                                                    </td>
-                                                                    <td style="width: 19% !important;">
-                                                                        <div class="col-md-9 input-group">
-                                                                            <input type="number"
-                                                                                class="form-control discount_percentage-variant"
-                                                                                value="{{ $pricing->discount_percentage }}"
-                                                                                @if ($pricing->discount_type != 'percent') readonly @endif
-                                                                                name="variant[discount_percentage][{{ $children->id }}][]">
-                                                                            <div class="input-group-append">
-                                                                                <span class="input-group-text">%</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <i class="las la-plus btn-add-pricing"
-                                                                            data-id_variant="{{ $children->id }}"
-                                                                            style="margin-left: 5px; margin-top: 17px;"
-                                                                            title="Add another ligne"></i>
-                                                                        <i class="las la-trash delete_pricing_canfiguration"
-                                                                            data-pricing_id="{{ $pricing->id }}"
-                                                                            style="margin-left: 5px; margin-top: 17px;"
-                                                                            title="Delete this ligne"></i>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                    </table>
-                                                @endif
-                                            </div>
+                                            @if ($children->unit_price !== 0)
+                                                <div class="mx-0 row bloc_pricing_configuration_variant">
+                                                    <label class="col-md-2 col-from-label">
+                                                        {{ __('Unit of Sale Price') }}
+                                                        <small>({{ __('VAT Exclusive') }})</small>
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <div class="col-md-10">
+                                                        <input type="number" class="form-control" name="variant[unit_sale_price][{{ $children->id }}]"
+                                                            value="{{ $children->unit_price }}"
+                                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                         <div class="row mb-3">
                                             <label
@@ -3202,8 +3130,6 @@
                     // Add some unique identifier to the cloned div (optional)
                     clonedDiv.attr('class', 'clonedDiv');
                     clonedDiv.attr('data-id', numbers_variant);
-                    // Disable all input elements in the cloned div
-                    //clonedDiv.find('input').prop('readonly', true);
 
                     // Append the cloned div to the container
                     var count = numbers_variant + 1;
@@ -3216,7 +3142,6 @@
                             '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
                     @endif
                     clonedDiv.find('h3').after(html_to_add);
-                    //clonedDiv.find('.fa-circle-xmark').hide();
                     clonedDiv.find('.fa-circle-check').hide();
                     clonedDiv.find('#btn-add-pricing-variant').hide();
                     clonedDiv.find('div.row').each(function() {
@@ -3345,6 +3270,11 @@
                             }
                         })
                     });
+
+                    clonedDiv.find("#bloc_pricing_configuration_variant input[type=number]")
+                        .attr("name", `variant-unit-price${numbers_variant}`);
+                    clonedDiv.find('#bloc_pricing_configuration_variant input[type=number]')
+                        .attr('data-id_newvariant', numbers_variant);
 
                     clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
                         numbers_variant);
@@ -3586,6 +3516,27 @@
                     var is_variant = $(this).data("variant");
                     var old_variant = $(this).data("old_variant");
                     var clonedElement = $("#table_pricing_configuration").clone();
+
+                    let oldVariantUnitPrice = $(this).data("unit_price") ?? 0;
+                    let numbers_variant = parseInt("{{ count($product->getChildrenProducts()) }}");
+
+                    let unitPriceElement = $(`
+                        <label class="col-md-2 col-from-label">
+                            {{ __("Unit of Sale Price") }}
+                            <small>({{ __("VAT Exclusive") }})</small>
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <input
+                               type="number"
+                               class="form-control"
+                               name="${numbers_variant > 0 ? `variant_unit_price-${numbers_variant}` : `variant[unit_sale_price][${old_variant}]`}"
+                               value="${oldVariantUnitPrice}"
+                               placeholder="{{ __("Unit of Sale Price") }}"
+                            />
+                        </div>
+                    `);
+
                     clonedElement.find('.min-qty').each(function(index, element) {
                         $(element).removeClass("min-qty").addClass("min-qty-variant");
                         if (is_variant != undefined) {
@@ -3706,11 +3657,9 @@
                             old_variant);
                     }
 
-
-
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(
-                        clonedElement);
+                        unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
                 }
@@ -6447,26 +6396,18 @@
                     var remarks = [];
                     if (check_attributes_selected != false) {
                         if (check_attributes == false) {
-                            //console.log('ok');
                             var message = "{{ translate('You need to choose at least one attribute.') }}";
                             remarks.push(message);
                         }
 
-                        if (check_price == false) {
-                            //console.log('ok1');
-                            var message = "{{ translate('Please check your pricing configuration.') }}";
-                            remarks.push(message);
-                        }
                         if ($('#sample_description_parent').val() != '') {
                             if (check_sample_price == false) {
-                                //console.log('ok2');
                                 var message =
                                     "{{ translate('The sample price must be greater than or equal to 0.1 AED.') }}";
                                 remarks.push(message);
                             }
 
                             if (check_sample_price_undefined == false) {
-                                //console.log('ok3');
                                 var message =
                                     "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.') }}";
                                 remarks.push(message);

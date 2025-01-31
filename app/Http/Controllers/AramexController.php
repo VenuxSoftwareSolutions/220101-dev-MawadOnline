@@ -172,6 +172,7 @@ class AramexController extends Controller
 
             $response = curl_exec($this->curl);
 
+            Log::info("calculate aramex rate api response: " . json_encode($response));
             return json_decode($response, true);
         } catch (Exception $e) {
             Log::error("Error while calculating rate using aramex api, with message: {$e->getMessage()}");
@@ -789,8 +790,8 @@ class AramexController extends Controller
                         ],
                     ],
                     'ThirdParty' => null,
-                    'ShippingDateTime' => '/Date('.Carbon::parse($input['shipping_datetime'])->valueOf().')/',
-                    'DueDate' => '/Date('.Carbon::parse($input['shipping_datetime'])->addDays(3)->valueOf().')/',
+                    'ShippingDateTime' => '/Date('.Carbon::now()->valueOf().')/',
+                    'DueDate' => '/Date('.Carbon::parse($input["pickup_datetime"])->valueOf().')/',
                     'Comments' => null,
                     'PickupLocation' => sprintf(
                         '%s %s, %s %s %s',

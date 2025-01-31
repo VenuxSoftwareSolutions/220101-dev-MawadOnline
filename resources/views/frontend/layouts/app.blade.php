@@ -822,7 +822,7 @@
 
                 $.ajax({
                     type:"POST",
-                    url: '{{ route('cart.addToCart') }}',
+                    url: `{{ route('cart.addToCart') }}${typeof(samplePriceSpanClicked) !== "undefined" && samplePriceSpanClicked === true ? "?sample=true" : ""}`,
                     data: dataToSend,
                     success: function(data){
                        $('#addToCart-modal-body').html(null);

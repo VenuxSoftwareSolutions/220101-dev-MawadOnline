@@ -59,7 +59,6 @@
                         <th data-breakpoints="lg">{{ translate('Customer') }}</th>
                         <th data-breakpoints="md">{{ translate('Amount') }}</th>
                         <th data-breakpoints="lg">{{ translate('Delivery Status') }}</th>
-                        <!-- <th>{{ translate('Payment Status') }}</th> -->
                         <th class="text-right">{{ translate('Options') }}</th>
                     </tr>
                 </thead>
