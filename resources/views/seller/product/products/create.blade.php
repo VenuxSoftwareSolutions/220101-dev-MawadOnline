@@ -725,11 +725,12 @@
                                                         placeholder="{{ translate('To QTY') }}"
                                                         value="{{ old('to_shipping.0') }}"></td>
                                                 <td>
-                                                    <select class="shipper" name="shipper[0][]" multiple
+                                                    <select class="form-control shipper"
+                                                        name="shipper[]"
                                                         id="shipper_shipping">
-                                                        <option value="vendor" @selected(old('shipper.0.0') == 'vendor')>
+                                                        <option value="vendor" @selected(old('shipper.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
-                                                        <option value="third_party" @selected(old('shipper.0.0') == 'third_party')>
+                                                        <option value="third_party" @selected(old('shipper.0') == 'third_party')>
                                                             {{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                                     </select>
                                                 </td>
@@ -2001,7 +2002,6 @@
         }
 
         $(document).ready(function() {
-            $('.shipper').multiSelect();
             $('.shipper_sample').multiSelect();
             $('#variant_informations').hide();
             $('#btn-create-variant').hide();
