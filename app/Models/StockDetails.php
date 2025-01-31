@@ -12,8 +12,11 @@ class StockDetails extends Model
 
     protected $fillable = [
         'operation_type', 'variant_id', 'warehouse_id',
-        'before_quantity', 'transaction_quantity', 'after_quantity', 'user_comment', 'seller_id',
+        'before_quantity', 'transaction_quantity',
+        'after_quantity', 'user_comment',
+        'order_id', 'order_detail_id', 'seller_id',
     ];
+
     protected $with = ["warehouse"];
 
     public function warehouse()
@@ -29,5 +32,10 @@ class StockDetails extends Model
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function orderDetail()
+    {
+        return $this->belongsTo(OrderDetail::class, 'order_detail_id');
     }
 }
