@@ -228,7 +228,19 @@ class SearchController extends Controller
 
             $selected_attribute_values[$attribute->id] = $value;
         }
-
+        if (isset($request_all['Color']) && is_array($request_all['Color'])) {
+            $color_attribute = Attribute::where('type_value', 'color')->first();
+            if ($color_attribute) {
+                $color_ids = Color::whereHas('colorGroups', function ($q) use ($request_all) {
+                    $q->whereIn('color_group_id', $request_all['Color']);
+                })->pluck('id')->toArray();
+                $color_codes = Color::whereIn('id', $color_ids)->pluck('code')->toArray();
+                $products->whereHas('productAttributeValues', function ($q) use ($color_attribute, $color_codes) {
+                    $q->where('id_attribute', $color_attribute->id)
+                    ->whereIn('value', $color_codes);
+                });
+            }
+        }
         $products = $products->paginate(6);
         if ($request->ajax()) {
             $html = '';

@@ -277,206 +277,212 @@
     </div>
     <!-- Attributes -->
     @foreach ($attributes as $attribute)
-      @if (!empty($selected_attribute_values[$attribute->id])) 
-        @if ($attribute->type_value == 'numeric')
-            @php
-                if (isset($request_all['units_' . $attribute->id])) {
-                    $unit_active = $request_all['units_' . $attribute->id];
-                    $unit_active_model = \App\Models\Unity::find($unit_active);
-                } else {
-                    $default_unit = $attribute->get_units()->where('default_unit', 1)->first();
-                    if (!$default_unit) {
-                        $default_unit = $attribute->get_units()->first();
+        @if (!empty($selected_attribute_values[$attribute->id]))
+            @if ($attribute->type_value == 'numeric')
+                @php
+                    if (isset($request_all['units_' . $attribute->id])) {
+                        $unit_active = $request_all['units_' . $attribute->id];
+                        $unit_active_model = \App\Models\Unity::find($unit_active);
+                    } else {
+                        $default_unit = $attribute->get_units()->where('default_unit', 1)->first();
+                        if (!$default_unit) {
+                            $default_unit = $attribute->get_units()->first();
+                        }
+                        $unit_active_model = $default_unit;
+                        $unit_active = $unit_active_model ? $unit_active_model->id : null;
                     }
-                    $unit_active_model = $default_unit;
-                    $unit_active = $unit_active_model ? $unit_active_model->id : null;
-                }
-                $rate = $unit_active_model ? $unit_active_model->rate : null;
-                $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
-                $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
-                if (isset($request_all['new_min_value_' . $attribute->id])) {
-                    $min_value = $request_all['new_min_value_' . $attribute->id];
-                } else {
-                    $min_value = $min_attribute_value;
-                }
+                    $rate = $unit_active_model ? $unit_active_model->rate : null;
+                    $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
+                    $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
+                    if (isset($request_all['new_min_value_' . $attribute->id])) {
+                        $min_value = $request_all['new_min_value_' . $attribute->id];
+                    } else {
+                        $min_value = $min_attribute_value;
+                    }
 
-                if (isset($request_all['new_max_value_' . $attribute->id])) {
-                    $max_value = $request_all['new_max_value_' . $attribute->id];
-                } else {
-                    $max_value = $max_attribute_value;
-                }
+                    if (isset($request_all['new_max_value_' . $attribute->id])) {
+                        $max_value = $request_all['new_max_value_' . $attribute->id];
+                    } else {
+                        $max_value = $max_attribute_value;
+                    }
 
-            @endphp
-            <div class="bg-white border mb-3">
-                <div class="fs-16 fw-700 p-3 ">
-                    <a href="#"
-                        class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
-                        data-toggle="collapse" data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
-                        style="white-space: normal;">
-                        {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
-                    </a>
+                @endphp
+                <div class="bg-white border mb-3">
+                    <div class="fs-16 fw-700 p-3 ">
+                        <a href="#"
+                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                            data-toggle="collapse"
+                            data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
+                            style="white-space: normal;">
+                            {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
+                        </a>
 
-                    <input type="hidden" name="units_old_{{ $attribute->id }}" value="{{ $rate }}">
+                        <input type="hidden" name="units_old_{{ $attribute->id }}" value="{{ $rate }}">
 
-                </div>
+                    </div>
 
-                <div class="collapse {{ $show }}"
-                    id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
-                    <div class="p-3 mr-3">
-                        <div class="aiz-range-slider-attribute aiz-range-slider-attribute-{{ $attribute->id }}"
-                            data-id="{{ $attribute->id }}">
-                            <div class="attribute-input-slider-range" id="attribute-input-slider-range"
-                                data-range-value-min="{{ $min_attribute_value }}"
-                                data-range-value-max="{{ $max_attribute_value }}"></div>
+                    <div class="collapse {{ $show }}"
+                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                        <div class="p-3 mr-3">
+                            <div class="aiz-range-slider-attribute aiz-range-slider-attribute-{{ $attribute->id }}"
+                                data-id="{{ $attribute->id }}">
+                                <div class="attribute-input-slider-range" id="attribute-input-slider-range"
+                                    data-range-value-min="{{ $min_attribute_value }}"
+                                    data-range-value-max="{{ $max_attribute_value }}"></div>
 
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <span
-                                        class="attribute-input-slider-range-value-low range-slider-value value-low fs-14 fw-600 opacity-70"
-                                        @if ($min_value < $min_attribute_value || $min_value > $max_attribute_value) data-range-value-low="{{ $min_attribute_value }}"
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <span
+                                            class="attribute-input-slider-range-value-low range-slider-value value-low fs-14 fw-600 opacity-70"
+                                            @if ($min_value < $min_attribute_value || $min_value > $max_attribute_value) data-range-value-low="{{ $min_attribute_value }}"
                                         @else
                                             data-range-value-low="{{ $min_value }}" @endif
-                                        id="attribute-input-slider-range-value-low"></span>
-                                </div>
-                                <div class="col-6 text-right">
-                                    <span
-                                        class="attribute-input-slider-range-value-high nb range-slider-value value-high fs-14 fw-600 opacity-70"
-                                        @if ($max_value > $max_attribute_value) data-range-value-high="{{ $max_attribute_value }}"
+                                            id="attribute-input-slider-range-value-low"></span>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <span
+                                            class="attribute-input-slider-range-value-high nb range-slider-value value-high fs-14 fw-600 opacity-70"
+                                            @if ($max_value > $max_attribute_value) data-range-value-high="{{ $max_attribute_value }}"
                                         @else
                                             data-range-value-high="{{ $max_value }}" @endif
-                                        id="attribute-input-slider-range-value-high"></span>
+                                            id="attribute-input-slider-range-value-high"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="min-max ">
-                        <input class="form-control" onchange="filter()"
-                            placeholder='{{ translate('min') }} {{ $attribute->name }}' type="number"
-                            id="min_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
-                            value="@if ($min_value < $min_attribute_value || $min_value > $max_attribute_value) {{ $min_attribute_value }}@else{{ $min_value }} @endif">
-                        <input class="form-control" onchange="filter()"
-                            placeholder='{{ translate('max') }} {{ $attribute->name }}' type="number"
-                            id="max_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
-                            value="@if ($max_value > $max_attribute_value) {{ $max_attribute_value }}@else{{ $max_value }} @endif">
-                    </div>
-                </div>
-            </div>
-        @elseif($attribute->type_value == 'color')
-            <div class="bg-white border mb-3">
-                <div class="fs-16 fw-700 p-3">
-                    <a href="#"
-                        class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
-                        data-toggle="collapse" data-target="#collapse_color">
-                        {{ translate('Color') }}
-                    </a>
-                </div>
-                @php
-                    $show = '';
-                    if (
-                        isset($selected_attribute_values[$attribute->id]) &&
-                        !empty($selected_attribute_values[$attribute->id])
-                    ) {
-                        $show = 'show';
-                    }
-                @endphp
-                <div class="collapse {{ $show }}" id="collapse_color">
-                    <div class="p-3 aiz-radio-inline">
-                        @foreach ($colors as $key => $color)
-                            <label class="aiz-megabox " data-toggle="tooltip" data-title="{{ $color->name }}">
-                                <input type="checkbox" name="{{ $attribute->id }}[]" value="{{ $color->id }}"
-                                    onchange="filter()" @if (isset($request_all[$attribute->id]) && in_array($color->id, $request_all[$attribute->id])) checked @endif>
-                                <span
-                                    class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
-                                    <span class="size-30px d-inline-block rounded"
-                                        style="background: {{ $color->code }};"></span>
-                                </span>
-                            </label>
-                        @endforeach
+                        <div class="min-max ">
+                            <input class="form-control" onchange="filter()"
+                                placeholder='{{ translate('min') }} {{ $attribute->name }}' type="number"
+                                id="min_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
+                                value="@if ($min_value < $min_attribute_value || $min_value > $max_attribute_value) {{ $min_attribute_value }}@else{{ $min_value }} @endif">
+                            <input class="form-control" onchange="filter()"
+                                placeholder='{{ translate('max') }} {{ $attribute->name }}' type="number"
+                                id="max_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
+                                value="@if ($max_value > $max_attribute_value) {{ $max_attribute_value }}@else{{ $max_value }} @endif">
+                        </div>
                     </div>
                 </div>
-            </div>
-        @elseif($attribute->type_value == 'boolean')
-            <div class="bg-white border mb-3">
-                <div class="fs-16 fw-700 p-3">
-                    <a href="#"
-                        class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
-                        data-toggle="collapse" data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
-                        style="white-space: normal;">
-                        {{ $attribute->getTranslation('name') }}
-                    </a>
-                </div>
-                @php
-                    $show = '';
-                    if (
-                        isset($selected_attribute_values[$attribute->id]) &&
-                        !empty($selected_attribute_values[$attribute->id])
-                    ) {
-                        $show = 'show';
-                    }
-                @endphp
-                <div class="collapse {{ $show }}"
-                    id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
-                    <div class="p-3 aiz-checkbox-list">
-                        <label class="aiz-checkbox mb-3">
-                            <input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="yes"
-                                onchange="filter()">
-                            <span class="aiz-square-check"></span>
-                            <span class="fs-14 fw-400 text-dark">
-                                {{ translate('Yes') }}
-                            </span>
-                        </label>
+            @elseif($attribute->type_value == 'color')
+                <div class="bg-white border mb-3">
+                    <div class="fs-16 fw-700 p-3">
+                        <a href="#"
+                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                            data-toggle="collapse" data-target="#collapse_color">
+                            {{ translate('Color') }} 
+                        </a>
+                    </div>
+                    @php
+                        $show = '';
+                        if (
+                            isset($selected_attribute_values[$attribute->id]) &&
+                            !empty($selected_attribute_values[$attribute->id])
+                        ) {
+                            $show = 'show';
+                        }
+                    @endphp
+                    <div class="collapse {{ $show }}" id="collapse_color">
+                        <div class="p-3 aiz-radio-inline">
+                            @foreach ($colors as $key => $color)
+                                <label class="aiz-megabox " data-toggle="tooltip" data-title="{{ $color->name }}">
+                                    <input type="checkbox" name="{{ $attribute->name }}[]"
+                                        value="{{ $color->id }}" onchange="filter()"
+                                        @if (isset($request_all[$attribute->id]) && in_array($color->id, $request_all[$attribute->id])) checked @endif>
+                                    <span
+                                        class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
+                                        <span class="size-30px d-inline-block rounded"
+                                            style="background: {{ $color->code }};"></span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
-        @else
-            <div class="bg-white border mb-3">
-                <div class="fs-16 fw-700 p-3">
-                    <a href="#"
-                        class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
-                        data-toggle="collapse" data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
-                        style="white-space: normal;">
-                        {{ $attribute->getTranslation('name') }}
-                    </a>
-                </div>
-                @php
-                    $show = '';
-                    if (
-                        isset($selected_attribute_values[$attribute->id]) &&
-                        !empty($selected_attribute_values[$attribute->id])
-                    ) {
-                        $show = 'show';
-                    }
-                    $attribute_values = $selected_attribute_values[$attribute->id] ?? [];
-                    $attribute_id = $attribute->id;
-                @endphp
-                <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
-                    <div class="p-3 aiz-checkbox-list" style="max-height: 300px; overflow-y: auto; position: relative;">
-                        @foreach ($attribute_values as $attribute_value)
-                            @php
-                                // Decode JSON values if needed
-                                if (is_string($attribute_value) && is_array(json_decode($attribute_value, true))) {
-                                    $decoded_value = json_decode($attribute_value, true);
-                                } else {
-                                    $decoded_value = $attribute_value;
-                                }
-                            @endphp
-        
+            @elseif($attribute->type_value == 'boolean')
+                <div class="bg-white border mb-3">
+                    <div class="fs-16 fw-700 p-3">
+                        <a href="#"
+                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                            data-toggle="collapse"
+                            data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
+                            style="white-space: normal;">
+                            {{ $attribute->getTranslation('name') }}
+                        </a>
+                    </div>
+                    @php
+                        $show = '';
+                        if (
+                            isset($selected_attribute_values[$attribute->id]) &&
+                            !empty($selected_attribute_values[$attribute->id])
+                        ) {
+                            $show = 'show';
+                        }
+                    @endphp
+                    <div class="collapse {{ $show }}"
+                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                        <div class="p-3 aiz-checkbox-list">
                             <label class="aiz-checkbox mb-3">
-                                <input type="checkbox" name="attributes[{{ $attribute_id }}][]"
-                                    value="{{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}"
-                                    onchange="filter()"
-                                    @if (isset($request_all['attributes'][$attribute_id]) && in_array($decoded_value, $request_all['attributes'][$attribute_id])) checked @endif>
+                                <input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="yes"
+                                    onchange="filter()">
                                 <span class="aiz-square-check"></span>
                                 <span class="fs-14 fw-400 text-dark">
-                                    {{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}
+                                    {{ translate('Yes') }}
                                 </span>
                             </label>
-                        @endforeach
+                        </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <div class="bg-white border mb-3">
+                    <div class="fs-16 fw-700 p-3">
+                        <a href="#"
+                            class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
+                            data-toggle="collapse"
+                            data-target="#collapse_{{ str_replace(' ', '_', $attribute->name) }}"
+                            style="white-space: normal;">
+                            {{ $attribute->getTranslation('name') }}
+                        </a>
+                    </div>
+                    @php
+                        $show = '';
+                        if (
+                            isset($selected_attribute_values[$attribute->id]) &&
+                            !empty($selected_attribute_values[$attribute->id])
+                        ) {
+                            $show = 'show';
+                        }
+                        $attribute_values = $selected_attribute_values[$attribute->id] ?? [];
+                        $attribute_id = $attribute->id;
+                    @endphp
+                    <div class="collapse {{ $show }}"
+                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                        <div class="p-3 aiz-checkbox-list"
+                            style="max-height: 300px; overflow-y: auto; position: relative;">
+                            @foreach ($attribute_values as $attribute_value)
+                                @php
+                                    // Decode JSON values if needed
+                                    if (is_string($attribute_value) && is_array(json_decode($attribute_value, true))) {
+                                        $decoded_value = json_decode($attribute_value, true);
+                                    } else {
+                                        $decoded_value = $attribute_value;
+                                    }
+                                @endphp
+
+                                <label class="aiz-checkbox mb-3">
+                                    <input type="checkbox" name="attributes[{{ $attribute_id }}][]"
+                                        value="{{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}"
+                                        onchange="filter()" @if (isset($request_all['attributes'][$attribute_id]) &&
+                                                in_array($decoded_value, $request_all['attributes'][$attribute_id])) checked @endif>
+                                    <span class="aiz-square-check"></span>
+                                    <span class="fs-14 fw-400 text-dark">
+                                        {{ is_array($decoded_value) ? $decoded_value['en'] : $decoded_value }}
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
         @endif
-        @endif 
     @endforeach
 
 </div>

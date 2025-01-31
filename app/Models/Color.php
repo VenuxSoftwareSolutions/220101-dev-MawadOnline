@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Color extends Model
 {
-    public function groupColors()
+    public function colorGroups()
     {
         return $this->belongsToMany(ColorGroup::class, 'color_group_color');
     }
