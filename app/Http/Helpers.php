@@ -1130,7 +1130,7 @@ function getShippingCost($carts, $index, $carrier = '')
             $apiResult = (new \App\Http\Controllers\AramexController)
                 ->calculateOrderProductsCharge(auth()->user()->id);
 
-            if ($apiResult->original['error'] === false) {
+            if ($apiResult->original['error'] === false && $apiResult->original["data"] !== null) {
                 return $apiResult->original['data']['TotalAmount']['Value'];
             }
 

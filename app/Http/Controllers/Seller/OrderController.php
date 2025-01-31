@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductStock;
 use App\Models\SmsTemplate;
+use App\Models\StockDetails;
 use App\Models\StockSummary;
 use App\Models\TrackingShipment;
 use App\Models\User;
@@ -38,7 +39,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $payment_status = "paid";
+        $payment_status = 'paid';
         $delivery_status = null;
         $sort_search = null;
         $orders = Order::orderBy('id', 'desc')
@@ -109,9 +110,9 @@ class OrderController extends Controller
             $order->delivery_status = $request->status;
             $order->save();
 
-            $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
+            $shippers = explode(',', $order->product->shippingOptions($order->quantity)->shipper);
 
-            if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
+            if ($request->status === 'ready_for_shipment' && in_array('third_party', $shippers)) {
                 $controller = new AramexController;
 
                 $warehouses = session()->get('warehouses');
@@ -149,7 +150,7 @@ class OrderController extends Controller
                         $order->id, json_encode($pickup)
                     ));
 
-                    $order->delivery_status = "in_preparation";
+                    $order->delivery_status = 'in_preparation';
                     $order->save();
 
                     return response()->json([
@@ -200,7 +201,7 @@ class OrderController extends Controller
                         $order->id, json_encode($shipment)
                     ));
 
-                    $order->delivery_status = "in_preparation";
+                    $order->delivery_status = 'in_preparation';
                     $order->save();
 
                     return response()->json([
@@ -367,18 +368,32 @@ class OrderController extends Controller
     {
         try {
             $warehouses = $request->warehouses;
-            $order = OrderDetail::find($request->order);
-            $globalOrder = Order::findOrFail($order->order_id);
-            $globalOrder->delivery_status = 'in_progress';
-            $globalOrder->save();
-            $order->delivery_status = 'in_preparation';
+            $orderDetail = OrderDetail::find($request->order);
+            $order = Order::findOrFail($orderDetail->order_id);
+            $order->delivery_status = 'in_progress';
             $order->save();
+            $orderDetail->delivery_status = 'in_preparation';
+            $orderDetail->save();
 
             foreach ($warehouses as $value) {
                 $stock = StockSummary::where([
                     'warehouse_id' => $value['warehouse_id'],
                     'variant_id' => $request->product,
                 ])->first();
+
+                StockDetails::create([
+                    'warehouse_id' => $value['warehouse_id'],
+                    'operation_type' => __('Stock removal'),
+                    'variant_id' => $request->product,
+                    'before_quantity' => $stock->current_total_quantity,
+                    'after_quantity' => $stock->current_total_quantity - $value['quantity'],
+                    'transaction_quantity' => $value['quantity'],
+                    'seller_id' => auth()->user()->owner_id,
+                    // we use order detail id because order can have many order details
+                    // so stock should handled by order detail (sub-order)
+                    'order_detail_id' => $orderDetail->id,
+                ]);
+
                 $stock->current_total_quantity = $stock->current_total_quantity - $value['quantity'];
                 $stock->save();
             }

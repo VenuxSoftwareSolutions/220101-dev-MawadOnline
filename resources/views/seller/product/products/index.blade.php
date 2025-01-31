@@ -50,11 +50,11 @@ thead tr{
                 </div>
                 @can('seller_create_product')
                 <div class="col-md-4">
-                    <div class="text-md-right"> <!-- Added this div -->
+                    <div class="text-md-right">
                         {{-- <a href="{{ route('seller.product_bulk_upload.index')}}" class="btn btn-secondary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Bulk upload') }}</a>  --}}
 
-                        <a href="{{ route('seller.products.create')}}" class="btn btn-secondary btn-lg">
+                        <a href="{{ route('seller.products.create')}}" class="btn btn-primary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
 
@@ -157,11 +157,11 @@ thead tr{
 
                             {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
-                            <th>{{ translate('Base Price')}}</th>
-                            <th data-breakpoints="md">{{ translate('Status')}}</th>
+                            <th class="text-nowrap">{{ translate('Unit of Sale Price') }}</th>
+                            <th class="text-center" data-breakpoints="md">{{ translate('Status')}}</th>
                             <th data-breakpoints="md">{{ translate('Draft')}}</th>
                             <th data-breakpoints="md">{{ translate('Published')}}</th>
-                            <th data-breakpoints="md" style="text-align: center;">{{ translate('Actions')}}</th>
+                            <th class="text-center" data-breakpoints="md">{{ translate('Actions')}}</th>
                         </tr>
                     </thead>
 

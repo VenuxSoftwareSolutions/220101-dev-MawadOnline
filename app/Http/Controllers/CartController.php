@@ -680,24 +680,12 @@ class CartController extends Controller
                 );
             }
 
-            // Minimum quantity validation
-            $min_from_value = PricingConfiguration::where('id_products', $request['variationId'])->min('from');
-
-            $quantity = $request['quantity'];
-
-            if ($quantity < $min_from_value) {
-                return [
-                    'status' => 0,
-                    'cart_count' => count($carts),
-                    'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.minQtyNotSatisfied', ['min_qty' => $min_from_value])->render(),
-                    'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
-                ];
-            }
-
             // Check the product variant details
             $str = $product->productVariantDetails();
             $product_stock = StockSummary::where('variant_id', $request['variationId'])
                 ->sum('current_total_quantity');
+
+            $quantity = (int) $request->quantity;
 
             if ($product_stock < $request['quantity']) {
                 return array(
@@ -746,7 +734,6 @@ class CartController extends Controller
 
             // Calculate the price and tax
             $price = CartUtility::priceProduct($request->variationId, $request->quantity);
-
             $tax = 0;
 
             // Save the cart data

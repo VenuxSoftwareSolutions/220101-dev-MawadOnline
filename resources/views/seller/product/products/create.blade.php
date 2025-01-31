@@ -279,6 +279,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ old('unit_sale_price') }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{ translate('Country of origin') }}</label>
                                     <div class="col-md-8">
                                         <div class="form-item">
@@ -425,14 +437,13 @@
                         </div>
                     </div>
                 </div>
-                {{-- Bloc Pricing configuration --}}
                 <div class="card default-pricing-wrapper__clz">
                     <div class="card-header">
                         <h5 class="mb-0 h6">{{ translate('Default Pricing Configuration') }}</h5>
                     </div>
                     <div class="card-body">
                         <div>
-                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
+                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style d-none">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
                                 <table class="table" id="table_pricing_configuration"
@@ -1081,15 +1092,14 @@
                             </div>
                             <div class="row mb-3" style="display: none">
                                 <label
-                                    class="col-md-2 col-from-label">{{ translate('Use default pricing configuration') }}</label>
+                                    class="col-md-2 col-from-label">{{ translate('Use parent unit of sale price') }}</label>
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-pricing" checked>
                                         <span></span>
                                     </label>
                                 </div>
-                                <div id="bloc_pricing_configuration_variant">
-
+                                <div class="row mx-0" id="bloc_pricing_configuration_variant">
                                 </div>
                             </div>
                             <div class="row mb-3" style="display: none">
@@ -2082,7 +2092,7 @@
 
             $('body').on('change', '#attributes', function() {
                 var ids_attributes = $(this).val();
-                
+
                 var clicked = ids_attributes.diff(initial_attributes);
                 if (clicked.length == 0) {
                     clicked = initial_attributes.diff(ids_attributes);
@@ -2650,10 +2660,26 @@
             })
 
             $('body').on('change', '.variant-pricing', function() {
-
                 if ($(this).is(':not(:checked)')) {
                     var is_variant = $(this).data("variant");
                     var clonedElement = $("#table_pricing_configuration").clone();
+
+                    let unitPriceElement = $(`
+                        <label class="col-md-2 col-from-label">
+                            {{ __("Unit of Sale Price") }}
+                            <small>({{ __("VAT Exclusive") }})</small>
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <input
+                               type="number"
+                               class="form-control"
+                               name="variant-unit_sale_price-${is_variant}"
+                               value="0"
+                               placeholder="{{ __("Unit of Sale Price") }}"
+                            />
+                        </div>
+                    `);
 
                     clonedElement.find('.min-qty').each(function(index, element) {
                         $(element).removeClass("min-qty").addClass("min-qty-variant");
@@ -2751,9 +2777,12 @@
                             }
                         })
                     });
-                    $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').show();
-                    $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').append(
-                        clonedElement);
+
+                    $(this).parent().parent().parent()
+                        .find('#bloc_pricing_configuration_variant').show();
+                    $(this).parent().parent().parent()
+                        .find('#bloc_pricing_configuration_variant').append(
+                        unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').empty();
                 }
@@ -5025,11 +5054,6 @@
                                 remarks.push(message);
                             }
 
-                            if (check_price == false) {
-                                var message =
-                                    "{{ translate('Please check your pricing configuration.') }}";
-                                remarks.push(message);
-                            }
                             if ($('#sample_description_parent').val() != '') {
                                 if (check_sample_price == false) {
                                     var message =
