@@ -5375,14 +5375,21 @@ class ProductService
         }
 
         if (is_array($variations) && ! empty($variations)) {
-            foreach ($variations as $variationId => $variation) {
-                if (isset($variation['slug']) && $variation['slug'] === $slug) {
-                    $lastItem = $variation; // Store the matching variation
-                    $variationId = $variationId;
-
-                    break; // Stop the loop once a match is found
-                }
+            foreach ($variations as $key => &$variation) {
+                $variation['outOfStock'] = get_single_product($key)->getTotalQuantity() <= 0;
             }
+
+            // variant with stock must be the first in array
+            // if no one has stock, the variant with the lowest unit price is the first
+            uasort($variations, function ($a, $b) {
+                if ($a['outOfStock'] === $b['outOfStock']) {
+                    return $a['unit_price'] <=> $b['unit_price'];
+                }
+                return $a['outOfStock'] ? 1 : -1;
+            });
+
+            $variationId = array_key_first($variations);
+            $lastItem = $variations[$variationId];
 
             if (! isset($lastItem)) {
                 $lastItem = end($variations);
