@@ -965,7 +965,7 @@
                                             <tr>
                                                 <td>
                                                     <select class="form-control shipper_sample" name="shipper_sample[]"
-                                                        id="shipper_sample_parent" multiple>
+                                                        id="shipper_sample_parent">
                                                         <option value="vendor" @selected(old('shipper_sample.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
                                                         <option value="third_party" @selected(old('shipper_sample.0') == 'third_party')>
@@ -2002,7 +2002,6 @@
         }
 
         $(document).ready(function() {
-            $('.shipper_sample').multiSelect();
             $('#variant_informations').hide();
             $('#btn-create-variant').hide();
             $('body #bloc_pricing_configuration_variant').hide();
