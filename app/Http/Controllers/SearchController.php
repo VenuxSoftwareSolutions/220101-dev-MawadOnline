@@ -78,16 +78,26 @@ class SearchController extends Controller
         if ($category_id != null) {
             $products->whereIn('category_id', $category_ids);
         }
+
         $conditions = [];
 
         $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
         
+        
+        //filter product by color  
+        $request_all = request()->input();
+        $colors = ColorGroup::all();
+        $products = $this->filterProductsByColor($products, $request_all,$colors);
+        
+        
         //get the category hierarchy
         list($category_parent, $category_parent_parent) = $this->getCategoryHierarchy($category);
 
+        
+
+
         $seller_id = $request->seller_id;
         $selected_attribute_values = [];
-        $colors = ColorGroup::all();
         $selected_color = [];
         
 
@@ -97,7 +107,6 @@ class SearchController extends Controller
         
 
        
-        $request_all = request()->input();
         
         if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
             foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
@@ -131,19 +140,7 @@ class SearchController extends Controller
 
             $selected_attribute_values[$attribute->id] = $value;
         }
-        if (isset($request_all['Color']) && is_array($request_all['Color'])) {
-            $color_attribute = Attribute::where('type_value', 'color')->first();
-            if ($color_attribute) {
-                $color_ids = Color::whereHas('colorGroups', function ($q) use ($request_all) {
-                    $q->whereIn('color_group_id', $request_all['Color']);
-                })->pluck('id')->toArray();
-                $color_codes = Color::whereIn('id', $color_ids)->pluck('code')->toArray();
-                $products->whereHas('productAttributeValues', function ($q) use ($color_attribute, $color_codes) {
-                    $q->where('id_attribute', $color_attribute->id)
-                    ->whereIn('value', $color_codes);
-                });
-            }
-        }
+        
         $products = $products->paginate(6);
         if ($request->ajax()) {
             $html = '';
@@ -378,6 +375,28 @@ class SearchController extends Controller
         }
         return $products;
     }
+    protected function filterProductsByColor($products, $request_all,$colors)
+    {
+
+        if (isset($request_all['Color']) && is_array($request_all['Color'])) {
+            $color_attribute = Attribute::where('type_value', 'color')->first();
+            if ($color_attribute) {
+                $color_ids = Color::whereHas('colorGroups', function ($q) use ($request_all) {
+                    $q->whereIn('color_group_id', $request_all['Color']);
+                })->pluck('id')->toArray();
+
+                $color_codes = Color::whereIn('id', $color_ids)->pluck('code')->toArray();
+
+                $products->whereHas('productAttributeValues', function ($q) use ($color_attribute, $color_codes) {
+                    $q->where('id_attribute', $color_attribute->id)
+                        ->whereIn('value', $color_codes);
+                });
+            }
+        }
+
+        return $products;
+    }
+
     protected function applyAttributeFilter($query, $attribute_type_value, $attribute_id, $attribute_value, $units_id)
     {
         switch ($attribute_type_value) {
