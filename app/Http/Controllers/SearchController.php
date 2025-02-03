@@ -28,6 +28,16 @@ class SearchController extends Controller
         $sort_by = $request->sort_by;
         $min_price = $request->min_price;
         $max_price = $request->max_price;
+        
+        $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
+
+
+
+
+
+
+
+
         $seller_id = $request->seller_id;
         $rating = $request->rating;
         $shops = $request->shops;
@@ -39,9 +49,8 @@ class SearchController extends Controller
         $category = [];
         $categories = [];
         $conditions = [];
-        $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
 
-        $products = Product::where('published', '1')->where('auction_product', 0)->where('approved', '1');
+        $products = Product::IsApprovedPublished()->nonAuction();
 
         //Filter attributes based on selected category
         if ($category_id != null) {

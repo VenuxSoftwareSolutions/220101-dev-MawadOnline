@@ -333,6 +333,10 @@ class Product extends Model
     {
         return $query->where('approved', '1')->where('published', 1);
     }
+    public function scopeNonAuction($query)
+    {
+        return $query->where('auction_product', 0);
+    }
 
     public function getChildrenProducts()
     {
