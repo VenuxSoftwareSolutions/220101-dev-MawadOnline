@@ -25,14 +25,13 @@ class SearchController extends Controller
     {
         $language = App::getLocale();
         $query = $request->keyword;
-        $sort_by = $request->sort_by;
-        $min_price = $request->min_price;
-        $max_price = $request->max_price;
         
         $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
         $products = Product::IsApprovedPublished()->nonAuction();
         $attributes = Attribute::all();
         $id_products = [];
+
+       
         //retrieve minimum and maximum price
         $baseQuery = clone $products;
         $priceQuery = clone $baseQuery;
@@ -40,19 +39,38 @@ class SearchController extends Controller
 
         $max_all_price = $priceQuery->max('pricing_configurations.unit_price') ?? 1;
         $min_all_price = $priceQuery->min('pricing_configurations.unit_price') ?? 0;
-        $brandQuery = clone $baseQuery;
         
+        //Filter products By Category
         ['products' => $products,'attributes' => $attributes,'category_ids' => $category_ids,'category_parents_ids' => $category_parents_ids] = $this->filterProductsAndAttributesByCategory($category_id, $query);
+      
+        //Filter by Brand
+        $brandQuery = clone $baseQuery;
+        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')->select('brands.*')->distinct()->get();
+        $brand_ids = $this->filterProductsByBrand($request, $brand_id, $products);
 
 
+       //filter by vendors 
+       $shopQuery = clone $baseQuery;
+       $shops = $request->shops;
+       $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
+       $vender_user_ids = $this->filterProductsByShop($request, $products);
 
 
+       //filter by Rating 
+       $rating = $request->rating;
+       $products = $this->filterProductsByRating($rating,$products);
+        
+       //filter by creation date 
+        $sort_by = $request->sort_by;
+        $products = $this->applySorting($products, $sort_by);
 
+        //filter by price range 
+        $min_price = $request->min_price;
+        $max_price = $request->max_price;
+        $products = $this->applyPriceFilter($products, $min_price, $max_price);
 
-
+        
         $seller_id = $request->seller_id;
-        $rating = $request->rating;
-        $shops = $request->shops;
 
         $selected_attribute_values = [];
         $colors = ColorGroup::all();
@@ -64,17 +82,7 @@ class SearchController extends Controller
 
 
         $id_products = [];
-        //retrieve minimum and maximum price
-        $baseQuery = clone $products;
-        $priceQuery = clone $baseQuery;
-        $priceQuery->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
 
-        $brandQuery = clone $baseQuery;
-
-        //retrieve brands
-        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')->select('brands.*')->distinct()->get();
-        $shopQuery = clone $baseQuery;
-        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
 
         if ($query) {
             $products->where('products.name', 'like', '%' . $query . '%');
@@ -86,57 +94,7 @@ class SearchController extends Controller
 
         $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
 
-        // Filter products by brand
-        $brand_ids = [];
-        if ($brand_id != null) {
-            $brand_ids[] = $brand_id;
-        }
-        if ($request->has('brand') && is_array($request->brand)) {
-            $slug_brand_ids = Brand::whereIn('slug', $request->brand)
-                ->pluck('id')
-                ->toArray();
 
-            $brand_ids = array_merge($brand_ids, $slug_brand_ids);
-        }
-        $brand_ids = array_unique(array_filter($brand_ids));
-        if (!empty($brand_ids)) {
-            $products->whereIn('brand_id', $brand_ids);
-        }
-        //Filter products by Shop
-        $vender_user_ids = [];
-        if ($request->shops) {
-            $vender_user_ids = Shop::whereIn('slug', $request->shops)
-                ->pluck('user_id')
-                ->toArray();
-        }
-
-        if (!empty($vender_user_ids)) {
-            $products->whereIn('products.user_id', $vender_user_ids);
-        }
-
-        //filter products by colors
-        if ($request->colors) {
-            $selected_color = $request->colors;
-        }
-
-        //apply sorting
-        switch ($sort_by) {
-            case 'newest':
-                $products->orderBy('created_at', 'desc');
-                break;
-            case 'oldest':
-                $products->orderBy('created_at', 'asc');
-                break;
-            case 'price-asc':
-                $products->select('products.*')->orderBy('min_price_order', 'asc');
-                break;
-            case 'price-desc':
-                $products->select('products.*')->orderBy('min_price_order', 'desc');
-                break;
-            default:
-                $products->orderBy('id', 'desc');
-                break;
-        }
 
         if ($category && $category->parent_id) {
             $category_parent = Category::with('childrenCategories')->find($category->parent_id);
@@ -150,37 +108,9 @@ class SearchController extends Controller
             $category_parent_parent = null;
         }
 
-        //filter by reviews
-        if ($rating && $rating > 0) {
-            $products->whereHas('reviews', function ($query) use ($rating) {
-                $query
-                    ->selectRaw('AVG(reviews.rating) as avg_rating')
-                    ->groupBy('reviews.product_id')
-                    ->havingRaw('AVG(reviews.rating) >= ?', [$rating]);
-            });
-        }
+        
 
-        // Filter based on the price range
-        if ($min_price || $max_price) {
-            $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
-                $query->whereRaw(
-                    "
-                    (pricing_configurations.unit_price -
-                        (pricing_configurations.unit_price *
-                            COALESCE((
-                                SELECT discount_percentage
-                                FROM discounts
-                                WHERE discounts.product_id = pricing_configurations.id_products
-                                ORDER BY discounts.created_at DESC
-                                LIMIT 1
-                            ), 0)
-                        )
-                    ) BETWEEN ? AND ?
-                ",
-                    [$min_price ?? 0, $max_price ?? PHP_INT_MAX],
-                );
-            });
-        }
+       
         $request_all = request()->input();
         
         if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
@@ -339,6 +269,55 @@ class SearchController extends Controller
     }
     
     
+    protected function applySorting($products, $sort_by){
+        switch ($sort_by) {
+            case 'newest':
+                $products->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $products->orderBy('created_at', 'asc');
+                break;
+            case 'price-asc':
+                $products->select('products.*')->orderBy('min_price_order', 'asc');
+                break;
+            case 'price-desc':
+                $products->select('products.*')->orderBy('min_price_order', 'desc');
+                break;
+            default:
+                $products->orderBy('id', 'desc');
+                break;
+        }
+    
+        return $products;
+    
+    }
+
+    protected function applyPriceFilter($products, $min_price, $max_price)
+    {
+        if ($min_price || $max_price) {
+            $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
+                $query->whereRaw(
+                    "
+                    (pricing_configurations.unit_price - 
+                        (pricing_configurations.unit_price * 
+                            COALESCE((
+                                SELECT discount_percentage 
+                                FROM discounts 
+                                WHERE discounts.product_id = pricing_configurations.id_products 
+                                ORDER BY discounts.created_at DESC 
+                                LIMIT 1
+                            ), 0)
+                        )
+                    ) BETWEEN ? AND ?
+                    ",
+                    [$min_price ?? 0, $max_price ?? PHP_INT_MAX]
+                );
+            });
+        }
+
+        return $products;
+    }
+
     protected function filterProductsAndAttributesByCategory($category_id, $query)
     {
         $products = Product::IsApprovedPublished()->nonAuction();
@@ -368,7 +347,52 @@ class SearchController extends Controller
             
             return compact('products', 'attributes', 'category_ids', 'category_parents_ids');
     }
+    protected function filterProductsByBrand(Request $request, $brand_id, &$products)
+    {
+        $brand_ids = [];
+        if ($brand_id != null) {
+            $brand_ids[] = $brand_id;
+        }
+        if ($request->has('brand') && is_array($request->brand)) {
+            $slug_brand_ids = Brand::whereIn('slug', $request->brand)
+                ->pluck('id')
+                ->toArray();
 
+            $brand_ids = array_merge($brand_ids, $slug_brand_ids);
+        }
+        $brand_ids = array_unique(array_filter($brand_ids));
+        if (!empty($brand_ids)) {
+            $products->whereIn('brand_id', $brand_ids);
+        }
+
+        return $brand_ids;
+    }
+    protected function filterProductsByShop(Request $request, &$products)
+    {
+        $vender_user_ids = [];
+        if ($request->shops) {
+            $vender_user_ids = Shop::whereIn('slug', $request->shops)
+                ->pluck('user_id')
+                ->toArray();
+        }
+
+        if (!empty($vender_user_ids)) {
+            $products->whereIn('products.user_id', $vender_user_ids);
+        }
+        return $vender_user_ids;
+    }
+    protected function filterProductsByRating($rating, &$products)
+    {
+        if ($rating && $rating > 0) {
+            $products->whereHas('reviews', function ($query) use ($rating) {
+                $query
+                    ->selectRaw('AVG(reviews.rating) as avg_rating')
+                    ->groupBy('reviews.product_id')
+                    ->havingRaw('AVG(reviews.rating) >= ?', [$rating]);
+            });
+        }
+        return $products;
+    }
     protected function applyAttributeFilter($query, $attribute_type_value, $attribute_id, $attribute_value, $units_id)
     {
         switch ($attribute_type_value) {
