@@ -4316,7 +4316,7 @@
                     $(this).parent().parent().parent().parent().find(
                         '.bloc_sample_pricing_configuration_variant').hide();
                 }
-            })
+            });
 
             $('body').on('change', '.shipper_sample', function() {
                 var count_shippers = "{{ count($supported_shippers) }}";
