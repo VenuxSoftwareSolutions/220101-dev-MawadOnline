@@ -30,7 +30,19 @@ class SearchController extends Controller
         $max_price = $request->max_price;
         
         $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
+        $products = Product::IsApprovedPublished()->nonAuction();
+        $attributes = Attribute::all();
+        $id_products = [];
+        //retrieve minimum and maximum price
+        $baseQuery = clone $products;
+        $priceQuery = clone $baseQuery;
+        $priceQuery->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
 
+        $max_all_price = $priceQuery->max('pricing_configurations.unit_price') ?? 1;
+        $min_all_price = $priceQuery->min('pricing_configurations.unit_price') ?? 0;
+        $brandQuery = clone $baseQuery;
+        
+        ['products' => $products,'attributes' => $attributes,'category_ids' => $category_ids,'category_parents_ids' => $category_parents_ids] = $this->filterProductsAndAttributesByCategory($category_id, $query);
 
 
 
@@ -42,7 +54,6 @@ class SearchController extends Controller
         $rating = $request->rating;
         $shops = $request->shops;
 
-        $attributes = Attribute::all();
         $selected_attribute_values = [];
         $colors = ColorGroup::all();
         $selected_color = [];
@@ -50,38 +61,7 @@ class SearchController extends Controller
         $categories = [];
         $conditions = [];
 
-        $products = Product::IsApprovedPublished()->nonAuction();
 
-        //Filter attributes based on selected category
-        if ($category_id != null) {
-            // Fetch category hierarchy and filter products
-            $category_ids = CategoryUtility::children_ids($category_id);
-            $category_ids[] = $category_id;
-            $products->whereIn('category_id', $category_ids);
-
-            // Fetch category details and attributes
-            $category = Category::with('childrenCategories')->find($category_id);
-            $category_parents_ids = $category->parents_ids()->toArray();
-            $category_parents_ids[] = $category_id;
-
-            $attribute_ids = DB::table('categories_has_attributes')->whereIn('category_id', $category_parents_ids)->pluck('attribute_id')->toArray();
-            $attributes = Attribute::whereIn('id', $attribute_ids)->get();
-        } else {
-            // Fetch top-level categories
-            $category_ids = [];
-            $categories = Category::with('childrenCategories', 'coverImage')->where('level', 1)->orderBy('order_level', 'desc')->get();
-
-            // Handle search query
-            if ($query != null) {
-                $products->where('products.name', 'like', '%' . $query . '%');
-            }
-
-            // Fetch all attributes
-            $category_parents_ids = [];
-            $attributes = get_category_attributes(1) ?? collect();
-
-            //$attributes = Attribute::all();
-        }
 
         $id_products = [];
         //retrieve minimum and maximum price
@@ -89,8 +69,6 @@ class SearchController extends Controller
         $priceQuery = clone $baseQuery;
         $priceQuery->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
 
-        $max_all_price = $priceQuery->max('pricing_configurations.unit_price') ?? 1;
-        $min_all_price = $priceQuery->min('pricing_configurations.unit_price') ?? 0;
         $brandQuery = clone $baseQuery;
 
         //retrieve brands
@@ -359,6 +337,38 @@ class SearchController extends Controller
 
         return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'id_products', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'seller_id', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors', 'selected_color'));
     }
+    
+    
+    protected function filterProductsAndAttributesByCategory($category_id, $query)
+    {
+        $products = Product::IsApprovedPublished()->nonAuction();
+        
+            if ($category_id) {
+                $category_ids = CategoryUtility::children_ids($category_id);
+                $category_ids[] = $category_id;
+                $products->whereIn('category_id', $category_ids);
+
+                $category = Category::with('childrenCategories')->find($category_id);
+                $category_parents_ids = $category->parents_ids()->toArray();
+                $category_parents_ids[] = $category_id;
+                
+                $attribute_ids = DB::table('categories_has_attributes')->whereIn('category_id', $category_parents_ids)->pluck('attribute_id')->toArray();
+                $attributes = Attribute::whereIn('id', $attribute_ids)->get();
+            } else {
+                $category_ids = [];
+                $categories = Category::with('childrenCategories', 'coverImage')->where('level', 1)->orderBy('order_level', 'desc')->get();
+                
+                if ($query) {
+                    $products->where('products.name', 'like', "%$query%");
+                }
+                
+                $category_parents_ids = [];
+                $attributes = get_category_attributes(1) ?? collect();
+            }
+            
+            return compact('products', 'attributes', 'category_ids', 'category_parents_ids');
+    }
+
     protected function applyAttributeFilter($query, $attribute_type_value, $attribute_id, $attribute_value, $units_id)
     {
         switch ($attribute_type_value) {
