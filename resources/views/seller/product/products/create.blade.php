@@ -4316,6 +4316,7 @@
                     $(this).parent().parent().find('.paid_sample').val('');
                     $(this).parent().parent().find('.paid_sample').prop('disabled', true);
                 }
+
                 if (selected.indexOf('third_party') !== -1) {
                     $(this).parent().parent().find('.shipping_amount').val('');
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
@@ -4325,8 +4326,8 @@
                     $(this).parent().parent().find('.paid_sample').prop('disabled', true);
 
                     if (count_shippers == 0) {
-                        var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+                        let title = "{{ translate('Default Shipping Configuration') }}";
+                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -4360,7 +4361,7 @@
                                 "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
 
                             $('#title-modal').text(title);
-                            $('#text-modal').text(message);
+                            $('#text-modal').html(message);
 
                             $('#modal-info').modal('show');
                             let checkbox = $(this).parent().find(
@@ -4380,14 +4381,14 @@
                             height = parseInt(height);
                             width = parseInt(width);
                             weight = parseInt(weight);
-                            var volumetric_weight = (length * height * width) / 5000;
-                            var chargeable_weight = 0;
-                            var unit = $('#weight_unit_sample').val();
-                            var max = 30;
+                            let volumetric_weight = (length * height * width) / 5000;
+                            let chargeable_weight = 0;
+                            let unit = $('#weight_unit_sample').val();
+                            let max = 30;
                             if (unit == "pounds") {
                                 max *= 2.2;
                             }
-                            var html = '';
+                            let html = '';
                             if (volumetric_weight > weight) {
                                 chargeable_weight = volumetric_weight;
                             } else {
@@ -4428,7 +4429,6 @@
 
                 if (selected.indexOf('vendor') !== -1) {
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
-                    // $(this).parent().parent().find('.estimated_sample').prop('disabled', false);
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
                     $(this).parent().parent().find('.paid_sample').prop('disabled', false);
                 }
