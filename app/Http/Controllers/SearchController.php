@@ -89,24 +89,9 @@ class SearchController extends Controller
         $colors = ColorGroup::all();
         $products = $this->filterProductsByColor($products, $request_all,$colors);
         
-        
         //get the category hierarchy
         list($category_parent, $category_parent_parent) = $this->getCategoryHierarchy($category);
 
-        
-
-
-        $seller_id = $request->seller_id;
-        $selected_attribute_values = [];
-        $selected_color = [];
-        
-
-
-
-        $id_products = [];
-        
-
-       
         
         if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
             foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
@@ -131,16 +116,9 @@ class SearchController extends Controller
             }
         }
 
-        foreach ($attributes as $attribute) {
-            $value = DB::table('attribute_values')
-                ->where('attribute_id', $attribute->id)
-                ->orderBy('value', 'asc')
-                ->pluck('value')
-                ->toArray();
-
-            $selected_attribute_values[$attribute->id] = $value;
-        }
         
+        $selected_attribute_values = $this->getSelectedAttributeValues($attributes);
+
         $products = $products->paginate(6);
         if ($request->ajax()) {
             $html = '';
@@ -156,7 +134,6 @@ class SearchController extends Controller
                 'request_all' => $request_all,
                 'max_all_price' => $max_all_price,
                 'min_all_price' => $min_all_price,
-                'id_products' => $id_products,
                 'shops' => $shops,
                 'vender_user_ids' => $vender_user_ids,
                 'max_price' => $max_price,
@@ -174,13 +151,11 @@ class SearchController extends Controller
                 'category_id' => $category_id,
                 'brand_id' => $brand_id,
                 'sort_by' => $sort_by,
-                'seller_id' => $seller_id,
                 'min_price' => $min_price,
                 'max_price' => $max_price,
                 'attributes' => $attributes,
                 'selected_attribute_values' => $selected_attribute_values,
                 'colors' => $colors,
-                'selected_color' => $selected_color,
             ])->render();
 
             $list_categories =
@@ -248,7 +223,7 @@ class SearchController extends Controller
             ]);
         }
 
-        return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'id_products', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'seller_id', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors', 'selected_color'));
+        return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by',  'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors', ));
     }
     
     
@@ -502,6 +477,20 @@ class SearchController extends Controller
         }
 
         return [$category_parent, $category_parent_parent];
+    }
+    protected function getSelectedAttributeValues($attributes)
+    {
+        $selected_attribute_values = [];
+
+        foreach ($attributes as $attribute) {
+            $selected_attribute_values[$attribute->id] = DB::table('attribute_values')
+                ->where('attribute_id', $attribute->id)
+                ->orderBy('value', 'asc')
+                ->pluck('value')
+                ->toArray();
+        }
+
+        return $selected_attribute_values;
     }
 
     public function listing(Request $request)
