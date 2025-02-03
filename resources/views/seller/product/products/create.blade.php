@@ -698,9 +698,9 @@
                                         class="bloc_shipping_configuration_variant">
                                         <thead>
                                             <tr>
+                                                <th>{{ translate('Shipper') }}</th>
                                                 <th>{{ translate('From QTY') }}</th>
                                                 <th>{{ translate('To QTY') }}</th>
-                                                <th>{{ translate('Shipper') }}</th>
                                                 <th>{{ translate('Est. Order Pre. Days') }}</th>
                                                 <th>{{ translate('Est. Shipping Days') }}</th>
                                                 <th style="width: 164px;">{{ translate('Paid by') }}</th>
@@ -712,14 +712,6 @@
                                         </thead>
                                         <tbody id="bloc_shipping_configuration">
                                             <tr>
-                                                <td><input type="number" name="from_shipping[]"
-                                                        class="form-control min-qty-shipping" id="min-qty-shipping"
-                                                        placeholder="{{ translate('From QTY') }}"
-                                                        value="{{ old('from_shipping.0') }}"></td>
-                                                <td><input type="number" name="to_shipping[]"
-                                                        class="form-control max-qty-shipping" id="max-qty-shipping"
-                                                        placeholder="{{ translate('To QTY') }}"
-                                                        value="{{ old('to_shipping.0') }}"></td>
                                                 <td>
                                                     <select class="form-control shipper"
                                                         name="shipper[]"
@@ -730,6 +722,14 @@
                                                             {{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                                     </select>
                                                 </td>
+                                                <td><input type="number" name="from_shipping[]"
+                                                        class="form-control min-qty-shipping" id="min-qty-shipping"
+                                                        placeholder="{{ translate('From QTY') }}"
+                                                        value="{{ old('from_shipping.0') }}"></td>
+                                                <td><input type="number" name="to_shipping[]"
+                                                        class="form-control max-qty-shipping" id="max-qty-shipping"
+                                                        placeholder="{{ translate('To QTY') }}"
+                                                        value="{{ old('to_shipping.0') }}"></td>
 
                                                 <td><input type="number" class="form-control estimated_order"
                                                         name="estimated_order[]" value="{{ old('estimated_order.0') }}"
