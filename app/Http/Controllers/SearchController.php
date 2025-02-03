@@ -92,34 +92,12 @@ class SearchController extends Controller
         //get the category hierarchy
         list($category_parent, $category_parent_parent) = $this->getCategoryHierarchy($category);
 
-        
-        if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
-            foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
-                $attribute = Attribute::find($attribute_id);
-                if ($attribute) {
-                    $units_id = $request['units_' . $attribute->id];
-                    $unit = Unity::find($units_id);
-                    $attribute_id = $attribute->id;
-                    $attribute_type_value = $attribute->type_value;
-                    if (isset($request_all['units_old_' . $attribute_id])) {
-                        $rate_old = $request_all['units_old_' . $attribute_id];
-                        $request_all['new_min_value_' . $attribute_id] = ($attribute_value[0] / $unit->rate) * $rate_old;
-                        $request_all['new_max_value_' . $attribute_id] = ($attribute_value[1] / $unit->rate) * $rate_old;
-                    }
-
-                    $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                        $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $language, $units_id) {
-                            $this->applyAttributeFilter($q, $attribute_type_value, $attribute_id, $attribute_value, $units_id);
-                        });
-                    });
-                }
-            }
-        }
-
-        
+        //filter product by other attributes
+        $products = $this->filterProductsByAttributes($products, $request_all);
         $selected_attribute_values = $this->getSelectedAttributeValues($attributes);
-
         $products = $products->paginate(6);
+
+
         if ($request->ajax()) {
             $html = '';
             foreach ($products as $product) {
@@ -370,6 +348,43 @@ class SearchController extends Controller
         }
 
         return $products;
+    }
+    protected function filterProductsByAttributes($products, $request_all)
+    {
+        if (!isset($request_all['attributes']) || !is_array($request_all['attributes'])) {
+            return $products; 
+        }
+    
+        foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
+            $attribute = Attribute::find($attribute_id);
+
+            if (!$attribute) {
+                continue; 
+            }
+    
+            $units_id = $request_all['units_' . $attribute->id] ?? null;
+            $unit = Unity::find($units_id);
+           
+    
+            $attribute_type_value = $attribute->type_value;
+            // Handle unit conversion if an old unit value exists
+            if (isset($request_all['units_old_' . $attribute_id])) {
+                $rate_old = $request_all['units_old_' . $attribute_id];
+                $request_all['new_min_value_' . $attribute_id] = ($attribute_value[0] / $unit->rate) * $rate_old;
+                $request_all['new_max_value_' . $attribute_id] = ($attribute_value[1] / $unit->rate) * $rate_old;
+            }
+    
+            // Apply filtering to products
+            $products->when($attribute, function ($query) use ($attribute_type_value, $attribute_id, $attribute_value, $units_id) {
+                $query->whereHas('productAttributeValues', function ($q) use ($attribute_type_value, $attribute_id, $attribute_value, $units_id) {
+                    $this->applyAttributeFilter($q, $attribute_type_value, $attribute_id, $attribute_value, $units_id);
+                });
+            });
+        }
+        
+        return $products;
+    
+    
     }
 
     protected function applyAttributeFilter($query, $attribute_type_value, $attribute_id, $attribute_value, $units_id)
