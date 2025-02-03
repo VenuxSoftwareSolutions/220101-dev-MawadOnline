@@ -25,7 +25,8 @@ class SearchController extends Controller
     {
         $language = App::getLocale();
         $query = $request->keyword;
-        
+        $category = [];
+        $categories = [];
         $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
         $products = Product::IsApprovedPublished()->nonAuction();
         $attributes = Attribute::all();
@@ -41,7 +42,7 @@ class SearchController extends Controller
         $min_all_price = $priceQuery->min('pricing_configurations.unit_price') ?? 0;
         
         //Filter products By Category
-        ['products' => $products,'attributes' => $attributes,'category_ids' => $category_ids,'category_parents_ids' => $category_parents_ids] = $this->filterProductsAndAttributesByCategory($category_id, $query);
+        ['products' => $products,'attributes' => $attributes,'category_ids' => $category_ids,'category_parents_ids' => $category_parents_ids,'category' => $category] = $this->filterProductsAndAttributesByCategory($category_id, $query);
       
         //Filter by Brand
         $brandQuery = clone $baseQuery;
@@ -69,45 +70,30 @@ class SearchController extends Controller
         $max_price = $request->max_price;
         $products = $this->applyPriceFilter($products, $min_price, $max_price);
 
-        
-        $seller_id = $request->seller_id;
+         // filter product by name 
+         if ($query) {
+            $products->where('products.name', 'like', '%' . $query . '%');
+        }
+        //filter product by category 
+        if ($category_id != null) {
+            $products->whereIn('category_id', $category_ids);
+        }
+        $conditions = [];
 
+        $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
+        
+        //get the category hierarchy
+        list($category_parent, $category_parent_parent) = $this->getCategoryHierarchy($category);
+
+        $seller_id = $request->seller_id;
         $selected_attribute_values = [];
         $colors = ColorGroup::all();
         $selected_color = [];
-        $category = [];
-        $categories = [];
-        $conditions = [];
+        
 
 
 
         $id_products = [];
-
-
-        if ($query) {
-            $products->where('products.name', 'like', '%' . $query . '%');
-        }
-
-        if ($category_id != null) {
-            $products->whereIn('category_id', $category_ids);
-        }
-
-        $conditions = array_merge($conditions, ['categories' => $category_ids, 'query' => $query]);
-
-
-
-        if ($category && $category->parent_id) {
-            $category_parent = Category::with('childrenCategories')->find($category->parent_id);
-        } else {
-            $category_parent = null;
-        }
-
-        if ($category_parent && $category_parent->parent_id) {
-            $category_parent_parent = Category::with('childrenCategories')->find($category_parent->parent_id);
-        } else {
-            $category_parent_parent = null;
-        }
-
         
 
        
@@ -317,11 +303,10 @@ class SearchController extends Controller
 
         return $products;
     }
-
     protected function filterProductsAndAttributesByCategory($category_id, $query)
     {
         $products = Product::IsApprovedPublished()->nonAuction();
-        
+        $category = null ; 
             if ($category_id) {
                 $category_ids = CategoryUtility::children_ids($category_id);
                 $category_ids[] = $category_id;
@@ -345,7 +330,7 @@ class SearchController extends Controller
                 $attributes = get_category_attributes(1) ?? collect();
             }
             
-            return compact('products', 'attributes', 'category_ids', 'category_parents_ids');
+            return compact('products', 'attributes', 'category_ids', 'category_parents_ids','category');
     }
     protected function filterProductsByBrand(Request $request, $brand_id, &$products)
     {
@@ -483,6 +468,21 @@ class SearchController extends Controller
                     ->where('value', '<=', (floatval($max_value) * $unit->rate) / $childrens_unit->rate);
             }
         });
+    }
+    protected function getCategoryHierarchy($category)
+    {   
+        $category_parent = null;
+        $category_parent_parent = null;
+
+        if ($category && $category->parent_id) {
+            $category_parent = Category::with('childrenCategories')->find($category->parent_id);
+        }
+
+        if ($category_parent && $category_parent->parent_id) {
+            $category_parent_parent = Category::with('childrenCategories')->find($category_parent->parent_id);
+        }
+
+        return [$category_parent, $category_parent_parent];
     }
 
     public function listing(Request $request)
