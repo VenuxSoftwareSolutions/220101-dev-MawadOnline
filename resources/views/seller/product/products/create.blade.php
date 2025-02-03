@@ -126,10 +126,6 @@
             width: 96px !important;
         }
 
-        #table_sample_configuration input[type="number"] {
-            width: auto !important;
-        }
-
         .error {
             border-color: red !important;
         }
@@ -982,7 +978,7 @@
                                                         value="{{ old('estimated_shipping_sample') }}"></td>
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample"
-                                                        id="paid_sample_parent" disabled>
+                                                        id="paid_sample_parent" style="width: max-content!important;">
                                                         <option value="" selected>{{ translate('Choose paid by') }}
                                                         </option>
                                                         <option value="vendor" @selected(old('paid_sample') == 'vendor')>
@@ -4321,7 +4317,7 @@
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
                     $(this).parent().parent().find('.estimated_shipping_sample').val('');
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
-                    $(this).parent().parent().find('.paid_sample').val('');
+                    $(this).parent().parent().find('.paid_sample').find("option:last").prop("selected", true);
                     $(this).parent().parent().find('.paid_sample').prop('disabled', true);
 
                     if (count_shippers == 0) {
@@ -4430,6 +4426,7 @@
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
                     $(this).parent().parent().find('.paid_sample').prop('disabled', false);
+                    $(this).parent().parent().find('.paid_sample').val('');
                 }
             });
         });
