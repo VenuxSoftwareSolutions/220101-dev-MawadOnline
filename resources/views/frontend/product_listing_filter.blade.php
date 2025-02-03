@@ -368,7 +368,7 @@
                         <a href="#"
                             class="dropdown-toggle text-dark filter-section collapsed d-flex align-items-center justify-content-between"
                             data-toggle="collapse" data-target="#collapse_color">
-                            {{ translate('Color') }} 
+                            {{ translate('Color') }}
                         </a>
                     </div>
                     @php
@@ -380,22 +380,22 @@
                             $show = 'show';
                         }
                     @endphp
-                    <div class="collapse {{ $show }}" id="collapse_color">
-                        <div class="p-3 aiz-radio-inline">
-                            @foreach ($colors as $key => $color)
-                                <label class="aiz-megabox " data-toggle="tooltip" data-title="{{ $color->name }}">
-                                    <input type="checkbox" name="{{ $attribute->name }}[]"
-                                        value="{{ $color->id }}" onchange="filter()"
-                                        @if (isset($request_all[$attribute->id]) && in_array($color->id, $request_all[$attribute->id])) checked @endif>
-                                    <span
-                                        class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
-                                        <span class="size-30px d-inline-block rounded"
-                                            style="background: {{ $color->code }};"></span>
-                                    </span>
-                                </label>
-                            @endforeach
-                        </div>
+                 <div class="collapse {{ $show }}" id="collapse_color">
+                    <div class="p-3 aiz-radio-inline">
+                        @foreach ($colors as $key => $color)
+                            <label class="aiz-megabox color-label">
+                                <input type="checkbox" name="{{ $attribute->name }}[]"
+                                    value="{{ $color->id }}" onchange="filter()"
+                                    @if (isset($request_all[$attribute->id]) && in_array($color->id, $request_all[$attribute->id])) checked @endif>
+                                <span class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
+                                    <span class="size-30px d-inline-block rounded" style="background: {{ $color->code }};"></span>
+                                </span>
+                                <span class="color-name">{{ $color->name }}</span>
+                            </label>
+                        @endforeach
                     </div>
+                </div>
+                
                 </div>
             @elseif($attribute->type_value == 'boolean')
                 <div class="bg-white border mb-3">
