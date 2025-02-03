@@ -3882,18 +3882,24 @@
                                 $(this).find("option[value='third_party']").prop("disabled", true);
                                 $(this).find("option[value='third_party']").prop('selected', false);
                             } else {
-                                $(this).parent().parent().find('.estimated_shipping').prop('readonly',
+                                $(this).parent().parent().find('.estimated_shipping').prop('disabled',
                                     true);
                                 $(this).parent().parent().find('.shipping_charge').find("option:first")
                                     .prop("selected", true);
                                 $(this).parent().parent().find('.shipping_charge').addClass(
                                     "disabled-select");
-                                $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly',
+                                $(this).parent().parent().find('.shipping_charge').prop("disabled", true);
+
+                                $(this).parent().parent().find('.paid').find("option:last")
+                                    .prop("selected", true);
+                                $(this).parent().parent().find('.paid').prop("disabled", true);
+
+                                $(this).parent().parent().find('.charge_per_unit_shipping').prop('disabled',
                                     true);
                                 $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
                                 $(this).parent().parent().find('.estimated_shipping').val(null);
-                                $(this).parent().parent().find('.paid').val(null);
-                                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly',
+
+                                $(this).parent().parent().find('.flat_rate_shipping').prop('disabled',
                                     true);
                                 $(this).parent().parent().find('.flat_rate_shipping').val(null);
                             }
