@@ -4305,14 +4305,12 @@
             });
 
             $('body').on('change', '.shipper_sample', function() {
-                var count_shippers = {{ count($supported_shippers) }};
-                var selected = $(this).val();
+                let count_shippers = {{ count($supported_shippers) }};
+                let selected = $(this).val();
 
                 if (selected.length == 0) {
                     $(this).parent().parent().find('.shipping_amount').val('');
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
-                    // $(this).parent().parent().find('.estimated_sample').val('');
-                    // $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
                     $(this).parent().parent().find('.estimated_shipping_sample').val('');
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
                     $(this).parent().parent().find('.paid_sample').val('');
@@ -4321,12 +4319,11 @@
                 if (selected.indexOf('third_party') !== -1) {
                     $(this).parent().parent().find('.shipping_amount').val('');
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
-                    // $(this).parent().parent().find('.estimated_sample').val('');
-                    // $(this).parent().parent().find('.estimated_sample').prop('disabled', true);
                     $(this).parent().parent().find('.estimated_shipping_sample').val('');
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
                     $(this).parent().parent().find('.paid_sample').val('');
                     $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+
                     if (count_shippers == 0) {
                         var title = "{{ translate('Default Shipping Configuration') }}";
                         var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
@@ -4347,34 +4344,26 @@
                         $(this).find("option[value='third_party']").prop('disabled', false);
                         $(this).find("option[value='third_party']").prop('selected', false);
                     } else {
-                        var weight = $('#package_weight_sample').val();
-                        var length = $('#length_sample').val();
-                        var width = $('#width_sample').val();
-                        var height = $('#height_sample').val();
-                        var breakable = $('#breakable_sample').val();
-                        var min_third_party = $('#min_third_party_sample').val();
-                        var max_third_party = $('#max_third_party_sample').val();
-                        var unit_third_party = $('#unit_third_party_sample').val();
+                        let weight = $('#package_weight_sample').val();
+                        let length = $('#length_sample').val();
+                        let width = $('#width_sample').val();
+                        let height = $('#height_sample').val();
+                        let breakable = $('#breakable_sample').val();
+                        let min_third_party = $('#min_third_party_sample').val();
+                        let max_third_party = $('#max_third_party_sample').val();
+                        let unit_third_party = $('#unit_third_party_sample').val();
 
                         if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                                 min_third_party == '') || (max_third_party == '')) {
-                            // Swal.fire({
-                            //         title: 'Cancelled',
-                            //         text: "Please ensure that all required fields are filled to know all information about your package.",
-                            //         icon: 'error',
-                            //         scrollbarPadding: false,
-                            //         backdrop:false,
-                            //     });
-
-                            var title = "{{ translate('Default Shipping Configuration') }}";
-                            var message =
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
                                 "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
 
                             $('#title-modal').text(title);
                             $('#text-modal').text(message);
 
                             $('#modal-info').modal('show');
-                            var checkbox = $(this).parent().find(
+                            let checkbox = $(this).parent().find(
                                 'input[type="checkbox"][value="third_party"]');
                             if (selected.length == 1) {
                                 $(this).parent().find('.multi-select-button').text('-- Select --');
@@ -4410,14 +4399,6 @@
                             }
 
                             if (chargeable_weight > max) {
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: "Chargeable Weight = " + Number(chargeable_weight.toFixed(2)) + ", then not accepted by our shipper",
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
-
                                 var title = "{{ translate('Default Shipping Configuration') }}";
                                 var message = "{{ translate('Chargeable Weight = ') }}" + Number(
                                         chargeable_weight.toFixed(2)) +
