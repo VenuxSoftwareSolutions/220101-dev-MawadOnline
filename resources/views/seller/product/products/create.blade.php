@@ -583,12 +583,21 @@
                                 <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div class="row mb-3">
+                                    <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
+                                    <div class="col-md-10">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="0" name="sample_available" type="checkbox" class="sample-available" />
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row mb-3" style="display: none;" id="sample-description-wrapper">
                                     <label class="col-md-2 col-from-label">{{ translate('Sample description') }}</label>
                                     <div class="col-md-10">
                                         <textarea class="form-control" name="sample_description" id="sample_description_parent">{{ old('sample_description') }}</textarea>
                                     </div>
                                 </div>
-                                <div class="row mb-3">
+                                <div class="row mb-3" id="sample-price-wrapper" style="display: none;">
                                     <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
                                     <div class="col-md-10">
                                         <input type="number" step="0.01" class="form-control" name="sample_price"
@@ -4296,6 +4305,18 @@
                     $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
                 }
             })
+
+            $('body').on('change', '.sample-available', function() {
+                if ($(this).is(':checked')) {
+                    $(this).val(1);
+                    $("#sample-description-wrapper").show();
+                    $("#sample-price-wrapper").show();
+                } else {
+                    $(this).val(0);
+                    $("#sample-description-wrapper").hide();
+                    $("#sample-price-wrapper").hide();
+                }
+            });
 
             $('body').on('change', '.variant-sample-available', function() {
                 if ($(this).is(':checked')) {
