@@ -3662,14 +3662,14 @@
                 if (id_variant != undefined) {
                     var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
                                     <td>
-                                        <select multiple class="shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
+                                        <select class="form-control shipper" name="variant_shipping-${id_variant}[shipper][${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input type="number" name="variant_shipping-${id_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
                                     <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_variant}[estimated_order][]" placeholder="{{ translate('Days') }}"></td>
                                     <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_variant}[estimated_shipping][]" placeholder="{{ translate('Days') }}"></td>
                                     <td>
@@ -3698,14 +3698,14 @@
                     if ($(this).closest('#variant_informations').length) {
                         var html_to_add = `
                                 <tr>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td>
-                                        <select multiple class="shipper" >
+                                   <td>
+                                        <select class="form-control shipper">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
+                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
                                     <td><input type="number" class="form-control estimated_order"  placeholder="{{ translate('Days') }}"></td>
                                     <td><input type="number" class="form-control estimated_shipping"  placeholder="{{ translate('Days') }}"></td>
                                     <td>
@@ -3733,14 +3733,14 @@
                     } else {
                         var html_to_add = `
                                 <tr>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td>
-                                        <select multiple class="shipper" name="shipper[${row}][]">
+                                   <td>
+                                        <select class="form-control shipper" name="shipper[${row}][]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
+                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
                                     <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{ translate('Days') }}"></td>
                                     <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{ translate('Days') }}"></td>
                                     <td>
