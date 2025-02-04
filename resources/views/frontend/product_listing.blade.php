@@ -448,30 +448,47 @@
 
         function updateSelectedValues(selected_values) {
             if (selected_values) {
+
                 if (selected_values.numeric_attributes) {
                     Object.keys(selected_values.numeric_attributes).forEach(function(attribute_id) {
-                        $('#min_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].min);
-                        $('#max_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].max);
+                        let numericAttr = selected_values.numeric_attributes[attribute_id];
+                        if (numericAttr) {
+                            $('#min_attribute_numeric_' + attribute_id).val(numericAttr.min);
+                            $('#max_attribute_numeric_' + attribute_id).val(numericAttr.max);
+
+                            let slider = $('.aiz-range-slider-attribute-' + attribute_id + ' .attribute-input-slider-range')[0];
+
+                            if (slider && slider.noUiSlider) {
+                                slider.noUiSlider.set([numericAttr.min, numericAttr.max]); 
+                            }
+
+                        }
                     });
+                    slide_refresh();
+
                 }
 
-                if (selected_values.boolean_attributes) {
+                if (selected_values.boolean_attributes && typeof selected_values.boolean_attributes === "object") {
                     Object.keys(selected_values.boolean_attributes).forEach(function(attribute_id) {
-                        $('input[name="attributes[' + attribute_id + '][]"]').prop('checked', selected_values
-                            .boolean_attributes[attribute_id]);
+                        let isChecked = selected_values.boolean_attributes[attribute_id] === true;
+                        $('input[name="attributes[' + attribute_id + '][]"]').prop('checked', isChecked);
                     });
                 }
 
-                if (selected_values.list_attributes) {
+                if (selected_values.list_attributes && typeof selected_values.list_attributes === "object") {
                     Object.keys(selected_values.list_attributes).forEach(function(attribute_id) {
-                        selected_values.list_attributes[attribute_id].forEach(function(value) {
-                            $('input[name="attributes[' + attribute_id + '][]"][value="' + value + '"]')
-                                .prop('checked', true);
-                        });
+                        let values = selected_values.list_attributes[attribute_id];
+                        if (Array.isArray(values)) {
+                            values.forEach(function(value) {
+                                $('input[name="attributes[' + attribute_id + '][]"][value="' + value + '"]').prop('checked', true);
+                            });
+                        }
                     });
                 }
             }
         }
+
+
     </script>
 
     <script>
