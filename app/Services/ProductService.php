@@ -5651,7 +5651,9 @@ class ProductService
                 ->get(),
             'ratingPercentages' => $ratingPercentages,
             'unit_of_sale' => $parent->unit ?? null,
-            'outStock' => get_single_product($variationId)->getTotalQuantity() <= 0,
+            'outStock' => get_single_product(
+                isset($variationId) ? $variationId : $parent->id
+            )->getTotalQuantity() <= 0,
             "sampleDetails" => $parent->getSampleDetails(),
         ];
     }
