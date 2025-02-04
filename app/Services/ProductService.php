@@ -593,6 +593,12 @@ class ProductService
             $collection['published'] = 0;
         }
 
+        if (isset($collection["sample_available"]) === false) {
+            $collection["sample_available"] = 0;
+            $collection["sample_description"] = null;
+            $collection["sample_price"] = null;
+        }
+
         if (! isset($collection['country_code'])) {
             $collection['country_code'] = '';
         }
