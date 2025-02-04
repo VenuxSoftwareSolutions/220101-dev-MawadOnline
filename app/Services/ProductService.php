@@ -210,10 +210,9 @@ class ProductService
                             ($collection['estimated_order'][$key] != null)
                         ) {
                             $current_data = [];
-                            $shippers = implode(',', $collection['shipper'][$key]);
                             $current_data['from_shipping'] = $from_shipping;
                             $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                            $current_data['shipper'] = $shippers;
+                            $current_data['shipper'] = $collection['shipper'][$key];
                             $current_data['estimated_order'] = $collection['estimated_order'][$key];
                             $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
                             $current_data['paid'] = $collection['paid'][$key];
@@ -228,10 +227,11 @@ class ProductService
                 }
             }
 
+
             $shipping_sample_parent = [];
+
             if (isset($collection['shipper_sample'])) {
                 $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-                $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
             } else {
                 $shipping_sample_parent['shipper_sample'] = null;
             }
@@ -4489,12 +4489,52 @@ class ProductService
         }
     }
 
+    public function storeSampleShipping($product_id, $sample_shipping)
+    {
+        $transformedArray = [];
+
+        $count = count($sample_shipping["shipper_sample"]);
+
+        for ($i = 0; $i < $count; $i++) {
+            $transformedArray[$i] = [
+                "product_id" => $product_id,
+                "shipper" => $sample_shipping["shipper_sample"][$i],
+                // Buyer buys one sample regardless how the sample is composed.
+                // It can be composed of 1 element or more, but at the end it's one sample.
+                "from_shipping" => 1,
+                "to_shipping" => 1,
+                "estimated_order" => $sample_shipping["estimated_sample"][$i],
+                "estimated_shipping" => $sample_shipping["estimated_shipping_sample"][$i],
+                "paid" => $sample_shipping["paid_sample"][$i],
+                "shipping_charge" => "flat",
+                "flat_rate_shipping" => $sample_shipping["shipping_amount"][$i],
+            ];
+        }
+
+        Shipping::insert($transformedArray);
+    }
+
     public function storeProductWithDependencies(
         $data, $pricing, $general_attributes_data,
         $ids_attributes_list, $ids_attributes_numeric,
         $unit_general_attributes_data, $shipping
     ) {
         $data["unit_price"] = $data['unit_sale_price'];
+
+        $sample_shipping["shipper_sample"] = $data["shipper_sample"];
+        unset($data["shipper_sample"]);
+
+        $sample_shipping["estimated_sample"] = $data["estimated_sample"];
+        unset($data["estimated_sample"]);
+
+        $sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
+        unset($data["estimated_shipping_sample"]);
+
+        $sample_shipping["paid_sample"] = $data["paid_sample"];
+        unset($data["paid_sample"]);
+
+        $sample_shipping["shipping_amount"] = $data["shipping_amount"];
+        unset($data["shipping_amount"]);
 
         $product = Product::create($data);
 
@@ -4507,6 +4547,8 @@ class ProductService
         );
 
         $this->storeShipping($product->id, $shipping);
+
+        $this->storeSampleShipping($product->id, $sample_shipping);
 
         return $product;
     }

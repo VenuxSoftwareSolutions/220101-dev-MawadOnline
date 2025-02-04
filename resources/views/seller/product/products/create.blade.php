@@ -716,6 +716,7 @@
                                                     <select class="form-control shipper"
                                                         name="shipper[]"
                                                         id="shipper_shipping">
+                                                        <option>{{ __("Select Shipper") }}</option>
                                                         <option value="vendor" @selected(old('shipper.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
                                                         <option value="third_party" @selected(old('shipper.0') == 'third_party')>
@@ -955,6 +956,7 @@
                                                 <th>{{ translate('Paid by') }}</th>
                                                 {{-- <th>{{translate('VAT')}}</th> --}}
                                                 <th>{{ translate('Shipping amount') }}</th>
+                                                <th>{{ translate('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody id="bloc_sample_configuration">
@@ -969,15 +971,15 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control estimated_sample"
-                                                        id="estimated_sample_parent" name="estimated_sample"
+                                                        id="estimated_sample_parent" name="estimated_sample[]"
                                                         value="{{ old('estimated_sample') }}" /></td>
                                                 <td><input type="number"
                                                         class="form-control estimated_shipping_sample"
                                                         id="estimated_shipping_sample_parent"
-                                                        name="estimated_shipping_sample"
+                                                        name="estimated_shipping_sample[]"
                                                         value="{{ old('estimated_shipping_sample') }}" /></td>
                                                 <td>
-                                                    <select class="form-control paid_sample" name="paid_sample"
+                                                    <select class="form-control paid_sample" name="paid_sample[]"
                                                         id="paid_sample_parent" style="width: max-content!important;">
                                                         <option value="" selected>{{ translate('Choose paid by') }}
                                                         </option>
@@ -988,8 +990,13 @@
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control shipping_amount"
-                                                        name="shipping_amount" value="{{ old('shipping_amount') }}"
+                                                        name="shipping_amount[]" value="{{ old('shipping_amount') }}"
                                                         step="0.1" /></td>
+                                                <td>
+                                                    <i class="las la-plus btn-add-sample-shipping"
+                                                        style="margin-left: 5px; margin-top: 17px;"
+                                                        title="{{ translate('Add another ligne') }}"></i>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -3716,7 +3723,7 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control shipping_charge" >
+                                        <select class="form-control shipping_charge">
                                             <option value="" selected>{{ translate('Choose shipping charge') }}</option>
                                             <option value="flat" @selected(old('shipping_charge') == 'flat')>{{ translate('Flat-rate regardless of quantity') }}</option>
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{ translate('Charging per Unit of Sale') }}</option>
@@ -3734,7 +3741,7 @@
                         var html_to_add = `
                                 <tr>
                                    <td>
-                                        <select class="form-control shipper" name="shipper[${row}][]">
+                                        <select class="form-control shipper" name="shipper[]">
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
@@ -3770,7 +3777,21 @@
 
                 // add another row in shipping configuration
                 $(this).parent().parent().parent().append(html_to_add);
-                $(this).parent().parent().parent().find('.shipper:last').multiSelect();
+            });
+
+            $('body').on('click', '.btn-add-sample-shipping', function() {
+                let row = $(this).parent().parent().parent().find('tr').length;
+                let id_variant = $(this).data('variant-id');
+                let clonedTr = $(this).parent().parent().clone();
+                let removeIcon = `
+                    <i
+                      class="las la-trash delete_sample_shipping_canfiguration"
+                      style="margin-left: 5px; margin-top: 17px;"
+                      title="{{ __("Delete this ligne") }}"
+                    ></i>
+                `;
+                clonedTr.find("td:last").append(removeIcon);
+                $(this).parent().parent().parent().append(clonedTr);
             });
 
             $('body').on('click', '.delete_shipping_canfiguration', function() {
