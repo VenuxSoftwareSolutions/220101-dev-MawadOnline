@@ -423,9 +423,10 @@
                             $show = 'show';
                         }
                     @endphp
-                    <div class="collapse {{ $show }}"
-                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                    <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
                         <div class="p-3 aiz-checkbox-list">
+                            <input type="hidden" name="attributes[{{ $attribute->id }}][]" value="no">
+                    
                             <label class="aiz-checkbox mb-3">
                                 <input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="yes"
                                     onchange="filter()">
@@ -436,6 +437,7 @@
                             </label>
                         </div>
                     </div>
+                
                 </div>
             @else
                 <div class="bg-white border mb-3">

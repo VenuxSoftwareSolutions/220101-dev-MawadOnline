@@ -27,7 +27,13 @@ class SearchController extends Controller
         $query = $request->keyword;
         $category = [];
         $categories = [];
-        $category_id = $request->category_id === 0 || $request->category_id === '0' ? null : $request->category_id;
+        if($request->category_id){
+            $category_id = $request->category_id;
+        }
+        if($request->category_id === 0 || $request->category_id === "0"){
+            $category_id = null ;
+        }
+
         $products = Product::IsApprovedPublished()->nonAuction();
         $attributes = Attribute::all();
         $id_products = [];
@@ -370,8 +376,6 @@ class SearchController extends Controller
             $attribute_type_value = $attribute->type_value;
             // Handle unit conversion if an old unit value exists
             if (isset($request_all['units_old_' . $attribute_id])) {
-                $rate_old = $request_all['units_old_' . $attribute_id];
-                // dd($attribute_value);
                 $request_all['new_min_value_' . $attribute_id] = $attribute_value['min'] ;
                 $request_all['new_max_value_' . $attribute_id] = $attribute_value['max'] ;
             }
