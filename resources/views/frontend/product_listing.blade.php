@@ -464,7 +464,6 @@
 
                         }
                     });
-                    slide_refresh();
 
                 }
 
