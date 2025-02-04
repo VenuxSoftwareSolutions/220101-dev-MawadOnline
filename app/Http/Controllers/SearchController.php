@@ -177,8 +177,8 @@ class SearchController extends Controller
                     if ($attribute) {
                         if ($attribute->type_value == 'numeric') {
                             $selected_values['numeric_attributes'][$attribute_id] = [
-                                'min' => $request_all['new_min_value_' . $attribute_id] ?? $attribute_value[0],
-                                'max' => $request_all['new_max_value_' . $attribute_id] ?? $attribute_value[1],
+                                'min' => $attribute_value['min'] ?? null,
+                                'max' => $attribute_value['max'] ?? null,
                             ];
                         } elseif ($attribute->type_value == 'boolean') {
                             $selected_values['boolean_attributes'][$attribute_id] = in_array('yes', $attribute_value);
@@ -188,6 +188,7 @@ class SearchController extends Controller
                     }
                 }
             }
+            
         
             return response()->json([
                 'request_all' => $request_all,
@@ -370,8 +371,9 @@ class SearchController extends Controller
             // Handle unit conversion if an old unit value exists
             if (isset($request_all['units_old_' . $attribute_id])) {
                 $rate_old = $request_all['units_old_' . $attribute_id];
-                $request_all['new_min_value_' . $attribute_id] = ($attribute_value[0] / $unit->rate) * $rate_old;
-                $request_all['new_max_value_' . $attribute_id] = ($attribute_value[1] / $unit->rate) * $rate_old;
+                // dd($attribute_value);
+                $request_all['new_min_value_' . $attribute_id] = $attribute_value['min'] ;
+                $request_all['new_max_value_' . $attribute_id] = $attribute_value['max'] ;
             }
     
             // Apply filtering to products
@@ -408,7 +410,7 @@ class SearchController extends Controller
                 break;
 
             case 'numeric':
-                $this->applyNumericFilter($query, $attribute_id, $attribute_value, $units_id);
+                $this->applyNumericFilter($query, $attribute_id, $attribute_value);
                 break;
             case 'boolean':
                 $query->where('id_attribute', $attribute_id)->whereIn('value', $attribute_value);
@@ -416,68 +418,23 @@ class SearchController extends Controller
         }
     }
 
-    protected function applyNumericFilter($query, $attribute_id, $attribute_value, $units_id)
+    protected function applyNumericFilter($query, $attribute_id, $attribute_value)
     {
-        if (count($attribute_value) > 1) {
-            $unit = Unity::find($units_id);
-            $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
-
-            $this->applyBetweenFilter($query, $attribute_id, $attribute_value, $units_id, $unit, $childrens_units);
-        } elseif (!is_null($attribute_value[0])) {
-            $this->applyMinFilter($query, $attribute_id, $attribute_value[0], $units_id);
-        } elseif (!is_null($attribute_value[1])) {
-            $this->applyMaxFilter($query, $attribute_id, $attribute_value[1], $units_id);
-        }
+        $minValue = $attribute_value['min'] ?? null;
+        $maxValue = $attribute_value['max'] ?? null;
+        $query->where('id_attribute', $attribute_id)
+            ->where(function ($q) use ($minValue, $maxValue) {
+                if ($minValue !== null && $maxValue !== null) {
+                    $q->whereRaw("CAST(value AS DECIMAL(10,2)) BETWEEN ? AND ?", [ $minValue, (float) $maxValue]);
+                } elseif ($minValue !== null) {
+                    $q->whereRaw("CAST(value AS DECIMAL(10,2)) >= ?", [(float) $minValue]);
+                } elseif ($maxValue !== null) {
+                    $q->whereRaw("CAST(value AS DECIMAL(10,2)) <= ?", [(float) $maxValue]);
+                }
+            });
     }
+    
 
-    protected function applyBetweenFilter($query, $attribute_id, $attribute_value, $units_id, $unit, $childrens_units)
-    {
-        $query->where(function ($q) use ($attribute_id, $attribute_value, $units_id, $unit, $childrens_units) {
-            $q->where('id_attribute', $attribute_id)
-                ->where('id_units', $units_id)
-                ->whereBetween('value', [floatval($attribute_value[0]), floatval($attribute_value[1])]);
-
-            foreach ($childrens_units as $childrens_unit) {
-                $q->orWhere(function ($q) use ($attribute_id, $attribute_value, $childrens_unit, $unit) {
-                    $q->where('id_attribute', $attribute_id)
-                        ->where('id_units', $childrens_unit->id)
-                        ->whereBetween('value', [(floatval($attribute_value[0]) * $unit->rate) / $childrens_unit->rate, (floatval($attribute_value[1]) * $unit->rate) / $childrens_unit->rate]);
-                });
-            }
-        });
-    }
-
-    protected function applyMinFilter($query, $attribute_id, $min_value, $units_id)
-    {
-        $unit = Unity::find($units_id);
-        $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
-
-        $query->where(function ($q) use ($attribute_id, $min_value, $units_id, $unit, $childrens_units) {
-            $q->where('id_attribute', $attribute_id)->where('id_units', $units_id)->where('value', '>=', floatval($min_value));
-
-            foreach ($childrens_units as $childrens_unit) {
-                $q->orWhere('id_attribute', $attribute_id)
-                    ->where('id_units', $childrens_unit->id)
-                    ->where('value', '>=', (floatval($min_value) * $unit->rate) / $childrens_unit->rate);
-            }
-        });
-    }
-
-    protected function applyMaxFilter($query, $attribute_id, $max_value, $units_id)
-    {
-        $unit = Unity::find($units_id);
-        $childrens_units = Unity::where('default_unit', $unit->default_unit)->get();
-
-        $query->where(function ($q) use ($attribute_id, $max_value, $units_id, $unit, $childrens_units) {
-            $q->where('id_attribute', $attribute_id)->where('id_units', $units_id)->where('value', '<=', floatval($max_value));
-
-            foreach ($childrens_units as $childrens_unit) {
-                $q->orWhere('id_attribute', $attribute_id)
-                    ->where('id_units', $childrens_unit->id)
-                    ->where('value', '<=', (floatval($max_value) * $unit->rate) / $childrens_unit->rate);
-            }
-        });
-    }
     protected function getCategoryHierarchy($category)
     {   
         $category_parent = null;

@@ -277,17 +277,21 @@
     </div>
     <!-- Attributes -->
     @foreach ($attributes as $attribute)
-        @if (!empty($selected_attribute_values[$attribute->id]))
+        {{-- @if (!empty($selected_attribute_values[$attribute->id])) --}}
             @if ($attribute->type_value == 'numeric')
                 @php
                     if (isset($request_all['units_' . $attribute->id])) {
                         $unit_active = $request_all['units_' . $attribute->id];
                         $unit_active_model = \App\Models\Unity::find($unit_active);
                     } else {
-                        $default_unit = $attribute->get_units()->where('default_unit', 1)->first();
-                        if (!$default_unit) {
-                            $default_unit = $attribute->get_units()->first();
-                        }
+                        $unit_ids = \DB::table('attributes_units')
+                            ->where('attribute_id', $attribute->id)
+                            ->pluck('unite_id');
+
+                        $default_unit = \App\Models\Unity::whereIn('id', $unit_ids)
+                            ->whereColumn('id', 'default_unit')
+                            ->first();
+                      
                         $unit_active_model = $default_unit;
                         $unit_active = $unit_active_model ? $unit_active_model->id : null;
                     }
@@ -351,14 +355,16 @@
                             </div>
                         </div>
                         <div class="min-max ">
-                            <input class="form-control" onchange="filter()"
+                                <input class="form-control" onchange="filter()"
                                 placeholder='{{ translate('min') }} {{ $attribute->name }}' type="number"
-                                id="min_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
-                                value="@if ($min_value < $min_attribute_value || $min_value > $max_attribute_value) {{ $min_attribute_value }}@else{{ $min_value }} @endif">
-                            <input class="form-control" onchange="filter()"
+                                id="min_attribute_numeric_{{ $attribute->id }}" name="attributes[{{ $attribute->id }}][min]"
+                                value="{{ $min_value < $min_attribute_value || $min_value > $max_attribute_value ? $min_attribute_value : $min_value }}">
+                            
+                                <input class="form-control" onchange="filter()"
                                 placeholder='{{ translate('max') }} {{ $attribute->name }}' type="number"
-                                id="max_attribute_numeric_{{ $attribute->id }}" name="{{ $attribute->id }}[]"
-                                value="@if ($max_value > $max_attribute_value) {{ $max_attribute_value }}@else{{ $max_value }} @endif">
+                                id="max_attribute_numeric_{{ $attribute->id }}" name="attributes[{{ $attribute->id }}][max]"
+                                value="{{ $max_value > $max_attribute_value ? $max_attribute_value : $max_value }}">
+                        
                         </div>
                     </div>
                 </div>
@@ -482,7 +488,7 @@
                     </div>
                 </div>
             @endif
-        @endif
+        {{-- @endif --}}
     @endforeach
 
 </div>

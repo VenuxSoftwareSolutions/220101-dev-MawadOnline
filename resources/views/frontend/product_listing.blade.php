@@ -419,6 +419,7 @@
                     slide_refresh();
                     rating_refresh();
                     $("#spinner-div").hide();
+                    console.log(response.selected_values);
                     updateSelectedValues(response.selected_values);
 
                 },
@@ -449,10 +450,8 @@
             if (selected_values) {
                 if (selected_values.numeric_attributes) {
                     Object.keys(selected_values.numeric_attributes).forEach(function(attribute_id) {
-                        $('#min_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[
-                            attribute_id].min);
-                        $('#max_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[
-                            attribute_id].max);
+                        $('#min_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].min);
+                        $('#max_attribute_numeric_' + attribute_id).val(selected_values.numeric_attributes[attribute_id].max);
                     });
                 }
 
