@@ -970,12 +970,12 @@
                                                 </td>
                                                 <td><input type="number" class="form-control estimated_sample"
                                                         id="estimated_sample_parent" name="estimated_sample"
-                                                        value="{{ old('estimated_sample') }}"></td>
-                                                <td><input type="number" disabled
+                                                        value="{{ old('estimated_sample') }}" /></td>
+                                                <td><input type="number"
                                                         class="form-control estimated_shipping_sample"
                                                         id="estimated_shipping_sample_parent"
                                                         name="estimated_shipping_sample"
-                                                        value="{{ old('estimated_shipping_sample') }}"></td>
+                                                        value="{{ old('estimated_shipping_sample') }}" /></td>
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample"
                                                         id="paid_sample_parent" style="width: max-content!important;">
@@ -987,9 +987,9 @@
                                                             {{ translate('Buyer') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" disabled class="form-control shipping_amount"
+                                                <td><input type="number" class="form-control shipping_amount"
                                                         name="shipping_amount" value="{{ old('shipping_amount') }}"
-                                                        step="0.1" readonly></td>
+                                                        step="0.1" /></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -4339,6 +4339,14 @@
                         checkbox.prop('checked', false);
                         $(this).find("option[value='third_party']").prop('disabled', false);
                         $(this).find("option[value='third_party']").prop('selected', false);
+
+                        $(this).find("option:first").prop("selected", true)
+                        $(this).parent().parent().find('.shipping_amount').val('');
+                        $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
+                        $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                        $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
+                        $(this).parent().parent().find('.paid_sample').find("option:first").prop("selected", true);
+                        $(this).parent().parent().find('.paid_sample').prop('disabled', false);
                     } else {
                         let weight = $('#package_weight_sample').val();
                         let length = $('#length_sample').val();
