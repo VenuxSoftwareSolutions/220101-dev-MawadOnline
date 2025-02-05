@@ -280,22 +280,18 @@
     @if ($attribute->type_value == 'numeric' || !empty($selected_attribute_values[$attribute->id]))
             @if ($attribute->type_value == 'numeric')
                 @php
-                    if (isset($request_all['units_' . $attribute->id])) {
-                        $unit_active = $request_all['units_' . $attribute->id];
-                        $unit_active_model = \App\Models\Unity::find($unit_active);
-                    } else {
-                        $unit_ids = \DB::table('attributes_units')
+                   
+                    $unit_ids = \DB::table('attributes_units')
                             ->where('attribute_id', $attribute->id)
                             ->pluck('unite_id');
 
-                        $default_unit = \App\Models\Unity::whereIn('id', $unit_ids)
+                    $default_unit = \App\Models\Unity::whereIn('id', $unit_ids)
                             ->whereColumn('id', 'default_unit')
                             ->first();
                       
-                        $unit_active_model = $default_unit;
-                        $unit_active = $unit_active_model ? $unit_active_model->id : null;
-                    }
-                    $rate = $unit_active_model ? $unit_active_model->rate : null;
+                    $unit_active_model = $default_unit;
+                    $unit_active = $unit_active_model ? $unit_active_model->id : null;
+                    
                     $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
                     $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
                     if (isset($request_all['new_min_value_' . $attribute->id])) {
@@ -321,7 +317,7 @@
                             {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
                         </a>
 
-                        <input type="hidden" name="units_old_{{ $attribute->id }}" value="{{ $rate }}">
+                        <input type="hidden" name="units_old_{{ $attribute->id }}" >
 
                     </div>
 

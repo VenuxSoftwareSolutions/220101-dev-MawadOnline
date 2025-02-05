@@ -424,9 +424,25 @@ class SearchController extends Controller
 
     protected function applyNumericFilter($query, $attribute_id, $attribute_value)
     {
+        $unit_ids = \DB::table('attributes_units')
+        ->where('attribute_id', $attribute_id)
+        ->pluck('unite_id');
+
+        $default_unit = \App\Models\Unity::whereIn('id', $unit_ids)
+                ->whereColumn('id', 'default_unit')
+                ->first();
+        $unit_active_model = $default_unit;
+        $unit_active = $unit_active_model ? $unit_active_model->id : null;
+        $conditions = [];
+
+        $attribute = attribute::find($attribute_id);
+        $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
+        $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
+
         $minValue = $attribute_value['min'] ?? null;
         $maxValue = $attribute_value['max'] ?? null;
-        $query->where('id_attribute', $attribute_id)
+        if($minValue !=  $min_attribute_value || $maxValue != $max_attribute_value ){
+            $query->where('id_attribute', $attribute_id)
             ->where(function ($q) use ($minValue, $maxValue) {
                 if ($minValue !== null && $maxValue !== null) {
                     $q->whereRaw("CAST(value AS DECIMAL(10,2)) BETWEEN ? AND ?", [ $minValue, (float) $maxValue]);
@@ -436,6 +452,7 @@ class SearchController extends Controller
                     $q->whereRaw("CAST(value AS DECIMAL(10,2)) <= ?", [(float) $maxValue]);
                 }
             });
+        }
     }
     
 
