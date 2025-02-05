@@ -3828,49 +3828,26 @@
                         $('#text-modal').html(message);
 
                         $('#modal-info').modal('show');
-
-                        let checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
-                        if (selected.length == 1) {
-                            $(this).parent().find('.multi-select-button').text('-- Select --');
-                        } else {
-                            $(this).parent().find('.multi-select-button').text('vendor');
-                        }
-                        // Uncheck the checkbox
-                        checkbox.prop('checked', false);
-                        $(this).find("option[value='third_party']").prop('disabled', false);
-                        $(this).find("option[value='third_party']").prop('selected', false);
                     } else {
-                        var weight = $('#weight').val();
-                        var length = $('#length').val();
-                        var width = $('#width').val();
-                        var height = $('#height').val();
-                        var breakable = $('#breakable').val();
-                        var min_third_party = $('#min_third_party').val();
-                        var max_third_party = $('#max_third_party').val();
-                        var unit_third_party = $('#unit_third_party').val();
+                        let weight = $('#weight').val();
+                        let length = $('#length').val();
+                        let width = $('#width').val();
+                        let height = $('#height').val();
+                        let breakable = $('#breakable').val();
+                        let min_third_party = $('#min_third_party').val();
+                        let max_third_party = $('#max_third_party').val();
+                        let unit_third_party = $('#unit_third_party').val();
+
                         if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                                 min_third_party == '') || (max_third_party == '')) {
-                            var title = "{{ translate('Default Shipping Configuration') }}";
-                            var message =
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
                                 "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
 
                             $('#title-modal').text(title);
-                            $('#text-modal').text(message);
+                            $('#text-modal').html(message);
 
                             $('#modal-info').modal('show');
-
-                            var checkbox = $(this).parent().find(
-                                'input[type="checkbox"][value="third_party"]');
-                            if (selected.length == 1) {
-                                $(this).parent().find('.multi-select-button').text('-- Select --');
-                            } else {
-                                $(this).parent().find('.multi-select-button').text('vendor');
-                            }
-
-                            // Uncheck the checkbox
-                            checkbox.prop('checked', false);
-                            $(this).find("option[value='third_party']").prop('disabled', false);
-                            $(this).find("option[value='third_party']").prop('selected', false);
                         } else {
                             length = parseInt(length);
                             height = parseInt(height);
@@ -3936,9 +3913,7 @@
                     $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', true);
                     $(this).parent().parent().find('.flat_rate_shipping').val(null);
                 }
-
-            })
-
+            });
 
             $('body').on('change', '.paid', function() {
                 var shippers = $(this).parent().parent().find('.shipper').val();
