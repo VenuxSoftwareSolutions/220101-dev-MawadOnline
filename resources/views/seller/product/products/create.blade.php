@@ -4009,15 +4009,13 @@
                     var id = $(this).data('id_variant');
 
                     clonedDiv.find('.shipper').each(function(index, element) {
-                        $(element).attr('name', `variant_shipping-` + id + `[shipper][` + index +
-                            `][]`)
+                        $(element).attr('name', `variant_shipping-${id}[shipper][${index}][]`)
                         $('#shipping_configuration_box #table_shipping_configuration').find(
-                            '.shipper').each(function(key, element_original) {
+                            '.shipper')?.each(function(key, element_original) {
                             if (index == key) {
-                                $(element_original).val().forEach(value => {
-                                    $(element).find('option[value="' + value + '"]')
+                                let value = $(element_original).val();
+                                $(element).find(`option[value="${value}"]`)
                                         .prop('selected', true);
-                                });
                             }
                         })
                     });
@@ -4228,6 +4226,7 @@
                     var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
                     var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
                     var id_variant = $(this).data('id_new_variant');
+
                     clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop(
                         'selected', true);
                     clonedDiv.find('.shipper_sample').each(function(index, element) {
