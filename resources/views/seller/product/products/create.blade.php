@@ -4083,7 +4083,6 @@
 
                 if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                         min_third_party == '') || (max_third_party == '')) {
-                    // html = '<span style="color: green"> {{ translate('Chargeable Weight = 0, then accepted by our shipper') }} </span>';
                     $('#result_calculate_third_party').empty();
                 } else {
                     length = parseInt(length);
@@ -4118,8 +4117,6 @@
                             ", {{ translate('then accepted by Aramex') }} </span>"
                     }
 
-
-
                     $('#result_calculate_third_party').html(html);
                 }
             });
@@ -4136,7 +4133,6 @@
 
                 if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                         min_third_party == '') || (max_third_party == '')) {
-                    //html = '<span style="color: green"> {{ translate('Chargeable Weight = 0, then accepted by our shipper') }} </span>';
                     $('#result_calculate_third_party_sample').empty();
                 } else {
                     length = parseInt(length);
