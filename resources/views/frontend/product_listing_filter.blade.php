@@ -277,21 +277,21 @@
     </div>
     <!-- Attributes -->
     @foreach ($attributes as $attribute)
-    @if ($attribute->type_value == 'numeric' || !empty($selected_attribute_values[$attribute->id]))
+        @if ($attribute->type_value == 'numeric' || !empty($selected_attribute_values[$attribute->id]))
             @if ($attribute->type_value == 'numeric')
                 @php
-                   
+
                     $unit_ids = \DB::table('attributes_units')
-                            ->where('attribute_id', $attribute->id)
-                            ->pluck('unite_id');
+                        ->where('attribute_id', $attribute->id)
+                        ->pluck('unite_id');
 
                     $default_unit = \App\Models\Unity::whereIn('id', $unit_ids)
-                            ->whereColumn('id', 'default_unit')
-                            ->first();
-                      
+                        ->whereColumn('id', 'default_unit')
+                        ->first();
+
                     $unit_active_model = $default_unit;
                     $unit_active = $unit_active_model ? $unit_active_model->id : null;
-                    
+
                     $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
                     $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
                     if (isset($request_all['new_min_value_' . $attribute->id])) {
@@ -317,7 +317,7 @@
                             {{ $attribute->getTranslation('name') }} ({{ $unit_active_model->name ?? '' }})
                         </a>
 
-                        <input type="hidden" name="units_old_{{ $attribute->id }}" >
+                        <input type="hidden" name="units_old_{{ $attribute->id }}">
 
                     </div>
 
@@ -351,20 +351,22 @@
                             </div>
                         </div>
                         <div class="min-max ">
-                                <input class="form-control" onchange="filter()"
+                            <input class="form-control" onchange="filter()"
                                 placeholder='{{ translate('min') }} {{ $attribute->name }}' type="number"
-                                id="min_attribute_numeric_{{ $attribute->id }}" name="attributes[{{ $attribute->id }}][min]"
+                                id="min_attribute_numeric_{{ $attribute->id }}"
+                                name="attributes[{{ $attribute->id }}][min]"
                                 value="{{ $min_value < $min_attribute_value || $min_value > $max_attribute_value ? $min_attribute_value : $min_value }}">
-                            
-                                <input class="form-control" onchange="filter()"
+
+                            <input class="form-control" onchange="filter()"
                                 placeholder='{{ translate('max') }} {{ $attribute->name }}' type="number"
-                                id="max_attribute_numeric_{{ $attribute->id }}" name="attributes[{{ $attribute->id }}][max]"
+                                id="max_attribute_numeric_{{ $attribute->id }}"
+                                name="attributes[{{ $attribute->id }}][max]"
                                 value="{{ $max_value > $max_attribute_value ? $max_attribute_value : $max_value }}">
-                        
+
                         </div>
                     </div>
                 </div>
-                @elseif($attribute->type_value == 'color')
+            @elseif($attribute->type_value == 'color')
                 <div class="bg-white border mb-3">
                     <div class="fs-16 fw-700 p-3">
                         <a href="#"
@@ -374,25 +376,33 @@
                         </a>
                     </div>
                     @php
-                        $show = isset($selected_attribute_values[$attribute->id]) && !empty($selected_attribute_values[$attribute->id]) ? 'show' : '';
+                        $show =
+                            isset($selected_attribute_values[$attribute->id]) &&
+                            !empty($selected_attribute_values[$attribute->id])
+                                ? 'show'
+                                : '';
                     @endphp
                     <div class="collapse {{ $show }}" id="collapse_color_{{ $attribute->id }}">
                         <div class="p-3 aiz-radio-inline">
                             @foreach ($colors as $color)
                                 <label class="aiz-megabox color-label">
-                                    <input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="{{ $color->id }}" 
-                                        onchange="filter()" 
+                                    <input type="checkbox" name="attributes[{{ $attribute->id }}][]"
+                                        value="{{ $color->id }}" onchange="updateColorSelection(this)"
                                         @if (isset($request_all[$attribute->id]) && in_array($color->id, $request_all[$attribute->id])) checked @endif>
-                                    <span class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
-                                        <span class="size-30px d-inline-block rounded" style="background: {{ $color->code }};"></span>
+
+                                    <span
+                                        class="aiz-megabox-elem rounded d-flex align-items-center justify-content-center p-1 mb-2">
+                                        <span class="size-30px d-inline-block rounded"
+                                            style="background: {{ $color->code }};"></span>
                                     </span>
                                     <span class="color-name">{{ $color->name }}</span>
                                 </label>
                             @endforeach
+
                         </div>
                     </div>
                 </div>
-                 @elseif($attribute->type_value == 'boolean')
+            @elseif($attribute->type_value == 'boolean')
                 <div class="bg-white border mb-3">
                     <div class="fs-16 fw-700 p-3">
                         <a href="#"
@@ -412,10 +422,11 @@
                             $show = 'show';
                         }
                     @endphp
-                    <div class="collapse {{ $show }}" id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
+                    <div class="collapse {{ $show }}"
+                        id="collapse_{{ str_replace(' ', '_', $attribute->name) }}">
                         <div class="p-3 aiz-checkbox-list">
                             <input type="hidden" name="attributes[{{ $attribute->id }}][]" value="no">
-                    
+
                             <label class="aiz-checkbox mb-3">
                                 <input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="yes"
                                     onchange="filter()">
@@ -426,7 +437,7 @@
                             </label>
                         </div>
                     </div>
-                
+
                 </div>
             @else
                 <div class="bg-white border mb-3">

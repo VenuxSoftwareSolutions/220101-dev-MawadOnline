@@ -196,6 +196,20 @@
             border-style: solid;
             border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
         }
+
+        .color-label input[type="checkbox"] {
+            display: none;
+        }
+
+        .color-label .aiz-megabox-elem {
+            border: 2px solid transparent;
+            transition: border 0.2s ease;
+        }
+
+        .color-label input[type="checkbox"]:checked+.aiz-megabox-elem {
+            border-color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
     </style>
 @endsection
 
@@ -447,54 +461,69 @@
         }
 
         function updateSelectedValues(selected_values) {
-    if (selected_values) {
-        if (selected_values.numeric_attributes) {
-            Object.keys(selected_values.numeric_attributes).forEach(function(attribute_id) {
-                let numericAttr = selected_values.numeric_attributes[attribute_id];
-                if (numericAttr) {
-                    $('#min_attribute_numeric_' + attribute_id).val(numericAttr.min);
-                    $('#max_attribute_numeric_' + attribute_id).val(numericAttr.max);
-                    let slider = $('.aiz-range-slider-attribute-' + attribute_id + ' .attribute-input-slider-range')[0];
-                    if (slider && slider.noUiSlider) {
-                        slider.noUiSlider.set([numericAttr.min, numericAttr.max]); 
-                    }
-                }
-            });
-        }
-
-        if (selected_values.boolean_attributes) {
-            Object.keys(selected_values.boolean_attributes).forEach(function(attribute_id) {
-                let isChecked = selected_values.boolean_attributes[attribute_id] === true;
-                $('input[name="attributes[' + attribute_id + '][]"]').prop('checked', isChecked);
-            });
-        }
-
-        if (selected_values.list_attributes) {
-            Object.keys(selected_values.list_attributes).forEach(function(attribute_id) {
-                let values = selected_values.list_attributes[attribute_id];
-                if (Array.isArray(values)) {
-                    values.forEach(function(value) {
-                        $('input[name="attributes[' + attribute_id + '][]"][value="' + value + '"]').prop('checked', true);
+            if (selected_values) {
+                if (selected_values.numeric_attributes) {
+                    Object.keys(selected_values.numeric_attributes).forEach(function(attribute_id) {
+                        let numericAttr = selected_values.numeric_attributes[attribute_id];
+                        if (numericAttr) {
+                            $('#min_attribute_numeric_' + attribute_id).val(numericAttr.min);
+                            $('#max_attribute_numeric_' + attribute_id).val(numericAttr.max);
+                            let slider = $('.aiz-range-slider-attribute-' + attribute_id +
+                                ' .attribute-input-slider-range')[0];
+                            if (slider && slider.noUiSlider) {
+                                slider.noUiSlider.set([numericAttr.min, numericAttr.max]);
+                            }
+                        }
                     });
                 }
-            });
-        }
 
-        if (selected_values.color_attributes) {
-            Object.keys(selected_values.color_attributes).forEach(function(attribute_id) {
-                let colors = selected_values.color_attributes[attribute_id];
-                if (Array.isArray(colors)) {
-                    colors.forEach(function(colorId) {
-                        $('input[name="attributes[' + attribute_id + '][]"][value="' + colorId + '"]').prop('checked', true);
+                if (selected_values.boolean_attributes) {
+                    Object.keys(selected_values.boolean_attributes).forEach(function(attribute_id) {
+                        let isChecked = selected_values.boolean_attributes[attribute_id] === true;
+                        $('input[name="attributes[' + attribute_id + '][]"]').prop('checked', isChecked);
                     });
                 }
-            });
+
+                if (selected_values.list_attributes) {
+                    Object.keys(selected_values.list_attributes).forEach(function(attribute_id) {
+                        let values = selected_values.list_attributes[attribute_id];
+                        if (Array.isArray(values)) {
+                            values.forEach(function(value) {
+                                $('input[name="attributes[' + attribute_id + '][]"][value="' + value + '"]')
+                                    .prop('checked', true);
+                            });
+                        }
+                    });
+                }
+
+                if (selected_values.color_attributes) {
+                    Object.keys(selected_values.color_attributes).forEach(function(attribute_id) {
+                        let colors = selected_values.color_attributes[attribute_id];
+                        if (Array.isArray(colors)) {
+                            colors.forEach(function(colorId) {
+                                $('input[name="attributes[' + attribute_id + '][]"][value="' + colorId +
+                                    '"]').prop('checked', true);
+                            });
+                        }
+                    });
+                }
+            }
         }
-    }
-}
 
+        function updateColorSelection(checkbox) {
+            let anySelected = document.querySelectorAll('.color-label input[type="checkbox"]:checked').length > 0;
+            if (!anySelected) {
+                resetFilters();
+            } else {
+                filter();
+            }
+        }
 
-
+        function resetFilters() {
+            let checkboxes = document.querySelectorAll('.color-label input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            filter();
+        }
     </script>
 
     <script>
