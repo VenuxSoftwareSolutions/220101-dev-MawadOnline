@@ -964,6 +964,7 @@
                                                 <td>
                                                     <select class="form-control shipper_sample" name="shipper_sample[]"
                                                         id="shipper_sample_parent">
+                                                        <option>{{ __("Select Shipper") }}</option>
                                                         <option value="vendor" @selected(old('shipper_sample.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
                                                         <option value="third_party" @selected(old('shipper_sample.0') == 'third_party')>
