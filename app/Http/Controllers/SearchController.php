@@ -339,44 +339,5 @@ class SearchController extends Controller
         }
     }
 
-    public function getProductsInPriceRange($minPrice, $maxPrice): array
-    {
-        // Retrieve all products with their pricing configurations
-        $products = Product::with('pricingConfiguration')->get();
-
-        $filteredProducts = [];
-
-        foreach ($products as $product) {
-            // Get the unit price from the pricing configuration
-            $unitPrice = $product->pricingConfiguration->unit_price;
-
-            // Initialize the final price with the unit price
-            $finalPrice = $unitPrice;
-
-            try {
-                // Check if there is a discount for the product
-                $discountInfo = Discount::getDiscountPercentage($product->id);
-
-                // Calculate the final price if a discount is applicable
-                $discountPercentage = $discountInfo['discount_percentage'];
-                $maxDiscountAmount = $discountInfo['max_discount_amount'];
-
-                $discountAmount = min(($unitPrice * $discountPercentage) / 100, $maxDiscountAmount);
-                $finalPrice = $unitPrice - $discountAmount;
-            } catch (\Exception $e) {
-                // No discount applicable, use the unit price as the final price
-                $finalPrice = $unitPrice;
-            }
-
-            // Check if the final price is within the specified range
-            if ($finalPrice >= $minPrice && $finalPrice <= $maxPrice) {
-                $filteredProducts[] = [
-                    'product' => $product,
-                    'final_price' => $finalPrice,
-                ];
-            }
-        }
-
-        return $filteredProducts;
-    }
+   
 }
