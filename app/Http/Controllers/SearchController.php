@@ -399,9 +399,13 @@ class SearchController extends Controller
             case 'numeric':
                 $this->applyNumericFilter($query, $attribute_id, $attribute_value);
                 break;
-            case 'boolean':
-                $query->where('id_attribute', $attribute_id)->whereIn('value', $attribute_value);
-                break;
+                case 'boolean':
+                    
+                    if (is_array($attribute_value) && count($attribute_value) === 1 && $attribute_value[0] !== "yes") {
+                        return;
+                    }
+                    $query->where('id_attribute', $attribute_id)->where('value', 'yes');
+                    break;
         }
     }
 
