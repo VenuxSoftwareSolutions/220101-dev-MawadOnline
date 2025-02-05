@@ -4046,8 +4046,6 @@
                         })
                     });
 
-                    clonedDiv.find('.shipper').multiSelect();
-
                     clonedDiv.find('.multi-select-container').each(function(index, element) {
                         if (index % 2 != 0) {
                             $(element).remove();
@@ -4270,7 +4268,7 @@
 
                     clonedDiv.find('.shipper_sample').attr('name', 'variant_shipper_sample-' + id_variant +
                         '[]');
-                    clonedDiv.find('.shipper_sample').multiSelect();
+
                     clonedDiv.find('.multi-select-container').each(function(index, element) {
                         if (index % 2 != 0) {
                             $(element).remove();
