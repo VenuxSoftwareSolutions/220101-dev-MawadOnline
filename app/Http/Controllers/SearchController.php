@@ -93,7 +93,6 @@ class SearchController extends Controller
         //filter product by color  
         $request_all = request()->input();
         $colors = ColorGroup::all();
-        $products = $this->filterProductsByColor($products, $request_all,$colors);
         
         //get the category hierarchy
         list($category_parent, $category_parent_parent) = $this->getCategoryHierarchy($category);
@@ -176,7 +175,9 @@ class SearchController extends Controller
                 'numeric_attributes' => [],
                 'boolean_attributes' => [],
                 'list_attributes' => [],
+                'color_attributes' => [], 
             ];
+            
             if (isset($request_all['attributes']) && is_array($request_all['attributes'])) {
                 foreach ($request_all['attributes'] as $attribute_id => $attribute_value) {
                     $attribute = Attribute::find($attribute_id);
@@ -188,12 +189,15 @@ class SearchController extends Controller
                             ];
                         } elseif ($attribute->type_value == 'boolean') {
                             $selected_values['boolean_attributes'][$attribute_id] = in_array('yes', $attribute_value);
-                        } elseif ($attribute->type_value == 'text' || ($attribute->type_value == 'list')) {
+                        } elseif ($attribute->type_value == 'text' || $attribute->type_value == 'list') {
                             $selected_values['list_attributes'][$attribute_id] = $attribute_value;
+                        } elseif ($attribute->type_value == 'color') {
+                            $selected_values['color_attributes'][$attribute_id] = $attribute_value;
                         }
                     }
                 }
             }
+            
             
         
             return response()->json([
@@ -335,27 +339,7 @@ class SearchController extends Controller
         }
         return $products;
     }
-    protected function filterProductsByColor($products, $request_all,$colors)
-    {
-
-        if (isset($request_all['Color']) && is_array($request_all['Color'])) {
-            $color_attribute = Attribute::where('type_value', 'color')->first();
-            if ($color_attribute) {
-                $color_ids = Color::whereHas('colorGroups', function ($q) use ($request_all) {
-                    $q->whereIn('color_group_id', $request_all['Color']);
-                })->pluck('id')->toArray();
-
-                $color_codes = Color::whereIn('id', $color_ids)->pluck('code')->toArray();
-
-                $products->whereHas('productAttributeValues', function ($q) use ($color_attribute, $color_codes) {
-                    $q->where('id_attribute', $color_attribute->id)
-                        ->whereIn('value', $color_codes);
-                });
-            }
-        }
-
-        return $products;
-    }
+  
     protected function filterProductsByAttributes($products, $request_all)
     {
         if (!isset($request_all['attributes']) || !is_array($request_all['attributes'])) {
@@ -401,12 +385,11 @@ class SearchController extends Controller
                 break;
 
             case 'color':
-                $list_colors = Color::whereHas('groupColors', function ($q) use ($attribute_value) {
+                $color_ids = Color::whereHas('colorGroups', function ($q) use ($attribute_value) {
                     $q->whereIn('color_group_id', $attribute_value);
-                })
-                    ->pluck('id')
-                    ->toArray();
-                $query->where('id_attribute', $attribute_id)->whereIn('id_colors', $list_colors);
+                })->pluck('id')->toArray();       
+                $color_codes = Color::whereIn('id', $color_ids)->pluck('code')->toArray();
+                $query->where('id_attribute', $attribute_id)->whereIn('value', $color_codes);
                 break;
 
             case 'list':
