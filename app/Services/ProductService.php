@@ -699,11 +699,11 @@ class ProductService
                         array_push($shipping, $current_data);
                     }
                 }
-
             }
         }
 
         $shipping_sample_parent = [];
+
         if (isset($collection['shipper_sample'])) {
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
             $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
