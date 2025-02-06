@@ -1145,7 +1145,7 @@
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-sample-pricing" checked
-                                            disabled>
+                                            />
                                         <span></span>
                                     </label>
                                 </div>
@@ -1183,7 +1183,7 @@
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
                                         <input value="1" type="checkbox" class="variant-sample-shipping" checked
-                                            disabled>
+                                            />
                                         <span></span>
                                     </label>
                                 </div>
@@ -2322,21 +2322,15 @@
             });
 
             $('body').on('click', '#btn-create-variant', function() {
-                // Clone the original div
                 if ($('#attributes option:selected').length > 0) {
                     var clonedDiv = $('body #variant_informations').clone();
 
-                    // Add some unique identifier to the cloned div (optional)
                     clonedDiv.attr('class', 'clonedDiv');
                     clonedDiv.removeAttr('id');
                     clonedDiv.attr('data-id', numbers_variant);
-                    // Disable all input elements in the cloned div
-                    //clonedDiv.find('input').prop('readonly', true);
-
-                    // Append the cloned div to the container
 
                     var count = numbers_variant + 1;
-                    //add attribute name for each input cloned
+
                     @if (app()->getLocale() == 'ae')
                         var html_to_add =
                             '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
@@ -2346,15 +2340,12 @@
                     @endif
 
                     clonedDiv.find('h3').after(html_to_add);
-                    //clonedDiv.find('.fa-circle-xmark').hide();
                     clonedDiv.find('.fa-circle-check').hide();
                     clonedDiv.find('#btn-add-pricing-variant').hide();
                     clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
                     clonedDiv.find('.sku').prop('readonly', true);
                     clonedDiv.find('div.row').each(function() {
-                        // Check if the div has display:none set
                         if ($(this).css('display') === 'none') {
-                            // If it's set to display:none, change it to its default value
                             $(this).css('display', '');
                         }
                     });
@@ -2427,7 +2418,6 @@
                         })
                     });
                     clonedDiv.find('.attributes').each(function(index, element) {
-                        // Retrieve the data-id_attributes value of the current input
                         var dataIdValue = $(element).data('id_attributes');
                         var value = 0;
                         var check = false;
@@ -2446,7 +2436,6 @@
                             $(element).val(value);
                         }
 
-                        // Change the attribute name of the current input
                         if (check == false) {
                             $(element).attr('name', 'attributes-' + dataIdValue + '-' +
                                 numbers_variant);
@@ -2455,10 +2444,8 @@
                     });
 
                     clonedDiv.find('.attributes-units').each(function(index, element) {
-                        // Retrieve the data-id_attributes value of the current input
                         var dataIdValue = $(element).data('id_attributes');
 
-                        // Change the attribute name of the current input
                         $(element).attr('name', 'attributes_units-' + dataIdValue + '-' +
                             numbers_variant);
                         $('#variant_informations').find('.attributes-units').each(function(key,
@@ -2467,9 +2454,7 @@
                                 $(element).find('option[value="' + $(element_original)
                                     .val() + '"]').prop('selected', true);
                             }
-
                         })
-
                     });
 
                     clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
@@ -2598,34 +2583,26 @@
                         $('#bloc_variants_created').prepend(clonedDiv);
                         var divId = "#bloc_variants_created";
 
-                        // Get the length of all h3 tags under the specific div
                         var h3Count = $(divId + " h3").length;
 
-
-                        // Loop through each h3 tag and display its order
                         $(divId + " h3").each(function(index) {
-                            var order = h3Count - index; // Number in descending order
+                            var order = h3Count - index;
                             $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
                         });
                         numbers_variant++;
-                        //AIZ.plugins.bootstrapSelect('refresh');
 
                         $('#variant_informations').find(
                             'input[type="text"], input[type="number"], input[type="checkbox"], input[type="radio"], select'
                         ).each(function() {
-                            // Reset text and number inputs
                             if ($(this).is('input[type="text"]') || $(this).is(
                                     'input[type="number"]')) {
-                                $(this).val(''); // Clear the value for text and number inputs
+                                $(this).val('');
                             }
-                            // Reset checkboxes and radio buttons
                             else if ($(this).is('input[type="radio"]')) {
                                 $(this).prop('checked',
-                                    false); // Uncheck checkboxes and radio buttons
-                            }
-                            // Reset select options
-                            else if ($(this).is('select')) {
-                                $(this).val(''); // Reset to the first option (index 0)
+                                    false);
+                            } else if ($(this).is('select')) {
+                                $(this).val('');
                             }
                         });
 
@@ -2633,7 +2610,6 @@
                             $(this).text('Nothing selected')
                         });
                     }
-
                 } else {
                     var title = "{{ translate('Create variant') }}";
                     var message =
@@ -4218,21 +4194,21 @@
 
             $('body').on('change', '.variant-sample-shipping', function() {
                 if ($(this).is(':not(:checked)')) {
-                    var clonedDiv = $('#table_sample_configuration').clone();
-                    var paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
-                    var shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
-                    var id_variant = $(this).data('id_new_variant');
+                    let clonedDiv = $('#table_sample_configuration').clone();
+                    let paid_sample = $('#table_sample_configuration').find('.paid_sample').val();
+                    let shipper_sample = $('#table_sample_configuration').find('.shipper_sample').val();
+                    let id_variant = $(this).data('id_new_variant');
 
-                    clonedDiv.find('.paid_sample').find('option[value="' + paid_sample + '"]').prop(
+                    clonedDiv.find('.paid_sample').find(`option[value="${paid_sample}"]`).prop(
                         'selected', true);
+
                     clonedDiv.find('.shipper_sample').each(function(index, element) {
                         $('#table_sample_configuration').find('.shipper_sample').each(function(key,
                             element_original) {
                             if (index == key) {
-                                $(element_original).val().forEach(value => {
-                                    $(element).find('option[value="' + value + '"]')
-                                        .prop('selected', true);
-                                });
+                                let value = $(element_original).val();
+                                $(element).find(`option[value="${value}"]`)
+                                    .prop('selected', true);
                             }
                         })
                     });
