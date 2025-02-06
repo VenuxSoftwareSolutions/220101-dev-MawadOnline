@@ -6475,37 +6475,31 @@
                             remarks.push(message);
                         }
                         if (check_shipping == false) {
-                            //console.log('ok4');
                             var message =
                                 "{{ translate('There is an issue with your shipping configuration.') }}";
                             remarks.push(message);
                         }
                         if (check_sku == false) {
-                            //console.log('ok5');
                             var message = "{{ translate('There is an empty SKU.') }}";
                             remarks.push(message);
                         }
                         if (check_images == false) {
-                            //console.log('ok6');
                             var message =
                                 "{{ translate('All file inputs in the variant section must contain at least one photo.') }}";
                             remarks.push(message);
                         }
                         if (check_main_images == false) {
-                            //console.log('ok7');
                             var message =
                                 "{{ translate('The main image must include at least one picture.') }}";
                             remarks.push(message);
                         }
                         if (check_thumbnail_images == false) {
-                            //console.log('ok8');
                             var message =
                                 "{{ translate('The thumbnail image must include at least one picture.') }}";
                             remarks.push(message);
                         }
 
                         if (check_short_description == false) {
-                            //console.log('ok9');
                             var message = "{{ translate('The short description is required.') }}";
                             remarks.push(message);
                         }
