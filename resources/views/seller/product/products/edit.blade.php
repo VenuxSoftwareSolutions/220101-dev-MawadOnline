@@ -5900,15 +5900,6 @@
                             'color': 'red',
                             'margin-right': '7px'
                         });
-                        // $('#attributes_bloc').html('<select class="form-control aiz-selectpicker" data-live-search="true" data-selected-text-format="count" id="attributes" multiple disabled data-placeholder="{{ translate('No attributes found') }}"></select>');
-                        // $('body input[name="activate_attributes"]').prop("checked", false);
-                        // $('#variant_informations').hide();
-                        // $('body .div-btn').hide();
-                        // $('body #bloc_variants_created').hide();
-                        // $('#general_attributes').empty();
-                        // AIZ.plugins.bootstrapSelect('refresh');
-                        // Optionally, clear selection here if needed
-                        // $('#jstree').jstree(true).deselect_node(selectedId);
                     }
                 }
             });
