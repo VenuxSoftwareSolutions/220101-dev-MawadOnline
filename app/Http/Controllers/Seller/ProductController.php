@@ -40,6 +40,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Log;
+use Exception;
 
 class ProductController extends Controller
 {
@@ -775,16 +776,25 @@ class ProductController extends Controller
 
     public function delete_shipping(Request $request)
     {
-        $shipping = Shipping::find($request->id);
-        if ($shipping != null) {
-            $shipping->delete();
+        try {
+            $shipping = Shipping::find($request->id);
 
-            return response()->json([
-                'status' => 'success',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
+            if ($shipping != null) {
+                $shipping->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                ]);
+            }
+        } catch (Exception $e) {
+            Log::error("Error while deleting shipping #{$request->id}, with message: {$e->getMessage()}");
+
+            response()->json([
+                "status" => "failed"
             ]);
         }
     }
