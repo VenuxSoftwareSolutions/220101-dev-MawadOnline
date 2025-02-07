@@ -1109,6 +1109,7 @@
                                                 <th>{{ translate('Paid by') }}</th>
                                                 {{-- <th>{{translate('VAT')}}</th> --}}
                                                 <th>{{ translate('Shipping amount') }}</th>
+                                                <th>{{ translate('Action') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody id="bloc_sample_configuration">
@@ -1157,6 +1158,11 @@
                                                                 @if ($shipper->shipper !== "vendor") disabled @endif
                                                                 class="form-control shipping_amount" name="shipping_amount"
                                                                 @if ($shipper->flat_rate_shipping != null) value="{{ $shipper->flat_rate_shipping }}" @else readonly @endif>
+                                                        </td>
+                                                        <td>
+                                                            <i class="las la-plus btn-add-sample-shipping"
+                                                                style="margin-left: 5px; margin-top: 17px;"
+                                                                title="{{ translate('Add another ligne') }}"></i>
                                                         </td>
                                                     </tr>
                                                 @endforeach
@@ -5248,6 +5254,24 @@
                     $(this).find('option').eq(0).prop('selected', true);
                 }
             })
+
+            $('body').on('click', '.btn-add-sample-shipping', function() {
+                let row = $(this).parent().parent().parent().find('tr').length;
+                let id_variant = $(this).data('variant-id');
+                let clonedTr = $(this).parent().parent().clone();
+                let removeIcon = `
+                    <i
+                      class="las la-trash delete_sample_shipping_canfiguration"
+                      style="margin-left: 5px; margin-top: 17px;"
+                      title="{{ __("Delete this ligne") }}"
+                    ></i>
+                `;
+                clonedTr.find("input").each((_,el) => {
+                    $(el).val("");
+                });
+                clonedTr.find("td:last").append(removeIcon);
+                $(this).parent().parent().parent().append(clonedTr);
+            });
 
             $('body').on('change', '.variant-shipping', function() {
                 var id_variant = $(this).data('id_variant');
