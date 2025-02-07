@@ -1130,18 +1130,18 @@
                                                             </select>
                                                         </td>
                                                         <td><input type="number" class="form-control estimated_sample"
-                                                                id="estimated_sample_parent" name="estimated_sample"
+                                                                id="estimated_sample_parent" name="estimated_sample[]"
                                                                 @if ($shipper->estimated_order != null) value="{{ $shipper->estimated_order }}" @endif>
                                                         </td>
                                                         <td><input type="number"
                                                                 @if ($shipper->shipper !== "vendor") disabled @endif
                                                                 id="estimated_shipping_sample_parent"
                                                                 class="form-control estimated_shipping_sample"
-                                                                name="estimated_shipping_sample"
+                                                                name="estimated_shipping_sample[]"
                                                                 @if ($shipper->estimated_shipping != null) value="{{ $shipper->estimated_shipping }}" @endif>
                                                         </td>
                                                         <td>
-                                                            <select style="width: max-content;" class="form-control paid_sample" name="paid_sample"
+                                                            <select style="width: max-content;" class="form-control paid_sample" name="paid_sample[]"
                                                                 id="paid_sample_parent"
                                                                 @if ($shipper->shipper !== "vendor") disabled @endif>
                                                                 <option selected>{{ translate('Choose paid by') }}
@@ -1156,7 +1156,7 @@
                                                         </td>
                                                         <td><input type="number"
                                                                 @if ($shipper->shipper !== "vendor") disabled @endif
-                                                                class="form-control shipping_amount" name="shipping_amount"
+                                                                class="form-control shipping_amount" name="shipping_amount[]"
                                                                 @if ($shipper->flat_rate_shipping != null) value="{{ $shipper->flat_rate_shipping }}" @else readonly @endif>
                                                         </td>
                                                         <td>
