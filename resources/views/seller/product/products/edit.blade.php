@@ -834,10 +834,10 @@
                                                                 name="shipper[{{ $key }}]">
                                                                 <option>{{ __("Select Shipper") }}</option>
                                                                 <option value="vendor"
-                                                                    @if (in_array('vendor', $shippers)) {{ 'selected' }} @endif>
+                                                                    @if ($shipping->shipper == 'vendor') selected @endif>
                                                                     {{ translate('vendor') }}</option>
                                                                 <option value="third_party"
-                                                                    @if (in_array('third_party', $shippers)) {{ 'selected' }} @endif>
+                                                                    @if ($shipping->shipper == 'third_party') selected @endif>
                                                                     {{ translate('MawadOnline 3rd Party Shippers') }}
                                                                 </option>
                                                             </select>
@@ -860,10 +860,10 @@
                                                                 <option value="" selected>
                                                                     {{ translate('Choose paid by') }}</option>
                                                                 <option value="vendor"
-                                                                    @if ($shipping->paid == 'vendor') {{ 'selected' }} @endif>
+                                                                    @if ($shipping->paid == 'vendor') selected @endif>
                                                                     {{ translate('vendor') }}</option>
                                                                 <option value="buyer"
-                                                                    @if ($shipping->paid == 'buyer') {{ 'selected' }} @endif>
+                                                                    @if ($shipping->paid == 'buyer') selected @endif>
                                                                     {{ translate('Buyer') }}</option>
                                                             </select>
                                                         </td>
@@ -873,11 +873,11 @@
                                                                 <option value="" selected>
                                                                     {{ translate('Choose shipping charge') }}</option>
                                                                 <option value="flat"
-                                                                    @if ($shipping->shipping_charge == 'flat') {{ 'selected' }} @endif>
+                                                                    @if ($shipping->shipping_charge == 'flat') selected @endif>
                                                                     {{ translate('Flat-rate regardless of quantity') }}
                                                                 </option>
                                                                 <option value="charging"
-                                                                    @if ($shipping->shipping_charge == 'charging') {{ 'selected' }} @endif>
+                                                                    @if ($shipping->shipping_charge == 'charging') selected @endif>
                                                                     {{ translate('Charging per Unit of Sale') }}</option>
                                                             </select>
                                                         </td>
