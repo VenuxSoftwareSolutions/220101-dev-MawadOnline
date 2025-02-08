@@ -3784,7 +3784,6 @@
                     } else {
                         $(this).attr('name', 'variant_shipping-' + variant_id + '[shipper][' +
                             count + '][]')
-
                     }
 
                     count++
