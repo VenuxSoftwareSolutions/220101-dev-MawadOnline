@@ -5291,8 +5291,6 @@
                         })
                     });
 
-                    clonedDiv.find('.shipper').multiSelect();
-
                     clonedDiv.find('.multi-select-container').each(function(index, element) {
                         if (index % 2 != 0) {
                             $(element).remove();
