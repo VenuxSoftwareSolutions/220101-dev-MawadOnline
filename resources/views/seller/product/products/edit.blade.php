@@ -4960,22 +4960,21 @@
 
             $('body').on('click', '.delete_shipping_canfiguration', function() {
                 //remove row in shipping configuration
-                var id_shipping = $(this).data('id');
-                var current_parent = $(this).parent().parent().parent();
-                var current = $(this);
-                var new_variant_id = $(this).data('variant-id');
-                var old_variant_id = $(this).data('id_variant');
+                let id_shipping = $(this).data('id');
+                let current_parent = $(this).parent().parent().parent();
+                let current = $(this);
+                let new_variant_id = $(this).data('variant-id');
+                let old_variant_id = $(this).data('id_variant');
 
                 if ((id_shipping == undefined) && (new_variant_id == undefined) && (old_variant_id ==
                         undefined)) {
                     $(this).parent().parent().remove();
-                    var count = 0;
+                    let count = 0;
                     current.find('.shipper').each(function(index) {
                         $(this).attr('name', 'shipper[' + count + ']')
                         count++
                     });
                 } else {
-
                     swal({
                             title: '{{ translate('Are you sure you want to delete this shipping ?') }}',
                             type: "warning",
