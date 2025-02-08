@@ -1115,7 +1115,7 @@
                                         <tbody id="bloc_sample_configuration">
                                             @php $shippers_sample = $product->getSampleShipping(); @endphp
                                             @if($shippers_sample->count() > 0)
-                                                @foreach($shippers_sample as $shipper)
+                                                @foreach($shippers_sample as $key => $shipper)
                                                     <tr>
                                                         <td>
                                                             <select class="form-control shipper_sample" name="shipper_sample[]"
@@ -1162,7 +1162,13 @@
                                                         <td>
                                                             <i class="las la-plus btn-add-sample-shipping"
                                                                 style="margin-left: 5px; margin-top: 17px;"
-                                                                title="{{ translate('Add another ligne') }}"></i>
+                                                                title="{{ __('Add another ligne') }}"></i>
+                                                            @if ($key != 0)
+                                                                <i class="las la-trash delete_shipping_canfiguration"
+                                                                    data-id="{{ $shipper->id }}"
+                                                                    style="margin-left: 5px; margin-top: 17px;"
+                                                                    title="{{ __("Delete this ligne") }}"></i>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach
