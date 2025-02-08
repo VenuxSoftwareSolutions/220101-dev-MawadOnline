@@ -4995,13 +4995,6 @@
                                     success: function(dataResult) {
                                         if (dataResult.status == 'success') {
                                             current.parent().parent().remove();
-                                            // Swal.fire({
-                                            //     title: 'Deleted',
-                                            //     text: "Deleted successfully",
-                                            //     icon: 'success',
-                                            //     scrollbarPadding: false,
-                                            //     backdrop:false,
-                                            // });
                                             var count = 0;
                                             current_parent.find('.shipper').each(function(
                                                 index) {
@@ -5017,7 +5010,6 @@
                                                         new_variant_id +
                                                         '[shipper][' + count +
                                                         '][]')
-
                                                 } else if (old_variant_id !=
                                                     undefined) {
                                                     $(this).attr('name',
@@ -5029,21 +5021,8 @@
                                                 count++
                                             });
                                         } else {
-                                            // Swal.fire({
-                                            //     title: 'Cancelled',
-                                            //     text: "Something went wrong",
-                                            //     icon: 'error',
-                                            //     scrollbarPadding: false,
-                                            //     backdrop:false,
-                                            // });
-
-                                            var title =
-                                                "{{ translate('Default Shipping Configuration') }}";
-                                            var message =
-                                                "{{ translate('Something went wrong') }}";
-
-                                            $('#title-modal').text(title);
-                                            $('#text-modal').text(message);
+                                            $('#title-modal').text("{{ translate('Default Shipping Configuration') }}");
+                                            $('#text-modal').text("{{ translate('Something went wrong') }}");
 
                                             $('#modal-info').modal('show');
                                         }
@@ -5263,7 +5242,6 @@
 
             $('body').on('click', '.btn-add-sample-shipping', function() {
                 let row = $(this).parent().parent().parent().find('tr').length;
-                let id_variant = $(this).data('variant-id');
                 let clonedTr = $(this).parent().parent().clone();
                 let removeIcon = `
                     <i
