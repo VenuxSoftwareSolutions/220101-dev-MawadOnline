@@ -723,20 +723,20 @@
                                                             {{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" name="from_shipping[]"
+                                                <td><input disabled type="number" name="from_shipping[]"
                                                         class="form-control min-qty-shipping" id="min-qty-shipping"
                                                         placeholder="{{ translate('From QTY') }}"
                                                         value="{{ old('from_shipping.0') }}"></td>
-                                                <td><input type="number" name="to_shipping[]"
+                                                <td><input disabled type="number" name="to_shipping[]"
                                                         class="form-control max-qty-shipping" id="max-qty-shipping"
                                                         placeholder="{{ translate('To QTY') }}"
                                                         value="{{ old('to_shipping.0') }}"></td>
 
-                                                <td><input type="number" class="form-control estimated_order"
+                                                <td><input disabled type="number" class="form-control estimated_order"
                                                         name="estimated_order[]" value="{{ old('estimated_order.0') }}"
                                                         placeholder="{{ translate('Days') }}">
                                                 </td>
-                                                <td><input type="number" class="form-control estimated_shipping"
+                                                <td><input disabled type="number" class="form-control estimated_shipping"
                                                         name="estimated_shipping[]"
                                                         placeholder="{{ translate('Days') }}"
                                                         value="{{ old('estimated_shipping.0') }}"></td>
@@ -760,11 +760,11 @@
                                                             {{ translate('Charging per Unit of Sale') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control flat_rate_shipping"
+                                                <td><input disabled type="number" class="form-control flat_rate_shipping"
                                                         name="flat_rate_shipping[]"
                                                         value="{{ old('flat_rate_shipping.0') }}"
                                                         placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                                <td><input type="number" class="form-control charge_per_unit_shipping"
+                                                <td><input disabled type="number" class="form-control charge_per_unit_shipping"
                                                         name="charge_per_unit_shipping[]"
                                                         placeholder="{{ translate('Charge unit') }}"
                                                         value="{{ old('charge_per_unit_shipping.0') }}" readonly></td>
@@ -778,6 +778,17 @@
                                                 @foreach (old('from_shipping', []) as $index => $value)
                                                     @if ($index > 0)
                                                         <tr>
+                                                            <td>
+                                                                <select class="form-control shipper" name="shipper[]"
+                                                                    id="shipper_shipping">
+                                                                    <option value="vendor" @selected(count(old('shipper', [])) > 1 && old('shipper', [])[$index] == 'vendor')>
+                                                                        {{ translate('vendor') }}</option>
+                                                                    <option value="third_party"
+                                                                        @selected(count(old('shipper', [])) > 1 && old('shipper', [])[$index] == 'third_party')>
+                                                                        {{ translate('MawadOnline 3rd Party Shippers') }}
+                                                                    </option>
+                                                                </select>
+                                                            </td>
                                                             <td><input type="number" name="from_shipping[]"
                                                                     class="form-control min-qty-shipping"
                                                                     id="min-qty-shipping"
@@ -788,18 +799,6 @@
                                                                     id="max-qty-shipping"
                                                                     placeholder="{{ translate('To QTY') }}"
                                                                     value="{{ old('to_shipping', [])[$index] }}"></td>
-                                                            <td>
-                                                                <select class="shipper" name="shipper[0][]" multiple
-                                                                    id="shipper_shipping">
-                                                                    <option value="vendor" @selected(count(old('shipper.0', [])) > 1 && old('shipper.0', [])[$index] == 'vendor')>
-                                                                        {{ translate('vendor') }}</option>
-                                                                    <option value="third_party"
-                                                                        @selected(count(old('shipper.0', [])) > 1 && old('shipper.0', [])[$index] == 'third_party')>
-                                                                        {{ translate('MawadOnline 3rd Party Shippers') }}
-                                                                    </option>
-                                                                </select>
-                                                            </td>
-
                                                             <td><input type="number" class="form-control estimated_order"
                                                                     name="estimated_order[]"
                                                                     value="{{ old('estimated_order', [])[$index] }}"
@@ -971,27 +970,27 @@
                                                             {{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control estimated_sample"
+                                                <td><input disabled type="number" class="form-control estimated_sample"
                                                         id="estimated_sample_parent" name="estimated_sample[]"
-                                                        value="{{ old('estimated_sample') }}" /></td>
-                                                <td><input type="number"
+                                                        value="{{ old('estimated_sample.0') }}" /></td>
+                                                <td><input disabled type="number"
                                                         class="form-control estimated_shipping_sample"
                                                         id="estimated_shipping_sample_parent"
                                                         name="estimated_shipping_sample[]"
-                                                        value="{{ old('estimated_shipping_sample') }}" /></td>
+                                                        value="{{ old('estimated_shipping_sample.0') }}" /></td>
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample[]"
                                                         id="paid_sample_parent" style="width: max-content!important;">
                                                         <option value="" selected>{{ translate('Choose paid by') }}
                                                         </option>
-                                                        <option value="vendor" @selected(old('paid_sample') == 'vendor')>
+                                                        <option value="vendor" @selected(old('paid_sample.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
-                                                        <option value="buyer" @selected(old('paid_sample') == 'buyer')>
+                                                        <option value="buyer" @selected(old('paid_sample.0') == 'buyer')>
                                                             {{ translate('Buyer') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input type="number" class="form-control shipping_amount"
-                                                        name="shipping_amount[]" value="{{ old('shipping_amount') }}"
+                                                <td><input disabled type="number" class="form-control shipping_amount"
+                                                        name="shipping_amount[]" value="{{ old('shipping_amount.0') }}"
                                                         step="0.1" /></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-sample-shipping"
@@ -3794,6 +3793,16 @@
                 let count_shippers = {{ count($supported_shippers) }};
                 let selected = $(this).val();
 
+                if(["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find("input").each(function(_, el) {
+                        $(el).attr("disabled", false)
+                    });
+                } else {
+                    $(this).parent().parent().find("input").each(function(_, el) {
+                        $(el).attr("disabled", true)
+                    });
+                }
+
                 if (selected.indexOf('third_party') !== -1) {
                     if (count_shippers == 0) {
                         let title = "{{ translate('Default Shipping Configuration') }}";
@@ -4024,7 +4033,6 @@
                         })
                     });
 
-
                     clonedDiv.find('.min-qty-shipping').attr('name', `variant_shipping-` + id + `[from][]`)
                     clonedDiv.find('.max-qty-shipping').attr('name', `variant_shipping-` + id + `[to][]`)
                     clonedDiv.find('.estimated_order').attr('name', `variant_shipping-` + id +
@@ -4039,7 +4047,9 @@
                         `[charge_per_unit_shipping][]`)
                     clonedDiv.find('.btn-add-shipping').attr('data-id', id);
                     clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id', id);
-
+                    clonedDiv.find("input").each((_, el) => {
+                        $(el).attr("disabled", true);
+                    });
                     $(this).parent().parent().parent().find('#bloc_default_shipping').append(clonedDiv);
                 } else {
                     $(this).parent().parent().parent().find('#bloc_default_shipping').empty();
@@ -4225,6 +4235,9 @@
                     clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' +
                         id_variant);
                     clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + id_variant);
+                    clonedDiv.find("input").each((_, el) => {
+                        $(el).attr("disabled", true);
+                    });
                     $(this).parent().parent().parent().find('#bloc-sample-shipping').append(clonedDiv);
                 } else {
                     $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
@@ -4268,13 +4281,14 @@
                 let count_shippers = {{ count($supported_shippers) }};
                 let selected = $(this).val();
 
-                if (selected.length == 0) {
-                    $(this).parent().parent().find('.shipping_amount').val('');
-                    $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
-                    $(this).parent().parent().find('.estimated_shipping_sample').val('');
-                    $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
-                    $(this).parent().parent().find('.paid_sample').val('');
-                    $(this).parent().parent().find('.paid_sample').prop('disabled', true);
+                if (["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", false);
+                    });
+                } else {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", true);
+                    });
                 }
 
                 if (selected.indexOf('third_party') !== -1) {
