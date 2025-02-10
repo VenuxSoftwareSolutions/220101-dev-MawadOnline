@@ -2804,7 +2804,7 @@ class ProductService
                 if ((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))) {
                     if (($from_shipping != null) && ($collection['to_shipping'][$key] != null) && ($collection['shipper'][$key] != null) && ($collection['estimated_order'][$key] != null)) {
                         $current_data = [];
-                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $shippers = $collection['shipper'][$key];
                         $current_data['from_shipping'] = $from_shipping;
                         $current_data['to_shipping'] = $collection['to_shipping'][$key];
                         $current_data['shipper'] = $shippers;
@@ -2825,7 +2825,6 @@ class ProductService
         $shipping_sample_parent = [];
         if (isset($collection['shipper_sample'])) {
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         } else {
             $shipping_sample_parent['shipper_sample'] = null;
         }
@@ -3467,18 +3466,8 @@ class ProductService
                 }
             }
 
-            Shipping::where('product_id', $product_draft->id)->delete();
-
-            if (count($shipping) > 0) {
-                $id = $product_draft->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
-            }
+            $this->storeShipping($product_draft->id, $shipping);
+            $this->storeSampleShipping($product_draft->id, $shipping_sample_parent);
 
             $childrens = Product::where('parent_id', $product_draft->id)->pluck('id')->toArray();
 
@@ -3498,18 +3487,9 @@ class ProductService
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
             $product_draft->update($collection);
-            Shipping::where('product_id', $product_draft->id)->delete();
 
-            if (count($shipping) > 0) {
-                $id = $product_draft->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
-            }
+            $this->storeShipping($product_draft->id, $shipping);
+            $this->storeSampleShipping($product_draft->id, $shipping_sample_parent);
 
             if (count($pricing) > 0) {
                 $all_data_to_insert = [];
@@ -3621,7 +3601,7 @@ class ProductService
                     }
 
                     if (isset($variant['shipper_sample'])) {
-                        $collection['shipper_sample'] = implode(',', $variant['shipper_sample']);
+                        $collection['shipper_sample'] = $variant['shipper_sample'];
                     } else {
                         $collection['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -3641,7 +3621,7 @@ class ProductService
                     if (isset($variant['paid_sample'])) {
                         $collection['paid_sample'] = $variant['paid_sample'];
                     } else {
-                        $collection['paid_sample'] = $shipping_sample_parent['paid_sample'];
+                        $collection['paid_sample'] = $shipping_sample_parent["paid_sample"];
                     }
 
                     if (isset($variant['shipping_amount'])) {
@@ -3659,6 +3639,21 @@ class ProductService
                     $product = Product::find($id);
 
                     if ($product != null) {
+                        $sample_shipping["shipper_sample"] = $collection["shipper_sample"];
+                        unset($collection["shipper_sample"]);
+
+                        $sample_shipping["estimated_sample"] = $collection["estimated_sample"];
+                        unset($collection["estimated_sample"]);
+
+                        $sample_shipping["estimated_shipping_sample"] = $collection["estimated_shipping_sample"];
+                        unset($collection["estimated_shipping_sample"]);
+
+                        $sample_shipping["paid_sample"] = $collection["paid_sample"];
+                        unset($collection["paid_sample"]);
+
+                        $sample_shipping["shipping_amount"] = $collection["shipping_amount"];
+                        unset($collection["shipping_amount"]);
+
                         $product->update($collection);
 
                         //attributes of variant
@@ -3940,31 +3935,12 @@ class ProductService
                                 }
                             }
 
-                            if (count($shipping_details) > 0) {
-                                Shipping::insert($shipping_details);
-                            }
+                            $this->storeShipping($product->id, $shipping_details);
                         } else {
-                            if (count($shipping) > 0) {
-                                $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
-
-                                // Using array_map() and array_filter()
-                                $shipping = array_map(function ($arr) use ($keyToRemove) {
-                                    return array_filter($arr, function ($k) use ($keyToRemove) {
-                                        return $k !== $keyToRemove;
-                                    }, ARRAY_FILTER_USE_KEY);
-                                }, $shipping);
-
-                                $id = $product->id;
-                                $keyToPush = 'product_id';
-                                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                                    $arr[$keyToPush] = $id;
-
-                                    return $arr;
-                                }, $shipping);
-
-                                Shipping::insert($shipping);
-                            }
+                            $this->storeShipping($product->id, $shipping);
                         }
+
+                        $this->storeSampleShipping($product->id, $sample_shipping);
                     }
                 }
             }
@@ -4493,6 +4469,8 @@ class ProductService
 
     public function storeShipping($product_id, $shipping)
     {
+        Shipping::where("product_id", $product_id)->delete();
+
         if (count($shipping) > 0) {
             $id = $product_id;
             $keyToPush = 'product_id';
@@ -4508,6 +4486,11 @@ class ProductService
 
     public function storeSampleShipping($product_id, $sample_shipping)
     {
+        Shipping::where("product_id", $product_id)
+            ->where("from_shipping", 1)
+            ->where("to_shipping", 1)
+            ->delete();
+
         if (is_array($sample_shipping["shipper_sample"]) === false) {
             Shipping::insert([
                 "product_id" => $product_id,
@@ -4627,7 +4610,6 @@ class ProductService
 
         $product_parent = Product::create($data);
 
-        $this->storeSampleShipping($product_parent->id, $sample_shipping);
         $all_data_to_insert_parent = [];
 
         foreach ($pricing['from'] as $key => $from) {
@@ -4698,7 +4680,9 @@ class ProductService
             PricingConfiguration::insert($all_data_to_insert_parent);
         }
 
-        $this->storeShipping($product_parent, $shipping);
+        $this->storeShipping($product_parent->id, $shipping);
+
+        $this->storeSampleShipping($product_parent->id, $sample_shipping);
 
         unset($data['is_parent']);
         $data['parent_id'] = $product_parent->id;
