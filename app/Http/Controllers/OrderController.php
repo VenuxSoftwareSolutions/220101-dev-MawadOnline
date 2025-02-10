@@ -27,6 +27,7 @@ use App\Jobs\firstCountDownNotificationJob;
 use App\Models\CommissionVat;
 use App\Models\Discount;
 use App\Utility\CartUtility;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -41,7 +42,7 @@ class OrderController extends Controller
     // All Orders
     public function all_orders(Request $request)
     {
-        CoreComponentRepository::instantiateShopRepository();
+        //CoreComponentRepository::instantiateShopRepository();
 
         $date = $request->date;
         $sort_search = null;
@@ -442,116 +443,229 @@ class OrderController extends Controller
         return view('seller.order_details_seller', compact('order'));
     }
 
-    public function update_delivery_status(Request $request)
+     public function update_delivery_status(Request $request)
     {
-        $order = Order::findOrFail($request->order_id);
-        $order->delivery_viewed = '0';
-        $order->delivery_status = $request->status;
-        $order->save();
+        try {
+            $order = OrderDetail::findOrFail($request->order_id);
+            $order->order->delivery_viewed = '0';
+            $order->delivery_status = $request->status;
+            $order->save();
 
-        if ($request->status == 'cancelled' && $order->payment_type == 'wallet') {
-            $user = User::where('id', $order->user_id)->first();
-            $user->balance += $order->grand_total;
-            $user->save();
-        }
+            $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
 
-        if (Auth::user()->user_type == 'seller') {
-            foreach ($order->orderDetails->where('seller_id', Auth::user()->owner_id) as $key => $orderDetail) {
-                $orderDetail->delivery_status = $request->status;
-                $orderDetail->save();
+            if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
+                $controller = new AramexController;
 
-                if ($request->status == 'cancelled') {
-                    $variant = $orderDetail->variation;
-                    if ($orderDetail->variation == null) {
-                        $variant = '';
+                $warehouses = session()->get('warehouses');
+                $selectedWarehouse = Warehouse::findOrFail($warehouses[0]['warehouse_id']);
+
+                $vendorBusinessInfo = BusinessInformation::where('user_id', auth()->user()->id)->first();
+                $contactPerson = ContactPerson::where('user_id', auth()->user()->id)->first();
+
+                $request->merge([
+                    'pickup_address_line1' => $selectedWarehouse->address_street,
+                    'pickup_address_line2' => $selectedWarehouse->address_building,
+                    'pickup_address_line3' => $selectedWarehouse->address_unit,
+                    'pickup_city' => $selectedWarehouse->area_id,
+                    'pickup_state' => $selectedWarehouse->emirate_id,
+                    'full_name' => "$contactPerson->first_name $contactPerson->last_name",
+                    'phone' => $contactPerson->mobile_phone,
+                    'shipper_address_line1' => $vendorBusinessInfo->street,
+                    'shipper_address_line2' => null,
+                    'shipper_address_line3' => null,
+                    'shipper_building_name' => $vendorBusinessInfo->building,
+                    'shipper_building_number' => $vendorBusinessInfo->unit,
+                    'shipper_post_code' => $vendorBusinessInfo->po_box,
+                    'state' => $vendorBusinessInfo->state,
+                    'city' => $vendorBusinessInfo->area_id,
+                    'email' => $contactPerson->email,
+                ]);
+
+                $pickup_input = $controller->transformNewPickupData($request->all());
+
+                $pickup = $controller->createPickup($pickup_input);
+
+                if ($pickup !== null && $pickup['HasErrors'] === true) {
+                    Log::error(sprintf(
+                        'Error while creating pickup for order %d, with message: %s',
+                        $order->id, json_encode($pickup)
+                    ));
+
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
+
+                    return response()->json([
+                        'error' => true,
+                        'message' => __("There's an error while processing pickup creation! Please try again later!"),
+                    ], 500);
+                }
+
+                $product = get_single_product($request->product_id);
+
+                $package_weight = $product->weight !== null ? (
+                    str()->lower($product->unit_weight) === 'kilograms' ?
+                    $product->weight
+                    : $product->weight * POUNDS_TO_KG_RATIO
+                ) : null;
+
+                $actualWeightValue = $package_weight !== null ? (
+                    (float) ($package_weight * $order->quantity * WEIGHT_MARGIN)
+                ) : ((float) $controller->calculateShipmentActualWeight(
+                    $product->only(['length', 'width', 'height']),
+                    $order->quantity
+                ));
+
+                $dimensions = [
+                    'Length' => $product->length,
+                    'Width' => $product->width,
+                    'Height' => $product->height,
+                    'Unit' => 'cm',
+                ];
+
+                $weight = [
+                    'Value' => $actualWeightValue,
+                    'Unit' => 'KG',
+                ];
+
+                $request->merge([
+                    'pickup_guid' => $pickup['ProcessedPickup']['GUID'],
+                    'dimensions' => $dimensions,
+                    'weight' => $weight,
+                ]);
+
+                $shipment_input = $controller->transformNewShipmentsData($request->all());
+                $shipment = $controller->createShipments($shipment_input);
+
+                if ($shipment !== null && $shipment['HasErrors'] === true) {
+                    Log::error(sprintf(
+                        'Error while creating shipment for order %d, with message: %s',
+                        $order->id, json_encode($shipment)
+                    ));
+
+                    $order->delivery_status = "in_preparation";
+                    $order->save();
+
+                    return response()->json([
+                        'error' => true,
+                        'message' => __("There's an error while processing shipment creation! Please try again later!"),
+                    ], 500);
+                }
+
+                $link = $shipment['Shipments'][0]['ShipmentLabel']['LabelURL'];
+
+                TrackingShipment::firstOrCreate([
+                    'user_id' => auth()->user()->id,
+                    'order_detail_id' => $order->id,
+                    'shipment_id' => $shipment['Shipments'][0]['ID'],
+                    'label_url' => $link,
+                ]);
+            }
+
+            if ($request->status == 'cancelled' && $order->order->payment_type == 'wallet') {
+                $user = User::where('id', $order->order->user_id)->first();
+                $user->balance += $order->grand_total;
+                $user->save();
+            }
+
+            if ($request->status == 'cancelled') {
+                $variant = $order->variation;
+                if ($order->variation == null) {
+                    $variant = '';
+                }
+
+                $product_stock = ProductStock::where('product_id', $order->product_id)
+                    ->where('variant', $variant)
+                    ->first();
+                if ($product_stock != null) {
+                    $product_stock->qty += $order->quantity;
+                    $product_stock->save();
+                }
+            }
+
+
+            if (addon_is_activated('affiliate_system')) {
+                if (($request->status == 'delivered' || $request->status == 'cancelled') &&
+                    $orderDetail->product_referral_code
+                ) {
+
+                    $no_of_delivered = 0;
+                    $no_of_canceled = 0;
+
+                    if ($request->status == 'delivered') {
+                        $no_of_delivered = $orderDetail->quantity;
                     }
-
-                    $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
-                        ->where('variant', $variant)
-                        ->first();
-
-                    if ($product_stock != null) {
-                        $product_stock->qty += $orderDetail->quantity;
-                        $product_stock->save();
+                    if ($request->status == 'cancelled') {
+                        $no_of_canceled = $orderDetail->quantity;
                     }
                 }
             }
-        } else {
-            foreach ($order->orderDetails as $key => $orderDetail) {
 
-                $orderDetail->delivery_status = $request->status;
-                $orderDetail->save();
+            if ($request->status == 'Replaced') {
+                $replacedOrderDetail = new OrderDetail();
+                $replacedOrder = new Order();
+                $replacedOrder = $order->order->replicate();
+                $replacedOrderDetail = $order->replicate();
+                $replacedOrder->created_at = Carbon::now();
+                $replacedOrder->save();
+                $replacedOrderDetail->order_id = $replacedOrder->id;
+                $replacedOrderDetail->delivery_status = "pending";
+                $replacedOrderDetail->last_delivery_status = null;
+                $replacedOrderDetail->created_at = Carbon::now();
+                $replacedOrderDetail->variation = $order->variation."- Replacement";
+                $replacedOrderDetail->save();
+            }
 
-                if ($request->status == 'cancelled') {
-                    $variant = $orderDetail->variation;
-                    if ($orderDetail->variation == null) {
-                        $variant = '';
-                    }
-
-                    $product_stock = ProductStock::where('product_id', $orderDetail->product_id)
-                        ->where('variant', $variant)
-                        ->first();
-
-                    if ($product_stock != null) {
-                        $product_stock->qty += $orderDetail->quantity;
-                        $product_stock->save();
-                    }
-                }
-
-                if (addon_is_activated('affiliate_system')) {
-                    if (($request->status == 'delivered' || $request->status == 'cancelled') &&
-                        $orderDetail->product_referral_code
-                    ) {
-
-                        $no_of_delivered = 0;
-                        $no_of_canceled = 0;
-
-                        if ($request->status == 'delivered') {
-                            $no_of_delivered = $orderDetail->quantity;
-                        }
-                        if ($request->status == 'cancelled') {
-                            $no_of_canceled = $orderDetail->quantity;
-                        }
-
-                        $referred_by_user = User::where('referral_code', $orderDetail->product_referral_code)->first();
-
-                        $affiliateController = new AffiliateController();
-                        $affiliateController->processAffiliateStats($referred_by_user->id, 0, 0, $no_of_delivered, $no_of_canceled);
-                    }
+            if (
+                addon_is_activated('otp_system') &&
+                SmsTemplate::where('identifier', 'delivery_status_change')
+                    ->first()
+                    ->status == 1
+            ) {
+                try {
+                    SmsUtility::delivery_status_change(json_decode($order->order->shipping_address)->phone, $order->order);
+                } catch (Exception) {
                 }
             }
-        }
-        if (addon_is_activated('otp_system') && SmsTemplate::where('identifier', 'delivery_status_change')->first()->status == 1) {
-            try {
-                SmsUtility::delivery_status_change(json_decode($order->shipping_address)->phone, $order);
-            } catch (Exception) {
-                // @todo log error
+
+            NotificationUtility::sendNotification($order->order, $request->status);
+
+            if (get_setting('google_firebase') == 1 && $order->order->user->device_token != null) {
+                $status = str_replace('_', '', $order->delivery_status);
+                $request->merge([
+                    'device_token' => $order->order->user->device_token,
+                    'title' => 'Order updated !',
+                    'status' => $status,
+                    'text' => " Your order {$order->order->code} has been {$status}",
+                    'type' => 'order',
+                    'id' => $order->id,
+                    'user_id' => $order->order->user->id,
+                ]);
+
+                NotificationUtility::sendFirebaseNotification($request);
             }
-        }
 
-        //sends Notifications to user
-        NotificationUtility::sendNotification($order, $request->status);
-        if (get_setting('google_firebase') == 1 && $order->user->device_token != null) {
-            $request->device_token = $order->user->device_token;
-            $request->title = 'Order updated !';
-            $status = str_replace('_', '', $order->delivery_status);
-            $request->text = " Your order {$order->code} has been {$status}";
-
-            $request->type = 'order';
-            $request->id = $order->id;
-            $request->user_id = $order->user->id;
-
-            NotificationUtility::sendFirebaseNotification($request);
-        }
-
-        if (addon_is_activated('delivery_boy')) {
-            if (Auth::user()->user_type == 'delivery_boy') {
-                $deliveryBoyController = new DeliveryBoyController();
-                $deliveryBoyController->store_delivery_history($order);
+            if (addon_is_activated('delivery_boy')) {
+                if (Auth::user()->user_type == 'delivery_boy') {
+                    $deliveryBoyController = new DeliveryBoyController;
+                    $deliveryBoyController->store_delivery_history($order);
+                }
             }
-        }
 
-        return 1;
+            if ($request->status === 'ready_for_shipment') {
+                return response()->json([
+                    'error' => false,
+                    'data' => [
+                        'link' => $link,
+                    ],
+                ], 200);
+            }
+
+            return 1;
+        } catch (Exception $e) {
+            Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
+
+            return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
+        }
     }
 
     public function update_tracking_code(Request $request)
