@@ -281,7 +281,59 @@
                                         {{ single_price($orderDetail->price) }}
                                     </td>
                                     <td class="text-center">
-                                        {{ $orderDetail->delivery_status }}
+                                        {{ $orderDetail->last_delivery_status ? $orderDetail->last_delivery_status : "-"  }}
+                                    </td>
+                                    <td class="text-center">
+                                        @if($orderDetail->delivery_status == 'Product-Returned')
+                                                <select
+                                                    onchange="updateDeliveryStatus(this)"
+                                                    class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
+                                                    data-product_id="{{ $orderDetail->product->id }}"
+                                                    data-orderdetail_id="{{ $orderDetail->id }}"
+                                                    data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                    style="width:200px;">
+                                                    <option value="Product-Returned" disabled
+                                                        @if ($orderDetail->delivery_status == 'Product-Returned') selected @endif >
+                                                        {{ __('order.Product-Returned') }}</option>
+                                                    <option value="Returned">
+                                                        {{ __('order.Initiate-Refund') }}</option>
+                                                </select>
+                                        @elseif(!in_array($orderDetail->delivery_status , ['Replaced','Returned','In-Return','cancelled','delivered','pending','on_the_way','in_preparation','ready_for_shipment'] ))
+                                            <select
+                                                onchange="updateDeliveryStatus(this)"
+                                                class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
+                                                data-product_id="{{ $orderDetail->product->id }}"
+                                                data-orderdetail_id="{{ $orderDetail->id }}"
+                                                data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                style="width:200px;">
+                                                <option value="In-Claim" disabled
+                                                    @if ($orderDetail->delivery_status == 'In-Claim') selected @endif>
+                                                    {{ translate('In-Claim') }}</option>
+                                                <option value="{{$orderDetail->last_delivery_status }}">
+                                                    {{ translate('Return to last status')}}- {{$orderDetail->last_delivery_status }}
+                                                </option>
+                                                @if(in_array($orderDetail->last_delivery_status,['delivered','on_the_way']))
+                                                <option value="Replaced">
+                                                    {{ __('order.Initiate-Replacement') }}
+                                                </option>
+                                                <option value="In-Return">
+                                                    {{ __('order.Initiate-Return') }}
+                                                </option>
+                                                <option value="Initiate-Refund">
+                                                    {{ __('order.Initiate-Refund') }}
+                                                </option>
+                                                @else
+                                                <option value="cancelled">
+                                                    {{ translate('Canceled') }}
+                                                </option>
+                                                @endif
+                                            </select>
+                                        @else
+                                            <input type="text" class="form-control"
+                                                value="{{ translate(ucfirst(str_replace('_', ' ', $orderDetail->delivery_status))) }}"
+                                                disabled>
+
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <select onchange="handleTicket(this)" class="form-control"
