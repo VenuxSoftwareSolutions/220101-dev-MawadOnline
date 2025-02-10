@@ -104,8 +104,8 @@
                                 <td>{{ $ticket->getVendor()->shop->name }}</td>
                                 <td>
                                     <span
-                                        class="badge badge-inline badge-info">{{ translate(ucfirst(str_replace('_', ' ', $ticket->orderDetails()->first()->delivery_status))) }}</span>
-                                </td>
+                                        class="badge badge-inline badge-info">{{ translate(ucfirst(str_replace('_', ' ', $ticket->orderDetails->delivery_status))) }}</span>
+                                    </td>
                                 <td>#{{ $ticket->orderDetails()->first()->order->id }}</td>
                                 <td>{{ $ticket->orderDetails()->first()->product->name }}</td>
                                 <td class="text-right">
