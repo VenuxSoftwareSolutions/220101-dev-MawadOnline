@@ -463,5 +463,52 @@
         const handleTicket = (event) =>{
                 window.location.href = event.value;
         }
+
+        // const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
+        //     if (event.value == "in_preparation") {
+        //         handleUpdateWarehouse(event)
+        //     } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
+        //         Swal.fire({
+        //             title: '{{ __('Pickup address') }}',
+        //             text: '{{ __('The pickup address will be the same as the selected warehouse in the last step.') }}',
+        //             icon: 'info',
+        //             scrollbarPadding: false,
+        //             showConfirmButton: true,
+        //             showCancelButton: true
+        //         }).then(({
+        //             isConfirmed
+        //         }) => {
+        //             if (isConfirmed === true) {
+        //                 $("#shipment-modal").modal("show");
+        //                 $("#shipment-modal").on('shown.bs.modal', function(e) {
+        //                     let orderDetailId = $(event).data("orderdetail_id");
+        //                     let productId = $(event).data("product_id");
+        //                     let modal = $(this);
+        //                     modal.find('.modal-body #order_detail_id').val(orderDetailId);
+        //                     modal.find('.modal-body [name=product_id]').val(productId);
+        //                 });
+        //             } else {
+        //                 $(event).val("in_preparation");
+        //             }
+        //         });
+        //     } else {
+        //         updateDeliveryStatus(event);
+        //     }
+        // };
+
+        const updateDeliveryStatus = (event) => {
+            let order_id = event.dataset.orderdetail_id;
+            let status = event.value;
+
+            $.post('{{ route('orders.update_delivery_status') }}', {
+                _token: '{{ csrf_token() }}',
+                order_id: order_id,
+                status: status
+            }, function(data) {
+                $('#order_details').modal('hide');
+                AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
+                location.reload().setTimeOut(1000);
+            });
+        }
     </script>
 @endsection
