@@ -171,6 +171,22 @@
                                                 @php
                                                     $shippers = $orderDetail->product->shippingOptions($orderDetail->quantity)->map(fn($option) => $option->shipper)->toArray();
                                                 @endphp
+                                            @if($orderDetail->delivery_status == 'In-Return')
+                                                <select
+                                                    onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"
+                                                    class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
+                                                    data-product_id="{{ $orderDetail->product->id }}"
+                                                    data-orderdetail_id="{{ $orderDetail->id }}"
+                                                    data-minimum-results-for-search="Infinity" id="update_delivery_status"
+                                                    style="width:200px;">
+                                                    <option value="In-Return" disabled
+                                                        @if ($orderDetail->delivery_status == 'In-Return') selected @endif >
+                                                        {{ __('order.Initiate-Return') }}</option>
+                                                    <option value="Product-Returned"
+                                                        @if ($orderDetail->delivery_status == 'Product-Returned”') selected @endif>
+                                                        {{ __('order.Product-Returned') }}</option>
+                                                </select>
+                                            @elseif ($orderDetail->delivery_status != 'Product-Returned' && $orderDetail->delivery_status != 'Returned' && $orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled' && $orderDetail->delivery_status != 'In-Claim')
                                                 <select
                                                     onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"
                                                     class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
