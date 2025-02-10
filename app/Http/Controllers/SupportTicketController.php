@@ -181,6 +181,7 @@ class SupportTicketController extends Controller
         $ticket_reply->reply_to = $request->submit_to == "vendor" ? $ticket->orderDetails->seller->id : $ticket->orderDetails->order->user->id ;
         $ticket_reply->ticket->save();
         if($request->submit_as && $request->submit_as == "Under Review" ){
+            $ticket->orderDetails->last_delivery_status = $ticket->orderDetails->delivery_status ;
             $ticket->orderDetails->delivery_status = "In-Claim";
             $ticket->orderDetails->save();
         }
