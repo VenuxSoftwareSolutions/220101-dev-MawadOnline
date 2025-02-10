@@ -198,6 +198,8 @@
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Total') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
+                                {{ translate('Last Status') }}</th>
+                                <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                 {{ translate('Status') }}</th>
                                 <th data-breakpoints="lg" class="min-col text-uppercase text-right">
                                     {{ translate('Ticket') }}</th>
