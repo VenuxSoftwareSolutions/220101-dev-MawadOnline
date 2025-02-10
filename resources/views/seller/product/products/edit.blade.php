@@ -632,17 +632,6 @@
                                 <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div id="sample_parent">
-                                    {{-- <div class="row mb-3">
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="1" type="checkbox" name="vat_sample" @if ($vat_user->vat_registered == 1) checked @endif>
-                                                <span></span>
-                                            </label>
-                                        </div>
-                                    </div> --}}
                                     <div class="row mb-3">
                                         <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
                                         <div class="col-md-10">
@@ -1325,7 +1314,7 @@
                                     <div class="custom-file mb-3">
                                         <input type="file" class="custom-file-input photos_variant"
                                             id="photos_variant" accept=".jpeg, .jpg, .png" multiple>
-                                        <label class="custom-file-label" for="photos_variant">Choose files</label>
+                                        <label class="custom-file-label" for="photos_variant">{{ __("Choose files") }}</label>
                                     </div>
                                     <div class="row uploaded_images">
 
