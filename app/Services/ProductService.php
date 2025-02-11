@@ -6108,28 +6108,48 @@ class ProductService
 
     public function applySorting($products, $sort_by)
     {
+        $discountedPriceQuery = DB::table('pricing_configurations as pc')
+            ->select('pc.id_products', DB::raw("
+                pc.unit_price - LEAST(COALESCE(MAX(d.max_discount), 0), pc.unit_price * (COALESCE(MAX(d.discount_percentage), 0) / 100)) AS discounted_price
+            "))
+            ->leftJoin('discounts as d', function ($join) {
+                $join->on('d.product_id', '=', 'pc.id_products')
+                    ->where('d.status', 1)
+                    ->where('d.start_date', '<=', now())
+                    ->where('d.end_date', '>=', now())
+                    ->where(function ($query) {
+                        $query->where('d.scope', 'product')->orWhereIn('d.scope', ['allOrders', 'min_order_amount']);
+                    });
+            })
+            ->groupBy('pc.id_products', 'pc.unit_price');
+    
+        // Join the discounted price subquery to the products query
+        $products = $products->leftJoinSub($discountedPriceQuery, 'discounted_prices', function ($join) {
+            $join->on('products.id', '=', 'discounted_prices.id_products');
+        });
+    
+        // Apply sorting dynamically
         switch ($sort_by) {
             case 'newest':
-                $products->orderBy('created_at', 'desc');
+                $products->orderBy('products.created_at', 'desc');
                 break;
             case 'oldest':
-                $products->orderBy('created_at', 'asc');
+                $products->orderBy('products.created_at', 'asc');
                 break;
             case 'price-asc':
-                $products->select('products.*')->orderBy('min_price_order', 'asc');
+                $products->orderByRaw('COALESCE(discounted_prices.discounted_price, products.unit_price) ASC');
                 break;
             case 'price-desc':
-                $products->select('products.*')->orderBy('min_price_order', 'desc');
+                $products->orderByRaw('COALESCE(discounted_prices.discounted_price, products.unit_price) DESC');
                 break;
             default:
-                $products->orderBy('id', 'desc');
+                $products->orderBy('products.id', 'desc');
                 break;
         }
-
-        return $products;
+    
+        return $products; // Returns query builder (not a collection), allowing pagination
     }
-
-    public function applyPriceFilter($products, $min_price, $max_price)
+        public function applyPriceFilter($products, $min_price, $max_price)
     {
         if ($min_price || $max_price) {
             $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
