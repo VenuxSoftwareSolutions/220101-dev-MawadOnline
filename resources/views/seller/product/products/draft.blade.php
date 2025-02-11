@@ -810,6 +810,7 @@
                                                             @php $shippers = explode(",", $shipping->shipper); @endphp
                                                             <select class="form-control shipper"
                                                                 name="shipper[]">
+                                                                <option>{{ __("Select shipper") }}</option>
                                                                 <option value="vendor"
                                                                     @if (in_array('vendor', $shippers)) {{ 'selected' }} @endif>
                                                                     {{ translate('vendor') }}</option>
@@ -1087,6 +1088,7 @@
                                                             @php $shippers_sample = explode(",", $shipping->shipper); @endphp
                                                             <select class="form-control shipper_sample" name="shipper_sample[]"
                                                                 id="shipper_sample_parent">
+                                                                <option>{{ __("Select shipper") }}</option>
                                                                 <option value="vendor"
                                                                     @if (in_array('vendor', $shippers_sample)) {{ 'selected' }} @endif>
                                                                     {{ translate('vendor') }}</option>
@@ -1622,6 +1624,7 @@
                                                                         @php $shippers = explode(",", $shipping->shipper); @endphp
                                                                         <select class="form-control shipper"
                                                                             name="variant[shipper][{{ $children->id }}][]">
+                                                                            <option>{{ __("Select shipper") }}</option>
                                                                             <option value="vendor"
                                                                                 @if (in_array('vendor', $shippers)) {{ 'selected' }} @endif>
                                                                                 {{ translate('vendor') }}</option>
@@ -1812,6 +1815,7 @@
 
                                                                         <select class="form-control shipper_sample"
                                                                             name="variant[shipper_sample][{{ $children->id }}][]">
+                                                                            <option>{{ __("Select shipper") }}</option>
                                                                             <option value="vendor"
                                                                                 @if ($shipping->shipper === 'vendor') {{ 'selected' }} @endif>
                                                                                 {{ translate('vendor') }}</option>
@@ -3615,6 +3619,7 @@
                 `;
                 clonedTr.find("input").each((_,el) => {
                     $(el).val("");
+                    $(el).attr("disabled", true);
                 });
                 clonedTr.find("td:last").append(removeIcon);
                 $(this).parent().parent().parent().append(clonedTr);
@@ -4865,14 +4870,15 @@
                                 <tr>
                                     <td>
                                         <select class="form-control shipper">
+                                            <option>{{ __("Select shipper") }}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number"  class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number"  class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td><input type="number" class="form-control estimated_order"  placeholder="{{ translate('Days') }}"></td>
-                                    <td><input type="number" class="form-control estimated_shipping"  placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input disabled type="number" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_order"  placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_shipping"  placeholder="{{ translate('Days') }}"></td>
                                     <td>
                                         <select class="form-control paid">
                                             <option value="" selected>{{ translate('Choose option') }}</option>
@@ -4887,8 +4893,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{ translate('Charging per Unit of Sale') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" placeholder="{{ translate('Charge unit') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control flat_rate_shipping" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control charge_per_unit_shipping" placeholder="{{ translate('Charge unit') }}" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne') }}"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne') }}"></i>
@@ -4900,14 +4906,15 @@
                                 <tr>
                                     <td>
                                         <select class="form-control shipper" name="shipper[]">
+                                            <option>{{ __("Select shipper") }}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td><input type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{ translate('Days') }}"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" name="from_shipping[]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input disabled type="number" name="to_shipping[]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_order" name="estimated_order[]" placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_shipping" name="estimated_shipping[]" placeholder="{{ translate('Days') }}"></td>
                                     <td>
                                         <select class="form-control paid" name="paid[]">
                                             <option value="" selected>{{ translate('Choose option') }}</option>
@@ -4922,8 +4929,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{ translate('Charging per Unit of Sale') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{ translate('Charge unit') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control flat_rate_shipping" name="flat_rate_shipping[]" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control charge_per_unit_shipping" name="charge_per_unit_shipping[]" placeholder="{{ translate('Charge unit') }}" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne') }}"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne') }}"></i>
@@ -4937,16 +4944,17 @@
                                     <td>
                                         <select class="form-control shipper" name="variant[shipper][` + id_variant +
                         `][]">
+                                            <option>{{ __("Select shipper") }}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant[estimated_order][` +
+                                    <td><input disabled type="number" name="variant[from_shipping][` + id_variant + `][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input disabled type="number" name="variant[to_shipping][` + id_variant + `][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_order" name="variant[estimated_order][` +
                         id_variant +
                         `][]" placeholder="{{ translate('Days') }}"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` +
+                                    <td><input disabled type="number" class="form-control estimated_shipping" name="variant[estimated_shipping][` +
                         id_variant + `][]" placeholder="{{ translate('Days') }}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant[paid][` + id_variant + `][]">
@@ -4964,10 +4972,10 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{ translate('Charging per Unit of Sale') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` +
+                                    <td><input disabled type="number" class="form-control flat_rate_shipping" name="variant[flat_rate_shipping][` +
                         id_variant +
                         `][]" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` +
+                                    <td><input disabled type="number" class="form-control charge_per_unit_shipping" name="variant[charge_per_unit_shipping][` +
                         id_variant + `][]" placeholder="{{ translate('Charge unit') }}" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne') }}"></i>
@@ -4981,14 +4989,15 @@
                                 <tr>
                                     <td>
                                         <select class="form-control shipper" name="variant_shipping-${id_new_variant}[shipper][]">
+                                            <option>{{ __("Select shipper") }}</option>
                                             <option value="vendor" @selected(old('shipper') == 'vendor')>{{ translate('vendor') }}</option>
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
-                                    <td><input type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
-                                    <td><input type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="{{ translate('Days') }}"></td>
-                                    <td><input type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" name="variant_shipping-${id_new_variant}[from][]" class="form-control min-qty-shipping" id="" placeholder="{{ translate('From QTY') }}"></td>
+                                    <td><input disabled type="number" name="variant_shipping-${id_new_variant}[to][]" class="form-control max-qty-shipping" id="" placeholder="{{ translate('To QTY') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_order" name="variant_shipping-${id_new_variant}[estimated_order][]" placeholder="{{ translate('Days') }}"></td>
+                                    <td><input disabled type="number" class="form-control estimated_shipping" name="variant_shipping-${id_new_variant}[estimated_shipping][]" placeholder="{{ translate('Days') }}"></td>
                                     <td>
                                         <select class="form-control paid" name="variant_shipping-${id_new_variant}[paid][]">
                                             <option value="" selected>{{ translate('Choose option') }}</option>
@@ -5003,8 +5012,8 @@
                                             <option value="charging" @selected(old('shipping_charge') == 'charging')>{{ translate('Charging per Unit of Sale') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                    <td><input type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="{{ translate('Charge unit') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control flat_rate_shipping" name="variant_shipping-${id_new_variant}[flat_rate_shipping][]" placeholder="{{ translate('Flat rate amount') }}" readonly></td>
+                                    <td><input disabled type="number" class="form-control charge_per_unit_shipping" name="variant_shipping-${id_new_variant}[charge_per_unit_shipping][]" placeholder="{{ translate('Charge unit') }}" readonly></td>
                                     <td>
                                         <i class="las la-plus btn-add-shipping" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Add another ligne') }}"></i>
                                         <i class="las la-trash delete_shipping_canfiguration" data-variant-id="${id_new_variant}" style="margin-left: 5px; margin-top: 17px;" title="{{ translate('Delete this ligne') }}"></i>
@@ -5097,21 +5106,27 @@
             })
 
             $('body').on('change', '.shipper', function() {
-                var count_shippers = "{{ count($supported_shippers) }}";
+                let count_shippers = "{{ count($supported_shippers) }}";
                 count_shippers = parseInt(count_shippers);
-                var selected = $(this).val();
+                let selected = $(this).val();
+
+                if (["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", false);
+                    });
+                } else {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", true);
+                    });
+                }
 
                 if (selected.indexOf('third_party') !== -1) {
                     if (count_shippers == 0) {
-                        var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = `<?php $text = "You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.";
-                        echo translate($text); ?>`;
-
-                        $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#title-modal').text("{{ translate('Default Shipping Configuration') }}");
+                        $('#text-modal').html("{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}");
                         $('#modal-info').modal('show');
 
-                        var checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
+                        let checkbox = $(this).parent().find('input[type="checkbox"][value="third_party"]');
                         if (selected.length == 1) {
                             $(this).parent().find('.multi-select-button').text('-- Select --');
                         } else {
@@ -5548,8 +5563,8 @@
                                             <option value="third_party" @selected(old('shipper') == 'third_party')>{{ translate('MawadOnline 3rd Party Shippers') }}</option>
                                         </select>
                                     </td>shipping_
-                                    <td><input type="number" class="form-control estimated_sample" name="estimated_sample[]"></td>
-                                    <td><input type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample[]"></td>
+                                    <td><input disabled type="number" class="form-control estimated_sample" name="estimated_sample[]"></td>
+                                    <td><input disabled type="number" class="form-control estimated_shipping_sample" name="estimated_shipping_sample[]"></td>
                                     <td>
                                         <select class="form-control paid_sample" name="paid_sample[]">
                                             <option value="" disabled selected>{{ translate('Choose shipper') }}</option>
@@ -5557,7 +5572,7 @@
                                             <option value="buyer" @selected(old('shipper') == 'buyer')>{{ translate('Buyer') }}</option>
                                         </select>
                                     </td>
-                                    <td><input type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
+                                    <td><input disabled type="number" class="form-control shipping_amount" name="shipping_amount[]"></td>
                                     <td>
                                         <i class="las la-plus btn-add-sample" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
                                         <i class="las la-trash delete_sample_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
@@ -5723,9 +5738,20 @@
             });
 
             $('body').on('change', '.shipper_sample', function() {
-                var count_shippers = "{{ count($supported_shippers) }}";
+                let count_shippers = "{{ count($supported_shippers) }}";
                 count_shippers = parseInt(count_shippers);
-                var selected = $(this).val();
+                let selected = $(this).val();
+
+                if (["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", false);
+                    });
+                } else {
+                    $(this).parent().parent().find('input').each(function(_, el) {
+                        $(el).attr("disabled", true);
+                    });
+                }
+
                 if (selected.length == 0) {
                     $(this).parent().parent().find('.shipping_amount').val('');
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
