@@ -51,18 +51,15 @@ class SearchController extends Controller
             $category_id = null;
         }
 
-        $products = Product::IsApprovedPublished()->nonAuction();
+        $products = Product::IsApprovedPublished()->nonAuction()->with('pricingConfiguration');
         Debugbar::info($products);
 
         $attributes = Attribute::all();
         $id_products = [];
 
         //retrieve minimum and maximum price
-        $baseQuery = clone $products;
-        $priceQuery = clone $baseQuery;
-        $priceQuery->join('pricing_configurations', 'products.id', '=', 'pricing_configurations.id_products');
 
-        $productIds = $priceQuery->pluck('products.id')->toArray();
+        $productIds = $products->pluck('products.id')->toArray();
 
         $discountedPrices = $this->productService->getDiscountedPrices($products);
 
@@ -75,15 +72,17 @@ class SearchController extends Controller
         ['products' => $products, 'attributes' => $attributes, 'category_ids' => $category_ids, 'category_parents_ids' => $category_parents_ids, 'category' => $category] = $this->productService->filterProductsAndAttributesByCategory($category_id, $query);
 
         //Filter by Brand
-        $brandQuery = clone $baseQuery;
-        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')->select('brands.*')->distinct()->get();
+        $brands = Brand::whereIn('id', Product::IsApprovedPublished()->nonAuction()->pluck('brand_id'))->get();
         $brand_ids = $this->productService->filterProductsByBrand($request, $brand_id, $products);
+        
+        $baseQuery = clone $products;
 
         //filter by vendors
         $shopQuery = clone $baseQuery;
         $shops = $request->shops;
         $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
         $vender_user_ids = $this->productService->filterProductsByShop($request, $products);
+
 
         //filter by Rating
         $rating = $request->rating;
@@ -100,7 +99,7 @@ class SearchController extends Controller
 
         // filter product by name
         if ($query) {
-            $products->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", [$query . '*']);
+            $products->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", ['+' . $query . '*']);
         }
                 
         //filter product by category

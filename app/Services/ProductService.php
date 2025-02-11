@@ -6123,12 +6123,10 @@ class ProductService
             })
             ->groupBy('pc.id_products', 'pc.unit_price');
     
-        // Join the discounted price subquery to the products query
         $products = $products->leftJoinSub($discountedPriceQuery, 'discounted_prices', function ($join) {
             $join->on('products.id', '=', 'discounted_prices.id_products');
         });
     
-        // Apply sorting dynamically
         switch ($sort_by) {
             case 'newest':
                 $products->orderBy('products.created_at', 'desc');
@@ -6147,8 +6145,7 @@ class ProductService
                 break;
         }
     
-        return $products; // Returns query builder (not a collection), allowing pagination
-    }
+        return $products; 
         public function applyPriceFilter($products, $min_price, $max_price)
     {
         if ($min_price || $max_price) {
