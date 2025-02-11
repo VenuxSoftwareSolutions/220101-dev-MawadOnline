@@ -18,6 +18,7 @@ use App\Models\AttributeCategory;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\App;
 use App\Services\ProductService;
+use Illuminate\Support\Facades\Cache;
 
 use DB;
 
@@ -36,6 +37,12 @@ class SearchController extends Controller
         $query = $request->keyword;
         $category = [];
         $categories = [];
+        $cacheKey = $this->generateCacheKey($request);
+        $cachedData = Cache::get($cacheKey);
+        if ($cachedData) {
+            return response()->json($cachedData);
+        }
+    
         if ($request->category_id) {
             $category_id = $request->category_id;
         }
@@ -120,7 +127,7 @@ class SearchController extends Controller
                 $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
             }
             $pagination = str_replace('href', 'data-href', $products->appends($request->input())->links()->render());
-
+            
             $filter = view('frontend.product_listing_filter', [
                 'conditions' => $conditions,
                 'request_all' => $request_all,
@@ -206,22 +213,35 @@ class SearchController extends Controller
                     }
                 }
             }
-
-            return response()->json([
-                'request_all' => $request_all,
+            $responseData = [
+                'request_all' => request()->input(),
                 'html' => $html,
                 'pagination' => $pagination,
                 'filter' => $filter,
                 'list_categories' => $list_categories,
                 'title_category' => $title_category,
                 'selected_values' => $selected_values,
-            ]);
+            ];
+            Cache::put($cacheKey, $responseData, now()->addMinutes(10));
+
+            return response()->json($responseData);
         }
 
         return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors'));
     }
 
    
+    /**
+     * Generate a unique cache key based on request parameters.
+     */
+    private function generateCacheKey(Request $request)
+    {
+        $keyParts = [
+            $request->fullUrl(),
+            json_encode($request->all())
+        ];
+        return 'products:' . md5(implode('|', $keyParts));
+    }
 
     public function listing(Request $request)
     {
