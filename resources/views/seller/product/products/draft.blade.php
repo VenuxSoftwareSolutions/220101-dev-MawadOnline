@@ -796,7 +796,6 @@
                                                 <th>{{ translate('Est. Order Prep. Days') }}</th>
                                                 <th>{{ translate('Est. Shipping Days') }}</th>
                                                 <th style="width: 164px;">{{ translate('Paid by') }}</th>
-                                                {{-- <th>{{translate('VAT')}}</th> --}}
                                                 <th>{{ translate('Shipping Charge Type') }}</th>
                                                 <th>{{ translate('Flat-rate Amount') }}</th>
                                                 <th>{{ translate('Charge per Unit of Sale') }}</th>
@@ -3852,9 +3851,6 @@
                     $(this).css('border-color', '#e2e5ec');
                 });
 
-                console.log('valuesMinQtyArray: ', valuesMinQtyArray)
-                console.log('valuesMaxQtyArray: ', valuesMaxQtyArray)
-
                 //check if there is any overlaps
                 for (let i = 0; i < valuesMinQtyArray.length; i++) {
                     var minVal = parseFloat(valuesMinQtyArray[
@@ -3874,13 +3870,6 @@
                                     'border-color', 'red');
                                 $(this).parent().parent().parent().find('.max-qty').eq(j - 1).css(
                                     'border-color', 'red');
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: '{{ translate('Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.') }}',
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
                                 var title = "{{ translate('Pricing Configuration') }}";
                                 var message =
                                     '{{ translate('Ensure that the difference between the minimum and maximum quantities of the preceding interval must be equal to one.') }}';
@@ -3896,13 +3885,6 @@
                                 otherMaxVal) { //check if min value exist in another interval
                                 $(this).parent().parent().parent().find('.min-qty').eq(i).css(
                                     'border-color', 'red');
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: '{{ translate('Overlap found.') }}',
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
                                 var title = "{{ translate('Pricing Configuration') }}";
                                 var message = '{{ translate('Overlap found.') }}';
 
@@ -3917,13 +3899,6 @@
                                 otherMaxVal) { //check if max value exist in another interval
                                 $(this).parent().parent().parent().find('.max-qty').eq(i).css(
                                     'border-color', 'red');
-                                // Swal.fire({
-                                //     title: 'Cancelled',
-                                //     text: '{{ translate('Overlap found.') }}',
-                                //     icon: 'error',
-                                //     scrollbarPadding: false,
-                                //     backdrop:false,
-                                // });
                                 var title = "{{ translate('Pricing Configuration') }}";
                                 var message = '{{ translate('Overlap found.') }}';
 
@@ -3936,7 +3911,6 @@
                         }
                     }
                 }
-                // add another ligne in pricing configuration when not any overlaps are found
             });
 
             $('body').on('focusout', '.unit-price-variant', function() {
@@ -3963,157 +3937,6 @@
                     }
                 })
 
-
-            // $('body').on('click', '.btn-add-pricing', function() {
-            //     var id_variant = $(this).data('id_variant');
-            //     var newvariant = $(this).data('newvariant-id');
-
-            //     if(id_variant != undefined){
-            //         var html_to_add = `
-        //                         <tr>
-        //                             <td><input type="number" min="1" name="variant[from][`+ id_variant +`][]" class="form-control min-qty" id=""></td>
-        //                             <td><input type="number" min="1" name="variant[to][`+ id_variant +`][]" class="form-control max-qty" id=""></td>
-        //                             <td><input type="number" step="0.01" min="1" name="variant[unit_price][`+ id_variant +`][]" class="form-control unit-price-variant" id=""></td>
-        //                             <td><input type="text" class="form-control aiz-date-range discount-range" name="variant[date_range_pricing][`+ id_variant +`][]" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-        //                             <td>
-        //                                 <select class="form-control discount_type" name="variant[discount_type][`+ id_variant +`][]">
-        //                                     <option value="" selected>{{ translate('Choose type') }}</option>
-        //                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{ translate('Flat') }}</option>
-        //                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{ translate('Percent') }}</option>
-        //                                 </select>
-        //                             </td>
-        //                             <td><input type="number" class="form-control discount_amount" name="variant[discount_amount][`+ id_variant +`][]"></td>
-        //                             <td style="width: 19% !important;">
-        //                                 <div class="col-md-9 input-group">
-        //                                     <input type="number" class="form-control discount_percentage" name="variant[discount_percentage][`+ id_variant +`][]">
-        //                                     <div class="input-group-append">
-        //                                         <span class="input-group-text">%</span>
-        //                                     </div>
-        //                                 </div>
-        //                             </td>
-        //                             <td>
-        //                                 <i class="las la-plus btn-add-pricing" data-id_variant="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-        //                                 <i class="las la-trash delete_pricing_canfiguration" data-pricing_id="` + id_variant + `" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-        //                             </td>
-        //                         </tr>
-        //                     `;
-            //     }else if(newvariant != undefined){
-            //         var html_to_add = `<tr>
-        //                             <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[from][]" class="form-control min-qty" id=""></td>
-        //                             <td><input type="number" min="1" name="variant_pricing-from`+ newvariant +`[to][]" class="form-control max-qty" id=""></td>
-        //                             <td><input type="number" step="0.01" min="1" name="variant_pricing-from`+ newvariant +`[unit_price][]" class="form-control unit-price-variant" id=""></td>
-        //                             <td><input type="text" class="form-control aiz-date-range discount-range" name="variant_pricing-from`+ newvariant +`[discount_range][]" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-        //                             <td>
-        //                                 <select class="form-control discount_type" name="variant_pricing-from`+ newvariant +`[discount_type][]">
-        //                                     <option value="" selected>{{ translate('Choose type') }}</option>
-        //                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{ translate('Flat') }}</option>
-        //                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{ translate('Percent') }}</option>
-        //                                 </select>
-        //                             </td>
-        //                             <td><input type="number" class="form-control discount_amount" name="variant_pricing-from`+ newvariant +`[discount_amount][]"></td>
-        //                             <td style="width: 19% !important;">
-        //                                 <div class="col-md-9 input-group">
-        //                                     <input type="number" class="form-control discount_percentage" name="variant_pricing-from`+ newvariant +`[discount_percentage][]">
-        //                                     <div class="input-group-append">
-        //                                         <span class="input-group-text">%</span>
-        //                                     </div>
-        //                                 </div>
-        //                             </td>
-        //                             <td>
-        //                                 <i class="las la-plus btn-add-pricing" data-id_variant="` + newvariant + `" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-        //                                 <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-        //                             </td>
-        //                         </tr>`;
-            //     }else{
-            //         // Check if the element or any of its parents has the specific Id
-            //         if ($(this).closest('#variant_informations').length) {
-            //             var html_to_add = `
-        //                         <tr>
-        //                             <td><input type="number" min="1" class="form-control min-qty-variant" id=""></td>
-        //                             <td><input type="number" min="1" class="form-control max-qty-variant" id=""></td>
-        //                             <td><input type="number" step="0.01" min="1" class="form-control unit-price-variant" id=""></td>
-        //                             <td><input type="text" class="form-control aiz-date-range discount-range-variant" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-        //                             <td>
-        //                                 <select class="form-control discount_type-variant">
-        //                                     <option value="" selected>{{ translate('Choose type') }}</option>
-        //                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{ translate('Flat') }}</option>
-        //                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{ translate('Percent') }}</option>
-        //                                 </select>
-        //                             </td>
-        //                             <td><input type="number" class="form-control discount_amount-variant"></td>
-        //                             <td style="width: 19% !important;">
-        //                                 <div class="col-md-9 input-group">
-        //                                     <input type="number" class="form-control discount_percentage-variant">
-        //                                     <div class="input-group-append">
-        //                                         <span class="input-group-text">%</span>
-        //                                     </div>
-        //                                 </div>
-        //                             </td>
-        //                             <td>
-        //                                 <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-        //                                 <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-        //                             </td>
-        //                         </tr>
-        //                     `;
-            //         }else{
-            //             var html_to_add = `
-        //                         <tr>
-        //                             <td><input type="number" min="1" name="from[]" class="form-control min-qty" id=""></td>
-        //                             <td><input type="number" min="1" name="to[]" class="form-control max-qty" id=""></td>
-        //                             <td><input type="number" step="0.01" min="1" name="unit_price[]" class="form-control unit-price-variant" id=""></td>
-        //                             <td><input type="text" class="form-control aiz-date-range discount-range" name="date_range_pricing[]" placeholder="{{ translate('Select Date') }}" data-time-picker="true" data-separator=" to " data-format="DD-MM-Y HH:mm:ss" autocomplete="off"></td>
-        //                             <td>
-        //                                 <select class="form-control discount_type" name="discount_type[]">
-        //                                     <option value="" selected>{{ translate('Choose type') }}</option>
-        //                                     <option value="amount" @selected(old('discount_type') == 'amount')>{{ translate('Flat') }}</option>
-        //                                     <option value="percent" @selected(old('discount_type') == 'percent')>{{ translate('Percent') }}</option>
-        //                                 </select>
-        //                             </td>
-        //                             <td><input type="number" class="form-control discount_amount" name="discount_amount[]"></td>
-        //                             <td style="width: 19% !important;">
-        //                                 <div class="col-md-9 input-group">
-        //                                     <input type="number" class="form-control discount_percentage" name="discount_percentage[]">
-        //                                     <div class="input-group-append">
-        //                                         <span class="input-group-text">%</span>
-        //                                     </div>
-        //                                 </div>
-        //                             </td>
-        //                             <td>
-        //                                 <i class="las la-plus btn-add-pricing" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
-        //                                 <i class="las la-trash delete_pricing_canfiguration" style="margin-left: 5px; margin-top: 17px;" title="Delete this ligne"></i>
-        //                             </td>
-        //                         </tr>
-        //                     `;
-            //         }
-            //     }
-
-            //         // add another bloc in pricing configuration
-            //         $(this).parent().parent().parent().append(html_to_add);
-
-            //         //Initialize last date range picker
-            //         $(this).parent().parent().parent().find('.aiz-date-range:last').daterangepicker({
-            //             timePicker: true,
-            //             autoUpdateInput: false,
-            //             minDate: today,
-            //             locale: {
-            //                 format: 'DD-MM-Y HH:mm:ss',
-            //                 separator : " to ",
-            //             },
-            //         });
-
-            //         var format = 'DD-MM-Y HH:mm:ss';
-            //         var separator = " to ";
-            //         $(this).parent().parent().parent().find('.aiz-date-range:last').on("apply.daterangepicker", function (ev, picker) {
-            //             $(this).val(
-            //                 picker.startDate.format(format) +
-            //                     separator +
-            //                     picker.endDate.format(format)
-            //             );
-            //         });
-
-            //         //refresh select discount type
-            //         AIZ.plugins.bootstrapSelect('refresh');
-            // });
             $('body').on('click', '.btn-add-pricing', function() {
                 var id_variant = $(this).data('id_variant');
                 var newvariant = $(this).data('newvariant-id');
