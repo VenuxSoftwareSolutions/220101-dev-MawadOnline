@@ -816,6 +816,7 @@
             @endif
 
             if(checkAddToCartValidity()) {
+                $('#addToCart-modal-body').html(null);
                 $('#addToCart').modal();
                 $('.c-preloader').show();
                 let dataToSend = additionalData ? additionalData : $('#option-choice-form-preview').serializeArray();
