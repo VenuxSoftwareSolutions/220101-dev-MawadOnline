@@ -1,3 +1,12 @@
+@section("style")
+    <style>
+        .disabled-look__clz {
+            opacity: 1;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    </style>
+@endsection
 <div class="text-left col-lg-6 col-md-12 float-left">
     <!-- Product Name -->
     <div class="row">
@@ -28,6 +37,11 @@
             $("#product-add-to-cart-span").hide();
             $("#product-add-to-cart-btn").hide();
 
+            $("#quantity").addClass("disabled-look__clz").val(1);
+            $(".quantity-control").each((_, el) => {
+                $(el).attr("disabled", true);
+            });
+
             if ($("#fullDescription").length > 0) {
                 $("#fullDescription").hide();
             }
@@ -45,6 +59,11 @@
 
             $('[id*="product-sample"]').addClass('d-none');
             $("#shortDescription").show();
+
+            $("#quantity").removeClass("disabled-look__clz");
+            $(".quantity-control").each((_, el) => {
+                $(el).attr("disabled", false);
+            });
         });
 
         sampleButton.addEventListener("click", () => {
