@@ -774,8 +774,7 @@
                            $('.buy-now').addClass('d-none');
                            $('.add-to-cart').addClass('d-none');
                            $('.out-of-stock').removeClass('d-none');
-                        }
-                        else{
+                        } else {
                            $('.buy-now').removeClass('d-none');
                            $('.add-to-cart').removeClass('d-none');
                            $('.out-of-stock').addClass('d-none');
@@ -788,11 +787,11 @@
         }
 
         function checkAddToCartValidity(){
-            var names = {};
+            let names = {};
             $('#option-choice-form input:radio').each(function() { // find unique names
                 names[$(this).attr('name')] = true;
             });
-            var count = 0;
+            let count = 0;
             $.each(names, function() { // then count them
                 count++;
             });
