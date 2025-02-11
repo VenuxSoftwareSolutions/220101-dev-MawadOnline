@@ -647,7 +647,6 @@
                 </span>
             @endif
         </button>
-
     </div>
     <div class="show-side-btn">
         <div class="col-12 d-flex justify-content-between p-0">
