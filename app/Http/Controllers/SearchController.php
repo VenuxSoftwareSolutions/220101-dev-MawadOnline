@@ -19,6 +19,7 @@ use App\Utility\CategoryUtility;
 use Illuminate\Support\Facades\App;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Cache;
+use Debugbar;
 
 use DB;
 
@@ -51,6 +52,8 @@ class SearchController extends Controller
         }
 
         $products = Product::IsApprovedPublished()->nonAuction();
+        Debugbar::info($products);
+
         $attributes = Attribute::all();
         $id_products = [];
 
@@ -97,8 +100,9 @@ class SearchController extends Controller
 
         // filter product by name
         if ($query) {
-            $products->where('products.name', 'like', '%' . $query . '%');
+            $products->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", [$query . '*']);
         }
+                
         //filter product by category
         if ($category_id != null) {
             $products->whereIn('category_id', $category_ids);
