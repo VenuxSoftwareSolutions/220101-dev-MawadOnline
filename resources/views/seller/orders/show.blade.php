@@ -478,7 +478,22 @@
 
         const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
             if (event.value == "in_preparation") {
-                handleUpdateWarehouse($(event).data("orderdetail_id"));
+                Swal.fire({
+                     title: '{{ __('Change order status') }}',
+                    text: '{{ __('be careful, if you change the status of the order you cannot rollback') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed === true) {
+                        handleUpdateWarehouse($(event).data("orderdetail_id"));
+                    } else {
+                        location.reload();
+                    }
+                });
             } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
                 Swal.fire({
                     title: '{{ __('Pickup address') }}',
@@ -504,7 +519,23 @@
                     }
                 });
             } else {
-                updateDeliveryStatus(event);
+                Swal.fire({
+                     title: '{{ __('Change order status') }}',
+                    text: '{{ __('be careful, if you change the status of the order you cannot rollback') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed === true) {
+                         updateDeliveryStatus(event);
+                    } else {
+                        location.reload();
+                    }
+                });
+
             }
         };
 
