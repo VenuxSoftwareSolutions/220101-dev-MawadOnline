@@ -4458,6 +4458,34 @@ class ProductService
                         $attribute_product->is_general = 1;
                         $attribute_product->id_units = $unit_general_attributes_data[$attr];
                         $attribute_product->value = $value;
+
+                        try {
+                            $unit = Unity::find($unit_general_attributes_data[$attr]);
+
+                            $default_attribute_unit = null;
+
+                            if ($unit->default_unit === null) {
+                                $default_attribute_unit = $unit;
+                            } else {
+                                $default_attribute_unit = Unity::find($unit->default_unit);
+                            }
+
+                            if ($default_attribute_unit !== null) {
+                                $attribute_product->default_unit_id = $default_attribute_unit->id;
+
+                                $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                            } else {
+                                Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                            }
+                        } catch (Exception $e) {
+                            Log::error(sprintf(
+                                "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                $product_id,
+                                $e->getMessage()
+                            ));
+                            return null;
+                        }
+
                         $attribute_product->save();
                     } else {
                         $attribute_product = new ProductAttributeValues();
@@ -4824,6 +4852,32 @@ class ProductService
                             $attribute_product->is_variant = 1;
                             $attribute_product->id_units = $variant['units'][$key];
                             $attribute_product->value = $value_attribute;
+
+                            try {
+                                $unit = Unity::find($variant["units"][$key]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $attribute_product = new ProductAttributeValues();
@@ -5117,6 +5171,32 @@ class ProductService
                             $attribute_product->is_general = 1;
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+
+                            try {
+                                $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product_parent->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $attribute_product = new ProductAttributeValues();
