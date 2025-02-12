@@ -79,6 +79,13 @@ class Attribute extends Model
         return Unity::whereIn('id', $units)->get();
     }
 
+    public function getDefaultUnit()
+    {
+        return $this->get_units()
+                   ->filter(fn ($unit) => $unit->default_unit === $unit->id)
+                   ->first();
+    }
+
     public function max_min_value($conditions = null, $unit = null)
     {
         $productAttributeValues = $this->attribute_values_filter($conditions);
