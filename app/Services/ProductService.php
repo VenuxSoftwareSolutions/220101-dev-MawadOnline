@@ -4417,8 +4417,13 @@ class ProductService
         }
     }
 
-    public function storeGeneralAttributes($product_id, $general_attributes_data, $ids_attributes_list, $ids_attributes_numeric, $unit_general_attributes_data)
-    {
+    public function storeGeneralAttributes(
+        $product_id,
+        $general_attributes_data,
+        $ids_attributes_list,
+        $ids_attributes_numeric,
+        $unit_general_attributes_data
+    ) {
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
 
         if (count($general_attributes_data) > 0) {
