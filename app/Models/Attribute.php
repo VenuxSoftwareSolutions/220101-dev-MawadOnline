@@ -81,20 +81,15 @@ class Attribute extends Model
     }
 
     function max_min_value($conditions, $unit_id) {
-        // Assuming $this refers to the Attribute model
-        $min_value = \DB::table('product_attribute_values')
+        $result = \DB::table('product_attribute_values')
             ->where('id_attribute', $this->id)
             ->where('id_units', $unit_id)
-            ->min('value');
-    
-        $max_value = \DB::table('product_attribute_values')
-            ->where('id_attribute', $this->id)
-            ->where('id_units', $unit_id)
-            ->max('value');
+            ->selectRaw('MIN(value) as min_value, MAX(value) as max_value')
+            ->first();
     
         return [
-            'min' => $min_value ?? 0, 
-            'max' => $max_value ?? 1, 
+            'min' => $result->min_value ?? 0,
+            'max' => $result->max_value ?? 1,
         ];
     }
 }

@@ -292,8 +292,9 @@
                     $unit_active_model = $default_unit;
                     $unit_active = $unit_active_model ? $unit_active_model->id : null;
 
-                    $min_attribute_value = $attribute->max_min_value($conditions, $unit_active)['min'];
-                    $max_attribute_value = $attribute->max_min_value($conditions, $unit_active)['max'];
+                    $attribute_values = $attribute->max_min_value($conditions, $unit_active);
+                    $min_attribute_value = $attribute_values['min'];
+                    $max_attribute_value = $attribute_values['max'];
                     if (isset($request_all['new_min_value_' . $attribute->id])) {
                         $min_value = $request_all['new_min_value_' . $attribute->id];
                     } else {
