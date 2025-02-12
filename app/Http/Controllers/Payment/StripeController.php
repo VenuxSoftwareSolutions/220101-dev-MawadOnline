@@ -151,12 +151,13 @@ class StripeController extends Controller
 
             if ($paymentIntent->status === 'succeeded') {
                 $payment = ['status' => 'Success'];
+                $paymentIntentId = $paymentIntent->id;
                 $paymentType = session()->get('payment_type');
 
                 switch ($paymentType) {
                     case 'cart_payment':
-                        return (new CheckoutController())
-                            ->checkout_done(session()->get('combined_order_id'), json_encode($payment));
+                        return (new CheckoutController)
+                            ->checkout_done(session()->get('combined_order_id'), json_encode($payment),$paymentIntentId);
                     case 'wallet_payment':
                         return (new WalletController())
                             ->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
