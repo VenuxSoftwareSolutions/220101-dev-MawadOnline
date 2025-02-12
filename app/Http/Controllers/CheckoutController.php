@@ -88,7 +88,7 @@ class CheckoutController extends Controller
     /**
      * redirects to this method after a successful checkout
      */
-    public function checkout_done($combined_order_id, $payment)
+    public function checkout_done($combined_order_id, $payment,$paymentIntentId)
     {
         $combined_order = CombinedOrder::findOrFail($combined_order_id);
 
@@ -96,6 +96,7 @@ class CheckoutController extends Controller
             $order = Order::findOrFail($order->id);
             $order->payment_status = 'paid';
             $order->payment_details = $payment;
+            $order->payment_intent_id = $paymentIntentId;
             $order->save();
 
             calculateCommissionAffilationClubPoint($order);
