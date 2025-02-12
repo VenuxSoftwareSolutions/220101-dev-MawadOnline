@@ -1501,14 +1501,7 @@ class ProductService
             Shipping::where('product_id', $product_update->id)->delete();
 
             if (count($shipping) > 0) {
-                $id = $product_update->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
+                $this->storeShipping($product_update->id, $shipping);
             }
 
             $childrens = Product::where('parent_id', $product_update->id)
@@ -2272,7 +2265,7 @@ class ProductService
                             } catch (Exception $e) {
                                 Log::error(sprintf(
                                     "Error while saving converted attribute value to default unit for product #%s, with message: %s",
-                                    $product_uppdate->id,
+                                    $product_update->id,
                                     $e->getMessage()
                                 ));
                                 return null;
@@ -2713,29 +2706,10 @@ class ProductService
                         }
 
                         if (count($shipping_details) > 0) {
-                            Shipping::insert($shipping_details);
+                            $this->storeShipping($new_product->id, $shipping_details);
                         }
                     } else {
-                        if (count($shipping) > 0) {
-                            $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
-
-                            // Using array_map() and array_filter()
-                            $shipping = array_map(function ($arr) use ($keyToRemove) {
-                                return array_filter($arr, function ($k) use ($keyToRemove) {
-                                    return $k !== $keyToRemove;
-                                }, ARRAY_FILTER_USE_KEY);
-                            }, $shipping);
-
-                            $id = $new_product->id;
-                            $keyToPush = 'product_id';
-                            $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                                $arr[$keyToPush] = $id;
-
-                                return $arr;
-                            }, $shipping);
-
-                            Shipping::insert($shipping);
-                        }
+                        $this->storeShipping($new_product->id, $shipping);
                     }
                 }
 
@@ -5319,29 +5293,12 @@ class ProductService
                         }
                     }
 
+
                     if (count($shipping_details) > 0) {
-                        Shipping::insert($shipping_details);
+                        $this->storeShipping($product->id, $shipping_details);
                     }
                 } else {
-                    if (count($shipping) > 0) {
-                        $keyToRemove = 'product_id';
-
-                        $shipping = array_map(function ($arr) use ($keyToRemove) {
-                            return array_filter($arr, function ($k) use ($keyToRemove) {
-                                return $k !== $keyToRemove;
-                            }, ARRAY_FILTER_USE_KEY);
-                        }, $shipping);
-
-                        $id = $product->id;
-                        $keyToPush = 'product_id';
-                        $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                            $arr[$keyToPush] = $id;
-
-                            return $arr;
-                        }, $shipping);
-
-                        Shipping::insert($shipping);
-                    }
+                    $this->storeShipping($product->id, $shipping);
                 }
             }
 
