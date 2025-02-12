@@ -6145,8 +6145,9 @@ class ProductService
                 break;
         }
     
-        return $products; 
-        public function applyPriceFilter($products, $min_price, $max_price)
+        return $products;
+    } 
+    public function applyPriceFilter($products, $min_price, $max_price)
     {
         if ($min_price || $max_price) {
             $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
