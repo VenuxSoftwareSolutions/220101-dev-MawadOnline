@@ -27,7 +27,6 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->dropIndex('products_filter_index');
-
         });
     }
 };

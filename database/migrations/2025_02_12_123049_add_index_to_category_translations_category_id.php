@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('discounts', function (Blueprint $table) {
-            $table->index(['product_id', 'status', 'start_date', 'end_date', 'scope'], 'discounts_product_index');
-
+        Schema::table('category_translations', function (Blueprint $table) {
+            $table->index('category_id');
         });
     }
 
@@ -26,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('discounts', function (Blueprint $table) {
-            $table->dropIndex('discounts_product_index');
+        Schema::table('category_translations', function (Blueprint $table) {
+            $table->dropIndex(['category_id']);
         });
     }
 };
