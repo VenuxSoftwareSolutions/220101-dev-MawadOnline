@@ -286,7 +286,7 @@
                                     <td class="text-center">
                                         @if($orderDetail->delivery_status == 'Product-Returned')
                                                 <select
-                                                    onchange="updateDeliveryStatus(this)"
+                                                    onchange="handleDeliveryStatusChanged(this)"
                                                     class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
                                                     data-product_id="{{ $orderDetail->product->id }}"
                                                     data-orderdetail_id="{{ $orderDetail->id }}"
@@ -300,7 +300,7 @@
                                                 </select>
                                         @elseif(!in_array($orderDetail->delivery_status , ['Replaced','Returned','In-Return','cancelled','delivered','pending','on_the_way','in_preparation','ready_for_shipment'] ))
                                             <select
-                                                onchange="updateDeliveryStatus(this)"
+                                                onchange="handleDeliveryStatusChanged(this)"
                                                 class="form-control" data-user_id="{{ $orderDetail->seller->id }}"
                                                 data-product_id="{{ $orderDetail->product->id }}"
                                                 data-orderdetail_id="{{ $orderDetail->id }}"
@@ -318,9 +318,6 @@
                                                 </option>
                                                 <option value="In-Return">
                                                     {{ __('order.Initiate-Return') }}
-                                                </option>
-                                                <option value="Initiate-Refund">
-                                                    {{ __('order.Initiate-Refund') }}
                                                 </option>
                                                 @else
                                                 <option value="cancelled">
@@ -414,6 +411,7 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script type="text/javascript">
         $('#assign_deliver_boy').on('change', function() {
             var order_id = {{ $order->id }};
@@ -464,37 +462,24 @@
                 window.location.href = event.value;
         }
 
-        // const handleDeliveryStatusChanged = (event, isThirdPartyShipperSupported = false) => {
-        //     if (event.value == "in_preparation") {
-        //         handleUpdateWarehouse(event)
-        //     } else if (event.value === "ready_for_shipment" && isThirdPartyShipperSupported === true) {
-        //         Swal.fire({
-        //             title: '{{ __('Pickup address') }}',
-        //             text: '{{ __('The pickup address will be the same as the selected warehouse in the last step.') }}',
-        //             icon: 'info',
-        //             scrollbarPadding: false,
-        //             showConfirmButton: true,
-        //             showCancelButton: true
-        //         }).then(({
-        //             isConfirmed
-        //         }) => {
-        //             if (isConfirmed === true) {
-        //                 $("#shipment-modal").modal("show");
-        //                 $("#shipment-modal").on('shown.bs.modal', function(e) {
-        //                     let orderDetailId = $(event).data("orderdetail_id");
-        //                     let productId = $(event).data("product_id");
-        //                     let modal = $(this);
-        //                     modal.find('.modal-body #order_detail_id').val(orderDetailId);
-        //                     modal.find('.modal-body [name=product_id]').val(productId);
-        //                 });
-        //             } else {
-        //                 $(event).val("in_preparation");
-        //             }
-        //         });
-        //     } else {
-        //         updateDeliveryStatus(event);
-        //     }
-        // };
+        const handleDeliveryStatusChanged = (event) => {
+                Swal.fire({
+                    title: '{{ __('Change order status') }}',
+                    text: '{{ __('be careful, if you change the status of the order you cannot rollback') }}',
+                    icon: 'info',
+                    scrollbarPadding: false,
+                    showConfirmButton: true,
+                    showCancelButton: true
+                }).then(({
+                    isConfirmed
+                }) => {
+                    if (isConfirmed === true) {
+                        updateDeliveryStatus(event);
+                    } else {
+                        location.reload();
+                    }
+                });
+        };
 
         const updateDeliveryStatus = (event) => {
             let order_id = event.dataset.orderdetail_id;
