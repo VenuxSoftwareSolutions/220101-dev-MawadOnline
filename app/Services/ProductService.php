@@ -5930,7 +5930,7 @@ class ProductService
                 }
             }
 
-xist->id);
+            $path_parent = public_path('/upload_products/Product-'.$product_catalog_exist->id);
             File::deleteDirectory($path_parent);
 
             ProductAttributeValueCatalog::where('catalog_id', $product_catalog_exist->id)->delete();
