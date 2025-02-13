@@ -40,6 +40,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Log;
+use Exception;
 
 class ProductController extends Controller
 {
@@ -287,10 +288,12 @@ class ProductController extends Controller
 
             if ($product->is_draft == 1) {
                 return redirect()->route(
-                    'seller.products.edit', [
+                    'seller.products.edit',
+                    [
                         'id' => $product->id,
                         'lang' => env('DEFAULT_LANGUAGE'),
-                    ]);
+                    ]
+                );
             } else {
                 return redirect()->route('seller.products');
             }
@@ -775,16 +778,25 @@ class ProductController extends Controller
 
     public function delete_shipping(Request $request)
     {
-        $shipping = Shipping::find($request->id);
-        if ($shipping != null) {
-            $shipping->delete();
+        try {
+            $shipping = Shipping::find($request->id);
 
-            return response()->json([
-                'status' => 'success',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
+            if ($shipping != null) {
+                $shipping->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                ]);
+            }
+        } catch (Exception $e) {
+            Log::error("Error while deleting shipping #{$request->id}, with message: {$e->getMessage()}");
+
+            response()->json([
+                "status" => "failed"
             ]);
         }
     }
@@ -897,7 +909,7 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService)->generate_combination($options);
+        $combinations = (new CombinationService())->generate_combination($options);
 
         return view('backend.product.products.sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'));
     }
@@ -955,7 +967,7 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService)->generate_combination($options);
+        $combinations = (new CombinationService())->generate_combination($options);
 
         return view('backend.product.products.sku_combinations_edit', compact('combinations', 'unit_price', 'colors_active', 'product_name', 'product'));
     }
@@ -1126,9 +1138,13 @@ class ProductController extends Controller
 
         // Store all necessary data in the session for preview
         $request->session()->put(
-            'productPreviewData', compact(
-                'detailedProduct', 'product_queries',
-                'total_query', 'reviews', 'review_status'
+            'productPreviewData',
+            compact(
+                'detailedProduct',
+                'product_queries',
+                'total_query',
+                'reviews',
+                'review_status'
             )
         );
 
@@ -1424,7 +1440,7 @@ class ProductController extends Controller
             [$startDate, $endDate] = explode(' to ', $dateRange);
 
             // Convert date strings to DateTime objects for comparison
-            $currentDate = new DateTime; // Current date/time
+            $currentDate = new DateTime(); // Current date/time
             $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
             $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -1471,7 +1487,7 @@ class ProductController extends Controller
                 [$startDate, $endDate] = explode(' to ', $dateRange);
 
                 // Convert date strings to DateTime objects for comparison
-                $currentDate = new DateTime; // Current date/time
+                $currentDate = new DateTime(); // Current date/time
                 $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                 $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -1750,7 +1766,7 @@ class ProductController extends Controller
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 

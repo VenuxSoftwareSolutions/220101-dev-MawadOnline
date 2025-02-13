@@ -210,10 +210,9 @@ class ProductService
                             ($collection['estimated_order'][$key] != null)
                         ) {
                             $current_data = [];
-                            $shippers = implode(',', $collection['shipper'][$key]);
                             $current_data['from_shipping'] = $from_shipping;
                             $current_data['to_shipping'] = $collection['to_shipping'][$key];
-                            $current_data['shipper'] = $shippers;
+                            $current_data['shipper'] = $collection['shipper'][$key];
                             $current_data['estimated_order'] = $collection['estimated_order'][$key];
                             $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
                             $current_data['paid'] = $collection['paid'][$key];
@@ -228,10 +227,11 @@ class ProductService
                 }
             }
 
+
             $shipping_sample_parent = [];
+
             if (isset($collection['shipper_sample'])) {
                 $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-                $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
             } else {
                 $shipping_sample_parent['shipper_sample'] = null;
             }
@@ -294,7 +294,7 @@ class ProductService
 
                     $key_unit_price = "variant-unit_sale_price-" . $ids[2];
 
-                     if (isset($data[$key_unit_price])) {
+                    if (isset($data[$key_unit_price])) {
                         if (! array_key_exists($ids[2], $variants_data)) {
                             $variants_data[$ids[2]] = [];
                         }
@@ -546,17 +546,28 @@ class ProductService
 
             if (! isset($data['activate_attributes'])) {
                 return $this->storeProductWithDependencies(
-                    $data, $pricing, $general_attributes_data,
-                    $ids_attributes_list, $ids_attributes_numeric,
-                    $unit_general_attributes_data, $shipping
+                    $data,
+                    $pricing,
+                    $general_attributes_data,
+                    $ids_attributes_list,
+                    $ids_attributes_numeric,
+                    $unit_general_attributes_data,
+                    $shipping
                 );
             } else {
                 return $this->storeParentProductWithDependencies(
-                    $data, $pricing, $shipping,
-                    $vat, $variants_data, $shipping_sample_parent,
-                    $ids_attributes_list, $ids_attributes_color,
-                    $ids_attributes_numeric, $vat_user,
-                    $general_attributes_data, $unit_general_attributes_data
+                    $data,
+                    $pricing,
+                    $shipping,
+                    $vat,
+                    $variants_data,
+                    $shipping_sample_parent,
+                    $ids_attributes_list,
+                    $ids_attributes_color,
+                    $ids_attributes_numeric,
+                    $vat_user,
+                    $general_attributes_data,
+                    $unit_general_attributes_data
                 );
             }
         } catch (Exception $e) {
@@ -684,7 +695,7 @@ class ProductService
                         ($collection['estimated_order'][$key] != null)
                     ) {
                         $current_data = [];
-                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $shippers = $collection['shipper'][$key];
                         $current_data['from_shipping'] = $from_shipping;
                         $current_data['to_shipping'] = $collection['to_shipping'][$key];
                         $current_data['shipper'] = $shippers;
@@ -699,14 +710,13 @@ class ProductService
                         array_push($shipping, $current_data);
                     }
                 }
-
             }
         }
 
         $shipping_sample_parent = [];
+
         if (isset($collection['shipper_sample'])) {
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         } else {
             $shipping_sample_parent['shipper_sample'] = null;
         }
@@ -1368,7 +1378,7 @@ class ProductService
                         if (in_array($attr, $ids_attributes_list)) {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1387,7 +1397,7 @@ class ProductService
                                         ->first();
                                     $check_add = false;
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product_update->id;
                                         $attribute_product->id_attribute = $attr;
                                         $attribute_product->is_general = 1;
@@ -1406,8 +1416,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_color,
-                                            'created_at' => new DateTime,
-                                            'updated_at' => new DateTime,
+                                            'created_at' => new DateTime(),
+                                            'updated_at' => new DateTime(),
                                         ]);
                                     }
                                 }
@@ -1415,7 +1425,7 @@ class ProductService
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1427,7 +1437,7 @@ class ProductService
                         } else {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -1447,8 +1457,8 @@ class ProductService
                                     'key' => 'add_attribute',
                                     'old_value' => null,
                                     'new_value' => $value,
-                                    'created_at' => new DateTime,
-                                    'updated_at' => new DateTime,
+                                    'created_at' => new DateTime(),
+                                    'updated_at' => new DateTime(),
                                 ]);
                             }
                         }
@@ -1518,6 +1528,22 @@ class ProductService
             // Create Parent Product
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
+
+            $sample_shipping["shipper_sample"] = $collection["shipper_sample"];
+            unset($collection["shipper_sample"]);
+
+            $sample_shipping["estimated_sample"] = $collection["estimated_sample"];
+            unset($collection["estimated_sample"]);
+
+            $sample_shipping["estimated_shipping_sample"] = $collection["estimated_shipping_sample"];
+            unset($collection["estimated_shipping_sample"]);
+
+            $sample_shipping["paid_sample"] = $collection["paid_sample"];
+            unset($collection["paid_sample"]);
+
+            $sample_shipping["shipping_amount"] = $collection["shipping_amount"];
+            unset($collection["shipping_amount"]);
+
             $product_update->update($collection);
 
             $historique = DB::table('revisions')
@@ -1539,16 +1565,9 @@ class ProductService
 
             Shipping::where('product_id', $product_update->id)->delete();
 
-            if (count($shipping) > 0) {
-                $id = $product_update->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
+            $this->storeShipping($product_update->id, $shipping);
 
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
-            }
+            $this->storeSampleShipping($product_update->id, $sample_shipping);
 
             if (count($pricing) > 0) {
                 $all_data_to_insert = [];
@@ -1660,7 +1679,7 @@ class ProductService
                     }
 
                     if (isset($variant['shipper_sample'])) {
-                        $collection['shipper_sample'] = implode(',', $variant['shipper_sample']);
+                        $collection['shipper_sample'] = $variant['shipper_sample'];
                     } else {
                         $collection['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -1698,6 +1717,21 @@ class ProductService
                     $product = Product::find($id);
 
                     if ($product != null) {
+                        $sample_shipping["shipper_sample"] = $collection["shipper_sample"];
+                        unset($collection["shipper_sample"]);
+
+                        $sample_shipping["estimated_sample"] = $collection["estimated_sample"];
+                        unset($collection["estimated_sample"]);
+
+                        $sample_shipping["estimated_shipping_sample"] = $collection["estimated_shipping_sample"];
+                        unset($collection["estimated_shipping_sample"]);
+
+                        $sample_shipping["paid_sample"] = $collection["paid_sample"];
+                        unset($collection["paid_sample"]);
+
+                        $sample_shipping["shipping_amount"] = $collection["shipping_amount"];
+                        unset($collection["shipping_amount"]);
+
                         $product->update($collection);
 
                         //attributes of variant
@@ -1718,7 +1752,7 @@ class ProductService
                                 if (in_array($key, $ids_attributes_list)) {
                                     $check_add_attribute = false;
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -1736,7 +1770,7 @@ class ProductService
                                             ->first();
                                         $check_add_attribute = false;
                                         if ($attribute_product == null) {
-                                            $attribute_product = new ProductAttributeValues;
+                                            $attribute_product = new ProductAttributeValues();
                                             $attribute_product->id_products = $product->id;
                                             $attribute_product->id_attribute = $key;
                                             $attribute_product->is_variant = 1;
@@ -1755,15 +1789,15 @@ class ProductService
                                                 'key' => 'add_attribute',
                                                 'old_value' => null,
                                                 'new_value' => $value_color,
-                                                'created_at' => new DateTime,
-                                                'updated_at' => new DateTime,
+                                                'created_at' => new DateTime(),
+                                                'updated_at' => new DateTime(),
                                             ]);
                                         }
                                     }
                                 } elseif (in_array($key, $ids_attributes_numeric)) {
                                     $check_add_attribute = false;
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -1775,7 +1809,7 @@ class ProductService
                                 } else {
                                     $check_add_attribute = false;
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -1795,8 +1829,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_attribute,
-                                            'created_at' => new DateTime,
-                                            'updated_at' => new DateTime,
+                                            'created_at' => new DateTime(),
+                                            'updated_at' => new DateTime(),
                                         ]);
                                     }
                                 }
@@ -1832,7 +1866,7 @@ class ProductService
                                 $image->move(public_path('/upload_products/Product-'.$product->id.'/images'), $imageName);
                                 $path = '/upload_products/Product-'.$product->id.'/images'.'/'.$imageName;
 
-                                $uploaded_document = new UploadProducts;
+                                $uploaded_document = new UploadProducts();
                                 $uploaded_document->id_product = $product->id;
                                 $uploaded_document->path = $path;
                                 $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -1848,8 +1882,8 @@ class ProductService
                                     'key' => 'add_image',
                                     'old_value' => null,
                                     'new_value' => $uploaded_document->id,
-                                    'created_at' => new DateTime,
-                                    'updated_at' => new DateTime,
+                                    'created_at' => new DateTime(),
+                                    'updated_at' => new DateTime(),
                                 ]);
                             }
                         }
@@ -2008,6 +2042,7 @@ class ProductService
                         }
 
                         Shipping::where('product_id', $product->id)->delete();
+
                         $shipping_details = [];
 
                         if (array_key_exists('shipping_details', $variant)) {
@@ -2039,30 +2074,12 @@ class ProductService
                                 }
                             }
 
-                            if (count($shipping_details) > 0) {
-                                Shipping::insert($shipping_details);
-                            }
+                            $this->storeShipping($product->id, $shipping_details);
                         } else {
-                            if (count($shipping) > 0) {
-                                $keyToRemove = 'product_id';
-
-                                $shipping = array_map(function ($arr) use ($keyToRemove) {
-                                    return array_filter($arr, function ($k) use ($keyToRemove) {
-                                        return $k !== $keyToRemove;
-                                    }, ARRAY_FILTER_USE_KEY);
-                                }, $shipping);
-
-                                $id = $product->id;
-                                $keyToPush = 'product_id';
-                                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                                    $arr[$keyToPush] = $id;
-
-                                    return $arr;
-                                }, $shipping);
-
-                                Shipping::insert($shipping);
-                            }
+                            $this->storeShipping($product->id, $shipping);
                         }
+
+                        $this->storeSampleShipping($product->id, $sample_shipping);
 
                         $historique_children = DB::table('revisions')
                             ->whereNull('deleted_at')
@@ -2126,7 +2143,7 @@ class ProductService
                         if (in_array($attr, $ids_attributes_list)) {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -2146,7 +2163,7 @@ class ProductService
                                         ->first();
                                     $check_add = false;
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product_update->id;
                                         $attribute_product->id_attribute = $attr;
                                         $attribute_product->is_general = 1;
@@ -2165,8 +2182,8 @@ class ProductService
                                             'key' => 'add_attribute',
                                             'old_value' => null,
                                             'new_value' => $value_color,
-                                            'created_at' => new DateTime,
-                                            'updated_at' => new DateTime,
+                                            'created_at' => new DateTime(),
+                                            'updated_at' => new DateTime(),
                                         ]);
                                     }
                                 }
@@ -2174,7 +2191,7 @@ class ProductService
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -2187,7 +2204,7 @@ class ProductService
                         } else {
                             $check_add = false;
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_update->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -2209,8 +2226,8 @@ class ProductService
                                     'key' => 'add_attribute',
                                     'old_value' => null,
                                     'new_value' => $value,
-                                    'created_at' => new DateTime,
-                                    'updated_at' => new DateTime,
+                                    'created_at' => new DateTime(),
+                                    'updated_at' => new DateTime(),
                                 ]);
                             }
                         }
@@ -2334,7 +2351,7 @@ class ProductService
                         if ($value_attribute != null) {
 
                             if (in_array($key, $ids_attributes_list)) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -2345,7 +2362,7 @@ class ProductService
                             } elseif (in_array($key, $ids_attributes_color)) {
                                 if (count($value_attribute) > 0) {
                                     foreach ($value_attribute as $value_color) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $new_product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -2356,7 +2373,7 @@ class ProductService
                                     }
                                 }
                             } elseif (in_array($key, $ids_attributes_numeric)) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -2364,7 +2381,7 @@ class ProductService
                                 $attribute_product->value = $value_attribute;
                                 $attribute_product->save();
                             } else {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -2395,7 +2412,7 @@ class ProductService
                             $image->move(public_path('/upload_products/Product-'.$new_product->id.'/images'), $imageName);
                             $path = '/upload_products/Product-'.$new_product->id.'/images'.'/'.$imageName;
 
-                            $uploaded_document = new UploadProducts;
+                            $uploaded_document = new UploadProducts();
                             $uploaded_document->id_product = $new_product->id;
                             $uploaded_document->path = $path;
                             $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -2410,8 +2427,8 @@ class ProductService
                                     'key' => 'add_image',
                                     'old_value' => null,
                                     'new_value' => $uploaded_document->id,
-                                    'created_at' => new DateTime,
-                                    'updated_at' => new DateTime,
+                                    'created_at' => new DateTime(),
+                                    'updated_at' => new DateTime(),
                                 ]);
                             }
                         }
@@ -2787,7 +2804,7 @@ class ProductService
                 if ((array_key_exists($key, $collection['from_shipping'])) && (array_key_exists($key, $collection['to_shipping'])) && (array_key_exists($key, $collection['shipper'])) && (array_key_exists($key, $collection['estimated_order']))) {
                     if (($from_shipping != null) && ($collection['to_shipping'][$key] != null) && ($collection['shipper'][$key] != null) && ($collection['estimated_order'][$key] != null)) {
                         $current_data = [];
-                        $shippers = implode(',', $collection['shipper'][$key]);
+                        $shippers = $collection['shipper'][$key];
                         $current_data['from_shipping'] = $from_shipping;
                         $current_data['to_shipping'] = $collection['to_shipping'][$key];
                         $current_data['shipper'] = $shippers;
@@ -2808,7 +2825,6 @@ class ProductService
         $shipping_sample_parent = [];
         if (isset($collection['shipper_sample'])) {
             $shipping_sample_parent['shipper_sample'] = $collection['shipper_sample'];
-            $collection['shipper_sample'] = implode(',', $collection['shipper_sample']);
         } else {
             $shipping_sample_parent['shipper_sample'] = null;
         }
@@ -3401,7 +3417,7 @@ class ProductService
 
                         if (in_array($attr, $ids_attributes_list)) {
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_draft->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -3415,7 +3431,7 @@ class ProductService
                                 foreach ($value as $value_color) {
                                     $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product_draft->id;
                                         $attribute_product->id_attribute = $attr;
                                         $attribute_product->is_general = 1;
@@ -3428,7 +3444,7 @@ class ProductService
                             }
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_draft->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -3438,7 +3454,7 @@ class ProductService
                             $attribute_product->save();
                         } else {
                             if ($attribute_product == null) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_draft->id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -3450,18 +3466,8 @@ class ProductService
                 }
             }
 
-            Shipping::where('product_id', $product_draft->id)->delete();
-
-            if (count($shipping) > 0) {
-                $id = $product_draft->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
-            }
+            $this->storeShipping($product_draft->id, $shipping);
+            $this->storeSampleShipping($product_draft->id, $shipping_sample_parent);
 
             $childrens = Product::where('parent_id', $product_draft->id)->pluck('id')->toArray();
 
@@ -3481,18 +3487,9 @@ class ProductService
             $collection['is_parent'] = 1;
             $collection = $collection->toArray();
             $product_draft->update($collection);
-            Shipping::where('product_id', $product_draft->id)->delete();
 
-            if (count($shipping) > 0) {
-                $id = $product_draft->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
-            }
+            $this->storeShipping($product_draft->id, $shipping);
+            $this->storeSampleShipping($product_draft->id, $shipping_sample_parent);
 
             if (count($pricing) > 0) {
                 $all_data_to_insert = [];
@@ -3604,7 +3601,7 @@ class ProductService
                     }
 
                     if (isset($variant['shipper_sample'])) {
-                        $collection['shipper_sample'] = implode(',', $variant['shipper_sample']);
+                        $collection['shipper_sample'] = $variant['shipper_sample'];
                     } else {
                         $collection['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
@@ -3624,7 +3621,7 @@ class ProductService
                     if (isset($variant['paid_sample'])) {
                         $collection['paid_sample'] = $variant['paid_sample'];
                     } else {
-                        $collection['paid_sample'] = $shipping_sample_parent['paid_sample'];
+                        $collection['paid_sample'] = $shipping_sample_parent["paid_sample"];
                     }
 
                     if (isset($variant['shipping_amount'])) {
@@ -3642,6 +3639,21 @@ class ProductService
                     $product = Product::find($id);
 
                     if ($product != null) {
+                        $sample_shipping["shipper_sample"] = $collection["shipper_sample"];
+                        unset($collection["shipper_sample"]);
+
+                        $sample_shipping["estimated_sample"] = $collection["estimated_sample"];
+                        unset($collection["estimated_sample"]);
+
+                        $sample_shipping["estimated_shipping_sample"] = $collection["estimated_shipping_sample"];
+                        unset($collection["estimated_shipping_sample"]);
+
+                        $sample_shipping["paid_sample"] = $collection["paid_sample"];
+                        unset($collection["paid_sample"]);
+
+                        $sample_shipping["shipping_amount"] = $collection["shipping_amount"];
+                        unset($collection["shipping_amount"]);
+
                         $product->update($collection);
 
                         //attributes of variant
@@ -3660,7 +3672,7 @@ class ProductService
 
                                 if (in_array($key, $ids_attributes_list)) {
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -3674,7 +3686,7 @@ class ProductService
                                         foreach ($value_attribute as $value_color) {
                                             $attribute_product = ProductAttributeValues::where('id_products', $id)->where('id_attribute', $key)->where('value', $value_color)->first();
                                             if ($attribute_product == null) {
-                                                $attribute_product = new ProductAttributeValues;
+                                                $attribute_product = new ProductAttributeValues();
                                                 $attribute_product->id_products = $product->id;
                                                 $attribute_product->id_attribute = $key;
                                                 $attribute_product->is_variant = 1;
@@ -3687,7 +3699,7 @@ class ProductService
                                     }
                                 } elseif (in_array($key, $ids_attributes_numeric)) {
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -3697,7 +3709,7 @@ class ProductService
                                     $attribute_product->save();
                                 } else {
                                     if ($attribute_product == null) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -3735,7 +3747,7 @@ class ProductService
                                 $image->move(public_path('/upload_products/Product-'.$product->id.'/images'), $imageName);
                                 $path = '/upload_products/Product-'.$product->id.'/images'.'/'.$imageName;
 
-                                $uploaded_document = new UploadProducts;
+                                $uploaded_document = new UploadProducts();
                                 $uploaded_document->id_product = $product->id;
                                 $uploaded_document->path = $path;
                                 $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -3923,31 +3935,12 @@ class ProductService
                                 }
                             }
 
-                            if (count($shipping_details) > 0) {
-                                Shipping::insert($shipping_details);
-                            }
+                            $this->storeShipping($product->id, $shipping_details);
                         } else {
-                            if (count($shipping) > 0) {
-                                $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
-
-                                // Using array_map() and array_filter()
-                                $shipping = array_map(function ($arr) use ($keyToRemove) {
-                                    return array_filter($arr, function ($k) use ($keyToRemove) {
-                                        return $k !== $keyToRemove;
-                                    }, ARRAY_FILTER_USE_KEY);
-                                }, $shipping);
-
-                                $id = $product->id;
-                                $keyToPush = 'product_id';
-                                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                                    $arr[$keyToPush] = $id;
-
-                                    return $arr;
-                                }, $shipping);
-
-                                Shipping::insert($shipping);
-                            }
+                            $this->storeShipping($product->id, $shipping);
                         }
+
+                        $this->storeSampleShipping($product->id, $sample_shipping);
                     }
                 }
             }
@@ -3964,7 +3957,7 @@ class ProductService
 
                             if (in_array($attr, $ids_attributes_list)) {
                                 if ($attribute_product == null) {
-                                    $attribute_product = new ProductAttributeValues;
+                                    $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product_draft->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = 1;
@@ -3978,7 +3971,7 @@ class ProductService
                                     foreach ($value as $value_color) {
                                         $attribute_product = ProductAttributeValues::where('id_products', $product_draft->id)->where('id_attribute', $attr)->where('value', $value_color)->first();
                                         if ($attribute_product == null) {
-                                            $attribute_product = new ProductAttributeValues;
+                                            $attribute_product = new ProductAttributeValues();
                                             $attribute_product->id_products = $product_draft->id;
                                             $attribute_product->id_attribute = $attr;
                                             $attribute_product->is_general = 1;
@@ -3991,7 +3984,7 @@ class ProductService
                                 }
                             } elseif (in_array($attr, $ids_attributes_numeric)) {
                                 if ($attribute_product == null) {
-                                    $attribute_product = new ProductAttributeValues;
+                                    $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product_draft->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = 1;
@@ -4001,7 +3994,7 @@ class ProductService
                                 $attribute_product->save();
                             } else {
                                 if ($attribute_product == null) {
-                                    $attribute_product = new ProductAttributeValues;
+                                    $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product_draft->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = 1;
@@ -4060,7 +4053,7 @@ class ProductService
                     foreach ($variant['attributes'] as $key => $value_attribute) {
                         if ($value_attribute != null) {
                             if (in_array($key, $ids_attributes_list)) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -4071,7 +4064,7 @@ class ProductService
                             } elseif (in_array($key, $ids_attributes_color)) {
                                 if (count($value_attribute) > 0) {
                                     foreach ($value_attribute as $value_color) {
-                                        $attribute_product = new ProductAttributeValues;
+                                        $attribute_product = new ProductAttributeValues();
                                         $attribute_product->id_products = $new_product->id;
                                         $attribute_product->id_attribute = $key;
                                         $attribute_product->is_variant = 1;
@@ -4082,7 +4075,7 @@ class ProductService
                                     }
                                 }
                             } elseif (in_array($key, $ids_attributes_numeric)) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -4090,7 +4083,7 @@ class ProductService
                                 $attribute_product->value = $value_attribute;
                                 $attribute_product->save();
                             } else {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
                                 $attribute_product->id_attribute = $key;
                                 $attribute_product->is_variant = 1;
@@ -4121,7 +4114,7 @@ class ProductService
                             $image->move(public_path('/upload_products/Product-'.$new_product->id.'/images'), $imageName);
                             $path = '/upload_products/Product-'.$new_product->id.'/images'.'/'.$imageName;
 
-                            $uploaded_document = new UploadProducts;
+                            $uploaded_document = new UploadProducts();
                             $uploaded_document->id_product = $new_product->id;
                             $uploaded_document->path = $path;
                             $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -4432,7 +4425,7 @@ class ProductService
             foreach ($general_attributes_data as $attr => $value) {
                 if ($value != null) {
                     if (in_array($attr, $ids_attributes_list)) {
-                        $attribute_product = new ProductAttributeValues;
+                        $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product_id;
                         $attribute_product->id_attribute = $attr;
                         $attribute_product->is_general = 1;
@@ -4443,7 +4436,7 @@ class ProductService
                     } elseif (in_array($attr, $ids_attributes_color)) {
                         if (count($value) > 0) {
                             foreach ($value as $value_color) {
-                                $attribute_product = new ProductAttributeValues;
+                                $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $product_id;
                                 $attribute_product->id_attribute = $attr;
                                 $attribute_product->is_general = 1;
@@ -4454,7 +4447,7 @@ class ProductService
                             }
                         }
                     } elseif (in_array($attr, $ids_attributes_numeric)) {
-                        $attribute_product = new ProductAttributeValues;
+                        $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product_id;
                         $attribute_product->id_attribute = $attr;
                         $attribute_product->is_general = 1;
@@ -4462,7 +4455,7 @@ class ProductService
                         $attribute_product->value = $value;
                         $attribute_product->save();
                     } else {
-                        $attribute_product = new ProductAttributeValues;
+                        $attribute_product = new ProductAttributeValues();
                         $attribute_product->id_products = $product_id;
                         $attribute_product->id_attribute = $attr;
                         $attribute_product->is_general = 1;
@@ -4476,6 +4469,8 @@ class ProductService
 
     public function storeShipping($product_id, $shipping)
     {
+        Shipping::where("product_id", $product_id)->delete();
+
         if (count($shipping) > 0) {
             $id = $product_id;
             $keyToPush = 'product_id';
@@ -4489,40 +4484,132 @@ class ProductService
         }
     }
 
+    public function storeSampleShipping($product_id, $sample_shipping)
+    {
+        Shipping::where("product_id", $product_id)
+            ->where("from_shipping", 1)
+            ->where("to_shipping", 1)
+            ->delete();
+
+        if (is_array($sample_shipping["shipper_sample"]) === false) {
+            Shipping::insert([
+                "product_id" => $product_id,
+                "shipper" => $sample_shipping["shipper_sample"],
+                // Buyer buys one sample regardless how the sample is composed.
+                // It can be composed of 1 element or more, but at the end it's one sample.
+                "from_shipping" => 1,
+                "to_shipping" => 1,
+                "estimated_order" => $sample_shipping["estimated_sample"],
+                "estimated_shipping" => $sample_shipping["estimated_shipping_sample"],
+                "paid" => $sample_shipping["paid_sample"],
+                "shipping_charge" => "flat",
+                "flat_rate_shipping" => $sample_shipping["shipping_amount"],
+            ]);
+        } else {
+            $transformedArray = [];
+            $shippers_length = count($sample_shipping["shipper_sample"]);
+
+            for ($i = 0; $i < $shippers_length; $i++) {
+                $transformedArray[$i] = [
+                    "product_id" => $product_id,
+                    "shipper" => $sample_shipping["shipper_sample"][$i],
+                    // Buyer buys one sample regardless how the sample is composed.
+                    // It can be composed of 1 element or more, but at the end it's one sample.
+                    "from_shipping" => 1,
+                    "to_shipping" => 1,
+                    "estimated_order" => $sample_shipping["estimated_sample"][$i],
+                    "estimated_shipping" => $sample_shipping["estimated_shipping_sample"][$i],
+                    "paid" => $sample_shipping["paid_sample"][$i],
+                    "shipping_charge" => "flat",
+                    "flat_rate_shipping" => $sample_shipping["shipping_amount"][$i],
+                ];
+            }
+
+            Shipping::insert($transformedArray);
+        }
+    }
+
     public function storeProductWithDependencies(
-        $data, $pricing, $general_attributes_data,
-        $ids_attributes_list, $ids_attributes_numeric,
-        $unit_general_attributes_data, $shipping
+        $data,
+        $pricing,
+        $general_attributes_data,
+        $ids_attributes_list,
+        $ids_attributes_numeric,
+        $unit_general_attributes_data,
+        $shipping
     ) {
         $data["unit_price"] = $data['unit_sale_price'];
+
+        $sample_shipping["shipper_sample"] = $data["shipper_sample"];
+        unset($data["shipper_sample"]);
+
+        $sample_shipping["estimated_sample"] = $data["estimated_sample"];
+        unset($data["estimated_sample"]);
+
+        $sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
+        unset($data["estimated_shipping_sample"]);
+
+        $sample_shipping["paid_sample"] = $data["paid_sample"];
+        unset($data["paid_sample"]);
+
+        $sample_shipping["shipping_amount"] = $data["shipping_amount"];
+        unset($data["shipping_amount"]);
 
         $product = Product::create($data);
 
         $this->storePricingConfiguration($product->id, $pricing);
 
         $this->storeGeneralAttributes(
-            $product->id, $general_attributes_data,
-            $ids_attributes_list, $ids_attributes_numeric,
+            $product->id,
+            $general_attributes_data,
+            $ids_attributes_list,
+            $ids_attributes_numeric,
             $unit_general_attributes_data
         );
 
         $this->storeShipping($product->id, $shipping);
 
+        $this->storeSampleShipping($product->id, $sample_shipping);
+
         return $product;
     }
 
     public function storeParentProductWithDependencies(
-        $data, $pricing, $shipping, $vat,
-        $variants_data, $shipping_sample_parent,
-        $ids_attributes_list, $ids_attributes_color,
-        $ids_attributes_numeric, $vat_user,
-        $general_attributes_data, $unit_general_attributes_data
+        $data,
+        $pricing,
+        $shipping,
+        $vat,
+        $variants_data,
+        $shipping_sample_parent,
+        $ids_attributes_list,
+        $ids_attributes_color,
+        $ids_attributes_numeric,
+        $vat_user,
+        $general_attributes_data,
+        $unit_general_attributes_data
     ) {
         // Create Parent Product
         $data['is_parent'] = 1;
         $data['sku'] = $data['name'];
         $data["unit_price"] = $data["unit_sale_price"];
+
+        $sample_shipping["shipper_sample"] = $data["shipper_sample"];
+        unset($data["shipper_sample"]);
+
+        $sample_shipping["estimated_sample"] = $data["estimated_sample"];
+        unset($data["estimated_sample"]);
+
+        $sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
+        unset($data["estimated_shipping_sample"]);
+
+        $sample_shipping["paid_sample"] = $data["paid_sample"];
+        unset($data["paid_sample"]);
+
+        $sample_shipping["shipping_amount"] = $data["shipping_amount"];
+        unset($data["shipping_amount"]);
+
         $product_parent = Product::create($data);
+
         $all_data_to_insert_parent = [];
 
         foreach ($pricing['from'] as $key => $from) {
@@ -4593,17 +4680,9 @@ class ProductService
             PricingConfiguration::insert($all_data_to_insert_parent);
         }
 
-        if (count($shipping) > 0) {
-            $id = $product_parent->id;
-            $keyToPush = 'product_id';
-            $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                $arr[$keyToPush] = $id;
+        $this->storeShipping($product_parent->id, $shipping);
 
-                return $arr;
-            }, $shipping);
-
-            Shipping::insert($shipping);
-        }
+        $this->storeSampleShipping($product_parent->id, $sample_shipping);
 
         unset($data['is_parent']);
         $data['parent_id'] = $product_parent->id;
@@ -4627,6 +4706,7 @@ class ProductService
                 } else {
                     $data['shipping'] = $variant['shipping'];
                 }
+
                 $data['low_stock_quantity'] = $variant['stock'];
                 if (! array_key_exists('sample_price', $variant)) {
                     $data['vat_sample'] = $vat;
@@ -4674,12 +4754,8 @@ class ProductService
                     $data['sample_available'] = 0;
                 }
 
-                if (isset($data['shipper_sample'])) {
-                    if (is_array($data['shipper_sample'])) {
-                        $data['shipper_sample'] = implode(',', $data['shipper_sample']);
-                    } else {
-                        $data['shipper_sample'] = $data['shipper_sample'];
-                    }
+                if (isset($variant["variant_shipper_sample"])) {
+                    $data['shipper_sample'] = $variant['variant_shipper_sample'];
                 }
 
                 if (isset($variant["unit_price"])) {
@@ -4692,13 +4768,30 @@ class ProductService
                 $randomString = Str::random(5);
                 $data['slug'] = $data['slug'].'-'.$randomString;
 
+                $variant_sample_shipping["shipper_sample"] = $data["shipper_sample"];
+                unset($data["shipper_sample"]);
+
+                $variant_sample_shipping["estimated_sample"] = $data["estimated_sample"];
+                unset($data["estimated_sample"]);
+
+                $variant_sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
+                unset($data["estimated_shipping_sample"]);
+
+                $variant_sample_shipping["paid_sample"] = $data["paid_sample"];
+                unset($data["paid_sample"]);
+
+                $variant_sample_shipping["shipping_amount"] = $data["shipping_amount"];
+                unset($data["shipping_amount"]);
+
                 $product = Product::create($data);
+
+                $this->storeSampleShipping($product->id, $variant_sample_shipping);
 
                 //attributes of variant
                 foreach ($variant['attributes'] as $key => $value_attribute) {
                     if ($value_attribute != null) {
                         if (in_array($key, $ids_attributes_list)) {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $key;
                             $attribute_product->is_variant = 1;
@@ -4709,7 +4802,7 @@ class ProductService
                         } elseif (in_array($key, $ids_attributes_color)) {
                             if (count($value_attribute) > 0) {
                                 foreach ($value_attribute as $value_color) {
-                                    $attribute_product = new ProductAttributeValues;
+                                    $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product->id;
                                     $attribute_product->id_attribute = $key;
                                     $attribute_product->is_variant = 1;
@@ -4720,7 +4813,7 @@ class ProductService
                                 }
                             }
                         } elseif (in_array($key, $ids_attributes_numeric)) {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $key;
                             $attribute_product->is_variant = 1;
@@ -4728,7 +4821,7 @@ class ProductService
                             $attribute_product->value = $value_attribute;
                             $attribute_product->save();
                         } else {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product->id;
                             $attribute_product->id_attribute = $key;
                             $attribute_product->is_variant = 1;
@@ -4762,7 +4855,7 @@ class ProductService
                             $image->move(public_path('/upload_products/Product-'.$product->id.'/images'), $imageName);
                             $path = '/upload_products/Product-'.$product->id.'/images'.'/'.$imageName;
 
-                            $uploaded_document = new UploadProducts;
+                            $uploaded_document = new UploadProducts();
                             $uploaded_document->id_product = $product->id;
                             $uploaded_document->path = $path;
                             $uploaded_document->extension = $image->getClientOriginalExtension();
@@ -4991,7 +5084,7 @@ class ProductService
                 foreach ($general_attributes_data as $attr => $value) {
                     if ($value != null) {
                         if (in_array($attr, $ids_attributes_list)) {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_parent->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = 1;
@@ -5002,7 +5095,7 @@ class ProductService
                         } elseif (in_array($attr, $ids_attributes_color)) {
                             if (count($value) > 0) {
                                 foreach ($value as $value_color) {
-                                    $attribute_product = new ProductAttributeValues;
+                                    $attribute_product = new ProductAttributeValues();
                                     $attribute_product->id_products = $product_parent->id;
                                     $attribute_product->id_attribute = $attr;
                                     $attribute_product->is_general = 1;
@@ -5013,7 +5106,7 @@ class ProductService
                                 }
                             }
                         } elseif (in_array($attr, $ids_attributes_numeric)) {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_parent->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = 1;
@@ -5021,7 +5114,7 @@ class ProductService
                             $attribute_product->value = $value;
                             $attribute_product->save();
                         } else {
-                            $attribute_product = new ProductAttributeValues;
+                            $attribute_product = new ProductAttributeValues();
                             $attribute_product->id_products = $product_parent->id;
                             $attribute_product->id_attribute = $attr;
                             $attribute_product->is_general = 1;
@@ -5493,7 +5586,7 @@ class ProductService
             [$startDate, $endDate] = explode(' to ', $dateRange);
 
             // Convert date strings to DateTime objects for comparison
-            $currentDate = new DateTime; // Current date/time
+            $currentDate = new DateTime(); // Current date/time
             $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
             $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -5545,7 +5638,7 @@ class ProductService
                 [$startDate, $endDate] = explode(' to ', $dateRange);
 
                 // Convert date strings to DateTime objects for comparison
-                $currentDate = new DateTime; // Current date/time
+                $currentDate = new DateTime(); // Current date/time
                 $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                 $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -5707,7 +5800,7 @@ class ProductService
                             [$startDate, $endDate] = explode(' to ', $dateRange);
 
                             // Convert date strings to DateTime objects for comparison
-                            $currentDate = new DateTime; // Current date/time
+                            $currentDate = new DateTime(); // Current date/time
                             $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                             $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -5751,7 +5844,7 @@ class ProductService
                             [$startDate, $endDate] = explode(' to ', $dateRange);
 
                             // Convert date strings to DateTime objects for comparison
-                            $currentDate = new DateTime; // Current date/time
+                            $currentDate = new DateTime(); // Current date/time
                             $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                             $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -5847,7 +5940,7 @@ class ProductService
                             ->pluck('id')
                             ->toArray();
 
-                            if (($request->status != 1) && ($request->status != 4)) {
+                        if (($request->status != 1) && ($request->status != 4)) {
                             $historique_attributes = Revision::where('revisionable_type', 'App\Models\ProductAttributeValues')
                                 ->whereIn('revisionable_id', $attributes_id)
                                 ->get();
@@ -5929,7 +6022,7 @@ class ProductService
                                     $uploaded = DB::table('upload_products')
                                         ->where('id', $image->new_value)
                                         ->delete();
-                                    }
+                                }
                             }
                         }
 
@@ -6168,7 +6261,7 @@ class ProductService
         }
     }
 
-    function copyProductChangesInCatalog($id)
+    public function copyProductChangesInCatalog($id)
     {
         $existingProduct = Product::find($id);
 

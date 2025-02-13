@@ -543,7 +543,19 @@ class Product extends Model
 
     public function getShipping()
     {
-        return Shipping::where('product_id', $this->id)->get();
+        return Shipping::where('product_id', $this->id)
+                        // when from != to => it's a product shipping
+                       ->whereColumn('from_shipping', '!=', 'to_shipping')
+                       ->get();
+    }
+
+    public function getSampleShipping()
+    {
+        return Shipping::where('product_id', $this->id)
+                        // when from = to = 1 => it's a sample shipping
+                       ->where('from_shipping', 1)
+                       ->where('to_shipping', 1)
+                       ->get();
     }
 
     public function getIdsChildrens()
