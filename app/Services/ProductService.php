@@ -1409,7 +1409,7 @@ class ProductService
                                     $attribute_product->save();
 
                                     if ($check_add == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -1476,7 +1476,7 @@ class ProductService
                         array_push($ids_product_attribute_values, $attribute_product->id);
                         if (! in_array($attr, $ids_attributes_color)) {
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\ProductAttributeValues",
                                     'revisionable_id' => $attribute_product->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -1518,14 +1518,12 @@ class ProductService
                 $product_update->save();
             }
 
-            $historique = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique = Revision::whereNull('deleted_at')
                 ->where('revisionable_id', $product_update->id)
                 ->where('revisionable_type', 'App\Models\Product')
                 ->get();
 
-            $historique_attributes = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique_attributes = Revision::whereNull('deleted_at')
                 ->whereIn('revisionable_id', $ids_product_attribute_values)
                 ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                 ->get();
@@ -1565,8 +1563,7 @@ class ProductService
 
             $product_update->update($collection);
 
-            $historique = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique = Revision::whereNull('deleted_at')
                 ->where('revisionable_id', $product_update->id)
                 ->where('revisionable_type', 'App\Models\Product')
                 ->get();
@@ -1801,7 +1798,7 @@ class ProductService
                                         $attribute_product->save();
 
                                         if ($check_add_attribute == true) {
-                                            DB::table('revisions')->insert([
+                                            Revision::insert([
                                                 'revisionable_type' => "App\Models\ProductAttributeValues",
                                                 'revisionable_id' => $attribute_product->id,
                                                 'user_id' => Auth::user()->owner_id,
@@ -1867,7 +1864,7 @@ class ProductService
                                 array_push($ids_product_attribute_values, $attribute_product->id);
                                 if (! in_array($key, $ids_attributes_color)) {
                                     if ($check_add_attribute == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -1920,7 +1917,7 @@ class ProductService
 
                                 array_push($ids_images, $uploaded_document->id);
 
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\UploadProducts",
                                     'revisionable_id' => $uploaded_document->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -2126,20 +2123,17 @@ class ProductService
 
                         $this->storeSampleShipping($product->id, $sample_shipping);
 
-                        $historique_children = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_children = Revision::whereNull('deleted_at')
                             ->where('revisionable_id', $product->id)
                             ->where('revisionable_type', 'App\Models\Product')
                             ->get();
 
-                        $historique_image = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_image = Revision::whereNull('deleted_at')
                             ->whereIn('revisionable_id', $ids_images)
                             ->where('revisionable_type', 'App\Models\UploadProducts')
                             ->get();
 
-                        $historique_attributes = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_attributes = Revision::whereNull('deleted_at')
                             ->whereIn('revisionable_id', $new_ids_attributes)
                             ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                             ->get();
@@ -2220,7 +2214,7 @@ class ProductService
                                     $attribute_product->save();
 
                                     if ($check_add == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -2290,7 +2284,7 @@ class ProductService
 
                         if (! in_array($attr, $ids_attributes_color)) {
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\ProductAttributeValues",
                                     'revisionable_id' => $attribute_product->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -2305,8 +2299,7 @@ class ProductService
                     }
                 }
 
-                $historique_attributes = DB::table('revisions')
-                    ->whereNull('deleted_at')
+                $historique_attributes = Revision::whereNull('deleted_at')
                     ->whereIn('revisionable_id', $ids_general)
                     ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                     ->get();
@@ -2516,7 +2509,7 @@ class ProductService
                             $uploaded_document->save();
 
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\UploadProducts",
                                     'revisionable_id' => $uploaded_document->id,
                                     'user_id' => Auth::user()->owner_id,
