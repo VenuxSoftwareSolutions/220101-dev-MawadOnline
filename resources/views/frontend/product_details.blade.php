@@ -2846,9 +2846,6 @@
                         variationId
                     },
                     success: function(response) {
-                        if(response.sampleTotal !== null) {
-                            $("#sample_chosen_price").text(response.sampleTotal)
-                        }
                         if (response.unit_price != null) {
                             if (response.discountPrice > 0) {
                                 $("#qty-interval").text(response.discountPrice)
