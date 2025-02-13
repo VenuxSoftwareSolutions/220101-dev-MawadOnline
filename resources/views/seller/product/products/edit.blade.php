@@ -648,13 +648,22 @@
                                         </div>
                                     </div> --}}
                                     <div class="row mb-3">
+                                        <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
+                                        <div class="col-md-10">
+                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                <input value="{{ $product->sample_available }}" @if($product->sample_available == 1) checked @endif name="sample_available" type="checkbox" class="sample-available" />
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3" id="sample-description-wrapper" @if($product->sample_available == 0) style="display: none;" @endif>
                                         <label
                                             class="col-md-2 col-from-label">{{ translate('Sample description') }}</label>
                                         <div class="col-md-10">
                                             <textarea class="form-control sample_description_parent" id="sample_description_parent" name="sample_description">{{ $product->sample_description }}</textarea>
                                         </div>
                                     </div>
-                                    <div class="row mb-3">
+                                    <div class="row mb-3" id="sample-price-wrapper" @if($product->sample_available == 0) style="display: none;" @endif>
                                         <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
                                         <div class="col-md-10">
                                             <input type="numbre" min="1" step="0.01"
@@ -5534,6 +5543,18 @@
                     $(this).parent().parent().parent().find('#bloc-sample-shipping').empty();
                 }
             })
+
+            $('body').on('change', '.sample-available', function() {
+                if ($(this).is(':checked')) {
+                    $(this).val(1);
+                    $("#sample-description-wrapper").show();
+                    $("#sample-price-wrapper").show();
+                } else {
+                    $(this).val(0);
+                    $("#sample-description-wrapper").hide();
+                    $("#sample-price-wrapper").hide();
+                }
+            });
 
             $('body').on('change', '.variant-sample-available', function() {
                 if ($(this).is(':checked')) {

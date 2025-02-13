@@ -706,6 +706,15 @@
                                 </div>
                             </div> --}}
                                 <div class="row mb-3">
+                                    <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
+                                    <div class="col-md-10">
+                                        <label class="aiz-switch aiz-switch-success mb-0">
+                                            <input value="{{ $product->sample_available }}" @if($product->sample_available == 1) checked @endif name="sample_available" type="checkbox" class="sample-available" disabled />
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
                                     <div class="col-md-2">
                                         <input type="text" class="form-control"
                                             value="{{ translate('Sample description') }}" disabled>
