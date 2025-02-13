@@ -4715,10 +4715,12 @@ class ProductService
                 "from_shipping" => 1,
                 "to_shipping" => 1,
                 "estimated_order" => $sample_shipping["estimated_sample"],
-                "estimated_shipping" => $sample_shipping["estimated_shipping_sample"],
-                "paid" => $sample_shipping["paid_sample"],
+                "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"]) ?
+                    $sample_shipping["estimated_shipping_sample"] : null,
+                "paid" => "buyer",
                 "shipping_charge" => "flat",
                 "flat_rate_shipping" => $sample_shipping["shipping_amount"],
+                "is_sample" => true
             ]);
         } else {
             $transformedArray = [];
@@ -4733,10 +4735,13 @@ class ProductService
                     "from_shipping" => 1,
                     "to_shipping" => 1,
                     "estimated_order" => $sample_shipping["estimated_sample"][$i],
-                    "estimated_shipping" => $sample_shipping["estimated_shipping_sample"][$i],
-                    "paid" => $sample_shipping["paid_sample"][$i],
+                    "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"][$i]) ?
+                    $sample_shipping["estimated_shipping_sample"][$i] : null,
+                    "paid" => "buyer",
                     "shipping_charge" => "flat",
-                    "flat_rate_shipping" => $sample_shipping["shipping_amount"][$i],
+                    "flat_rate_shipping" => isset($sample_shipping["shipping_amount"][$i]) ?
+                        $sample_shipping["shipping_amount"][$i] : null,
+                    "is_sample" => true
                 ];
             }
 
