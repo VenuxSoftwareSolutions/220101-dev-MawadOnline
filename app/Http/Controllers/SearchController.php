@@ -54,7 +54,9 @@ class SearchController extends Controller
         $products = Product::IsApprovedPublished()->nonAuction()->with('pricingConfiguration');
         Debugbar::info($products);
 
-        $attributes = Attribute::select('id', 'name', 'type_value')->get();
+        $attributes = Cache::remember('attributes', 3600, function () {
+            return Attribute::select('id', 'name', 'type_value')->get();
+        });
         $id_products = [];
 
         //retrieve minimum and maximum price
