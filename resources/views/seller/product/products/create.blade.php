@@ -4474,8 +4474,7 @@
                 }
             });
         });
-    </script>
-    <script>
+
         $(function() {
             $('#jstree').jstree({
                 'core': {
@@ -5043,30 +5042,27 @@
                         var remarks = [];
                         if (check_attributes_selected != false) {
                             if (check_attributes == false) {
-                                var message =
-                                    "{{ translate('You need to choose at least one attribute.') }}";
-                                remarks.push(message);
+                                remarks.push("{{ translate('You need to choose at least one attribute.') }}");
                             }
 
                             if ($('#sample_description_parent').val() != '') {
                                 if (check_sample_price == false) {
-                                    var message =
-                                        "{{ translate('The sample price must be greater than or equal to 0.1 AED.') }}";
-                                    remarks.push(message);
+                                    remarks.push("{{ translate('The sample price must be greater than or equal to 0.1 AED.') }}");
                                 }
 
                                 if (check_sample_price_undefined == false) {
-                                    var message =
-                                        "{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.') }}";
-                                    remarks.push(message);
+                                    remarks.push("{{ translate('The sample price is required and must be greater than or equal to 0.1 AED.') }}");
                                 }
 
-                                if ($('#shipper_sample_parent').val() == '' || $('#estimated_sample_parent')
-                                    .val() == '' || $('#estimated_shipping_sample_parent').val() == '' || $(
-                                        '#paid_sample_parent').val() == '') {
-                                    var message =
-                                        "{{ translate('There is a problem with the configuration of your shipping sample.') }}";
-                                    remarks.push(message);
+                                if (
+                                    $('#shipper_sample_parent').val() == '' ||
+                                    $('#estimated_sample_parent').val() == '' ||
+                                    (
+                                          $("#shipper_sample_parent").val() !== "third_party" &&
+                                          $('#estimated_shipping_sample_parent').val() == ''
+                                    ) || $('#paid_sample_parent').val() == ''
+                                ) {
+                                    remarks.push("{{ translate('There is a problem with the configuration of your shipping sample.') }}");
                                 }
                             }
 
