@@ -3946,23 +3946,8 @@
                         $(this).parent().parent().find('.shipping_charge').removeClass("disabled-select");
                     }
                 } else {
-                    // Swal.fire({
-                    //     title: 'Cancelled',
-                    //     text: "You cannot selected, if you don't selected vendor in shippers",
-                    //     icon: 'error',
-                    //     scrollbarPadding: false,
-                    //     backdrop:false,
-                    // });
-
-                    var title = "{{ translate('Default Shipping Configuration') }}";
-                    var messagePart1 = "{{ translate('You cannot selected, if you don') }}";
-                    var messagePart2 = "{{ translate('t selected vendor in shippers') }}";
-
-                    // Combine the parts with the single quote correctly placed
-                    var message = messagePart1 + "'" + messagePart2;
-
-                    $('#title-modal').text(title);
-                    $('#text-modal').text(message);
+                    $('#title-modal').text("{{ translate('Default Shipping Configuration') }}");
+                    $('#text-modal').html("{{ translate("You cannot select this, if you don't selected vendor in shippers") }}");
 
                     $('#modal-info').modal('show');
                 }
@@ -3970,14 +3955,6 @@
 
             $('body').on('change', '.shipping_charge', function() {
                 if ($(this).parent().parent().find('.paid').val() == 'vendor') {
-                    // Swal.fire({
-                    //     title: 'Cancelled',
-                    //     text: "You cannot choose shipping charge when it is paid by vendor.",
-                    //     icon: 'error',
-                    //     scrollbarPadding: false,
-                    //     backdrop:false,
-                    // });
-
                     var title = "{{ translate('Default Shipping Configuration') }}";
                     var message =
                         "{{ translate('You cannot choose shipping charge when it is paid by vendor.') }}";
