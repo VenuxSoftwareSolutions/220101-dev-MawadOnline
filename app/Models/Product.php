@@ -559,6 +559,7 @@ class Product extends Model
                         // when from = to = 1 => it's a sample shipping
                        ->where('from_shipping', 1)
                        ->where('to_shipping', 1)
+                       ->where("is_sample", true)
                        ->get();
     }
 
