@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-    use EnhancedRevisionableTrait, SoftDeletes;
+    use EnhancedRevisionableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -698,7 +699,7 @@ class Product extends Model
             return [];
         }
 
-        $tableName = (new Product)->getTable();
+        $tableName = (new Product())->getTable();
         $columns = DB::getSchemaBuilder()->getColumnListing($tableName);
 
         $sampleColumns = array_filter($columns, function ($column) {
