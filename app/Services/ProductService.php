@@ -223,12 +223,15 @@ class ProductService
                             $current_data['to_shipping'] = $collection['to_shipping'][$key];
                             $current_data['shipper'] = $collection['shipper'][$key];
                             $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                            $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                            $current_data['estimated_shipping'] = isset($collection['estimated_shipping'][$key]) ?
+                            $collection['estimated_shipping'][$key] : null;
                             $current_data['paid'] = $collection['paid'][$key];
-                            $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                            $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                            $current_data['shipping_charge'] = isset($collection['shipping_charge'][$key]) ?
+                            $collection['shipping_charge'][$key] : null;
+                            $current_data['flat_rate_shipping'] = isset($collection['flat_rate_shipping'][$key]) ?
+                            $collection['flat_rate_shipping'][$key] : null;
                             $current_data['vat_shipping'] = $vat_user->vat_registered;
-                            $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+                            $current_data['charge_per_unit_shipping'] = isset($collection['charge_per_unit_shipping'][$key]) ? $collection['charge_per_unit_shipping'][$key] : null;
 
                             array_push($shipping, $current_data);
                         }
@@ -1282,6 +1285,12 @@ class ProductService
             unset($collection["unit_price"]);
             $collection["unit_price"] = $collection["unit_sale_price"];
 
+            unset($collection["shipper_sample"]);
+            unset($collection["estimated_sample"]);
+            unset($collection["estimated_shipping_sample"]);
+            unset($collection["paid_sample"]);
+            unset($collection["shipping_amount"]);
+
             $product_update->update($collection);
             $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
 
@@ -1507,11 +1516,11 @@ class ProductService
                 ->where('id_products', $product_update->id)
                 ->delete();
 
-            Shipping::where('product_id', $product_update->id)->delete();
-
             if (count($shipping) > 0) {
                 $this->storeShipping($product_update->id, $shipping);
             }
+
+            $this->storeSampleShipping($product_update->id, $shipping_sample_parent);
 
             $childrens = Product::where('parent_id', $product_update->id)
                 ->pluck('id')
@@ -1587,8 +1596,6 @@ class ProductService
                 $product_update->approved = 0;
                 $product_update->save();
             }
-
-            Shipping::where('product_id', $product_update->id)->delete();
 
             $this->storeShipping($product_update->id, $shipping);
 
@@ -2091,8 +2098,6 @@ class ProductService
 
                             PricingConfiguration::insert($all_data_to_insert);
                         }
-
-                        Shipping::where('product_id', $product->id)->delete();
 
                         $shipping_details = [];
 
@@ -4687,12 +4692,10 @@ class ProductService
         Shipping::where("product_id", $product_id)->delete();
 
         if (count($shipping) > 0) {
-            $id = $product_id;
-            $keyToPush = 'product_id';
-            $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                $arr[$keyToPush] = $id;
+            $shipping = array_map(function ($array) use ($product_id) {
+                $array['product_id'] = $product_id;
 
-                return $arr;
+                return $array;
             }, $shipping);
 
             Shipping::insert($shipping);
@@ -4701,51 +4704,56 @@ class ProductService
 
     public function storeSampleShipping($product_id, $sample_shipping)
     {
-        Shipping::where("product_id", $product_id)
-            ->where("from_shipping", 1)
-            ->where("to_shipping", 1)
-            ->delete();
+        try {
+            Shipping::where("product_id", $product_id)
+                ->where("from_shipping", 1)
+                ->where("to_shipping", 1)
+                ->delete();
 
-        if (is_array($sample_shipping["shipper_sample"]) === false) {
-            Shipping::insert([
-                "product_id" => $product_id,
-                "shipper" => $sample_shipping["shipper_sample"],
-                // Buyer buys one sample regardless how the sample is composed.
-                // It can be composed of 1 element or more, but at the end it's one sample.
-                "from_shipping" => 1,
-                "to_shipping" => 1,
-                "estimated_order" => $sample_shipping["estimated_sample"],
-                "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"]) ?
-                    $sample_shipping["estimated_shipping_sample"] : null,
-                "paid" => "buyer",
-                "shipping_charge" => "flat",
-                "flat_rate_shipping" => $sample_shipping["shipping_amount"],
-                "is_sample" => true
-            ]);
-        } else {
-            $transformedArray = [];
-            $shippers_length = count($sample_shipping["shipper_sample"]);
-
-            for ($i = 0; $i < $shippers_length; $i++) {
-                $transformedArray[$i] = [
+            if (is_array($sample_shipping["shipper_sample"]) === false) {
+                Shipping::insert([
                     "product_id" => $product_id,
-                    "shipper" => $sample_shipping["shipper_sample"][$i],
+                    "shipper" => $sample_shipping["shipper_sample"],
                     // Buyer buys one sample regardless how the sample is composed.
                     // It can be composed of 1 element or more, but at the end it's one sample.
                     "from_shipping" => 1,
                     "to_shipping" => 1,
-                    "estimated_order" => $sample_shipping["estimated_sample"][$i],
-                    "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"][$i]) ?
-                    $sample_shipping["estimated_shipping_sample"][$i] : null,
+                    "estimated_order" => $sample_shipping["estimated_sample"],
+                    "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"]) ?
+                        $sample_shipping["estimated_shipping_sample"] : null,
                     "paid" => "buyer",
                     "shipping_charge" => "flat",
-                    "flat_rate_shipping" => isset($sample_shipping["shipping_amount"][$i]) ?
-                        $sample_shipping["shipping_amount"][$i] : null,
+                    "flat_rate_shipping" => isset($sample_shipping["shipping_amount"]) ?
+                        $sample_shipping["shipping_amount"] : null,
                     "is_sample" => true
-                ];
-            }
+                ]);
+            } else {
+                $transformedArray = [];
+                $shippers_length = count($sample_shipping["shipper_sample"]);
 
-            Shipping::insert($transformedArray);
+                for ($i = 0; $i < $shippers_length; $i++) {
+                    $transformedArray[$i] = [
+                        "product_id" => $product_id,
+                        "shipper" => $sample_shipping["shipper_sample"][$i],
+                        // Buyer buys one sample regardless how the sample is composed.
+                        // It can be composed of 1 element or more, but at the end it's one sample.
+                        "from_shipping" => 1,
+                        "to_shipping" => 1,
+                        "estimated_order" => $sample_shipping["estimated_sample"][$i],
+                        "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"][$i]) ?
+                        $sample_shipping["estimated_shipping_sample"][$i] : null,
+                        "paid" => "buyer",
+                        "shipping_charge" => "flat",
+                        "flat_rate_shipping" => isset($sample_shipping["shipping_amount"][$i]) ?
+                            $sample_shipping["shipping_amount"][$i] : null,
+                        "is_sample" => true
+                    ];
+                }
+
+                Shipping::insert($transformedArray);
+            }
+        } catch (Exception $e) {
+            Log::error(sprintf("Error while saving product #%s shipping sample data, with message: %s", $product_id, $e->getMessage()));
         }
     }
 
