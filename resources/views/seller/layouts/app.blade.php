@@ -184,6 +184,11 @@
             border: 1px solid #1b3a57 !important;
             /* Navy blue border on hover */
         }
+        .disabled-look__clz {
+            opacity: 1;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 
     <!-- Font Awesome CSS -->
