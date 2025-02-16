@@ -225,7 +225,8 @@ class ProductService
                             $current_data['estimated_order'] = $collection['estimated_order'][$key];
                             $current_data['estimated_shipping'] = isset($collection['estimated_shipping'][$key]) ?
                             $collection['estimated_shipping'][$key] : null;
-                            $current_data['paid'] = $collection['paid'][$key];
+                            $current_data['paid'] = isset($collection['paid'][$key]) ?
+                            $collection['paid'][$key] : null;
                             $current_data['shipping_charge'] = isset($collection['shipping_charge'][$key]) ?
                             $collection['shipping_charge'][$key] : null;
                             $current_data['flat_rate_shipping'] = isset($collection['flat_rate_shipping'][$key]) ?
@@ -712,12 +713,14 @@ class ProductService
                         $current_data['to_shipping'] = $collection['to_shipping'][$key];
                         $current_data['shipper'] = $shippers;
                         $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                        $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                        $current_data['estimated_shipping'] = isset($collection['estimated_shipping'][$key]) ?
+                        $collection['estimated_shipping'][$key] : null;
                         $current_data['paid'] = $collection['paid'][$key];
                         $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                        $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                        $current_data['flat_rate_shipping'] = isset($collection['flat_rate_shipping'][$key]) ?
+                        $collection['flat_rate_shipping'][$key] : null;
                         $current_data['vat_shipping'] = $vat_user->vat_registered;
-                        $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+                        $current_data['charge_per_unit_shipping'] = isset($collection['charge_per_unit_shipping'][$key]) ? $collection['charge_per_unit_shipping'][$key] : null;
 
                         array_push($shipping, $current_data);
                     }
@@ -2117,19 +2120,18 @@ class ProductService
                                         $current_shipping['from_shipping'] = $from;
                                         $current_shipping['to_shipping'] = $variant['shipping_details']['to_shipping'][$key];
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                                        $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
+                                        $current_shipping['estimated_shipping'] = isset($variant['shipping_details']['estimated_shipping'][$key]) ? $variant['shipping_details']['estimated_shipping'][$key] : null;
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                        $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
-                                        $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
+                                        $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge'][$key]) ? $variant['shipping_details']['shipping_charge'][$key] : null;
+                                        $current_shipping['flat_rate_shipping'] = isset($variant['shipping_details']['flat_rate_shipping'][$key]) ? $variant['shipping_details']['flat_rate_shipping'][$key] : null;
                                         $current_shipping['vat_shipping'] = $vat_user->vat_registered;
                                         $current_shipping['product_id'] = $product->id;
-                                        $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
+                                        $current_shipping['charge_per_unit_shipping'] =  isset($variant['shipping_details']['charge_per_unit_shipping'][$key]) ? $variant['shipping_details']['charge_per_unit_shipping'][$key] : null;
 
                                         array_push($shipping_details, $current_shipping);
                                     }
                                 }
                             }
-
                             $this->storeShipping($product->id, $shipping_details);
                         } else {
                             $this->storeShipping($product->id, $shipping);
@@ -2892,12 +2894,12 @@ class ProductService
                         $current_data['to_shipping'] = $collection['to_shipping'][$key];
                         $current_data['shipper'] = $shippers;
                         $current_data['estimated_order'] = $collection['estimated_order'][$key];
-                        $current_data['estimated_shipping'] = $collection['estimated_shipping'][$key];
+                        $current_data['estimated_shipping'] = isset($collection['estimated_shipping'][$key]) ? $collection['estimated_shipping'][$key] : null;
                         $current_data['paid'] = $collection['paid'][$key];
-                        $current_data['shipping_charge'] = $collection['shipping_charge'][$key];
-                        $current_data['flat_rate_shipping'] = $collection['flat_rate_shipping'][$key];
+                        $current_data['shipping_charge'] = isset($collection['shipping_charge'][$key]) ? $collection['shipping_charge'][$key] : null;
+                        $current_data['flat_rate_shipping'] = isset($collection['flat_rate_shipping'][$key]) ? $collection['flat_rate_shipping'][$key] : null;
                         $current_data['vat_shipping'] = $vat_user->vat_registered;
-                        $current_data['charge_per_unit_shipping'] = $collection['charge_per_unit_shipping'][$key];
+                        $current_data['charge_per_unit_shipping'] = isset($collection['charge_per_unit_shipping'][$key]) ? $collection['charge_per_unit_shipping'][$key] : null;
 
                         array_push($shipping, $current_data);
                     }
@@ -4708,6 +4710,7 @@ class ProductService
             Shipping::where("product_id", $product_id)
                 ->where("from_shipping", 1)
                 ->where("to_shipping", 1)
+                ->where("is_sample", true)
                 ->delete();
 
             if (is_array($sample_shipping["shipper_sample"]) === false) {
@@ -4774,14 +4777,20 @@ class ProductService
         $sample_shipping["estimated_sample"] = $data["estimated_sample"];
         unset($data["estimated_sample"]);
 
-        $sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
-        unset($data["estimated_shipping_sample"]);
+        if (isset($data["estimated_shipping_sample"])) {
+            $sample_shipping["estimated_shipping_sample"] = $data["estimated_shipping_sample"];
+
+            unset($data["estimated_shipping_sample"]);
+        }
+
 
         $sample_shipping["paid_sample"] = $data["paid_sample"];
         unset($data["paid_sample"]);
 
-        $sample_shipping["shipping_amount"] = $data["shipping_amount"];
-        unset($data["shipping_amount"]);
+        if (isset($data["shipping_amount"])) {
+            $sample_shipping["shipping_amount"] = $data["shipping_amount"];
+            unset($data["shipping_amount"]);
+        }
 
         $product = Product::create($data);
 
@@ -5285,24 +5294,29 @@ class ProductService
 
                 if (array_key_exists('shipping_details', $variant)) {
                     foreach ($variant['shipping_details']['from'] as $key => $from) {
-                        if (($from != null) && ($variant['shipping_details']['to'][$key] != null) && ($variant['shipping_details']['shipper'][$key] != null) && ($variant['shipping_details']['estimated_order'][$key] != null)) {
+                        if (
+                            ($from != null) &&
+                            ($variant['shipping_details']['to'][$key] != null) &&
+                            ($variant['shipping_details']['shipper'][$key] != null)
+                            && ($variant['shipping_details']['estimated_order'][$key] != null)
+                        ) {
                             $current_shipping = [];
                             if (is_array($variant['shipping_details']['shipper'][$key])) {
-                                $shippers = implode(',', $variant['shipping_details']['shipper'][$key]);
-                                $current_shipping['shipper'] = $shippers;
+                                $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key][0];
                             } else {
                                 $current_shipping['shipper'] = $variant['shipping_details']['shipper'][$key];
                             }
+
                             $current_shipping['from_shipping'] = $from;
                             $current_shipping['to_shipping'] = $variant['shipping_details']['to'][$key];
                             $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
-                            $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
+                            $current_shipping['estimated_shipping'] = isset($variant['shipping_details']['estimated_shipping'][$key]) ? $variant['shipping_details']['estimated_shipping'][$key] : null;
                             $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
                             $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
-                            $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
+                            $current_shipping['flat_rate_shipping'] = isset($variant['shipping_details']['flat_rate_shipping'][$key]) ? $variant['shipping_details']['flat_rate_shipping'][$key] : null;
                             $current_shipping['vat_shipping'] = $vat_user->vat_registered;
                             $current_shipping['product_id'] = $product->id;
-                            $current_shipping['charge_per_unit_shipping'] = $variant['shipping_details']['charge_per_unit_shipping'][$key];
+                            $current_shipping['charge_per_unit_shipping'] = isset($variant['shipping_details']['charge_per_unit_shipping'][$key]) ? $variant['shipping_details']['charge_per_unit_shipping'][$key] : null;
 
                             array_push($shipping_details, $current_shipping);
                         }
