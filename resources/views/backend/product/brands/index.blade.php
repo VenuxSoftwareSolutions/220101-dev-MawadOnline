@@ -9,7 +9,7 @@
 </div>
 
 <div class="row">
-	<div class="@if(auth()->user()->can('add_brand')) col-lg-7 @else col-lg-12 @endif">
+	<div class="@if(auth()->user()->can('add_brand')) col-lg-9 @else col-lg-12 @endif">
 		<div class="card">
 		    <div class="card-header row gutters-5">
 				<div class="col text-center text-md-left">
@@ -29,6 +29,7 @@
 		                <tr>
 		                    <th>#</th>
 		                    <th>{{translate('Name')}}</th>
+							<th>{{ translate('Status') }}</th>
 		                    <th>{{translate('Logo')}}</th>
 		                    <th class="text-right">{{translate('Options')}}</th>
 		                </tr>
@@ -38,6 +39,7 @@
 		                    <tr>
 		                        <td>{{ ($key+1) + ($brands->currentPage() - 1)*$brands->perPage() }}</td>
 		                        <td>{{ $brand->getTranslation('name') }}</td>
+								<td></td>
 								<td>
 		                            <img src="{{ uploaded_asset($brand->logo) }}" alt="{{translate('Brand')}}" class="h-50px">
 		                        </td>
@@ -64,7 +66,7 @@
 		</div>
 	</div>
 	@can('add_brand')
-		<div class="col-md-5">
+		<div class="col-md-3">
 			<div class="card">
 				<div class="card-header">
 					<h5 class="mb-0 h6">{{ translate('Add New Brand') }}</h5>
