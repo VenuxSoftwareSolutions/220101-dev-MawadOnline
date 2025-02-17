@@ -177,6 +177,7 @@ class Product extends Model
         static::deleting(function ($product) {
             // Automatically delete related stock summaries
             $product->stockSummaries()->delete();
+            $product->shippingRelation()->delete();
         });
     }
 
