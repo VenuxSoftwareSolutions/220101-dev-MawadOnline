@@ -6474,7 +6474,10 @@
                             if (
                                 $('#shipper_sample_parent').val() == '' ||
                                 $('#estimated_sample_parent').val() == '' ||
-                                $('#estimated_shipping_sample_parent').val() == '' ||
+                                (
+                                  $("#shipper_sample_parent").val() !== "third_party" &&
+                                  $('#estimated_shipping_sample_parent').val() == ''
+                                ) ||
                                 $('#paid_sample_parent').val() == ''
                             ) {
                                 var message =
