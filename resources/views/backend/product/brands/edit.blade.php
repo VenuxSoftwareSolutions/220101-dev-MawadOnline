@@ -61,6 +61,30 @@
                         <input type="text" placeholder="{{translate('Slug')}}" id="slug" name="slug" value="{{ $brand->slug }}" class="form-control">
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-from-label" for="status">{{ translate('Status') }}</label>
+                    <div class="col-sm-9">
+                      <label class="aiz-switch aiz-switch-success mb-0">
+                        <input type="checkbox" id="status" name="status">
+                        <span></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+               
+                <div class="form-group row">
+                    <label class="col-sm-3 col-from-label" for="approved_at">{{translate('Approved At')}}</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="approved_at" name="approved_at" value="{{ $brand->approved_at }}" class="form-control" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-3 col-from-label" for="approved_by">{{translate('Approved By')}}</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="approved_by" name="approved_by" value="{{ $brand->approved_by }}" class="form-control" disabled>
+                    </div>
+                </div>
+
                 <div class="form-group mb-0 text-right">
                     <button type="submit" class="btn btn-primary">{{translate('Save')}}</button>
                 </div>
