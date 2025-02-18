@@ -1013,7 +1013,7 @@ if (! function_exists('translation_tables')) {
     }
 }
 
-function getShippingCost($carts, $index, $carrier = '')
+function getShippingCost($carts, $index, $carrier = '', $shipper = null)
 {
     $shipping_type = get_setting('shipping_type');
     $admin_products = [];
@@ -1115,7 +1115,9 @@ function getShippingCost($carts, $index, $carrier = '')
 
         return 0;
     } else {
-        $shippingOptions = $product->shippingOptions($cartItem['quantity']);
+        $shippingOptions = $product->shippingOptions($cartItem['quantity'])
+            ->filter(fn ($option) => $option->shipper === $shipper)
+            ->first();
 
         if ($shippingOptions->shipper === 'vendor') {
             if ($shippingOptions->charge_per_unit_shipping != null) {

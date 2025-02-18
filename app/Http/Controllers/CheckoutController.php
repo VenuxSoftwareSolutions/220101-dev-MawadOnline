@@ -297,6 +297,7 @@ class CheckoutController extends Controller
         if ($carts && count($carts) > 0) {
             foreach ($carts as $key => $cart) {
                 $product = Product::find($cart['product_id']);
+                $shipper = $request["shipping_method_{$product->id}"];
                 $tax += cart_product_tax($cart, $product, false) * $cart['quantity'];
                 $subtotal += cart_product_price($cart, $product, false, false) * $cart['quantity'];
 
@@ -314,12 +315,12 @@ class CheckoutController extends Controller
                     $cart['shipping_cost'] = 0;
 
                     if ($cart['shipping_type'] == 'home_delivery') {
-                        $cart['shipping_cost'] = getShippingCost($carts, $key);
+                        $cart['shipping_cost'] = getShippingCost($carts, $key, '', $shipper);
                     }
                 } else {
                     $cart['shipping_type'] = 'carrier';
                     $cart['carrier_id'] = $request['carrier_id_'.$product->user_id];
-                    $cart['shipping_cost'] = getShippingCost($carts, $key, $cart['carrier_id']);
+                    $cart['shipping_cost'] = getShippingCost($carts, $key, $cart['carrier_id'], $shipper);
                 }
 
                 $shipping += $cart['shipping_cost'];
