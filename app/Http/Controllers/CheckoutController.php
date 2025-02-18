@@ -50,7 +50,7 @@ class CheckoutController extends Controller
             }
         }
 
-        (new OrderController)->store($request);
+        (new OrderController())->store($request);
 
         $request->session()->put('payment_type', 'cart_payment');
 
@@ -62,7 +62,7 @@ class CheckoutController extends Controller
             $decorator = __NAMESPACE__.'\\Payment\\'.str_replace(' ', '', ucwords(str_replace('_', ' ', $request->payment_option))).'Controller';
 
             if (class_exists($decorator)) {
-                return (new $decorator)->pay($request);
+                return (new $decorator())->pay($request);
             } else {
                 $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
                 $manual_payment_data = [
@@ -114,7 +114,7 @@ class CheckoutController extends Controller
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
         if ($carts && $carts->count() > 0) {
-            $carts->each(function($cart) {
+            $carts->each(function ($cart) {
                 $cart->reserved = "YES";
 
                 $reservedQuantity = - $cart->quantity;
@@ -139,14 +139,16 @@ class CheckoutController extends Controller
 
             $categories = Category::all();
 
-            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
                 ->count() > 0;
 
             return view(
                 'frontend.shipping_info',
                 compact(
-                    'categories', 'carts',
-                    'emirates', 'isCheckoutSessionTimeoutExpires'
+                    'categories',
+                    'carts',
+                    'emirates',
+                    'isCheckoutSessionTimeoutExpires'
                 )
             );
         }
@@ -166,7 +168,7 @@ class CheckoutController extends Controller
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
-        $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+        $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
             ->count() > 0;
 
         if ($carts->isEmpty()) {
@@ -329,14 +331,16 @@ class CheckoutController extends Controller
 
             $total = $subtotal + $tax + $shipping;
 
-            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
                 ->count() > 0;
 
             return view(
                 'frontend.payment_select',
                 compact(
-                    'carts', 'shipping_info',
-                    'total', 'isCheckoutSessionTimeoutExpires'
+                    'carts',
+                    'shipping_info',
+                    'total',
+                    'isCheckoutSessionTimeoutExpires'
                 )
             );
         } else {
@@ -366,7 +370,7 @@ class CheckoutController extends Controller
                         $request->code,
                         $cart->product->id
                     );
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     throw $e;
                 }
 
@@ -399,7 +403,7 @@ class CheckoutController extends Controller
                 "total" => single_price($total + $tax + $shipping),
                 "subTotal" => $total + $tax + $shipping
             ], 200);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while applying coupon code, with message: {$e->getMessage()}");
             return response()->json([
                 "error" => true,
@@ -468,7 +472,8 @@ class CheckoutController extends Controller
 
             flash(
                 __(
-                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !", [
+                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !",
+                    [
                         "name" => auth()->user()->name
                     ]
                 )
@@ -486,6 +491,6 @@ class CheckoutController extends Controller
 
     public function cancelCheckout($combined_order_id)
     {
-        return (new OrderController)->deleteOrderIfPaymentFail($combined_order_id);
+        return (new OrderController())->deleteOrderIfPaymentFail($combined_order_id);
     }
 }
