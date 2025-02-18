@@ -4956,7 +4956,7 @@ class ProductService
                 }
 
                 if (isset($variant['variant_shipper_sample'])) {
-                    $data['shipper_sample'] = implode(',', $variant['variant_shipper_sample']);
+                    $data['shipper_sample'] = $variant['variant_shipper_sample'];
                 } else {
                     $data['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                 }
@@ -4989,10 +4989,6 @@ class ProductService
                     $data['sample_available'] = $variant['sample_available'];
                 } else {
                     $data['sample_available'] = 0;
-                }
-
-                if (isset($variant["variant_shipper_sample"])) {
-                    $data['shipper_sample'] = $variant['variant_shipper_sample'];
                 }
 
                 if (isset($variant["unit_price"])) {
@@ -5312,7 +5308,7 @@ class ProductService
                             $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                             $current_shipping['estimated_shipping'] = isset($variant['shipping_details']['estimated_shipping'][$key]) ? $variant['shipping_details']['estimated_shipping'][$key] : null;
                             $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                            $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
+                            $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge'][$key]) ? $variant['shipping_details']['shipping_charge'][$key] : null;
                             $current_shipping['flat_rate_shipping'] = isset($variant['shipping_details']['flat_rate_shipping'][$key]) ? $variant['shipping_details']['flat_rate_shipping'][$key] : null;
                             $current_shipping['vat_shipping'] = $vat_user->vat_registered;
                             $current_shipping['product_id'] = $product->id;
