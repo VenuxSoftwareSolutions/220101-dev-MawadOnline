@@ -26,4 +26,9 @@ class Brand extends Model
     {
         return $this->belongsTo(Upload::class, 'logo');
     }
+    public function approvedUser()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
 }

@@ -120,6 +120,16 @@ class BrandController extends Controller
             $brand->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
         }
         $brand->logo = $request->logo;
+        $brand->approved = $request->approved ? 1 : 0;
+
+        if ($brand->approved == 1) {
+            $brand->approved_at = now();
+            $brand->approved_by = auth()->id();
+        } else {
+            $brand->approved_at = null;
+            $brand->approved_by = null;
+        }
+    
         $brand->save();
 
         $brand_translation = BrandTranslation::firstOrNew(['lang' => $request->lang, 'brand_id' => $brand->id]);
