@@ -3073,7 +3073,7 @@ if (function_exists('getAramexShippingDuration') === false) {
     {
         $weight = (float) getProductWeightGeneralAttribute($product->id);
 
-        $orderPreparationEstimatedDuration = $product->shippingOptions($quantity)->estimated_order;
+        $orderPreparationEstimatedDuration = $product->thirdPartyShippingOptions($quantity)->estimated_order;
 
         $shippingDurations = $weight >= 20 ? [
             1 + $orderPreparationEstimatedDuration,

@@ -647,6 +647,17 @@ class Product extends Model
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
+            ->where("is_sample", "<>", true)
+            ->get();
+    }
+
+    public function thirdPartyShippingOptions($qty)
+    {
+        return Shipping::where('product_id', $this->id)
+            ->where('from_shipping', '<=', $qty)
+            ->where('to_shipping', '>=', $qty)
+            ->where("shipper", "third_party")
+            ->where("is_sample", "<>", true)
             ->first();
     }
 

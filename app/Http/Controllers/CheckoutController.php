@@ -206,11 +206,15 @@ class CheckoutController extends Controller
         $productQtyPanier = [];
         $admin_product_variation = [];
         $seller_product_variation = [];
+        $shippings = [];
 
         $carts->each(function ($cart) use (
-            &$admin_products, &$seller_products,
-            &$productQtyPanier, &$admin_product_variation,
-            &$seller_product_variation
+            &$admin_products,
+            &$seller_products,
+            &$productQtyPanier,
+            &$admin_product_variation,
+            &$seller_product_variation,
+            &$shippings
         ) {
             $product = get_single_product($cart['product_id']);
             $productId = $cart['product_id'];
@@ -234,6 +238,21 @@ class CheckoutController extends Controller
                 $seller_products[$product->user_id] = $product_ids;
                 $seller_product_variation[] = $cart['variation'];
             }
+
+            $shippers = [];
+            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
+
+            foreach ($shippingOptions as $key => $option) {
+                $shippers[$key] = $option->shipper;
+                $duration[$key] = $option->shipper === "vendor" ? $option->estimated_order + $option->estimated_shipping : getAramexShippingDuration($product, $productQtyPanier[$product->id]);
+            }
+
+            $shippings[$productId] = [
+                "shippers" => $shippers,
+                "shippingOptions" => $shippingOptions,
+                "durations" => $duration,
+                "productWeight" => getProductWeightGeneralAttribute($product->id)
+            ];
         });
 
         $pickup_point_list = [];
@@ -243,10 +262,17 @@ class CheckoutController extends Controller
         }
 
         return view('frontend.delivery_info', compact(
-            'carts', 'carrier_list', 'shippers_areas',
-            'pickup_point_list', 'admin_products', 'seller_products',
-            'productQtyPanier', 'admin_product_variation', 'seller_product_variation',
-            'isCheckoutSessionTimeoutExpires'
+            'carts',
+            'carrier_list',
+            'shippers_areas',
+            'pickup_point_list',
+            'admin_products',
+            'seller_products',
+            'productQtyPanier',
+            'admin_product_variation',
+            'seller_product_variation',
+            'isCheckoutSessionTimeoutExpires',
+            'shippings'
         ));
     }
 
