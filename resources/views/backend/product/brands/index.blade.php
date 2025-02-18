@@ -24,44 +24,75 @@
 				</div>
 		    </div>
 		    <div class="card-body">
-		        <table class="table aiz-table mb-0">
-		            <thead>
-		                <tr>
-		                    <th>#</th>
-		                    <th>{{translate('Name')}}</th>
-							<th>{{ translate('Status') }}</th>
-		                    <th>{{translate('Logo')}}</th>
-		                    <th class="text-right">{{translate('Options')}}</th>
-		                </tr>
-		            </thead>
-		            <tbody>
-		                @foreach($brands as $key => $brand)
-		                    <tr>
-		                        <td>{{ ($key+1) + ($brands->currentPage() - 1)*$brands->perPage() }}</td>
-		                        <td>{{ $brand->getTranslation('name') }}</td>
-								<td></td>
-								<td>
-		                            <img src="{{ uploaded_asset($brand->logo) }}" alt="{{translate('Brand')}}" class="h-50px">
-		                        </td>
-		                        <td class="text-right">
-									@can('edit_brand')
-										<a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('brands.edit', ['id'=>$brand->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
-											<i class="las la-edit"></i>
-										</a>
-									@endcan
-									@can('delete_brand')
-										<a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('brands.destroy', $brand->id)}}" title="{{ translate('Delete') }}">
-											<i class="las la-trash"></i>
-										</a>
-									@endcan
-		                        </td>
-		                    </tr>
-		                @endforeach
-		            </tbody>
-		        </table>
-		        <div class="aiz-pagination">
-                	{{ $brands->appends(request()->input())->links() }}
-            	</div>
+				<div class="table-responsive">
+
+                    <table class="table aiz-table mb-0 text-nowrap">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>{{translate('Name')}}</th>
+								<th>{{translate('Meta Title')}}</th>
+								<th>{{translate('Meta Description')}}</th>
+								<th>{{ translate('Status') }}</th>
+								<th>{{translate('Logo')}}</th>
+								<th class="text-right">{{translate('Options')}}</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach($brands as $key => $brand)
+								<tr>
+									<td>{{ ($key+1) + ($brands->currentPage() - 1)*$brands->perPage() }}</td>
+									<td>{{ $brand->getTranslation('name') }}</td>
+									<td>{{ $brand->meta_title }}</td>
+									<td>{{ $brand->meta_description }}</td>
+									<td>
+										@switch($brand->approved)
+										@case(0)
+											<span class="badge badge-primary width-badge"
+												style="background-color: #2E294E;">{{ translate('Pending') }}</span>
+										@break
+
+										@case(1)
+											<span class="badge badge-success width-badge">{{ translate('Approved') }}</span>
+										@break
+
+										@case(4)
+											<span class="badge badge-info width-badge">{{ translate('Under Review') }}</span>
+										@break
+
+										@case(2)
+											<span
+												class="badge badge-warning width-badge">{{ translate('Revision Required') }}</span>
+										@break
+
+										@case(3)
+											<span class="badge badge-danger width-badge">{{ translate('Rejected') }}</span>
+										@break
+									@endswitch
+									</td>
+									<td>
+										<img src="{{ uploaded_asset($brand->logo) }}" alt="{{translate('Brand')}}" class="h-50px">
+									</td>
+									<td class="text-right">
+										@can('edit_brand')
+											<a class="btn btn-soft-primary btn-icon btn-circle btn-sm" href="{{route('brands.edit', ['id'=>$brand->id, 'lang'=>env('DEFAULT_LANGUAGE')] )}}" title="{{ translate('Edit') }}">
+												<i class="las la-edit"></i>
+											</a>
+										@endcan
+										@can('delete_brand')
+											<a href="#" class="btn btn-soft-danger btn-icon btn-circle btn-sm confirm-delete" data-href="{{route('brands.destroy', $brand->id)}}" title="{{ translate('Delete') }}">
+												<i class="las la-trash"></i>
+											</a>
+										@endcan
+									</td>
+								</tr>
+							@endforeach
+						</tbody>
+					</table>
+					<div class="aiz-pagination">
+						{{ $brands->appends(request()->input())->links() }}
+					</div>
+				</div>
 		    </div>
 		</div>
 	</div>
