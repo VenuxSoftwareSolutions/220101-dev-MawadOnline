@@ -6,11 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\Brand;
 use App\Models\BrandTranslation;
 use App\Models\Product;
+use App\Models\BuJob;
+use App\Models\User;
+use App\Models\Shop;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         // Staff Permission Check
         $this->middleware(['permission:view_all_brands'])->only('index');
         $this->middleware(['permission:add_brand'])->only('create');
@@ -24,20 +28,20 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
-        $sort_search =null;
+        $sort_search = null;
         $status_filter = $request->status;
 
         $brands = Brand::orderBy('name', 'asc');
-        if ($request->has('search')){
+        if ($request->has('search')) {
             $sort_search = $request->search;
-            $brands = $brands->where('name', 'like', '%'.$sort_search.'%');
+            $brands = $brands->where('name', 'like', '%' . $sort_search . '%');
         }
-        if ($request->has('status') && $request->status !== '') {
+        if ($request->has('status') && $request->status != '') {
             $brands->where('approved', $status_filter);
         }
-    
+
         $brands = $brands->paginate(15);
-        return view('backend.product.brands.index', compact('brands', 'sort_search','status_filter'));
+        return view('backend.product.brands.index', compact('brands', 'sort_search', 'status_filter'));
     }
 
     /**
@@ -63,9 +67,8 @@ class BrandController extends Controller
         $brand->meta_description = $request->meta_description;
         if ($request->slug != null) {
             $brand->slug = str_replace(' ', '-', $request->slug);
-        }
-        else {
-            $brand->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+        } else {
+            $brand->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
         }
 
         $brand->logo = $request->logo;
@@ -99,9 +102,9 @@ class BrandController extends Controller
      */
     public function edit(Request $request, $id)
     {
-        $lang   = $request->lang;
-        $brand  = Brand::findOrFail($id);
-        return view('backend.product.brands.edit', compact('brand','lang'));
+        $lang = $request->lang;
+        $brand = Brand::findOrFail($id);
+        return view('backend.product.brands.edit', compact('brand', 'lang'));
     }
 
     /**
@@ -114,16 +117,15 @@ class BrandController extends Controller
     public function update(Request $request, $id)
     {
         $brand = Brand::findOrFail($id);
-        if($request->lang == env("DEFAULT_LANGUAGE")){
+        if ($request->lang == env("DEFAULT_LANGUAGE")) {
             $brand->name = $request->name;
         }
         $brand->meta_title = $request->meta_title;
         $brand->meta_description = $request->meta_description;
         if ($request->slug != null) {
             $brand->slug = strtolower($request->slug);
-        }
-        else {
-            $brand->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)).'-'.Str::random(5);
+        } else {
+            $brand->slug = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $request->name)) . '-' . Str::random(5);
         }
         $brand->logo = $request->logo;
         $brand->approved = $request->approved ? 1 : 0;
@@ -135,7 +137,7 @@ class BrandController extends Controller
             $brand->approved_at = null;
             $brand->approved_by = null;
         }
-    
+
         $brand->save();
 
         $brand_translation = BrandTranslation::firstOrNew(['lang' => $request->lang, 'brand_id' => $brand->id]);
@@ -166,4 +168,30 @@ class BrandController extends Controller
         return redirect()->route('brands.index');
 
     }
+    public function brandsByBuJob(Request $request, $bu_job_id)
+    {
+        $sort_search = $request->input('search', null);
+
+        $job = BuJob::with('brands')->findOrFail($bu_job_id);
+
+        if ($sort_search) {
+            $filteredBrands = $job->brands->filter(function ($brand) use ($sort_search) {
+                return stripos($brand->name, $sort_search) !== false;
+            });
+
+            $job->setRelation('brands', $filteredBrands);
+        }
+
+        $vendor = User::find($job->vendor_user_id);
+        $job->vendor_name = $vendor ? $vendor->name : 'N/A';
+
+        $shop = Shop::where('user_id', $job->vendor_user_id)->first();
+
+        $job->vendor_business_name = $shop ? $shop->name : 'N/A';
+
+        $jobs = collect([$job]);
+
+        return view('backend.product.brands.brands_jobs', compact('jobs', 'sort_search'));
+    }
+
 }

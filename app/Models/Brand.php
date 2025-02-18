@@ -30,5 +30,9 @@ class Brand extends Model
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
+    public function buJobs()
+    {
+        return $this->belongsToMany(BuJob::class, 'brands_bujobs', 'brand_id', 'bu_job_id');
+    }
 
 }
