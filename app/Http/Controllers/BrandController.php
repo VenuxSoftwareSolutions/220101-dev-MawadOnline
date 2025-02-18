@@ -137,7 +137,7 @@ class BrandController extends Controller
         $brand_translation->save();
 
         flash(translate('Brand has been updated successfully'))->success();
-        return back();
+        return redirect()->route('brands.index');
 
     }
 
