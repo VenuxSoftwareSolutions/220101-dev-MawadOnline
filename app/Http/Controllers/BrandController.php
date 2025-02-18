@@ -25,13 +25,19 @@ class BrandController extends Controller
     public function index(Request $request)
     {
         $sort_search =null;
+        $status_filter = $request->status;
+
         $brands = Brand::orderBy('name', 'asc');
         if ($request->has('search')){
             $sort_search = $request->search;
             $brands = $brands->where('name', 'like', '%'.$sort_search.'%');
         }
+        if ($request->has('status') && $request->status !== '') {
+            $brands->where('approved', $status_filter);
+        }
+    
         $brands = $brands->paginate(15);
-        return view('backend.product.brands.index', compact('brands', 'sort_search'));
+        return view('backend.product.brands.index', compact('brands', 'sort_search','status_filter'));
     }
 
     /**

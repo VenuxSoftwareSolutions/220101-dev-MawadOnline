@@ -19,6 +19,24 @@
 					<form class="" id="sort_brands" action="" method="GET">
 						<div class="input-group input-group-sm">
 					  		<input type="text" class="form-control" id="search" name="search"@isset($sort_search) value="{{ $sort_search }}" @endisset placeholder="{{ translate('Type name & Enter') }}">
+							  <select class="form-control ml-2" name="status" onchange="this.form.submit()">
+                                <option value="">{{ translate('All Statuses') }}</option>
+                                <option value="0" {{ $status_filter === '0' ? 'selected' : '' }}>
+                                    {{ translate('Pending') }}
+                                </option>
+                                <option value="1" {{ $status_filter === '1' ? 'selected' : '' }}>
+                                    {{ translate('Approved') }}
+                                </option>
+                                <option value="4" {{ $status_filter === '4' ? 'selected' : '' }}>
+                                    {{ translate('Under Review') }}
+                                </option>
+                                <option value="2" {{ $status_filter === '2' ? 'selected' : '' }}>
+                                    {{ translate('Revision Required') }}
+                                </option>
+                                <option value="3" {{ $status_filter === '3' ? 'selected' : '' }}>
+                                    {{ translate('Rejected') }}
+                                </option>
+                            </select>
 						</div>
 					</form>
 				</div>
