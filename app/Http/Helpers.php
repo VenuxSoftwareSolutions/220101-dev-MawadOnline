@@ -946,7 +946,7 @@ function translate($key, $lang = null, $addslashes = false)
     });
 
     if (! isset($translations_en[$lang_key])) {
-        $translation_def = new Translation;
+        $translation_def = new Translation();
         $translation_def->lang = 'en';
         $translation_def->lang_key = $lang_key;
         $translation_def->lang_value = str_replace(["\r", "\n", "\r\n"], '', $key);
@@ -1127,7 +1127,7 @@ function getShippingCost($carts, $index, $carrier = '')
             // supported 3rd party shipper is aramex for now
             request()->merge(['product_id' => $product->id]);
 
-            $apiResult = (new \App\Http\Controllers\AramexController)
+            $apiResult = (new \App\Http\Controllers\AramexController())
                 ->calculateOrderProductsCharge(auth()->user()->id);
 
             if ($apiResult->original['error'] === false && $apiResult->original["data"] !== null) {
@@ -1463,7 +1463,7 @@ if (! function_exists('get_setting')) {
 
 function hex2rgba($color, $opacity = false)
 {
-    return (new ColorCodeConverter)->convertHexToRgba($color, $opacity);
+    return (new ColorCodeConverter())->convertHexToRgba($color, $opacity);
 }
 
 if (! function_exists('isAdmin')) {
@@ -1580,7 +1580,7 @@ if (! function_exists('wallet_payment_done')) {
         $user->balance = $user->balance + $amount;
         $user->save();
 
-        $wallet = new Wallet;
+        $wallet = new Wallet();
         $wallet->user_id = $user->id;
         $wallet->amount = $amount;
         $wallet->payment_method = $payment_method;
@@ -1612,7 +1612,7 @@ if (! function_exists('seller_purchase_payment_done')) {
         $seller->package_invalid_at = date('Y-m-d', strtotime($seller->package_invalid_at.' +'.$seller_package->duration.'days'));
         $seller->save();
 
-        $seller_package = new SellerPackagePayment;
+        $seller_package = new SellerPackagePayment();
         $seller_package->user_id = $user_id;
         $seller_package->seller_package_id = $seller_package_id;
         $seller_package->payment_method = $payment_method;
@@ -1657,15 +1657,15 @@ if (! function_exists('product_restock')) {
 if (! function_exists('calculateCommissionAffilationClubPoint')) {
     function calculateCommissionAffilationClubPoint($order)
     {
-        (new CommissionController)->calculateCommission($order);
+        (new CommissionController())->calculateCommission($order);
 
         if (addon_is_activated('affiliate_system')) {
-            (new AffiliateController)->processAffiliatePoints($order);
+            (new AffiliateController())->processAffiliatePoints($order);
         }
 
         if (addon_is_activated('club_point')) {
             if ($order->user != null) {
-                (new ClubPointController)->processClubPoints($order);
+                (new ClubPointController())->processClubPoints($order);
             }
         }
 
@@ -2593,7 +2593,7 @@ if (! function_exists('offerUserWelcomeCoupon')) {
 
             $couponDetails = json_decode($coupon->details);
 
-            $user_coupon = new UserCoupon;
+            $user_coupon = new UserCoupon();
             $user_coupon->user_id = auth()->user()->id;
             $user_coupon->coupon_id = $coupon->id;
             $user_coupon->coupon_code = $coupon->code;
@@ -2843,7 +2843,7 @@ if (! function_exists('seller_lease_creation')) {
                 $seller->seller_package_id = 4;
                 $seller->save();
 
-                $seller_lease = new SellerLease;
+                $seller_lease = new SellerLease();
                 $seller_lease->vendor_id = $user->id;
                 $seller_lease->package_id = 4;
                 $seller_lease->start_date = $startDate->format('Y-m-d');
@@ -2865,7 +2865,7 @@ if (! function_exists('generateUniqueSlug')) {
         $slug = Str::slug($title);
 
         // Check if slug exists in the specified model
-        $existingSlugCount = DB::table((new $model)->getTable())
+        $existingSlugCount = DB::table((new $model())->getTable())
             ->where($column, 'LIKE', "{$slug}%")
             ->count();
 
