@@ -20,7 +20,6 @@ use App\Models\Shipping;
 use App\Models\StockSummary;
 use App\Models\UploadProducts;
 use App\Models\User;
-use App\Models\PricingConfiguration;
 
 use Auth;
 use Carbon\Carbon;
