@@ -486,7 +486,7 @@
         $('#search').on('focus', function(){
             search();
         });
-        $('form').on('submit', function (e) {
+        $('#search_form').on('submit', function (e) {
             let inputField = $('#search');
             let value = inputField.val();
             value = value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
