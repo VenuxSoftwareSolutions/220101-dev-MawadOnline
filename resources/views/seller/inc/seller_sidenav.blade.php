@@ -33,7 +33,7 @@
             <ul class="aiz-side-nav-list" id="main-menu" data-toggle="aiz-side-menu">
                 <li id="AddProduct" class="aiz-side-nav-item changes-button">
                     <a href="{{ route('seller.products.create')}}" class="btn btn-primary d-flex align-items-center">
-                        <i class="las la-plus-square aiz-side-nav-icon"></i>
+                        <i class="las la-plus"></i>
                         <span class="aiz-side-nav-text ml-2">{{ __('sidenav.Add_Product') }}</span>
                     </a>
                 </li>
@@ -80,7 +80,7 @@
                                     class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
                                 </a>
-                            </li> 
+                            </li>
                             {{-- @can('seller_show_digital_products')
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.digitalproducts') }}"
@@ -125,7 +125,7 @@
                                     <span class="aiz-side-nav-text">{{ __('sidenav.Offers_create') }}</span>
                                 </a>
                             </li>
-                            
+
                         </ul>
                     </li>
                 {{-- Discounts and Coupons Management --}}

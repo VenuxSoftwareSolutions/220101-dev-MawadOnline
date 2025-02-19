@@ -67,17 +67,23 @@ class Attribute extends Model
 
     public function get_attribute_units()
     {
-        $units = AttributesUnity::where('attribute_id', $this->id)->pluck('unite_id')->toArray();
-
-        return $units;
+        return AttributesUnity::where('attribute_id', $this->id)
+            ->pluck('unite_id')
+            ->toArray();
     }
 
     public function get_units()
     {
         $units = $this->get_attribute_units();
-        $units = Unity::whereIn('id', $units)->get();
 
-        return $units;
+        return Unity::whereIn('id', $units)->get();
+    }
+
+    public function getDefaultUnit()
+    {
+        return $this->get_units()
+                   ->filter(fn ($unit) => $unit->default_unit === $unit->id)
+                   ->first();
     }
 
     function max_min_value($conditions, $unit_id) {

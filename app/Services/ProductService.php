@@ -1416,7 +1416,7 @@ class ProductService
                                     $attribute_product->save();
 
                                     if ($check_add == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -1440,6 +1440,32 @@ class ProductService
                             }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+
+                            try {
+                                $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product_update->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $check_add = false;
@@ -1457,7 +1483,7 @@ class ProductService
                         array_push($ids_product_attribute_values, $attribute_product->id);
                         if (! in_array($attr, $ids_attributes_color)) {
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\ProductAttributeValues",
                                     'revisionable_id' => $attribute_product->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -1482,14 +1508,7 @@ class ProductService
             Shipping::where('product_id', $product_update->id)->delete();
 
             if (count($shipping) > 0) {
-                $id = $product_update->id;
-                $keyToPush = 'product_id';
-                $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                    $arr[$keyToPush] = $id;
-
-                    return $arr;
-                }, $shipping);
-                Shipping::insert($shipping);
+                $this->storeShipping($product_update->id, $shipping);
             }
 
             $childrens = Product::where('parent_id', $product_update->id)
@@ -1506,14 +1525,12 @@ class ProductService
                 $product_update->save();
             }
 
-            $historique = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique = Revision::whereNull('deleted_at')
                 ->where('revisionable_id', $product_update->id)
                 ->where('revisionable_type', 'App\Models\Product')
                 ->get();
 
-            $historique_attributes = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique_attributes = Revision::whereNull('deleted_at')
                 ->whereIn('revisionable_id', $ids_product_attribute_values)
                 ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                 ->get();
@@ -1553,8 +1570,7 @@ class ProductService
 
             $product_update->update($collection);
 
-            $historique = DB::table('revisions')
-                ->whereNull('deleted_at')
+            $historique = Revision::whereNull('deleted_at')
                 ->where('revisionable_id', $product_update->id)
                 ->where('revisionable_type', 'App\Models\Product')
                 ->get();
@@ -1789,7 +1805,7 @@ class ProductService
                                         $attribute_product->save();
 
                                         if ($check_add_attribute == true) {
-                                            DB::table('revisions')->insert([
+                                            Revision::insert([
                                                 'revisionable_type' => "App\Models\ProductAttributeValues",
                                                 'revisionable_id' => $attribute_product->id,
                                                 'user_id' => Auth::user()->owner_id,
@@ -1812,6 +1828,32 @@ class ProductService
                                     }
                                     $attribute_product->id_units = $data['unit_variant'][$id][$key];
                                     $attribute_product->value = $value_attribute;
+
+                                    try {
+                                        $unit = Unity::find($data['unit_variant'][$id][$key]);
+                                        $default_attribute_unit = null;
+
+                                        if ($unit->default_unit === null) {
+                                            $default_attribute_unit = $unit;
+                                        } else {
+                                            $default_attribute_unit = Unity::find($unit->default_unit);
+                                        }
+
+                                        if ($default_attribute_unit !== null) {
+                                            $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                            $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                        } else {
+                                            Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                        }
+                                    } catch (Exception $e) {
+                                        Log::error(sprintf(
+                                            "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                            $product->id,
+                                            $e->getMessage()
+                                        ));
+                                        return null;
+                                    }
+
                                     $attribute_product->save();
                                 } else {
                                     $check_add_attribute = false;
@@ -1829,7 +1871,7 @@ class ProductService
                                 array_push($ids_product_attribute_values, $attribute_product->id);
                                 if (! in_array($key, $ids_attributes_color)) {
                                     if ($check_add_attribute == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -1882,7 +1924,7 @@ class ProductService
 
                                 array_push($ids_images, $uploaded_document->id);
 
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\UploadProducts",
                                     'revisionable_id' => $uploaded_document->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -2088,20 +2130,17 @@ class ProductService
 
                         $this->storeSampleShipping($product->id, $sample_shipping);
 
-                        $historique_children = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_children = Revision::whereNull('deleted_at')
                             ->where('revisionable_id', $product->id)
                             ->where('revisionable_type', 'App\Models\Product')
                             ->get();
 
-                        $historique_image = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_image = Revision::whereNull('deleted_at')
                             ->whereIn('revisionable_id', $ids_images)
                             ->where('revisionable_type', 'App\Models\UploadProducts')
                             ->get();
 
-                        $historique_attributes = DB::table('revisions')
-                            ->whereNull('deleted_at')
+                        $historique_attributes = Revision::whereNull('deleted_at')
                             ->whereIn('revisionable_id', $new_ids_attributes)
                             ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                             ->get();
@@ -2182,7 +2221,7 @@ class ProductService
                                     $attribute_product->save();
 
                                     if ($check_add == true) {
-                                        DB::table('revisions')->insert([
+                                        Revision::insert([
                                             'revisionable_type' => "App\Models\ProductAttributeValues",
                                             'revisionable_id' => $attribute_product->id,
                                             'user_id' => Auth::user()->owner_id,
@@ -2207,6 +2246,32 @@ class ProductService
                             }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+
+                            try {
+                                $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product_update->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $check_add = false;
@@ -2226,7 +2291,7 @@ class ProductService
 
                         if (! in_array($attr, $ids_attributes_color)) {
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\ProductAttributeValues",
                                     'revisionable_id' => $attribute_product->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -2241,8 +2306,7 @@ class ProductService
                     }
                 }
 
-                $historique_attributes = DB::table('revisions')
-                    ->whereNull('deleted_at')
+                $historique_attributes = Revision::whereNull('deleted_at')
                     ->whereIn('revisionable_id', $ids_general)
                     ->where('revisionable_type', 'App\Models\ProductAttributeValues')
                     ->get();
@@ -2356,7 +2420,6 @@ class ProductService
                     //attributes of variant
                     foreach ($variant['attributes'] as $key => $value_attribute) {
                         if ($value_attribute != null) {
-
                             if (in_array($key, $ids_attributes_list)) {
                                 $attribute_product = new ProductAttributeValues();
                                 $attribute_product->id_products = $new_product->id;
@@ -2386,6 +2449,32 @@ class ProductService
                                 $attribute_product->is_variant = 1;
                                 $attribute_product->id_units = $variant['units'][$key];
                                 $attribute_product->value = $value_attribute;
+
+                                try {
+                                    $unit = Unity::find($variant['units'][$key]);
+                                    $default_attribute_unit = null;
+
+                                    if ($unit->default_unit === null) {
+                                        $default_attribute_unit = $unit;
+                                    } else {
+                                        $default_attribute_unit = Unity::find($unit->default_unit);
+                                    }
+
+                                    if ($default_attribute_unit !== null) {
+                                        $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                        $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                    } else {
+                                        Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                    }
+                                } catch (Exception $e) {
+                                    Log::error(sprintf(
+                                        "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                        $new_product->id,
+                                        $e->getMessage()
+                                    ));
+                                    return null;
+                                }
+
                                 $attribute_product->save();
                             } else {
                                 $attribute_product = new ProductAttributeValues();
@@ -2427,7 +2516,7 @@ class ProductService
                             $uploaded_document->save();
 
                             if ($check_add == true) {
-                                DB::table('revisions')->insert([
+                                Revision::insert([
                                     'revisionable_type' => "App\Models\UploadProducts",
                                     'revisionable_id' => $uploaded_document->id,
                                     'user_id' => Auth::user()->owner_id,
@@ -2617,29 +2706,10 @@ class ProductService
                         }
 
                         if (count($shipping_details) > 0) {
-                            Shipping::insert($shipping_details);
+                            $this->storeShipping($new_product->id, $shipping_details);
                         }
                     } else {
-                        if (count($shipping) > 0) {
-                            $keyToRemove = 'product_id'; // For example, let's say you want to remove the element at index 1
-
-                            // Using array_map() and array_filter()
-                            $shipping = array_map(function ($arr) use ($keyToRemove) {
-                                return array_filter($arr, function ($k) use ($keyToRemove) {
-                                    return $k !== $keyToRemove;
-                                }, ARRAY_FILTER_USE_KEY);
-                            }, $shipping);
-
-                            $id = $new_product->id;
-                            $keyToPush = 'product_id';
-                            $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                                $arr[$keyToPush] = $id;
-
-                                return $arr;
-                            }, $shipping);
-
-                            Shipping::insert($shipping);
-                        }
+                        $this->storeShipping($new_product->id, $shipping);
                     }
                 }
 
@@ -2648,7 +2718,6 @@ class ProductService
 
                 // Update the approved field in the children related to the parent
                 $product_update->children()->update(['approved' => 0]);
-
             }
 
             return $product_update;
@@ -3458,6 +3527,32 @@ class ProductService
                             }
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+
+                            try {
+                                $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product_draft->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             if ($attribute_product == null) {
@@ -3713,6 +3808,32 @@ class ProductService
                                     }
                                     $attribute_product->id_units = $data['unit_variant'][$id][$key];
                                     $attribute_product->value = $value_attribute;
+
+                                    try {
+                                        $unit = Unity::find($data['unit_variant'][$id][$key]);
+                                        $default_attribute_unit = null;
+
+                                        if ($unit->default_unit === null) {
+                                            $default_attribute_unit = $unit;
+                                        } else {
+                                            $default_attribute_unit = Unity::find($unit->default_unit);
+                                        }
+
+                                        if ($default_attribute_unit !== null) {
+                                            $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                            $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                        } else {
+                                            Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                        }
+                                    } catch (Exception $e) {
+                                        Log::error(sprintf(
+                                            "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                            $product->id,
+                                            $e->getMessage()
+                                        ));
+                                        return null;
+                                    }
+
                                     $attribute_product->save();
                                 } else {
                                     if ($attribute_product == null) {
@@ -3998,6 +4119,32 @@ class ProductService
                                 }
                                 $attribute_product->id_units = $unit_general_attributes_data[$attr];
                                 $attribute_product->value = $value;
+
+                                try {
+                                    $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                    $default_attribute_unit = null;
+
+                                    if ($unit->default_unit === null) {
+                                        $default_attribute_unit = $unit;
+                                    } else {
+                                        $default_attribute_unit = Unity::find($unit->default_unit);
+                                    }
+
+                                    if ($default_attribute_unit !== null) {
+                                        $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                        $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                    } else {
+                                        Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                    }
+                                } catch (Exception $e) {
+                                    Log::error(sprintf(
+                                        "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                        $product_draft->id,
+                                        $e->getMessage()
+                                    ));
+                                    return null;
+                                }
+
                                 $attribute_product->save();
                             } else {
                                 if ($attribute_product == null) {
@@ -4088,6 +4235,32 @@ class ProductService
                                 $attribute_product->is_variant = 1;
                                 $attribute_product->id_units = $variant['units'][$key];
                                 $attribute_product->value = $value_attribute;
+
+                                try {
+                                    $unit = Unity::find($variant['units'][$key]);
+                                    $default_attribute_unit = null;
+
+                                    if ($unit->default_unit === null) {
+                                        $default_attribute_unit = $unit;
+                                    } else {
+                                        $default_attribute_unit = Unity::find($unit->default_unit);
+                                    }
+
+                                    if ($default_attribute_unit !== null) {
+                                        $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                        $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                    } else {
+                                        Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                    }
+                                } catch (Exception $e) {
+                                    Log::error(sprintf(
+                                        "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                        $new_product->id,
+                                        $e->getMessage()
+                                    ));
+                                    return null;
+                                }
+
                                 $attribute_product->save();
                             } else {
                                 $attribute_product = new ProductAttributeValues();
@@ -4424,8 +4597,13 @@ class ProductService
         }
     }
 
-    public function storeGeneralAttributes($product_id, $general_attributes_data, $ids_attributes_list, $ids_attributes_numeric, $unit_general_attributes_data)
-    {
+    public function storeGeneralAttributes(
+        $product_id,
+        $general_attributes_data,
+        $ids_attributes_list,
+        $ids_attributes_numeric,
+        $unit_general_attributes_data
+    ) {
         $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
 
         if (count($general_attributes_data) > 0) {
@@ -4460,6 +4638,34 @@ class ProductService
                         $attribute_product->is_general = 1;
                         $attribute_product->id_units = $unit_general_attributes_data[$attr];
                         $attribute_product->value = $value;
+
+                        try {
+                            $unit = Unity::find($unit_general_attributes_data[$attr]);
+
+                            $default_attribute_unit = null;
+
+                            if ($unit->default_unit === null) {
+                                $default_attribute_unit = $unit;
+                            } else {
+                                $default_attribute_unit = Unity::find($unit->default_unit);
+                            }
+
+                            if ($default_attribute_unit !== null) {
+                                $attribute_product->default_unit_id = $default_attribute_unit->id;
+
+                                $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                            } else {
+                                Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                            }
+                        } catch (Exception $e) {
+                            Log::error(sprintf(
+                                "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                $product_id,
+                                $e->getMessage()
+                            ));
+                            return null;
+                        }
+
                         $attribute_product->save();
                     } else {
                         $attribute_product = new ProductAttributeValues();
@@ -4826,6 +5032,32 @@ class ProductService
                             $attribute_product->is_variant = 1;
                             $attribute_product->id_units = $variant['units'][$key];
                             $attribute_product->value = $value_attribute;
+
+                            try {
+                                $unit = Unity::find($variant["units"][$key]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $attribute_product = new ProductAttributeValues();
@@ -5061,29 +5293,12 @@ class ProductService
                         }
                     }
 
+
                     if (count($shipping_details) > 0) {
-                        Shipping::insert($shipping_details);
+                        $this->storeShipping($product->id, $shipping_details);
                     }
                 } else {
-                    if (count($shipping) > 0) {
-                        $keyToRemove = 'product_id';
-
-                        $shipping = array_map(function ($arr) use ($keyToRemove) {
-                            return array_filter($arr, function ($k) use ($keyToRemove) {
-                                return $k !== $keyToRemove;
-                            }, ARRAY_FILTER_USE_KEY);
-                        }, $shipping);
-
-                        $id = $product->id;
-                        $keyToPush = 'product_id';
-                        $shipping = array_map(function ($arr) use ($id, $keyToPush) {
-                            $arr[$keyToPush] = $id;
-
-                            return $arr;
-                        }, $shipping);
-
-                        Shipping::insert($shipping);
-                    }
+                    $this->storeShipping($product->id, $shipping);
                 }
             }
 
@@ -5119,6 +5334,32 @@ class ProductService
                             $attribute_product->is_general = 1;
                             $attribute_product->id_units = $unit_general_attributes_data[$attr];
                             $attribute_product->value = $value;
+
+                            try {
+                                $unit = Unity::find($unit_general_attributes_data[$attr]);
+                                $default_attribute_unit = null;
+
+                                if ($unit->default_unit === null) {
+                                    $default_attribute_unit = $unit;
+                                } else {
+                                    $default_attribute_unit = Unity::find($unit->default_unit);
+                                }
+
+                                if ($default_attribute_unit !== null) {
+                                    $attribute_product->default_unit_id = $default_attribute_unit->id;
+                                    $attribute_product->default_unit_conv_value = $unit->rate * $value;
+                                } else {
+                                    Log::info(sprintf("Unit %s doesn't have a default unit", $unit->name));
+                                }
+                            } catch (Exception $e) {
+                                Log::error(sprintf(
+                                    "Error while saving converted attribute value to default unit for product #%s, with message: %s",
+                                    $product_parent->id,
+                                    $e->getMessage()
+                                ));
+                                return null;
+                            }
+
                             $attribute_product->save();
                         } else {
                             $attribute_product = new ProductAttributeValues();
