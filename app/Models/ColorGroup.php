@@ -11,6 +11,6 @@ class ColorGroup extends Model
 
     public function colors()
     {
-        return $this->belongsToMany(Color::class, 'color_group_color');
+         return $this->belongsToMany(Color::class, 'color_group_color');
     }
 }
