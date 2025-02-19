@@ -22,6 +22,9 @@ class DiscountStoreRequest extends FormRequest
         'product_id' => 'required_if:scope,product|exists:products,id',
         'category_id' => 'required_if:scope,category|exists:categories,id',
         'min_order_amount' => 'required_if:scope,order_over_amount|numeric|min:0', 
+        'min_qty' => 'nullable|integer|min:1',
+        'max_qty' => 'nullable|integer|min:1|gte:min_qty',
+
     ];
 }
 
@@ -36,6 +39,9 @@ class DiscountStoreRequest extends FormRequest
             'discount_percentage' => 'discount percentage',
             'max_discount' => 'maximum discount',
             'min_order_amount' => 'minimum order amount',
+            'min_qty' => 'minimum quantity',
+            'max_qty' => 'maximum quantity',
+
         ];
     }
 }
