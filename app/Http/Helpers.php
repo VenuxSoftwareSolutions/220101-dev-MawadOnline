@@ -1115,7 +1115,7 @@ function getShippingCost($carts, $index, $carrier = '', $shipper = null)
 
         return 0;
     } else {
-        $shippingOptions = $product->shippingOptions($cartItem['quantity'])
+        $shippingOptions = $product->shippingOptions($cartItem['quantity'], $cartItem->is_sample)
             ->filter(fn ($option) => $option->shipper === $shipper)
             ->first();
 
@@ -2899,7 +2899,9 @@ if (! function_exists('generateUniqueSlug')) {
 if (function_exists('formatChargeBasedOnChargeType') === false) {
     function formatChargeBasedOnChargeType(object $shippingOptions, $carts): string
     {
-        if ($shippingOptions->charge_per_unit_shipping != null) {
+        if ($shippingOptions->paid === "vendor") {
+            return __('Free (handled by vendor)');
+        } elseif ($shippingOptions->charge_per_unit_shipping != null) {
             $qty = 0;
             $carts->each(function ($cart) use ($shippingOptions, &$qty) {
                 if ($cart->product_id === $shippingOptions->product_id) {
@@ -3071,11 +3073,12 @@ if (function_exists('getProductWeightGeneralAttribute') === false) {
 }
 
 if (function_exists('getAramexShippingDuration') === false) {
-    function getAramexShippingDuration($product, $quantity)
+    function getAramexShippingDuration($product, $quantity, $is_sample = false)
     {
         $weight = (float) getProductWeightGeneralAttribute($product->id);
 
-        $orderPreparationEstimatedDuration = $product->thirdPartyShippingOptions($quantity)->estimated_order;
+        $orderPreparationEstimatedDuration = $product->thirdPartyShippingOptions($quantity, $is_sample)
+            ->estimated_order;
 
         $shippingDurations = $weight >= 20 ? [
             1 + $orderPreparationEstimatedDuration,
@@ -3085,6 +3088,9 @@ if (function_exists('getAramexShippingDuration') === false) {
             4 + $orderPreparationEstimatedDuration,
         ];
 
-        return __("{$shippingDurations[0]} to {$shippingDurations[1]} days");
+        return __(":from to :to days", [
+            "from" => $shippingDurations[0],
+            "to" => $shippingDurations[1]
+        ]);
     }
 }

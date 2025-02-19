@@ -642,22 +642,22 @@ class Product extends Model
         }
     }
 
-    public function shippingOptions($qty)
+    public function shippingOptions($qty, $is_sample = false)
     {
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
-            ->where("is_sample", "<>", true)
+            ->where("is_sample", $is_sample)
             ->get();
     }
 
-    public function thirdPartyShippingOptions($qty)
+    public function thirdPartyShippingOptions($qty, $is_sample = false)
     {
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
             ->where("shipper", "third_party")
-            ->where("is_sample", "<>", true)
+            ->where("is_sample", $is_sample)
             ->first();
     }
 

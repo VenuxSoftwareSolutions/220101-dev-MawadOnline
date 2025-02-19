@@ -242,11 +242,13 @@ class CheckoutController extends Controller
             }
 
             $shippers = [];
-            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
+            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id], $cart->is_sample);
 
             foreach ($shippingOptions as $key => $option) {
                 $shippers[$key] = $option->shipper;
-                $duration[$key] = $option->shipper === "vendor" ? $option->estimated_order + $option->estimated_shipping : getAramexShippingDuration($product, $productQtyPanier[$product->id]);
+                $duration[$key] = $option->shipper === "vendor" ?
+                    $option->estimated_order + $option->estimated_shipping :
+                    getAramexShippingDuration($product, $productQtyPanier[$product->id], $cart->is_sample);
             }
 
             $shippings[$productId] = [
