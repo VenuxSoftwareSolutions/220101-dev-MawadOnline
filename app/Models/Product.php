@@ -330,7 +330,7 @@ class Product extends Model
 
     public function scopeIsApprovedPublished($query)
     {
-        return $query->where('approved', '1')->where('published', 1);
+        return $query->where('products.approved', '1')->where('published', 1);
     }
     public function scopeNonAuction($query)
     {
