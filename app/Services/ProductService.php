@@ -20,6 +20,8 @@ use App\Models\Shipping;
 use App\Models\StockSummary;
 use App\Models\UploadProducts;
 use App\Models\User;
+use App\Models\PricingConfiguration;
+
 use Auth;
 use Carbon\Carbon;
 use DateTime;
@@ -6720,12 +6722,10 @@ class ProductService
             })
             ->groupBy('pc.id_products', 'pc.unit_price');
     
-        // Join the discounted price subquery to the products query
         $products = $products->leftJoinSub($discountedPriceQuery, 'discounted_prices', function ($join) {
             $join->on('products.id', '=', 'discounted_prices.id_products');
         });
     
-        // Apply sorting dynamically
         switch ($sort_by) {
             case 'newest':
                 $products->orderBy('products.created_at', 'desc');
@@ -6744,9 +6744,9 @@ class ProductService
                 break;
         }
     
-        return $products; // Returns query builder (not a collection), allowing pagination
-    }
-        public function applyPriceFilter($products, $min_price, $max_price)
+        return $products;
+    } 
+    public function applyPriceFilter($products, $min_price, $max_price)
     {
         if ($min_price || $max_price) {
             $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
