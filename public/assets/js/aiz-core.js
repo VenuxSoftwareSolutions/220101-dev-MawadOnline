@@ -1200,14 +1200,24 @@ $.fn.toggleAttr = function (attr, attr1, attr2) {
                         },
                     },
                 });
+                const urlHash = window.location.hash;
+                const uploadType = urlHash ? urlHash.substring(1) : 'home_slider';
                 uppy.use(Uppy.XHRUpload, {
-                    endpoint: AIZ.data.appUrl + "/aiz-uploader/upload",
+                    endpoint: AIZ.data.appUrl + "/aiz-uploader/upload?upload_type=" + uploadType, // Pass as query param
                     fieldName: "aiz_file",
                     formData: true,
                     headers: {
                         "X-CSRF-TOKEN": AIZ.data.csrf,
                     },
+                    metaFields: ["upload_type"] 
                 });
+                
+                uppy.setMeta({
+                    upload_type: uploadType
+                });
+                
+             
+                                
                 uppy.on("upload-success", function () {
                     AIZ.uploader.getAllUploads(
                         AIZ.data.appUrl + "/aiz-uploader/get-uploaded-files"
