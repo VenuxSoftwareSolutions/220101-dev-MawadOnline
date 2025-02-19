@@ -20,6 +20,8 @@ use App\Models\Shipping;
 use App\Models\StockSummary;
 use App\Models\UploadProducts;
 use App\Models\User;
+use App\Models\PricingConfiguration;
+
 use Auth;
 use Carbon\Carbon;
 use DateTime;
@@ -6745,9 +6747,9 @@ class ProductService
                 break;
         }
 
-        return $products; // Returns query builder (not a collection), allowing pagination
+        return $products;
     }
-        public function applyPriceFilter($products, $min_price, $max_price)
+    public function applyPriceFilter($products, $min_price, $max_price)
     {
         if ($min_price || $max_price) {
             $products->whereHas('pricingConfiguration', function ($query) use ($min_price, $max_price) {
