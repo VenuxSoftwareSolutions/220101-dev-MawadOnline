@@ -32,6 +32,7 @@ use Log;
 use Mail;
 use App\Models\Revision;
 use App\Mail\ApprovalProductMail;
+use App\Models\PricingConfiguration;
 use App\Models\ProductCatalog;
 use App\Models\ProductAttributeValueCatalog;
 use App\Models\UploadProductCatalog;
@@ -6719,12 +6720,12 @@ class ProductService
                     });
             })
             ->groupBy('pc.id_products', 'pc.unit_price');
-    
+
         // Join the discounted price subquery to the products query
         $products = $products->leftJoinSub($discountedPriceQuery, 'discounted_prices', function ($join) {
             $join->on('products.id', '=', 'discounted_prices.id_products');
         });
-    
+
         // Apply sorting dynamically
         switch ($sort_by) {
             case 'newest':
@@ -6743,7 +6744,7 @@ class ProductService
                 $products->orderBy('products.id', 'desc');
                 break;
         }
-    
+
         return $products; // Returns query builder (not a collection), allowing pagination
     }
         public function applyPriceFilter($products, $min_price, $max_price)
