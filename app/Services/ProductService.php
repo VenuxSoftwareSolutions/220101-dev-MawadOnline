@@ -918,10 +918,10 @@ class ProductService
                     if (array_key_exists($key, $data['variant']['paid_sample'])) {
                         $variants_data[$key]['paid_sample'] = $data['variant']['paid_sample'][$key];
                     } else {
-                        $variants_data[$key]['paid_sample'] = 0;
+                        $variants_data[$key]['paid_sample'] =  $shipping_sample_parent['paid_sample'];
                     }
                 } else {
-                    $variants_data[$key]['paid_sample'] = 0;
+                    $variants_data[$key]['paid_sample'] = $shipping_sample_parent['paid_sample'];
                 }
 
                 if (array_key_exists('shipping_amount', $data['variant'])) {
@@ -4745,7 +4745,7 @@ class ProductService
                         "estimated_order" => $sample_shipping["estimated_sample"][$i],
                         "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"][$i]) ?
                         $sample_shipping["estimated_shipping_sample"][$i] : null,
-                        "paid" => "buyer",
+                        "paid" => $sample_shipping["paid_sample"][$i],
                         "shipping_charge" => "flat",
                         "flat_rate_shipping" => isset($sample_shipping["shipping_amount"][$i]) ?
                             $sample_shipping["shipping_amount"][$i] : null,
