@@ -4691,7 +4691,9 @@ class ProductService
 
     public function storeShipping($product_id, $shipping)
     {
-        Shipping::where("product_id", $product_id)->delete();
+        Shipping::where("product_id", $product_id)
+            ->where("is_sample", false)
+            ->delete();
 
         if (count($shipping) > 0) {
             $shipping = array_map(function ($array) use ($product_id) {
@@ -4724,7 +4726,8 @@ class ProductService
                     "estimated_order" => $sample_shipping["estimated_sample"],
                     "estimated_shipping" => isset($sample_shipping["estimated_shipping_sample"]) ?
                         $sample_shipping["estimated_shipping_sample"] : null,
-                    "paid" => "buyer",
+                    "paid" => isset($sample_shipping["paid_sample"]) ?
+                        $sample_shipping["paid_sample"] : null,
                     "shipping_charge" => "flat",
                     "flat_rate_shipping" => isset($sample_shipping["shipping_amount"]) ?
                         $sample_shipping["shipping_amount"] : null,
