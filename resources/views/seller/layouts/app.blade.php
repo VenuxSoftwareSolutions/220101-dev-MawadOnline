@@ -480,7 +480,7 @@
                     }
                 } else {
                     $("#search-menu").html(
-                        `<li class="aiz-side-nav-item"><span	class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
+                        `<li class="aiz-side-nav-item"><span class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
                         );
                 }
             } else {
@@ -499,6 +499,384 @@
             if (this.complete && !this.naturalHeight && !this.naturalWidth) {
                 $(this).triggerHandler('error');
             }
+        });
+
+        $(document).ready(function() {
+            $('body').on('change', '.shipper', function() {
+                let count_shippers = parseInt($(this).data("count_shippers"));
+                let selected = $(this).val();
+
+                if(["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find("input,select").each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null);
+
+                            if (selected === "third_party") {
+                                if(
+                                    [
+                                        "paid[]",
+                                        "shipping_charge[]"
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("paid") === true ||
+                                    $(el).attr("class").includes("shipping_charge") === true
+                                ) {
+                                    $(el).addClass("disabled-look__clz")
+                                } else if(
+                                    [
+                                        "from_shipping[]",
+                                        "to_shipping[]",
+                                        "estimated_order[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    [
+                                       "min-qty-shipping", "max-qty-shipping"
+                                    ].includes($(el).attr("id")) === true ||
+                                    $(el).attr("class").includes("estimated_order") === true ||
+                                    $(el).attr("class").includes("min-qty-shipping") ||
+                                    $(el).attr("class").includes("max-qty-shipping")
+                                ) {
+                                    $(el).attr("readonly", false);
+                                } else {
+                                    $(el).attr("readonly", true);
+                                }
+                            } else {
+                                if($(el).hasClass("disabled-look__clz")) {
+                                    $(el).removeClass("disabled-look__clz");
+                                } else {
+                                    $(el).attr("readonly", false);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $(this).parent().parent().find("input,select").each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null)
+
+                            if (
+                                [
+                                    "paid[]",
+                                    "shipping_charge[]"
+                                ].includes($(el).attr("name")) === true ||
+                                $(el).attr("class").includes("paid") === true ||
+                                $(el).attr("class").includes("shipping_charge") === true
+                            ) {
+                                $(el).addClass("disabled-look__clz")
+                            } else {
+                                $(el).attr("readonly", true)
+                            }
+                        }
+                    });
+                }
+
+                if (selected.indexOf('third_party') !== -1) {
+                     $(this).parent().parent().find('.paid').find("option:last")
+                            .prop("selected", true);
+
+                    if (count_shippers == 0) {
+                        let title = "{{ translate('Default Shipping Configuration') }}";
+                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+                    } else {
+                        let weight = $('#weight').val();
+                        let length = $('#length').val();
+                        let width = $('#width').val();
+                        let height = $('#height').val();
+                        let breakable = $('#breakable').val();
+                        let min_third_party = $('#min_third_party').val();
+                        let max_third_party = $('#max_third_party').val();
+                        let unit_third_party = $('#unit_third_party').val();
+
+                        if ((weight == '') || (length == '') || (width == '') || (height == '') || (
+                                min_third_party == '') || (max_third_party == '')) {
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
+                                "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').html(message);
+
+                            $('#modal-info').modal('show');
+                        } else {
+                            length = parseInt(length);
+                            height = parseInt(height);
+                            width = parseInt(width);
+                            weight = parseInt(weight);
+                            let volumetric_weight = (length * height * width) / 5000;
+                            let chargeable_weight = 0;
+                            let html = '';
+
+                            if (volumetric_weight > weight) {
+                                chargeable_weight = volumetric_weight;
+                            } else {
+                                chargeable_weight = weight;
+                            }
+
+                            if (chargeable_weight > 30) {
+                                let title = "{{ translate('Default Shipping Configuration') }}";
+                                let message = "{{ translate('Chargeable Weight = ') }}" + Number(
+                                        chargeable_weight.toFixed(2)) +
+                                    ", {{ translate('then not accepted by our shipper') }}";
+
+                                $('#title-modal').text(title);
+                                $('#text-modal').text(message);
+
+                                $('#modal-info').modal('show');
+                            } else {
+                                $(this).parent().parent().find('.estimated_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.shipping_charge').find("option:first")
+                                    .prop("selected", true);
+                                $(this).parent().parent().find('.shipping_charge').addClass('disabled-look__clz');
+
+                                $(this).parent().parent().find('.paid').find("option:last")
+                                    .prop("selected", true);
+                                $(this).parent().parent().find('.paid').addClass("disabled-look__clz");
+
+                                $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                                $(this).parent().parent().find('.estimated_shipping').val(null);
+
+                                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                            }
+                        }
+                    }
+                }
+
+                if (selected.indexOf('vendor') !== -1) {
+                    $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected",
+                        true);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                    $(this).parent().parent().find('.paid').val(null);
+                    $(this).parent().parent().find('.estimated_shipping').val(null);
+                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }
+            });
+
+            $('body').on('change', '.shipper_sample', function() {
+                let count_shippers = parseInt($(this).data("count_shippers"));
+                let selected = $(this).val();
+
+                if (["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find('input,select').each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null);
+
+                            if (selected === "third_party") {
+                                if(
+                                    [
+                                        "paid_sample[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("paid_sample") === true
+                                ) {
+                                    $(el).addClass("disabled-look__clz")
+                                } else if(
+                                    [
+                                        "estimated_sample[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("estimated_sample") === true
+                                ) {
+                                    $(el).attr("readonly", false);
+                                } else {
+                                    $(el).attr("readonly", true);
+                                }
+                            } else {
+                                if($(el).hasClass("disabled-look__clz")) {
+                                    $(el).removeClass("disabled-look__clz");
+                                } else {
+                                    $(el).attr("readonly", false);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $(this).parent().parent().find('input,select').each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null)
+
+                            if (
+                                [
+                                    "paid_sample[]",
+                                ].includes($(el).attr("name")) === true
+                            ) {
+                                $(el).addClass("disabled-look__clz")
+                            } else {
+                                $(el).attr("readonly", true)
+                            }
+                        }
+                    });
+                }
+
+                if (selected.indexOf('third_party') !== -1) {
+                    $(this).parent().parent().find('.shipping_amount').val('');
+                    $(this).parent().parent().find('.shipping_amount').prop('readonly', true);
+                    $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                    $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', true);
+                    $(this).parent().parent().find('.paid_sample').find("option:last").prop("selected", true);
+
+                    if (count_shippers == 0) {
+                        let title = "{{ translate('Default Shipping Configuration') }}";
+                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).find("option:first").prop("selected", true)
+                        $(this).parent().parent().find('.shipping_amount').val('');
+                        $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
+                        $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                        $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', false);
+                        $(this).parent().parent().find('.paid_sample').find("option:first").prop("selected", true);
+                    } else {
+                        let weight = $('#package_weight_sample').val();
+                        let length = $('#length_sample').val();
+                        let width = $('#width_sample').val();
+                        let height = $('#height_sample').val();
+                        let breakable = $('#breakable_sample').val();
+                        let min_third_party = $('#min_third_party_sample').val();
+                        let max_third_party = $('#max_third_party_sample').val();
+                        let unit_third_party = $('#unit_third_party_sample').val();
+
+                        if ((weight == '') || (length == '') || (width == '') || (height == '') || (
+                                min_third_party == '') || (max_third_party == '')) {
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
+                                "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').html(message);
+
+                            $('#modal-info').modal('show');
+                        } else {
+                            length = parseInt(length);
+                            height = parseInt(height);
+                            width = parseInt(width);
+                            weight = parseInt(weight);
+                            let volumetric_weight = (length * height * width) / 5000;
+                            let chargeable_weight = 0;
+                            let unit = $('#weight_unit_sample').val();
+                            let max = 30;
+                            if (unit == "pounds") {
+                                max *= 2.2;
+                            }
+                            let html = '';
+                            if (volumetric_weight > weight) {
+                                chargeable_weight = volumetric_weight;
+                            } else {
+                                chargeable_weight = weight;
+                            }
+
+                            if (unit == "pounds") {
+                                chargeable_weight *= 2.2;
+                            }
+
+                            if (chargeable_weight > max) {
+                                var title = "{{ translate('Default Shipping Configuration') }}";
+                                var message = "{{ translate('Chargeable Weight = ') }}" + Number(
+                                        chargeable_weight.toFixed(2)) +
+                                    ", {{ translate('then not accepted by our shipper') }}";
+
+                                $('#title-modal').text(title);
+                                $('#text-modal').text(message);
+
+                                $('#modal-info').modal('show');
+                            }
+                        }
+                    }
+                }
+
+                if (selected.indexOf('vendor') !== -1) {
+                    $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
+                    $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', false);
+                    $(this).parent().parent().find('.paid_sample').val('');
+                }
+            });
+
+            $('body').on('click', '#third_party_activate', function() {
+                if ($(this).is(':checked')) {
+                    let count_shippers = parseInt($(this).data("count_shippers"));
+
+                    if (count_shippers == 0) {
+                        $('body input[name="activate_third_party"]').prop('checked', false);
+
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).prop('checked', false)
+                    } else {
+                        $('#bloc_third_party input[type="number"]').each(function() {
+                            $(this).prop('readonly', false);
+                        });
+
+                        $('#bloc_third_party select').each(function() {
+                            $(this).prop('disabled', false);
+                        });
+                    }
+                } else {
+                    $('#bloc_third_party input[type="number"]').each(function() {
+                        $(this).prop('readonly', true);
+                    });
+
+                    $('#bloc_third_party select').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+
+                    $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
+                }
+            });
+
+            $('body').on('click', '#third_party_activate_sample', function() {
+                if ($(this).is(':checked')) {
+                    let count_shippers = parseInt($(this).data("count_shippers"));
+
+                    if (count_shippers == 0) {
+                        $('body input[name="activate_third_party"]').prop('checked', false);
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).prop('checked', false)
+                    } else {
+                        $('#bloc_third_party_sample input[type="number"]').each(function() {
+                            $(this).prop('readonly', false);
+                        });
+
+                        $('#bloc_third_party_sample select').each(function() {
+                            $(this).prop('disabled', false);
+                        });
+                    }
+                } else {
+                    $('#bloc_third_party_sample input[type="number"]').each(function() {
+                        $(this).prop('readonly', true);
+                    });
+
+                    $('#bloc_third_party_sample select').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+
+                    $('#bloc_third_party_sample input[type="number"]').val('').prop('readonly', true);
+                }
+            });
         });
     </script>
 </body>
