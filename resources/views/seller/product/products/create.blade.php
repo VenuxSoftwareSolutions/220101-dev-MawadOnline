@@ -582,7 +582,13 @@
                                     <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
                                     <div class="col-md-10">
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="0" name="sample_available" type="checkbox" class="sample-available" />
+                                            <input
+                                                 value="{{ old("sample_available") ?? 0 }}"
+                                                 @checked(old("sample_available") == 1)
+                                                 name="sample_available"
+                                                 type="checkbox"
+                                                 class="sample-available"
+                                            />
                                             <span></span>
                                         </label>
                                     </div>
