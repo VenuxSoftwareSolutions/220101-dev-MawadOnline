@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Log;
 use Exception;
+use App\Rules\NonOverlappingShippingQuantityPerShipper;
 
 class ProductController extends Controller
 {
@@ -810,13 +811,16 @@ class ProductController extends Controller
 
         $rules = [
             'unit_sale_price' => ['required', 'numeric'],
-            'from_shipping' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
-            ],
-            'to_shipping' => ['required', 'array'],
-            'from_shipping.*' => 'numeric',
-            'to_shipping.*' => 'numeric',
+            'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                $request->get("shipper"),
+                $request->get("from_shipping"),
+                $request->get("to_shipping")
+            )],
+            'from_shipping' => 'bail|required|array',
+            'to_shipping' => 'bail|required|array',
+            'shipper.*' => 'bail|required|string',
+            'from_shipping.*' => 'bail|required|integer|min:1',
+            'to_shipping.*' => 'bail|required|integer|min:1',
         ];
 
         $variantsPricing = collect($request->all())
