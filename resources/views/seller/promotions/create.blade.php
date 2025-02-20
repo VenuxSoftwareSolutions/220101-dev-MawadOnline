@@ -362,6 +362,16 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="min_qty" class="form-label">Minimum Quantity</label>
+                            <input type="number" class="form-control" id="min_qty" name="min_qty" placeholder="Minimum quantity" min="1">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_qty" class="form-label">Maximum Quantity</label>
+                            <input type="number" class="form-control" id="max_qty" name="max_qty" placeholder="Maximum quantity" min="1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                             <label for="maxDiscount" class="form-label">Max Use	Discount</label>
                             <input type="number" class="form-control" name="max_discount"
                                 placeholder="Maximum discount amount">
@@ -559,6 +569,8 @@
             const couponRadio = document.getElementById('coupons');
             const couponCodeContainer = document.getElementById('couponCodeContainer');
             const DiscountContainer = document.getElementById('DiscountContainer');
+            const maxQuantityInput = document.getElementById('max_qty');
+            const minQuantityInput = document.getElementById('min_qty');
 
            
 
@@ -573,6 +585,8 @@
                 orderAmountInput.value = "";
                 productCategoryContainer.style.display = "none";
                 multiTreeContainer.style.display = "none";
+                maxQuantityInput.disabled = true ;
+                minQuantityInput.disabled = true ; 
 
                 const multiTreeParams = {
                     sortable: true,
@@ -592,8 +606,13 @@
 
                 if (scope === "product") {
                     productCategoryContainer.style.display = "block";
+                    maxQuantityInput.style.display = "block";
+
                     productSelect.disabled = false;
                     categorySelect.disabled = false;
+                    maxQuantityInput.disabled = false ;
+                    minQuantityInput.disabled = false ; 
+
 
 
                 } else if (scope === "category") {
@@ -690,6 +709,8 @@
                 const orderAmount = form.querySelector("#order_amount").value;
                 const generatedCode = document.getElementById("code").value;
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
+                const maxQty = form.querySelector("input[name='max_qty']").value;
+                const minQty = form.querySelector("input[name='min_qty']").value;
 
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
@@ -710,6 +731,13 @@
                 if (offerType === "coupon" && (!generatedCode)) {
                     return showError ("Please generate a coupon code before submitting.");
                 }
+                if (minQty === "" || isNaN(minQty) || minQty <= 0)
+                    return showError("Minimum quantity must be a positive number.");
+                if (maxQty === "" || isNaN(maxQty) || maxQty <= 0)
+                    return showError("Maximum quantity must be a positive number.");
+                if (Number(maxQty) < Number(minQty))
+                    return showError("Maximum quantity must be greater than or equal to the minimum quantity.");
+
                 return true;
             }
 

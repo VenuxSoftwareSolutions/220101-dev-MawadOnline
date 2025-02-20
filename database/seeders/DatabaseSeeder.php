@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Database\Seeders\ProductSeeder;
+/* use Database\Seeders\ProductSeeder; */
+use Database\Seeders\UnitsSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
         //$this->call(LeaseSeeder::class);
         /* $this->call(TranslationProductSeeder::class); */
         /* $this->call(TranslationCatalogueSeeder::class); */
-        $this->call(ProductSeeder::class);
+        /* $this->call(ProductSeeder::class); */
+        $this->call(UnitsSeeder::class);
     }
 }

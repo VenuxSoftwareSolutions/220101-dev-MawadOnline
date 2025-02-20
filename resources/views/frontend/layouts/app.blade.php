@@ -486,6 +486,16 @@
         $('#search').on('focus', function(){
             search();
         });
+        $('#search_form').on('submit', function (e) {
+            let inputField = $('#search');
+            let value = inputField.val();
+            value = value.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+            inputField.val(value);
+            if (value.length < 3) {
+                e.preventDefault();
+                AIZ.plugins.notify('warning', "{{ translate('Search keyword must be at least 3 characters long.') }}");
+            }
+        });
 
         function escapeHtml(text) {
     let map = {
@@ -774,8 +784,7 @@
                            $('.buy-now').addClass('d-none');
                            $('.add-to-cart').addClass('d-none');
                            $('.out-of-stock').removeClass('d-none');
-                        }
-                        else{
+                        } else {
                            $('.buy-now').removeClass('d-none');
                            $('.add-to-cart').removeClass('d-none');
                            $('.out-of-stock').addClass('d-none');
@@ -788,11 +797,11 @@
         }
 
         function checkAddToCartValidity(){
-            var names = {};
+            let names = {};
             $('#option-choice-form input:radio').each(function() { // find unique names
                 names[$(this).attr('name')] = true;
             });
-            var count = 0;
+            let count = 0;
             $.each(names, function() { // then count them
                 count++;
             });
@@ -816,6 +825,7 @@
             @endif
 
             if(checkAddToCartValidity()) {
+                $('#addToCart-modal-body').html(null);
                 $('#addToCart').modal();
                 $('.c-preloader').show();
                 let dataToSend = additionalData ? additionalData : $('#option-choice-form-preview').serializeArray();

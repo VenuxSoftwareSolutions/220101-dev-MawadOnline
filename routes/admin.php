@@ -101,6 +101,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::controller(BrandController::class)->group(function () {
         Route::get('/brands/edit/{id}', 'edit')->name('brands.edit');
         Route::get('/brands/destroy/{id}', 'destroy')->name('brands.destroy');
+        Route::get('/brands/by-bu-jobs/{bu_job_id}', [BrandController::class, 'brandsByBuJob'])->name('brands.byBuJob');
+
     });
 
     // Products
