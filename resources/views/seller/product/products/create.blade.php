@@ -1053,7 +1053,7 @@
                         <div class="tree_main">
                             <input type="text" id="search_input" class="form-control"
                                 placeholder="{{ translate('Search') }}"
-                                value="{{ old('parent_id') ? get_single_category(old('parent_id'))->name : '' }}">
+                                value="{{ old('parent_id') ? get_single_category(old('parent_id'))->name : '' }}" />
                             <div class="h-300px overflow-auto c-scrollbar-light">
                                 <div id="jstree"></div>
                             </div>
