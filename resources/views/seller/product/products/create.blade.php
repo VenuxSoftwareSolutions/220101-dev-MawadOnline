@@ -204,6 +204,158 @@
                 right: -11px !important;
             }
         }
+        .add_prod_btnlist{
+            padding:10px 20px;
+            background:#fff;
+            border:none;
+            border-radius: 8px;
+        }
+        .hidden{display: none;}
+        .active_btnlist{
+            color: #ffffff !important;
+            background: #2e294e;
+        }.active_btnlist:hover{
+            color: #ffffff;
+            background: #2e294e;
+        }
+        .sbu-s1-desc{
+            border: solid 1px #fefefe;
+            border-radius: 16px;
+            background: #fafafa;
+            text-align: center;
+            color: #3A3B40;
+        }
+        .sbu-s1-title{
+            text-align: center;
+            color: #3A3B40;
+        }
+        .sbu-s1-btn-ex{
+            border:solid 1px #f4f4f4;
+            border-radius: 8px;
+            color: #2e294e;
+            background: #f9f9f9;
+        }
+        .sbu-s1-btn-arrow{
+            border:none;
+            border-radius: 8px;
+            color: #378AB6;
+            background: none;
+        }
+        .sbu-s1-btn-sub{
+            border:none;
+            border-radius: 12px;
+            color: #ffffff;
+            background: #378AB6;
+        }
+        .sbu-s1-btn-ex-l{
+            border:solid 1px #2e294e;
+            border-radius: 8px;
+            color: #2e294e;
+            background: #f9f9f9;
+        }
+        .dark-c3{
+            color: #3A3B40;
+        }
+        .line-h{
+            line-height: 27px;
+        }
+        .mt5px{
+            margin-top: 5px;
+        }
+        .sbu-save-icon{
+            position: relative;
+            top: -2px;
+        }
+        .sbu-save-img{
+            width: 380px;
+            height: auto;
+            border-radius: 12px;
+            border: solid 6px #f2f2f2;
+        }
+        .sbu-discount-img{
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: solid 6px #f2f2f2;
+        }
+        .sbu-upload-box{
+            border:dashed 3px #e4e4e4;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+        .sbu-upload-title{
+            background: #ffffff;
+            border-radius: 12px;
+            border:solid 1px #e4e4e4;
+        }
+        .sbu-s1-btn-imp{
+            border:solid 1px #CB774B;
+            border-radius: 8px;
+            color: #CB774B;
+            background: #fff;
+        }
+        .sbu-upload-box-dad{
+            color: #bebebe;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 2px solid transparent;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .radio-label span {
+            font-size: 16px;
+            color: #555;
+        }
+
+        input[type="radio"] + .radio-label {
+            border-color: #f2f2f2;
+            background-color: #f2f2f2;
+        }
+
+        input[type="radio"]:checked + .radio-label {
+            border-color: #5FA38E;
+            background-color: #5FA38E;
+        }
+
+        input[type="radio"]:checked + .radio-label span {
+            color: white;
+        }
+
+        .yes { color: #5FA38E; }
+        .no { color: #E2BE6A; }
+        .border-b-title{
+            border-bottom: solid 1px #ececec;
+        }
+        .sbu-s2-title-icon{
+            position: relative;
+            top: -2px;
+        }
+
+        .input-disc-box{
+            width: 138px;
+            height: auto;
+            background: #ececec;
+        }
+        .input-disc-percent{
+            width: 38px;
+            height: 100%;
+            line-height: 42px;
+        }
     </style>
 @endpush
 
@@ -232,10 +384,297 @@
     <div class="button-container">
         <button type="button" class="preview-button" onclick="submitForm()">{{ __('product.PreviewProduct') }}</button>
     </div>
+    <button class="add_prod_btnlist btn mr-1 dark-c3 fs-16 font-prompt active_btnlist" id="addprod">Add Product</button>
+    <button class="add_prod_btnlist btn mr-1 dark-c3 fs-16 font-prompt" id="classicbulk">Classic Bulk Upload</button>
+    <button class="add_prod_btnlist btn dark-c3 fs-16 font-prompt" id="smartbulk">Smart Bulk Upload</button>
+    <div id="classic_proc" class="hidden">
+        Classic Bulk Upload
+    </div>
+    <div id="smart_proc" class="hidden">
+        <div class="row gutters-5 mt-2">
+            <div class="col-lg-12">
+                <div class="card">
+                    <!-- Step 1 -- Explaining -->
+                    <div class="card-body" id="smartbulk-1">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-center">
+                            <div class="col-10 col-md-8">
+                                <div class="col-12 sbu-s1-title fs-24 font-prmopt p-2 pb-4">
+                                    <b>Smart</b> Bulk Upload
+                                </div>
+                                <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4">
+                                    This system is a huge time saver. With the ability to upload up to 1,000,000 products at once, managing your inventory has never been easier.
+                                </div>
+                                <div class="col-12 py-3 d-flex justify-content-center">
+                                    <div class="col-12 col-md-8 d-flex justify-content-between">
+                                    <button class="fs-16 font-prmopt sbu-s1-btn-ex py-2 px-3">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 11V17L11 15" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 17L7 15" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        Export
+                                    </button>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-arrow py-2 px-3">
+                                            Then
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.4297 5.92999L20.4997 12L14.4297 18.07" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M3.5 12H20.33" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                        </button>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-ex py-2 px-3">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 11L11 13" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                            Import
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="startNowBtn">
+                                        Start Now
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 2 -- Exporting -->
+                    <div class="card-body hidden" id="smartbulk-2">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-start">
+                            <div class="col-10 col-md-6">
+                                <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
+                                    <span class="dark-c3 p-0">
+                                        <svg width="24" height="24" class="sbu-s2-title-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 11V17L11 15" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 17L7 15" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Export CSV File
+                                    </span>
+                                </div>
+                                <div class="col-12 p-0 pt-3">
+                                    <span class="col-12 p-0 fs-16 font-prompt dark-c3 float-left">
+                                        From your inventory management or database software, export your product data in MS Excel format.
+                                    </span>
+                                    <span class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
+                                        Ensure your file includes the following key details:
+                                    </span>
+                                    <ul class="fs-16 p-0 font-prompt dark-c3 line-h mt5px float-left">
+                                        <li><strong>Product Name –</strong> Helps attract buyers with clear, searchable titles.</li>
+                                        <li><strong>Brand –</strong> Ensures correct classification and brand recognition.</li>
+                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting.</li>
+                                        <li><strong>Unit Price –</strong> Essential for listing products and enabling transactions.</li>
+                                        <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, per
+                                            kilogram).</li>
+                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations.</li>
+                                        <li><strong>Product Package Weight –</strong> Helps with shipping cost estimation.</li>
+                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence.</li>
+                                        <!--<li><strong>Technical Documents Link –</strong> Upload CAD/BIM files, spec sheets, or certifications.</li>
+                                        <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
+                                    </ul>
+                                </div>
+                                <div class="col-12 p-0 py-1 d-flex justify-content-start">
+                                    <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next2Btn">
+                                        Next Step
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 3 -- Save & explain -->
+                    <div class="card-body hidden" id="smartbulk-3">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-center">
+                            <div class="col-10 col-md-8">
+                                <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4 dark-c3">
+                                    Save your Excel file in <b>CSV (UTF-8)</b> format.
+                                    <svg width="20" height="20" class="sbu-save-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3.5 7V17C3.5 20 4.97 22 8.5 22H15.5C18.97 22 20.5 20 20.5 17V15.83C20.5 15.3 20.29 14.79 19.91 14.42L19.08 13.59C18.7 13.21 18.49 12.71 18.49 12.18V10C18.49 9.45 18.94 9 19.49 9C20.04 9 20.49 8.55 20.49 8V7C20.49 4 18.96 2 15.49 2H8.49C4.97 2 3.5 4 3.5 7Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M7.99047 21.97L7.98047 19C7.98047 17.89 8.87047 17 9.98047 17H13.9905C15.0905 17 15.9805 17.89 15.9905 18.99L16.0205 21.98" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M13.9707 7.78003H7.9707" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+
+                                </div>
+                                <div class="col-12 d-flex justify-content-center">
+                                <img class="sbu-save-img lazyload mt-3" src="{{ static_asset('assets/img/saveascsv.png') }}">
+                                </div>
+                                <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next3Btn">
+                                        Next Step
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 4 -- Save & explain -->
+                    <div class="card-body hidden" id="smartbulk-4">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-center">
+                            <div class="col-10 col-md-8">
+                                <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4 dark-c3">
+                                    Import your <b>CSV</b> File.
+
+                                </div>
+                                <div class="col-12 d-flex justify-content-center mt-3">
+                                    <div class="col-10 col-md-7 sbu-upload-box p-4">
+                                        <div class="col-12 fs-18 font-prmopt d-flex justify-content-center dark-c3 sbu-upload-title p-3">AI Product Bulk Upload</div>
+                                        <div class="col-12 mt-3 d-flex justify-content-center">
+                                            <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+
+                                                Import CSV File
+                                            </button>
+                                        </div>
+                                        <!--
+                                        <div class="col-12 mt-3 d-flex justify-content-center sbu-upload-box-dad fs-20">
+                                            Drag & Drop Field
+                                        </div>
+                                            -->
+                                    </div>
+                                </div>
+                                <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next4Btn">
+                                        Next Step
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 5 -- Save & explain -->
+                    <div class="card-body hidden" id="smartbulk-5">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-start">
+                            <div class="col-10 col-md-9">
+                                <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
+                                    <span class="dark-c3 p-0">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M17 18.43H13L8.54999 21.39C7.88999 21.83 7 21.36 7 20.56V18.43C4 18.43 2 16.43 2 13.43V7.42993C2 4.42993 4 2.42993 7 2.42993H17C20 2.42993 22 4.42993 22 7.42993V13.43C22 16.43 20 18.43 17 18.43Z" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M11.9998 11.3599V11.1499C11.9998 10.4699 12.4198 10.1099 12.8398 9.81989C13.2498 9.53989 13.6598 9.1799 13.6598 8.5199C13.6598 7.5999 12.9198 6.85986 11.9998 6.85986C11.0798 6.85986 10.3398 7.5999 10.3398 8.5199" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M11.9955 13.75H12.0045" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        Required Questions
+                                    </span>
+                                </div>
+                                <div class="col-12 p-0 pt-2">
+                                    <span class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
+                                        Before we proceed, there are 2 questions that require your clarifications:
+                                    </span>
+                                    <span class="col-12 p-0 fs-16 font-prompt dark-c3 mt-2 float-left">
+                                        <b>Do you usually deliver to your customers?</b>
+                                    </span>
+                                    <br/>
+                                    <div class="col-12 mt-3 float-left radio-group">
+                                        <label>
+                                            <input type="radio" name="deliver" value="yes">
+                                            <span class="radio-label yes"><span>Yes</span></span>
+                                        </label>
+
+                                        <label>
+                                            <input type="radio" name="deliver" value="no">
+                                            <span class="radio-label no"><span>No</span></span>
+                                        </label>
+                                    </div>
+                                    <ul class="fs-16 p-0 pb-3 font-prompt border-b-title dark-c3 line-h mt5px float-left">
+                                        <li>
+                                            &bull; <strong>(IF NO)</strong> Make sure that the products’ inventory list includes the products packages
+                                            details; WxHxL and weight, so that our trusted delivery partners can give accurate fees
+                                            to your customers.
+                                        </li>
+                                        <li>
+                                            &bull; You can adjust every product’s data later in the “edit product” in the Product List. However, for bulk action, it is preferable to apply the general rule here.
+                                        </li>
+                                    </ul>
+                                    <div class="fs-16 p-0 pt-3">
+                                        Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
+                                    </div>
+                                    <img class="sbu-discount-img lazyload mt-3" src="{{ static_asset('assets/img/discountexample.png') }}">
+                                    <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
+                                        <li>
+                                            &bull; Sell in bulk at retail price (not recommended).
+                                        </li>
+                                        <li>
+                                            &bull; Set a global pricing rule for all products and fine-tune specific items later in the Products List.
+                                        </li>
+                                        <li>
+                                            &bull; Skip for now and adjust prices individually later.
+                                        </li>
+                                    </ul>
+                                    <!-- Table -->
+                                    <div>
+                                        <table class="table" id="table_discount_configuration">
+                                            <thead>
+                                                <tr>
+                                                    <th>From QTY</th>
+                                                    <th>To QTY</th>
+                                                    <th>Unit Price (VAT Exclusive)</th>
+                                                    <th>Discount (Start/End)</th>
+                                                    <th>Discount Percentage</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="bloc_shipping_configuration">
+                                                <tr>
+                                                    <td>
+                                                        <input type="number" name="fromqte" class="form-control min-qty-shipping" id="min-qty-shipping" placeholder="From QTY" value="">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="toqte" class="form-control max-qty-shipping" id="max-qty-shipping" placeholder="To QTY" value="">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="unitprice" class="form-control estimated_order" value="" placeholder="Unit Price">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" id="date-range" class="form-control discount-range" placeholder="Discount (Start/End)">
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-disc-box float-left">
+                                                        <input type="number" name="discount" class="form-control charge_per_unit_shipping float-left"  placeholder="Discount" value="">
+                                                        <div class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">%</div>
+                                                        <div>
+                                                    </td>
+                                                    <td>
+                                                        <i class="las la-plus btn-add-discount" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data" id="choice_form">
         @csrf
-        <div class="row gutters-5">
+        <div class="row gutters-5 mt-2">
             <div class="col-lg-12">
                 {{-- Bloc Product Information --}}
                 <input type="hidden" id="published_after_approve" value="0" name="published_modal">
@@ -4623,6 +5062,8 @@
             });
         };
     </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -5218,5 +5659,119 @@
                 }
             });
         });
+        $(document).ready(function() {
+        $("#choice_form").show();
+        $("#classic_proc, #smart_proc").hide();
+
+        $(".btn").click(function() {
+            $(".btn").removeClass("active_btnlist");
+            $(this).addClass("active_btnlist");
+        });
+
+        $("#smartbulk").click(function() {
+            $("#smart_proc").show();
+            $("#classic_proc, #choice_form").hide();
+        });
+
+        $("#classicbulk").click(function() {
+            $("#classic_proc").show();
+            $("#smart_proc, #choice_form").hide();
+        });
+
+        $("#addprod").click(function() {
+            $("#choice_form").show();
+            $("#classic_proc, #smart_proc").hide();
+        });
+        $("#startNowBtn").click(function() {
+            $("#smartbulk-1").hide();
+            $("#smartbulk-2").show();
+        });
+        $("#export-conf").click(function() {
+            $(this).attr("data-value", "true");
+            console.log("Export Confirm value:", $(this).attr("data-value"));
+        });/*
+        $("#next2Btn").click(function() {
+            if($("#export-conf").attr("data-value") === "true") {
+                $("#smartbulk-2").hide();
+                $("#smartbulk-3").show();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Oops...',
+                    text: 'You have to export the file first!'
+                });
+            }
+        });*/
+        $("#next2Btn").click(function() {
+            $("#smartbulk-2").hide();
+            $("#smartbulk-3").show();
+        });
+        $("#next3Btn").click(function() {
+            $("#smartbulk-3").hide();
+            $("#smartbulk-4").show();
+        });
+        $("#next4Btn").click(function() {
+            $("#smartbulk-4").hide();
+            $("#smartbulk-5").show();
+        });
+    });
+    flatpickr('.discount-range', {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            minDate: "today",
+            onClose: function(selectedDates) {
+                console.log("From:", selectedDates[0]);
+                console.log("To:", selectedDates[1]);
+            }
+        });
+    // added code for discount table
+    // Add new row to the discount configuration table
+
+    $(document).ready(function() {
+    $('body').on('click', '.btn-add-discount', function() {
+        var newRow = `
+            <tr>
+                <td>
+                    <input type="number" name="fromqte[]" class="form-control min-qty-discount" placeholder="From QTY">
+                </td>
+                <td>
+                    <input type="number" name="toqte[]" class="form-control max-qty-discount" placeholder="To QTY">
+                </td>
+                <td>
+                    <input type="number" name="unitprice[]" class="form-control unit-price-discount" placeholder="Unit Price">
+                </td>
+                <td>
+                    <input type="text" class="form-control discount-range" placeholder="Discount (Start/End)">
+                </td>
+                <td>
+                    <div class="input-disc-box d-flex align-items-center">
+                        <input type="number" name="discount[]" class="form-control discount-percentage" placeholder="Discount">
+                        <span class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">%</span>
+                    </div>
+                </td>
+                <td>
+                    <i class="las la-plus btn-add-discount" style="margin-left: 5px; margin-top: 17px;" title="Add another row"></i>
+                    <i class="las la-trash delete-discount-row" style="margin-left: 5px; margin-top: 17px;" title="Delete this row"></i>
+                </td>
+            </tr>
+        `;
+
+        $('#table_discount_configuration tbody').append(newRow);
+        flatpickr('.discount-range', {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            minDate: "today",
+            onClose: function(selectedDates) {
+                console.log("From:", selectedDates[0]);
+                console.log("To:", selectedDates[1]);
+            }
+        });
+        $('body').on('click', '.delete-discount-row', function() {
+                $(this).parent().parent().remove();
+            })
+    });
+});
     </script>
 @endsection
