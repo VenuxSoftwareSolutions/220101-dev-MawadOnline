@@ -73,18 +73,31 @@ class SearchController extends Controller
         //Filter products By Category
         ['products' => $products, 'attributes' => $attributes, 'category_ids' => $category_ids, 'category_parents_ids' => $category_parents_ids, 'category' => $category] = $this->productService->filterProductsAndAttributesByCategory($category_id, $query);
 
-        //Filter by Brand
-        $brands = Brand::whereIn('id', Product::IsApprovedPublished()->nonAuction()->pluck('brand_id'))
-        ->select('id', 'name')
-        ->get();
-        $brand_ids = $this->productService->filterProductsByBrand($request, $brand_id, $products);
         $baseQuery = clone $products;
 
-        //filter by vendors
+        $brandQuery = clone $baseQuery;
+
+        $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')
+        ->where('brands.approved', '=', 1)  
+        ->whereNull('products.deleted_at')  
+        ->select('brands.*')
+        ->distinct()
+        ->get();
+        
+    
+        $brand_ids = $this->productService->filterProductsByBrand($request, $brand_id, $products);
+
+
+
+        //filter by vendor
         $shopQuery = clone $baseQuery;
+
         $shops = $request->shops;
-        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.id', 'shops.name')->distinct()->get();
+
+        $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
+
         $vender_user_ids = $this->productService->filterProductsByShop($request, $products);
+
 
         //filter by Rating
         $rating = $request->rating;
