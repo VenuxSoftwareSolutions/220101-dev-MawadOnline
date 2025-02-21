@@ -840,6 +840,24 @@ class ProductController extends Controller
             }
         }
 
+        foreach (
+            $request->collect()
+                   ->filter(
+                       fn ($value, $key) => str_starts_with($key, 'variant_shipping-')
+                   )->all() as $value
+        ) {
+            $request->validate([
+                'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                    $value["shipper"],
+                    $value["from"],
+                    $value["to"],
+                    true
+                )],
+                'from' => 'bail|required|array',
+                'to' => 'bail|required|array',
+            ]);
+        }
+
         $request->validate($rules);
     }
 

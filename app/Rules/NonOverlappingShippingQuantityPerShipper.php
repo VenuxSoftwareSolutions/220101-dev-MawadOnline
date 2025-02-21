@@ -9,12 +9,14 @@ class NonOverlappingShippingQuantityPerShipper implements InvokableRule
     protected $shipper;
     protected $from;
     protected $to;
+    protected $is_variant;
 
-    public function __construct($shipper, $from, $to)
+    public function __construct($shipper, $from, $to, $is_variant = false)
     {
         $this->shipper = $shipper;
         $this->from = $from;
         $this->to = $to;
+        $this->is_variant = $is_variant;
     }
 
     /**
@@ -55,7 +57,11 @@ class NonOverlappingShippingQuantityPerShipper implements InvokableRule
                             "MawadOnline 3rd Party Shipping" : $shipper
                         );
 
-                        $fail("Default shipping from/to Quantities cannot overlap for {$formattedShipper} shipper.");
+                        if ($this->is_variant === true) {
+                            $fail("Default variant shipping from/to Quantities cannot overlap for {$formattedShipper} shipper.");
+                        } else {
+                            $fail("Default shipping from/to Quantities cannot overlap for {$formattedShipper} shipper.");
+                        }
                     }
                 }
             }
