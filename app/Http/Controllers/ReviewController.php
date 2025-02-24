@@ -52,12 +52,28 @@ class ReviewController extends Controller
     {
         $request->validate([
             'comment' => 'required|string|max:255',
+            'rating' => 'required_if:has_rating,false|numeric|min:1|max:5'
+
         ]);
+
+        $maxReviews = get_setting('max_reviews_per_product');
+        $existingReviewsCount = Review::where('product_id', $request->product_id)
+        ->where('user_id', Auth::id())
+        ->count();
+        if ($existingReviewsCount >= $maxReviews) {
+            return back()->withErrors(['max' => 'Maximum allowed reviews for this product is reached.']);
+        }
+        
+
         DB::transaction(function () use ($request) {
             $review = new Review();
+            $existingRatingReview = Review::where('product_id', $request->product_id)
+            ->where('user_id', Auth::id())
+            ->whereNotNull('rating')
+            ->first();
             $review->product_id = $request->product_id;
             $review->user_id = Auth::user()->id;
-            $review->rating = $request->rating;
+            $review->rating =  $request->rating;
             $review->comment = $request->comment;
             $review->name = Auth::user()->name;
             $review->status = 0;
