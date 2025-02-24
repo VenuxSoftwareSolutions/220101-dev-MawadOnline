@@ -61,8 +61,10 @@
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.0.1",
-        "mockery/mockery": "^1.4.4",
+        "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^6.1",
+        "pestphp/pest": "^1.23",
+        "pestphp/pest-plugin-laravel": "^1.4",
         "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-ignition": "^1.0"
     },
@@ -110,6 +112,7 @@
         "sort-packages": true,
         "optimize-autoloader": true,
         "allow-plugins": {
+            "pestphp/pest-plugin": true,
             "symfony/thanks": true
         }
     },

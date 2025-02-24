@@ -9,14 +9,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasRoles, Notifiable;
+    use HasApiTokens;
+    use HasRoles;
+    use Notifiable;
+    use HasFactory;
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new EmailVerificationNotification);
+        $this->notify(new EmailVerificationNotification());
     }
 
     /**

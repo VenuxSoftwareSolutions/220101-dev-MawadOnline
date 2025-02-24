@@ -1,21 +1,21 @@
 <?php
 
-namespace Tests\Feature;
+use App\Models\User;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+beforeEach(function () {
+    $this->user = User::factory()->create();
+});
 
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testBasicTest()
-    {
-        $response = $this->get('/');
+it("shows the home page", function () {
+    $this->get("/")->assertStatus(200);
+});
 
-        $response->assertStatus(200);
-    }
-}
+it("shows the login page", function () {
+    $this->get("/users/login")->assertStatus(200);
+});
+
+it("shows the user dashboard", function () {
+    $this->actingAs($this->user)
+       ->get("/dashboard")
+       ->assertStatus(200);
+});

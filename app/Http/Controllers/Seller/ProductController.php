@@ -224,7 +224,7 @@ class ProductController extends Controller
                 $data['main_photos'] = $request->main_photos;
                 $data['photosThumbnail'] = $request->photosThumbnail;
                 $update = false;
-                $this->productUploadsService->store_uploads($data, $update);
+                /* $this->productUploadsService->store_uploads($data, $update); */
             }
 
             flash(translate('Product has been inserted successfully'))->success();
