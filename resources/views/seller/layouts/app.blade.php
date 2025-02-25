@@ -417,89 +417,14 @@
 
     @yield('modal')
 
-
     <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js') }}"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <!-- Select extension -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    @yield('script')
-    <!-- Include MultiSelect JS -->
-    <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
-
-    <script type="text/javascript">
-        @foreach (session('flash_notification', collect())->toArray() as $message)
-            AIZ.plugins.notify('{{ $message['level'] }}', '{{ $message['message'] }}');
-        @endforeach
-
-        $('.dropdown-menu a[data-toggle="tab"]').click(function(e) {
-            e.stopPropagation()
-            $(this).tab('show')
-        })
-
-        if ($('#lang-change').length > 0) {
-            $('#lang-change .dropdown-menu a').each(function() {
-                $(this).on('click', function(e) {
-                    e.preventDefault();
-                    var $this = $(this);
-                    var locale = $this.data('flag');
-                    $.post('{{ route('language.change') }}', {
-                        _token: '{{ csrf_token() }}',
-                        locale: locale
-                    }, function(data) {
-                        location.reload();
-                    });
-
-                });
-            });
-        }
-
-        function menuSearch() {
-            var filter, item;
-            filter = $("#menu-search").val().toUpperCase();
-            items = $("#main-menu").find("a");
-            items = items.filter(function(i, item) {
-                if ($(item).find(".aiz-side-nav-text")[0].innerText.toUpperCase().indexOf(filter) > -1 && $(item)
-                    .attr('href') !== '#') {
-                    return item;
-                }
-            });
-
-            if (filter !== '') {
-                $("#main-menu").addClass('d-none');
-                $("#search-menu").html('')
-                if (items.length > 0) {
-                    for (i = 0; i < items.length; i++) {
-                        const text = $(items[i]).find(".aiz-side-nav-text")[0].innerText;
-                        const link = $(items[i]).attr('href');
-                        $("#search-menu").append(
-                            `<li class="aiz-side-nav-item"><a href="${link}" class="aiz-side-nav-link"><i class="las la-ellipsis-h aiz-side-nav-icon"></i><span>${text}</span></a></li`
-                            );
-                    }
-                } else {
-                    $("#search-menu").html(
-                        `<li class="aiz-side-nav-item"><span class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
-                        );
-                }
-            } else {
-                $("#main-menu").removeClass('d-none');
-                $("#search-menu").html('')
-            }
-        }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
-    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}"></script>
     <script>
-        jQuery("img").one('error', function() {
-            jQuery(this).attr("src",
-            "{{ asset('public/images/placeholder.png') }}"); //.unbind("error") is useless here
-        }).each(function() {
-            if (this.complete && !this.naturalHeight && !this.naturalWidth) {
-                $(this).triggerHandler('error');
-            }
-        });
+        var numbers_variant = 0;
 
         $(document).ready(function() {
             $('body').on('change', '.shipper', function() {
@@ -877,6 +802,385 @@
                     $('#bloc_third_party_sample input[type="number"]').val('').prop('readonly', true);
                 }
             });
+
+            $('body').on('click', '#btn-create-variant', function() {
+                if ($('#attributes option:selected').length > 0) {
+                    let clonedDiv = $('body #variant_informations').clone();
+
+                    clonedDiv.attr('class', 'clonedDiv');
+                    clonedDiv.removeAttr('id');
+                    clonedDiv.attr('data-id', numbers_variant);
+
+                    let count = numbers_variant + 1;
+
+                    @if (app()->getLocale() == 'ae')
+                        let html_to_add =
+                            '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+                    @else
+                        let html_to_add =
+                            '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+                    @endif
+
+                    clonedDiv.find('h3').after(html_to_add);
+                    clonedDiv.find('.fa-circle-check').hide();
+                    clonedDiv.find('#btn-add-pricing-variant').hide();
+                    clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+                    clonedDiv.find('.sku').prop('readonly', true);
+                    clonedDiv.find('div.row').each(function() {
+                        if ($(this).css('display') === 'none') {
+                            $(this).css('display', '');
+                        }
+                    });
+                    clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
+                    clonedDiv.find('.sample_description').attr('name', 'sample_description-' +
+                        numbers_variant);
+                    clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
+                    clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant +
+                        '[]');
+                    clonedDiv.find('.photos_variant').attr('id', 'photos_variant-' + numbers_variant);
+                    clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
+                    clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
+                    clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
+                    clonedDiv.find('.min-qty-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[from][]');
+                    });
+                    clonedDiv.find('.max-qty-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[to][]');
+                    });
+                    clonedDiv.find('.unit-price-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[unit_price][]');
+                    });
+                    clonedDiv.find('.discount_percentage-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_percentage][]');
+                    });
+                    clonedDiv.find('.discount_amount-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_amount][]');
+                    });
+                    clonedDiv.find('.discount-range-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_range][]');
+                        $(element).daterangepicker({
+                            timePicker: true,
+                            autoUpdateInput: false,
+                            minDate: today,
+                            locale: {
+                                format: 'DD-MM-Y HH:mm:ss',
+                                separator: " to ",
+                            },
+                        });
+
+                        let format = 'DD-MM-Y HH:mm:ss';
+                        let separator = " to ";
+
+                        $(element).on("apply.daterangepicker", function(ev, picker) {
+                            $(this).val(
+                                picker.startDate.format(format) +
+                                separator +
+                                picker.endDate.format(format)
+                            );
+                        });
+                    });
+                    clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
+                    clonedDiv.find('.variant-shipping').attr('data-id_variant', numbers_variant);
+
+                    clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
+                    clonedDiv.find('.discount_type-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_type][]');
+                        $('#variant_informations').find('.discount_type-variant').each(function(key,
+                            element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+                    clonedDiv.find('.attributes').each(function(index, element) {
+                        let dataIdValue = $(element).data('id_attributes');
+                        let value = 0;
+                        let check = false;
+                        if ($(element).attr('data-type')) {
+                            $('#variant_informations').find('.color').each(function(key,
+                                element_original) {
+                                if ($(element_original).data('id_attributes') ==
+                                    dataIdValue) {
+                                    value = $(element_original).val();
+                                    $(element).attr('name', 'attributes-' + dataIdValue +
+                                        '-' + numbers_variant + '[]');
+                                    check = true;
+                                }
+                            })
+
+                            $(element).val(value);
+                        }
+
+                        if (check == false) {
+                            $(element).attr('name', 'attributes-' + dataIdValue + '-' +
+                                numbers_variant);
+                        }
+                    });
+
+                    clonedDiv.find('.attributes-units').each(function(index, element) {
+                        let dataIdValue = $(element).data('id_attributes');
+
+                        $(element).attr('name', 'attributes_units-' + dataIdValue + '-' +
+                            numbers_variant);
+                        $('#variant_informations').find('.attributes-units').each(function(key,
+                            element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
+
+                    clonedDiv.find('.min-qty-shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
+                    });
+
+                    clonedDiv.find('.max-qty-shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
+                    });
+
+                    let id_shipper = 0;
+                    clonedDiv.find('.shipper').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[shipper][' + id_shipper + '][]');
+                        $('#variant_informations #table_shipping_configuration').find('.shipper')
+                            .each(function(key, element_original) {
+                                if (index == key) {
+                                    $(element_original).val().forEach(value => {
+                                        $(element).find('option[value="' + value + '"]')
+                                            .prop('selected', true);
+                                    });
+                                }
+                            })
+
+                        id_shipper++;
+                    });
+
+                    clonedDiv.find('.estimated_order').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[estimated_order][]');
+                    });
+
+                    clonedDiv.find('.estimated_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[estimated_shipping][]');
+                    });
+
+                    clonedDiv.find('.paid').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
+                        $('#variant_informations #table_shipping_configuration').find('.paid').each(
+                            function(key, element_original) {
+                                if (index == key) {
+                                    $(element).find('option[value="' + $(element_original)
+                                        .val() + '"]').prop('selected', true);
+                                }
+                            })
+                    });
+
+                    clonedDiv.find('.vat_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[vat_shipping][]');
+                    });
+
+                    clonedDiv.find('.shipping_charge').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[shipping_charge][]');
+                        $('#variant_informations #table_shipping_configuration').find(
+                            '.shipping_charge').each(function(key, element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.flat_rate_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[flat_rate_shipping][]');
+                    });
+
+                    clonedDiv.find('.charge_per_unit_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[charge_per_unit_shipping][]');
+                    });
+
+                    clonedDiv.find('.shipper_sample').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipper_sample-' + numbers_variant + '[]');
+                        $('#variant_informations #table_sample_configuration').find(
+                            '.shipper_sample').each(function(key, element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.paid_sample').each(function(index, element) {
+                        $(element).attr('name', 'paid_sample-' + numbers_variant);
+                        $('#variant_informations #table_sample_configuration').find('.paid_sample')
+                            .each(function(key, element_original) {
+                                if (index == key) {
+                                    $(element).find('option[value="' + $(element_original)
+                                        .val() + '"]').prop('selected', true);
+                                }
+                            })
+                    });
+
+                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' +
+                        numbers_variant);
+                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
+
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id',
+                        numbers_variant);
+                    clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
+                    clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
+
+                    if (clonedDiv.find('.sku').val() == '') {
+                        var title = "{{ translate('Form validation') }}";
+                        var message =
+                            '{{ translate('The SKU field must be filled before creating the variant.') }}';
+                        $('#title-modal').text(title);
+                        $('#text-modal').text(message);
+
+                        $('#modal-info').modal('show')
+                    } else {
+                        $('#bloc_variants_created').show();
+                        $('#bloc_variants_created').prepend(clonedDiv);
+                        var divId = "#bloc_variants_created";
+
+                        var h3Count = $(divId + " h3").length;
+
+                        $(divId + " h3").each(function(index) {
+                            var order = h3Count - index;
+                            $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
+                        });
+                        numbers_variant++;
+
+                        $('#variant_informations').find(
+                            'input[type="text"], input[type="number"], input[type="checkbox"], input[type="radio"], select'
+                        ).each(function() {
+                            if ($(this).is('input[type="text"]') || $(this).is(
+                                    'input[type="number"]')) {
+                                $(this).val('');
+                            }
+                            else if ($(this).is('input[type="radio"]')) {
+                                $(this).prop('checked',
+                                    false);
+                            } else if ($(this).is('select')) {
+                                $(this).val('');
+                            }
+                        });
+
+                        $('#variant_informations').find('.filter-option-inner-inner').each(function() {
+                            $(this).text('Nothing selected')
+                        });
+                    }
+                } else {
+                    var title = "{{ translate('Create variant') }}";
+                    var message =
+                        '{{ translate('A minimum of one attribute must be selected in order to create a variant.') }}';
+                    $('#title-modal').text(title);
+                    $('#text-modal').text(message);
+
+                    $('#modal-info').modal('show')
+                }
+            });
+        });
+    </script>
+
+    @yield('script')
+
+    <!-- Include MultiSelect JS -->
+    <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
+
+    <script type="text/javascript">
+        @foreach (session('flash_notification', collect())->toArray() as $message)
+            AIZ.plugins.notify('{{ $message['level'] }}', '{{ $message['message'] }}');
+        @endforeach
+
+        $('.dropdown-menu a[data-toggle="tab"]').click(function(e) {
+            e.stopPropagation()
+            $(this).tab('show')
+        })
+
+        if ($('#lang-change').length > 0) {
+            $('#lang-change .dropdown-menu a').each(function() {
+                $(this).on('click', function(e) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var locale = $this.data('flag');
+                    $.post('{{ route('language.change') }}', {
+                        _token: '{{ csrf_token() }}',
+                        locale: locale
+                    }, function(data) {
+                        location.reload();
+                    });
+
+                });
+            });
+        }
+
+        function menuSearch() {
+            var filter, item;
+            filter = $("#menu-search").val().toUpperCase();
+            items = $("#main-menu").find("a");
+            items = items.filter(function(i, item) {
+                if ($(item).find(".aiz-side-nav-text")[0].innerText.toUpperCase().indexOf(filter) > -1 && $(item)
+                    .attr('href') !== '#') {
+                    return item;
+                }
+            });
+
+            if (filter !== '') {
+                $("#main-menu").addClass('d-none');
+                $("#search-menu").html('')
+                if (items.length > 0) {
+                    for (i = 0; i < items.length; i++) {
+                        const text = $(items[i]).find(".aiz-side-nav-text")[0].innerText;
+                        const link = $(items[i]).attr('href');
+                        $("#search-menu").append(
+                            `<li class="aiz-side-nav-item"><a href="${link}" class="aiz-side-nav-link"><i class="las la-ellipsis-h aiz-side-nav-icon"></i><span>${text}</span></a></li`
+                            );
+                    }
+                } else {
+                    $("#search-menu").html(
+                        `<li class="aiz-side-nav-item"><span class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
+                        );
+                }
+            } else {
+                $("#main-menu").removeClass('d-none');
+                $("#search-menu").html('')
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+    <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}"></script>
+    <script>
+        jQuery("img").one('error', function() {
+            jQuery(this).attr("src",
+            "{{ asset('public/images/placeholder.png') }}"); //.unbind("error") is useless here
+        }).each(function() {
+            if (this.complete && !this.naturalHeight && !this.naturalWidth) {
+                $(this).triggerHandler('error');
+            }
         });
     </script>
 </body>
