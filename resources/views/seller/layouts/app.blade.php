@@ -291,13 +291,11 @@
             border-radius: 5px;
             padding: 15px 26px;
         }
-    </style>
-    <style>
+
         .coming-soon-container {
             text-align: center;
             padding: 50px;
             background-color: #f7f8fa;
-            /* Adjust the background color if needed */
         }
 
         .coming-soon-container img {
