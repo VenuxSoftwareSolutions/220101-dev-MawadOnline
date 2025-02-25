@@ -277,7 +277,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">
                                         {{ __('Unit of Sale Price') }}
-                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <small>({{ __('VAT Inclusive') }})</small>
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-md-8">
@@ -600,7 +600,9 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3" id="sample-price-wrapper" style="display: none;">
-                                    <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                    <label class="col-md-2 col-from-label">
+                                        {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                    </label>
                                     <div class="col-md-10">
                                         <input type="number" step="0.01" class="form-control" name="sample_price"
                                             id="sample_price_parent" value="{{ old('sample_price') }}">
@@ -1180,7 +1182,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                        <label class="col-md-2 col-from-label">
+                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                        </label>
                                         <div class="col-md-10">
                                             <input type="number" step="0.01" class="form-control sample_price">
                                         </div>
@@ -2665,7 +2669,7 @@
                     let unitPriceElement = $(`
                         <label class="col-md-2 col-from-label">
                             {{ __("Unit of Sale Price") }}
-                            <small>({{ __("VAT Exclusive") }})</small>
+                            <small>({{ __("VAT Inclusive") }})</small>
                             <span class="text-danger">*</span>
                         </label>
                         <div class="col-md-10">

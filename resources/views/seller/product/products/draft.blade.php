@@ -255,7 +255,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">
                                         {{ __('Unit of Sale Price') }}
-                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <small>({{ __('VAT Inclusive') }})</small>
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-md-8">
@@ -640,7 +640,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3" id="sample-price-wrapper" @if($product->sample_available == 0) style="display: none;" @endif>
-                                        <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                        <label class="col-md-2 col-from-label">
+                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                        </label>
                                         <div class="col-md-10">
                                             <input type="number" min="1" step="0.01"
                                                 class="form-control sample_price_parent" id="sample_price_parent"
@@ -1376,7 +1378,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                        <label class="col-md-2 col-from-label">
+                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                        </label>
                                         <div class="col-md-10">
                                             <input type="text" class="form-control sample_price">
                                         </div>
@@ -1483,7 +1487,7 @@
                                                 <div class="mx-0 row bloc_pricing_configuration_variant">
                                                     <label class="col-md-2 col-from-label">
                                                         {{ __('Unit of Sale Price') }}
-                                                        <small>({{ __('VAT Exclusive') }})</small>
+                                                        <small>({{ __('VAT Inclusive') }})</small>
                                                         <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="col-md-10">
@@ -1841,7 +1845,9 @@
                                                     </div>
                                                     <div class="row mb-3">
                                                         <label
-                                                            class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                                            class="col-md-2 col-from-label">
+                                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                                        </label>
                                                         <div class="col-md-10">
                                                             <input type="number" min="1" step="0.01"
                                                                 class="form-control sample_price"
@@ -3745,13 +3751,15 @@
                     let oldVariantUnitPrice = $(this).data("unit_price");
 
                     let unitPriceElement = $(`
-                        <label class="col-md-2 col-from-label">
-                            {{ __("Unit of Sale Price") }}
-                            <small>({{ __("VAT Exclusive") }})</small>
-                            <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-md-10">
-                            <input type="number" class="form-control" name="variant[unit_sale_price][${old_variant}]" value="${oldVariantUnitPrice}" placeholder="{{ __("Unit of Sale Price") }}">
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-from-label">
+                                {{ __("Unit of Sale Price") }}
+                                <small>({{ __("VAT Inclusive") }})</small>
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" name="variant[unit_sale_price][${old_variant === undefined ? is_variant : old_variant}]" value="${oldVariantUnitPrice ?? 0}" placeholder="{{ __("Unit of Sale Price") }}">
+                            </div>
                         </div>
                     `);
 
@@ -3882,8 +3890,8 @@
                     }
 
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
-                    $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(
-                        unitPriceElement);
+                    $(this).parent().parent().parent()
+                        .find('#bloc_pricing_configuration_variant').append(unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
                 }
