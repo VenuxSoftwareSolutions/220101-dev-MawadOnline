@@ -76,7 +76,7 @@ class CartUtility
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -121,7 +121,7 @@ class CartUtility
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -250,7 +250,7 @@ class CartUtility
                     $dateRange = $pricing['variant_pricing-from']['discount']['date'][$index];
                     [$startDate, $endDate] = explode(' to ', $dateRange);
 
-                    $currentDate = new DateTime;
+                    $currentDate = new DateTime();
                     $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                     $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -280,14 +280,14 @@ class CartUtility
 
         try {
             $discount = Discount::getDiscountPercentage($id);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while getting discount for product $id, with message: {$e->getMessage()}");
             $discount = null;
         }
 
         if (isset($discountPrice) && $discountPrice > 0) {
             return $discountPrice;
-        } else if (is_array($discount)) {
+        } elseif (is_array($discount)) {
             $unitPrice = 0;
 
             foreach ($pricing['from'] as $index => $from) {
