@@ -823,7 +823,7 @@
             @if (isset($detailedProduct))
                 <div class="product-rightbox-seller-details float-left col-md-12">
                     <div class="float-left col-md-12 p-0">
-                        <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}"
+                        <a href="{{ $detailedProduct->user !== null ? route('shop.visit', $detailedProduct->user->shop->slug) : "#" }}"
                             class="link-style-none">
                             <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
                                 {{ $detailedProduct->user->shop->name }}
