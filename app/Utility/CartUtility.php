@@ -166,6 +166,28 @@ class CartUtility
 
     public static function priceProduct($id, $qty)
     {
+        try {
+            $discount = Discount::getDiscountPercentage($id);
+        } catch (Exception $e) {
+            Log::error("Error while getting discount for product $id, with message: {$e->getMessage()}");
+            $discount = null;
+        }
+
+        $product = get_single_product($id);
+        $unitPrice = $product->unit_price;
+
+        if (is_array($discount)) {
+            $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
+
+            if ($percentage > $discount["max_discount_amount"]) {
+                $unitPrice -= $discount["max_discount_amount"];
+            } else {
+                $unitPrice -= $percentage;
+            }
+        }
+
+        return $unitPrice;
+
         $pricing = [];
         $pricing['from'] = PricingConfiguration::where('id_products', $id)
             ->pluck('from')
