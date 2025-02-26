@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Route;
 use Mail;
 use Log;
 use App\Jobs\firstCountDownNotificationJob;
+use App\Models\CommissionVat;
+use App\Models\Discount;
+use App\Utility\CartUtility;
 
 class OrderController extends Controller
 {
@@ -236,6 +239,9 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
+
+                    $this->storeMwdCommission($product, $cartItem["quantity"], $order_detail->id);
+
                     firstCountDownNotificationJob::dispatch($order_detail)
                                                 ->delay(now()->addHours(24));
 
@@ -662,5 +668,52 @@ class OrderController extends Controller
         }
 
         return 1;
+    }
+
+    public function storeMwdCommission($product, $qty, $subOrderId)
+    {
+        $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+        $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+        $priceVatIncl = $product->unit_price;
+
+        $discount = 0;
+
+        try {
+            $discount = Discount::getDiscountPercentage($product->id, $qty);
+        } catch (Exception $e) {
+            Log::info("Error while getting product #{$product->id} discount, with message: {$e->getMessage()}");
+        }
+
+        $priceAfterDiscountVatIncl = CartUtility::priceProduct($product->id, $qty);
+
+        $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+        $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+        $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+        $priceAfterMwdCommission = roundUpToTwoDigits(
+            $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+        );
+
+        $data = [
+            "sub_order_id" => $subOrderId,
+            "price_vat_incl" => $priceVatIncl,
+            "discount_percentage" => is_array($discount) === true ? $discount["discount_percentage"] : 0,
+            "price_after_discount_vat_incl" => $priceAfterDiscountVatIncl,
+            "mwd_commission_percentage" => $mwdCommissionPercentage,
+            "mwd_commission_percentage_vat" => $mwdCommissionPercentageVat,
+            "mwd_commission_percentage_amount" => $mwdCommissionPercentageAmount,
+            "mwd_commission_percentage_vat_amount" => $mwdCommissionPercentageVatAmount,
+            "mwd_total_percentage" => $mwdCommissionTotalPercentage,
+            "price_after_mwd_percentage" => $priceAfterMwdCommission,
+        ];
+
+        $isDataInserted = CommissionVat::insert($data);
+
+        if ($isDataInserted === true) {
+            Log::info("Commission vat inserted data:", $data);
+        }
     }
 }
