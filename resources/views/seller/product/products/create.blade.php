@@ -3743,7 +3743,6 @@
                         }
                     });
 
-
                     clonedDiv.find('.paid_sample').find(`option[value="${paid_sample}"]`).prop(
                         'selected', true);
 
@@ -3760,11 +3759,6 @@
 
                     clonedDiv.find('.shipper_sample').attr('name', `variant_shipper_sample-${id_variant}[]`);
 
-                    clonedDiv.find('.multi-select-container').each(function(index, element) {
-                        if (index % 2 != 0) {
-                            $(element).remove();
-                        }
-                    })
                     clonedDiv.find('.paid_sample').attr('name', `paid_sample-${id_variant}[]`);
                     clonedDiv.find('.estimated_sample').attr('name', `estimated_sample-${id_variant}[]`);
                     clonedDiv.find('.estimated_shipping_sample').attr('name', `estimated_shipping_sample-${id_variant}[]`);
