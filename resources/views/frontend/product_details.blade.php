@@ -2040,7 +2040,7 @@
                                                             <div class="form-group">
                                                                 <label
                                                                     class="opacity-60">{{ translate('Rating') }}</label>
-                                                                <div class="rating rating-input">
+                                                                <div class="rating rating-input" style="@if ($userRating) pointer-events: none; @endif">
                                                                     @for ($i = 1; $i <= 5; $i++)
                                                                         <label>
                                                                             <input type="radio" name="rating"
