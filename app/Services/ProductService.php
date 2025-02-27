@@ -20,14 +20,12 @@ use App\Models\Shipping;
 use App\Models\StockSummary;
 use App\Models\UploadProducts;
 use App\Models\User;
-
 use Auth;
 use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Str;
 use Log;
 use Mail;
@@ -38,7 +36,6 @@ use App\Models\ProductCatalog;
 use App\Models\ProductAttributeValueCatalog;
 use App\Models\UploadProductCatalog;
 use App\Utility\CategoryUtility;
-
 use File;
 
 class ProductService
