@@ -822,13 +822,16 @@
                     clonedDiv.find('h3').after(html_to_add);
                     clonedDiv.find('.fa-circle-check').hide();
                     clonedDiv.find('#btn-add-pricing-variant').hide();
+
                     clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
                     clonedDiv.find('.sku').prop('readonly', true);
+
                     clonedDiv.find('div.row').each(function() {
                         if ($(this).css('display') === 'none') {
                             $(this).css('display', '');
                         }
                     });
+
                     clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
                     clonedDiv.find('.sample_description').attr('name', 'sample_description-' +
                         numbers_variant);
@@ -839,6 +842,7 @@
                     clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
                     clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
                     clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
+
                     clonedDiv.find('.min-qty-variant').each(function(index, element) {
                         $(element).attr('name', 'variant_pricing-from' + numbers_variant +
                             '[from][]');
@@ -954,6 +958,7 @@
                     });
 
                     let id_shipper = 0;
+
                     clonedDiv.find('.shipper').each(function(index, element) {
                         $(element).attr('name', 'variant_shipping-' + numbers_variant +
                             '[shipper][' + id_shipper + '][]');
@@ -1077,8 +1082,7 @@
                             if ($(this).is('input[type="text"]') || $(this).is(
                                     'input[type="number"]')) {
                                 $(this).val('');
-                            }
-                            else if ($(this).is('input[type="radio"]')) {
+                            } else if ($(this).is('input[type="radio"]')) {
                                 $(this).prop('checked',
                                     false);
                             } else if ($(this).is('select')) {
