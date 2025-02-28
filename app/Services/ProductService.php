@@ -45,7 +45,9 @@ class ProductService
         try {
             $collection = collect($data);
 
-            $vat_user = BusinessInformation::where('user_id', auth()->user()->owner_id)->first();
+            $vat_user = BusinessInformation::where(
+                'user_id', auth()->user()->owner_id
+            )->first();
 
             $approved = 1;
 
@@ -313,6 +315,7 @@ class ProductService
                     }
 
                     $key_pricing = 'variant-pricing-'.$ids[2];
+
                     if (! isset($data[$key_pricing])) {
                         if (! array_key_exists($ids[2], $variants_data)) {
                             $variants_data[$ids[2]] = [];
@@ -499,7 +502,6 @@ class ProductService
 
             if (isset($collection['product_sk'])) {
                 $collection['sku'] = $collection['product_sk'];
-                unset($collection['product_sk']);
             } else {
                 $collection['sku'] = $collection['name'];
             }
@@ -526,9 +528,15 @@ class ProductService
                 'vat'
             ))->toArray();
 
-            $ids_attributes_color = Attribute::where('type_value', 'color')->pluck('id')->toArray();
-            $ids_attributes_list = Attribute::where('type_value', 'list')->pluck('id')->toArray();
-            $ids_attributes_numeric = Attribute::where('type_value', 'numeric')->pluck('id')->toArray();
+            $ids_attributes_color = Attribute::where('type_value', 'color')
+                ->pluck('id')
+                ->toArray();
+            $ids_attributes_list = Attribute::where('type_value', 'list')
+                ->pluck('id')
+                ->toArray();
+            $ids_attributes_numeric = Attribute::where('type_value', 'numeric')
+                ->pluck('id')
+                ->toArray();
 
             $prefixToRemove = 'attribute_generale';
             $prefixToRemoveUnit = 'unit_attribute_generale';
@@ -2686,6 +2694,7 @@ class ProductService
                     }
 
                     $shipping_details = [];
+
                     if (array_key_exists('shipping_details', $variant)) {
                         foreach ($variant['shipping_details']['from'] as $key => $from) {
                             if (($from != null) && ($variant['shipping_details']['to'][$key] != null) && ($variant['shipping_details']['shipper'][$key] != null) && ($variant['shipping_details']['estimated_order'][$key] != null)) {
