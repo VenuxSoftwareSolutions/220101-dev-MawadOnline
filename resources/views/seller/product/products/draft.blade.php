@@ -1864,7 +1864,7 @@
                                             <div class="col-md-10">
                                                 <label class="aiz-switch aiz-switch-success mb-0">
                                                     <input value="1" type="checkbox"
-                                                        data-id_old_variant= "{{ $children->id }}"
+                                                        data-id_old_variant="{{ $children->id }}"
                                                         class="variant-sample-shipping"
                                                         name="variant[sample_shipping][{{ $children->id }}]"
                                                         @if ($children->getSampleShipping()->count() === 0) checked @endif
@@ -5039,7 +5039,6 @@
 
                 if ((weight == '') || (length == '') || (width == '') || (height == '') || (
                         min_third_party == '') || (max_third_party == '')) {
-                    //html = '<span style="color: green"> {{ translate('Chargeable Weight = 0, then accepted by our shipper') }} </span>';
                     $('#result_calculate_third_party').empty();
                 } else {
                     length = parseInt(length);
