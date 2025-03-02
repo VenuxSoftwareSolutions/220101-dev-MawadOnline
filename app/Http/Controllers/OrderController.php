@@ -568,6 +568,7 @@ class OrderController extends Controller
             }
 
             if ($request->status == 'cancelled') {
+
                 $variant = $order->variation;
                 if ($order->variation == null) {
                     $variant = '';
@@ -601,20 +602,15 @@ class OrderController extends Controller
             }
 
             if ($request->status == 'Replaced') {
-                $replacedOrderDetail = new OrderDetail();
-                $replacedOrder = new Order();
-                $replacedOrder = $order->order->replicate();
-                $replacedOrderDetail = $order->replicate();
-                $replacedOrder->created_at = Carbon::now();
-                $replacedOrder->save();
-                $replacedOrderDetail->order_id = $replacedOrder->id;
-                $replacedOrderDetail->delivery_status = "pending";
-                $replacedOrderDetail->last_delivery_status = null;
-                $replacedOrderDetail->created_at = Carbon::now();
-                $replacedOrderDetail->variation = $order->variation."- Replacement";
-                $replacedOrderDetail->save();
+                $this->replaceOrder($order);
             }
-
+            if(in_array($request->status,['cancelled','Returned'])){
+                $refund = Refund::where(['order_detail_id'=>$order->id])->get();
+                if($refund->isEmpty()){
+                   return $this->executeRefund($order);
+                }
+                return response()->json(['error' => true, 'message' => __('Refund already done')], 200);
+            }
             if (
                 addon_is_activated('otp_system') &&
                 SmsTemplate::where('identifier', 'delivery_status_change')
@@ -663,7 +659,6 @@ class OrderController extends Controller
             return 1;
         } catch (Exception $e) {
             Log::info("Error while changing delivery status, with message: {$e->getMessage()}");
-
             return response()->json(['error' => true, 'message' => __('Something went wrong!')], 500);
         }
     }
