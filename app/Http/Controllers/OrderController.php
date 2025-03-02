@@ -851,4 +851,19 @@ class OrderController extends Controller
         }
     }
 
+    public function replaceOrder($order){
+        $replacedOrderDetail = new OrderDetail();
+        $replacedOrder = new Order();
+        $replacedOrder = $order->order->replicate();
+        $replacedOrderDetail = $order->replicate();
+        $replacedOrder->created_at = Carbon::now();
+        $replacedOrder->save();
+        $replacedOrderDetail->order_id = $replacedOrder->id;
+        $replacedOrderDetail->delivery_status = "pending";
+        $replacedOrderDetail->last_delivery_status = null;
+        $replacedOrderDetail->created_at = Carbon::now();
+        $replacedOrderDetail->variation = $order->variation."- Replacement";
+        $replacedOrderDetail->save();
+    }
+
 }
