@@ -519,6 +519,11 @@
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
+                                <li class="aiz-side-nav-item">
+                                        <a href="{{route('refunds.indexadmin')}}" class="aiz-side-nav-link {{ areActiveRoutes(['refunds.indexadmin', 'reason_show'])}}">
+                                            <span class="aiz-side-nav-text">{{translate('All Refunds')}}</span>
+                                        </a>
+                                    </li>
                                 @can('view_refund_requests')
                                     <li class="aiz-side-nav-item">
                                         <a href="{{route('refund_requests_all')}}" class="aiz-side-nav-link {{ areActiveRoutes(['refund_requests_all', 'reason_show'])}}">
