@@ -14,6 +14,8 @@ use App\Models\Product;
 use App\Models\ProductStock;
 use App\Models\SmsTemplate;
 use App\Models\User;
+use App\Models\Refund;
+use App\Models\RefundHistories;
 use App\Utility\NotificationUtility;
 use App\Utility\SmsUtility;
 use Auth;
@@ -450,7 +452,6 @@ class OrderController extends Controller
             $order->order->delivery_viewed = '0';
             $order->delivery_status = $request->status;
             $order->save();
-
             $shippers = explode(",", $order->product->shippingOptions($order->quantity)->shipper);
 
             if ($request->status === 'ready_for_shipment' && in_array("third_party", $shippers)) {
@@ -825,4 +826,29 @@ class OrderController extends Controller
             Log::info("Commission vat inserted data:", $data);
         }
     }
+
+    public function executeRefund($order){
+        try {
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+            $result = $stripe->refunds->create(['payment_intent' => "pi_3QfkfoFlc6vGgLAs1XEpbB8E","amount" => $order->price * 100]);
+            $refund = new Refund();
+            $refundHistories = new RefundHistories();
+            $refund->buyer_id = $order->order->user_id;
+            $refund->seller_id = $order->order->seller_id;
+            $refund->order_detail_id = $order->id;
+            $refundHistories->refund_status = $refund->refund_status = $result->status;
+            $refundHistories->description_error = $refund->description_error = $result->failure_reason;
+            $refundHistories->payment_refund_id = $refund->payment_refund_id = $result->id;
+            $refundHistories->payment_charge_id = $refund->payment_charge_id = $result->charge;
+            $refundHistories->amount = $refund->amount = $result->amount;
+            $refund->save();
+            $refundHistories->refund_id = $refund->id;
+            $refundHistories->save();
+            return response()->json(['false' => true, 'message' => __('Refund executed')], 500);
+        } catch (Exception $e) {
+            Log::info("Error while execute refund, with message: {$e->getMessage()}");
+            return response()->json(['error' => true, 'message' => __('Something went wrong: more details in refund management!')], 500);
+        }
+    }
+
 }
