@@ -52,6 +52,7 @@ use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
 use App\Http\Controllers\Seller\CatalogController;
 use App\Http\Controllers\MawadIndexController;
+use App\Http\Controllers\RefundController;
 
 /*
   |--------------------------------------------------------------------------
@@ -594,4 +595,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         "/mawad/index/select/catgory",
         [MawadIndexController::class, "selectCategory"]
     )->name("admin.mawad.index.select.category");
+    //refunds
+    Route::controller(RefundController::class)->group(function () {
+        Route::get('/refunds', 'index')->name('refunds.indexadmin');
+        Route::get('/refund/execute/{refund}', 'execute')->name('refunds.execute');
+        Route::get('/refund/details/{refund}', 'details')->name('refunds.details');
+    });
 });
