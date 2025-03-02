@@ -18,9 +18,11 @@ return new class extends Migration
             $table->unsignedBigInteger('buyer_id');
             $table->unsignedBigInteger('seller_id');
             $table->integer('order_detail_id');
-            $table->enum('refund_status',['error','success']);
-            $table->string('description_error', 255);
+            $table->enum('refund_status',['pending','requires_action','succeeded','failed','canceled']);
+            $table->string('description_error', 255)->nullable();
             $table->string('payment_refund_id', 255);
+            $table->string('payment_charge_id', 255);
+            $table->float('amount');
             $table->foreign('buyer_id')
                     ->references('id')
                     ->on('users');
