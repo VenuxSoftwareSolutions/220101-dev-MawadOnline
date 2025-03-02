@@ -490,9 +490,11 @@
                 order_id: order_id,
                 status: status
             }, function(data) {
-                $('#order_details').modal('hide');
-                AIZ.plugins.notify('success', '{{ translate('Order status has been updated') }}');
-                location.reload().setTimeOut(1000);
+                AIZ.plugins.notify(data.error ? 'danger' :'success', data.message);
+                location.reload().setTimeOut(2000);
+            }).fail(function(data){
+                AIZ.plugins.notify(data.responseJSON.error ? 'danger' :'success', data.responseJSON.message);
+                location.reload().setTimeOut(2000);
             });
         }
     </script>
