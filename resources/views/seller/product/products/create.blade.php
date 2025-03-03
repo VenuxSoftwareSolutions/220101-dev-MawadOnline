@@ -243,6 +243,12 @@
             color: #ffffff;
             background: #378AB6;
         }
+        .sbu-s1-btn-prev{
+            border:solid 1px #378AB6;
+            border-radius: 12px;
+            color: #378AB6;
+            background: #ffffff;
+        }
         .sbu-s1-btn-ex-l{
             border:solid 1px #2e294e;
             border-radius: 8px;
@@ -289,6 +295,12 @@
             border-radius: 8px;
             color: #CB774B;
             background: #fff;
+        }
+        .sbu-s1-btn-start{
+            border:none;
+            border-radius: 8px;
+            color: #ffffff;
+            background: #378AB6;
         }
         .sbu-upload-box-dad{
             color: #bebebe;
@@ -351,6 +363,9 @@
             width: 38px;
             height: 100%;
             line-height: 42px;
+        }
+        #shipping_configuration_box{
+            display: none;
         }
     </style>
 @endpush
@@ -468,18 +483,25 @@
                                     <ul class="fs-16 p-0 font-prompt dark-c3 line-h mt5px float-left">
                                         <li><strong>Product Name –</strong> Helps attract buyers with clear, searchable titles.</li>
                                         <li><strong>Brand –</strong> Ensures correct classification and brand recognition.</li>
-                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting.</li>
+                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting (Price in ADE).</li>
                                         <li><strong>Unit Price –</strong> Essential for listing products and enabling transactions.</li>
                                         <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, per
                                             kilogram).</li>
                                         <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations.</li>
                                         <li><strong>Product Package Weight –</strong> Helps with shipping cost estimation.</li>
                                         <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence.</li>
+                                        <li><strong>Country of Origin –</strong> Indicates where the product is manufactured or sourced from.</li>
                                         <!--<li><strong>Technical Documents Link –</strong> Upload CAD/BIM files, spec sheets, or certifications.</li>
                                         <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
                                     </ul>
                                 </div>
                                 <div class="col-12 p-0 py-1 d-flex justify-content-start">
+                                    <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev2Btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        Previous
+                                    </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next2Btn">
                                         Next Step
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -508,6 +530,12 @@
                                 <img class="sbu-save-img lazyload mt-3" src="{{ static_asset('assets/img/saveascsv.png') }}">
                                 </div>
                                 <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev3Btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        Previous
+                                    </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next3Btn">
                                         Next Step
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -529,7 +557,7 @@
                                 </div>
                                 <div class="col-12 d-flex justify-content-center mt-3">
                                     <div class="col-10 col-md-7 sbu-upload-box p-4">
-                                        <div class="col-12 fs-18 font-prmopt d-flex justify-content-center dark-c3 sbu-upload-title p-3">AI Product Bulk Upload</div>
+                                       <!-- <div class="col-12 fs-18 font-prmopt d-flex justify-content-center dark-c3 sbu-upload-title p-3">AI Product Bulk Upload</div> -->
                                         <div class="col-12 mt-3 d-flex justify-content-center">
                                             <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -550,6 +578,12 @@
                                     </div>
                                 </div>
                                 <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev4Btn">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        Previous
+                                    </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next4Btn">
                                         Next Step
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -564,15 +598,16 @@
                     <!-- Step 5 -- Save & explain -->
                     <div class="card-body hidden" id="smartbulk-5">
                         <div class="col-12 p-3 pt-0 d-flex justify-content-start">
-                            <div class="col-10 col-md-9">
+                            <div class="col-12">
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M17 18.43H13L8.54999 21.39C7.88999 21.83 7 21.36 7 20.56V18.43C4 18.43 2 16.43 2 13.43V7.42993C2 4.42993 4 2.42993 7 2.42993H17C20 2.42993 22 4.42993 22 7.42993V13.43C22 16.43 20 18.43 17 18.43Z" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M11.9998 11.3599V11.1499C11.9998 10.4699 12.4198 10.1099 12.8398 9.81989C13.2498 9.53989 13.6598 9.1799 13.6598 8.5199C13.6598 7.5999 12.9198 6.85986 11.9998 6.85986C11.0798 6.85986 10.3398 7.5999 10.3398 8.5199" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M11.9955 13.75H12.0045" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M3.1709 7.43994L12.0009 12.5499L20.7709 7.46991" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12.001 21.61V12.54" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9.9306 2.48L4.59061 5.45003C3.38061 6.12003 2.39062 7.80001 2.39062 9.18001V14.83C2.39062 16.21 3.38061 17.89 4.59061 18.56L9.9306 21.53C11.0706 22.16 12.9406 22.16 14.0806 21.53L19.4206 18.56C20.6306 17.89 21.6206 16.21 21.6206 14.83V9.18001C21.6206 7.80001 20.6306 6.12003 19.4206 5.45003L14.0806 2.48C12.9306 1.84 11.0706 1.84 9.9306 2.48Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M17.0007 13.2401V9.58014L7.51074 4.1001" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
-                                        Required Questions
+                                            product shipping
                                     </span>
                                 </div>
                                 <div class="col-12 p-0 pt-2">
@@ -604,6 +639,445 @@
                                             &bull; You can adjust every product’s data later in the “edit product” in the Product List. However, for bulk action, it is preferable to apply the general rule here.
                                         </li>
                                     </ul>
+                                    <div class="fs-16 p-0 pt-3">
+                                        Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
+                                    </div>
+                                    <div class="card mt-3" id="shipping_configuration_box">
+                                        <div class="card-header">
+                                            <h5 class="mb-0 h6">{{ translate('Default Shipping Configuration') }}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="bloc-default-shipping-style">
+                                                <h6>{{ ucfirst(translate('Default Product Shipping')) }}</h6>
+                                                <hr>
+                                                <div class="bloc-default-shipping-style">
+                                                    <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
+                                                    <hr>
+                                                    <div class="row mb-3">
+                                                        <label
+                                                            class="col-md-4 col-from-label">{{ translate('Activate MawadOnline 3rd Party Shipping') }}</label>
+                                                        <div class="col-md-8">
+                                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                                <input value="1" type="checkbox" id="third_party_activate"
+                                                                    name="activate_third_party">
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <table class="table" id="table_third_party_configuration"
+                                                            class="bloc_third_configuration_variant">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{ translate('Package Length (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Width (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Height (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Weight') }}</th>
+                                                                    <th>{{ translate('Weight Unit') }}</th>
+                                                                    <th>{{ translate('Breakable') }}</th>
+                                                                    <th>{{ translate('Temperature Unit') }}</th>
+                                                                    <th>{{ translate('Temperature Min') }}</th>
+                                                                    <th>{{ translate('Temperature Max') }}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bloc_third_party">
+                                                                <tr>
+                                                                    <td><input type="number" name="length" class="form-control"
+                                                                            id="length" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="width" class="form-control"
+                                                                            id="width" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="height" class="form-control"
+                                                                            id="height" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="weight" class="form-control"
+                                                                            id="weight" step="0.1" readonly></td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="weight_unit"
+                                                                            name="unit_weight" disabled>
+                                                                            <option value="kilograms">{{ translate('Kilograms') }}</option>
+                                                                            <option value="pounds">{{ translate('Pounds') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="breakable"
+                                                                            name="breakable" disabled>
+                                                                            <option value=""></option>
+                                                                            <option value="yes">{{ translate('Yes') }}</option>
+                                                                            <option value="no">{{ translate('No') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="unit_third_party"
+                                                                            name="unit_third_party" disabled>
+                                                                            <option value="celsius">{{ translate('Celsius') }}</option>
+                                                                            <option value="kelvin">{{ translate('Kelvin') }}</option>
+                                                                            <option value="fahrenheit">{{ translate('Fahrenheit') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="number" class="form-control" name="min_third_party"
+                                                                            id="min_third_party" step="0.1" readonly></td>
+                                                                    <td><input type="number" class="form-control" name="max_third_party"
+                                                                            id="max_third_party" step="0.1" readonly></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <small>{{ translate('Fill all required fields for shippers to confirm delivery ability') }}.</small>
+                                                    <div id="result_calculate_third_party">
+
+                                                    </div>
+                                                </div>
+                                                <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                                    <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                                    <hr>
+                                                    <div>
+                                                        <table class="table" id="table_shipping_configuration"
+                                                            class="bloc_shipping_configuration_variant">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{ translate('Shipper') }}</th>
+                                                                    <th>{{ translate('From QTY') }}</th>
+                                                                    <th>{{ translate('To QTY') }}</th>
+                                                                    <th>{{ translate('Est. Order Pre. Days') }}</th>
+                                                                    <th>{{ translate('Est. Shipping Days') }}</th>
+                                                                    <th style="width: 164px;">{{ translate('Paid by') }}</th>
+                                                                    <th>{{ translate('Shipping Charge Type') }}</th>
+                                                                    <th>{{ translate('Flat-rate Amount') }}</th>
+                                                                    <th>{{ translate('Charge per Unit of Sale') }}</th>
+                                                                    <th>{{ translate('Action') }}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bloc_shipping_configuration">
+                                                                <tr>
+                                                                    <td>
+                                                                        <select class="form-control shipper"
+                                                                            name="shipper[]"
+                                                                            id="shipper_shipping">
+                                                                            <option>{{ __("Select Shipper") }}</option>
+                                                                            <option value="vendor" @selected(old('shipper.0') == 'vendor')>
+                                                                                {{ translate('vendor') }}</option>
+                                                                            <option value="third_party" @selected(old('shipper.0') == 'third_party')>
+                                                                                {{ translate('MawadOnline 3rd Party Shippers') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input disabled type="number" name="from_shipping[]"
+                                                                            class="form-control min-qty-shipping" id="min-qty-shipping"
+                                                                            placeholder="{{ translate('From QTY') }}"
+                                                                            value="{{ old('from_shipping.0') }}"></td>
+                                                                    <td><input disabled type="number" name="to_shipping[]"
+                                                                            class="form-control max-qty-shipping" id="max-qty-shipping"
+                                                                            placeholder="{{ translate('To QTY') }}"
+                                                                            value="{{ old('to_shipping.0') }}"></td>
+
+                                                                    <td><input disabled type="number" class="form-control estimated_order"
+                                                                            name="estimated_order[]" value="{{ old('estimated_order.0') }}"
+                                                                            placeholder="{{ translate('Days') }}">
+                                                                    </td>
+                                                                    <td><input disabled type="number" class="form-control estimated_shipping"
+                                                                            name="estimated_shipping[]"
+                                                                            placeholder="{{ translate('Days') }}"
+                                                                            value="{{ old('estimated_shipping.0') }}"></td>
+                                                                    <td>
+                                                                        <select class="form-control paid" name="paid[]">
+                                                                            <option value="" selected>{{ translate('Choose option') }}
+                                                                            </option>
+                                                                            <option value="vendor" @selected(old('paid.0') == 'vendor')>
+                                                                                {{ translate('vendor') }}</option>
+                                                                            <option value="buyer" @selected(old('paid.0') == 'buyer')>
+                                                                                {{ translate('Buyer') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                                            <option selected>
+                                                                                {{ translate('Choose shipping charge') }}</option>
+                                                                            <option value="flat" @selected(old('shipping_charge.0') == 'flat')>
+                                                                                {{ translate('Flat-rate regardless of quantity') }}</option>
+                                                                            <option value="charging" @selected(old('shipping_charge.0') == 'charging')>
+                                                                                {{ translate('Charging per Unit of Sale') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input disabled type="number" class="form-control flat_rate_shipping"
+                                                                            name="flat_rate_shipping[]"
+                                                                            value="{{ old('flat_rate_shipping.0') }}"
+                                                                            placeholder="{{ translate('Flat rate amount') }}" readonly></td>
+                                                                    <td><input disabled type="number" class="form-control charge_per_unit_shipping"
+                                                                            name="charge_per_unit_shipping[]"
+                                                                            placeholder="{{ translate('Charge unit') }}"
+                                                                            value="{{ old('charge_per_unit_shipping.0') }}" readonly></td>
+                                                                    <td>
+                                                                        <i class="las la-plus btn-add-shipping"
+                                                                            style="margin-left: 5px; margin-top: 17px;"
+                                                                            title="{{ translate('Add another ligne') }}"></i>
+                                                                    </td>
+                                                                </tr>
+                                                                @if (count(old('from_shipping', [])) > 1)
+                                                                    @foreach (old('from_shipping', []) as $index => $value)
+                                                                        @if ($index > 0)
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <select class="form-control shipper" name="shipper[]"
+                                                                                        id="shipper_shipping">
+                                                                                        <option value="vendor" @selected(count(old('shipper', [])) > 1 && old('shipper', [])[$index] == 'vendor')>
+                                                                                            {{ translate('vendor') }}</option>
+                                                                                        <option value="third_party"
+                                                                                            @selected(count(old('shipper', [])) > 1 && old('shipper', [])[$index] == 'third_party')>
+                                                                                            {{ translate('MawadOnline 3rd Party Shippers') }}
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td><input type="number" name="from_shipping[]"
+                                                                                        class="form-control min-qty-shipping"
+                                                                                        id="min-qty-shipping"
+                                                                                        placeholder="{{ translate('From QTY') }}"
+                                                                                        value="{{ old('from_shipping', [])[$index] }}"></td>
+                                                                                <td><input type="number" name="to_shipping[]"
+                                                                                        class="form-control max-qty-shipping"
+                                                                                        id="max-qty-shipping"
+                                                                                        placeholder="{{ translate('To QTY') }}"
+                                                                                        value="{{ old('to_shipping', [])[$index] }}"></td>
+                                                                                <td><input type="number" class="form-control estimated_order"
+                                                                                        name="estimated_order[]"
+                                                                                        value="{{ old('estimated_order', [])[$index] }}"
+                                                                                        placeholder="{{ translate('Days') }}">
+                                                                                </td>
+                                                                                <td><input type="number"
+                                                                                        class="form-control estimated_shipping"
+                                                                                        name="estimated_shipping[]"
+                                                                                        placeholder="{{ translate('Days') }}"
+                                                                                        value="{{ old('estimated_shipping', [])[$index] }}">
+                                                                                </td>
+                                                                                <td>
+                                                                                    <select class="form-control paid" name="paid[]">
+                                                                                        <option value="" selected>
+                                                                                            {{ translate('Choose option') }}
+                                                                                        </option>
+                                                                                        <option value="vendor" @selected(old('paid', [])[$index] == 'vendor')>
+                                                                                            {{ translate('vendor') }}</option>
+                                                                                        <option value="buyer" @selected(old('paid', [])[$index] == 'buyer')>
+                                                                                            {{ translate('Buyer') }}</option>
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <select class="form-control shipping_charge"
+                                                                                        name="shipping_charge[]">
+                                                                                        <option selected>
+                                                                                            {{ translate('Choose shipping charge') }}</option>
+                                                                                        <option value="flat" @selected(old('shipping_charge', [])[$index] == 'flat')>
+                                                                                            {{ translate('Flat-rate regardless of quantity') }}
+                                                                                        </option>
+                                                                                        <option value="charging" @selected(old('shipping_charge', [])[$index] == 'charging')>
+                                                                                            {{ translate('Charging per Unit of Sale') }}
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td><input type="number"
+                                                                                        class="form-control flat_rate_shipping"
+                                                                                        name="flat_rate_shipping[]"
+                                                                                        placeholder="{{ translate('Flat rate amount') }}"
+                                                                                        value="{{ old('flat_rate_shipping', [])[$index] }}"
+                                                                                        readonly></td>
+                                                                                <td><input type="number"
+                                                                                        class="form-control charge_per_unit_shipping"
+                                                                                        name="charge_per_unit_shipping[]"
+                                                                                        placeholder="{{ translate('Charge unit') }}"
+                                                                                        value="{{ old('charge_per_unit_shipping', [])[$index] }}"
+                                                                                        readonly></td>
+                                                                                <td>
+                                                                                    <i class="las la-plus btn-add-shipping"
+                                                                                        style="margin-left: 5px; margin-top: 17px;"
+                                                                                        title="{{ translate('Add another ligne') }}"></i>
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                                <h6>{{ ucfirst(translate('Default Sample Shipping')) }}</h6>
+                                                <hr>
+                                                <div class="bloc-default-shipping-style">
+                                                    <h6>{{ ucfirst(translate('MawadOnline 3rd Party Shipping')) }}</h6>
+                                                    <hr>
+                                                    <div class="row mb-3">
+                                                        <label
+                                                            class="col-md-4 col-from-label">{{ translate('Activate MawadOnline 3rd Party Shipping') }}</label>
+                                                        <div class="col-md-8">
+                                                            <label class="aiz-switch aiz-switch-success mb-0">
+                                                                <input value="1" type="checkbox" id="third_party_activate_sample"
+                                                                    name="activate_third_party_sample">
+                                                                <span></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <table class="table" id="table_third_party_configuration_sample"
+                                                            class="bloc_third_configuration_variant_sample">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{ translate('Package Length (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Width (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Height (Cm)') }}</th>
+                                                                    <th>{{ translate('Package Weight') }}</th>
+                                                                    <th>{{ translate('Weight Unit') }}</th>
+                                                                    <th>{{ translate('Breakable') }}</th>
+                                                                    <th>{{ translate('Temperature Unit') }}</th>
+                                                                    <th>{{ translate('Temperature Min') }}</th>
+                                                                    <th>{{ translate('Temperature Max') }}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bloc_third_party_sample">
+                                                                <tr>
+                                                                    <td><input type="number" name="length_sample" class="form-control"
+                                                                            id="length_sample" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="width_sample" class="form-control"
+                                                                            id="width_sample" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="height_sample" class="form-control"
+                                                                            id="height_sample" step="0.1" readonly></td>
+                                                                    <td><input type="number" name="package_weight_sample"
+                                                                            class="form-control" id="package_weight_sample" step="0.1"
+                                                                            readonly></td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="weight_unit_sample"
+                                                                            name="weight_unit_sample" disabled>
+                                                                            <option value="kilograms">{{ translate('Kilograms') }}</option>
+                                                                            <option value="pounds">{{ translate('Pounds') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="breakable_sample"
+                                                                            name="breakable_sample" disabled>
+                                                                            <option value=""></option>
+                                                                            <option value="yes">{{ translate('Yes') }}</option>
+                                                                            <option value="no">{{ translate('No') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td>
+                                                                        <select class="form-control calculate" id="unit_third_party_sample"
+                                                                            name="unit_third_party_sample" disabled>
+                                                                            <option value="celsius">{{ translate('Celsius') }}</option>
+                                                                            <option value="kelvin">{{ translate('Kelvin') }}</option>
+                                                                            <option value="fahrenheit">{{ translate('Fahrenheit') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input type="number" class="form-control"
+                                                                            name="min_third_party_sample" id="min_third_party_sample"
+                                                                            step="0.1" readonly></td>
+                                                                    <td><input type="number" class="form-control"
+                                                                            name="max_third_party_sample" id="max_third_party_sample"
+                                                                            step="0.1" readonly></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <small>{{ translate('Fill all required fields for shippers to confirm delivery ability') }}.</small>
+                                                    <div id="result_calculate_third_party_sample">
+                                                    </div>
+                                                </div>
+                                                <div class="bloc-default-shipping-style" style="margin-top: 22px;">
+                                                    <h6>{{ translate('Shipping Duration & Charge') }}</h6>
+                                                    <hr>
+                                                    <div>
+                                                        <table class="table" id="table_sample_configuration"
+                                                            class="bloc_sample_configuration_variant">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>{{ translate('Shipping-by') }}</th>
+                                                                    <th>{{ translate('Estimated Sample Preparation Days') }}</th>
+                                                                    <th>{{ translate('Estimated Shipping Days') }}</th>
+                                                                    <th>{{ translate('Paid by') }}</th>
+                                                                    {{-- <th>{{translate('VAT')}}</th> --}}
+                                                                    <th>{{ translate('Shipping amount') }}</th>
+                                                                    <th>{{ translate('Action') }}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bloc_sample_configuration">
+                                                                <tr>
+                                                                    <td>
+                                                                        <select class="form-control shipper_sample" name="shipper_sample[]"
+                                                                            id="shipper_sample_parent">
+                                                                            <option>{{ __("Select Shipper") }}</option>
+                                                                            <option value="vendor" @selected(old('shipper_sample.0') == 'vendor')>
+                                                                                {{ translate('vendor') }}</option>
+                                                                            <option value="third_party" @selected(old('shipper_sample.0') == 'third_party')>
+                                                                                {{ translate('MawadOnline 3rd Party Shippers') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input disabled type="number" class="form-control estimated_sample"
+                                                                            id="estimated_sample_parent" name="estimated_sample[]"
+                                                                            value="{{ old('estimated_sample.0') }}" /></td>
+                                                                    <td><input disabled type="number"
+                                                                            class="form-control estimated_shipping_sample"
+                                                                            id="estimated_shipping_sample_parent"
+                                                                            name="estimated_shipping_sample[]"
+                                                                            value="{{ old('estimated_shipping_sample.0') }}" /></td>
+                                                                    <td>
+                                                                        <select class="form-control paid_sample" name="paid_sample[]"
+                                                                            id="paid_sample_parent" style="width: max-content!important;">
+                                                                            <option value="" selected>{{ translate('Choose paid by') }}
+                                                                            </option>
+                                                                            <option value="vendor" @selected(old('paid_sample.0') == 'vendor')>
+                                                                                {{ translate('vendor') }}</option>
+                                                                            <option value="buyer" @selected(old('paid_sample.0') == 'buyer')>
+                                                                                {{ translate('Buyer') }}</option>
+                                                                        </select>
+                                                                    </td>
+                                                                    <td><input disabled type="number" class="form-control shipping_amount"
+                                                                            name="shipping_amount[]" value="{{ old('shipping_amount.0') }}"
+                                                                            step="0.1" /></td>
+                                                                    <td>
+                                                                        <i class="las la-plus btn-add-sample-shipping"
+                                                                            style="margin-left: 5px; margin-top: 17px;"
+                                                                            title="{{ translate('Add another ligne') }}"></i>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 py-3 d-flex justify-content-start pl-0">
+                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev5Btn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            Previous
+                                        </button>
+                                        <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next5Btn">
+                                            Next Step
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Step 6 -- Discount -->
+                    <div class="card-body hidden" id="smartbulk-6">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-start">
+                            <div class="col-10 col-md-9">
+                                <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
+                                    <span class="dark-c3 p-0">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+
+                                            products discount
+                                    </span>
+                                </div>
+                                <div class="col-12 p-0 pt-2">
                                     <div class="fs-16 p-0 pt-3">
                                         Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
                                     </div>
@@ -659,10 +1133,45 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="col-12 py-3 d-flex justify-content-start">
+                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev6Btn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            Previous
+                                        </button>
+                                        <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next6Btn">
+                                            Next Step
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Step 7 -- Start -->
+                    <div class="card-body hidden" id="smartbulk-7">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-center">
+                            <div class="col-10 col-md-8">
+                                <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4 dark-c3">
+                                    Click start Now, sit back, and let our intelligent system handle the rest quietly.
+                                </div>
+                                <div class="col-12 py-3 d-flex justify-content-center">
+                                    <button class="fs-16 font-prmopt sbu-s1-btn-start py-2 px-3">
+                                        Start Now
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -5647,13 +6156,48 @@
             $("#smartbulk-2").hide();
             $("#smartbulk-3").show();
         });
+        $("#prev2Btn").click(function() {
+            $("#smartbulk-2").hide();
+            $("#smartbulk-1").show();
+        });
         $("#next3Btn").click(function() {
             $("#smartbulk-3").hide();
             $("#smartbulk-4").show();
         });
+        $("#prev3Btn").click(function() {
+            $("#smartbulk-3").hide();
+            $("#smartbulk-2").show();
+        });
         $("#next4Btn").click(function() {
             $("#smartbulk-4").hide();
             $("#smartbulk-5").show();
+        });
+        $("#prev4Btn").click(function() {
+            $("#smartbulk-4").hide();
+            $("#smartbulk-3").show();
+        });
+        $("#next5Btn").click(function() {
+            $("#smartbulk-5").hide();
+            $("#smartbulk-6").show();
+        });
+        $("#prev5Btn").click(function() {
+            $("#smartbulk-5").hide();
+            $("#smartbulk-4").show();
+        });
+        $("#next6Btn").click(function() {
+            $("#smartbulk-6").hide();
+            $("#smartbulk-7").show();
+        });
+        $("#prev6Btn").click(function() {
+            $("#smartbulk-6").hide();
+            $("#smartbulk-5").show();
+        });
+        $('input[name="deliver"]').change(function(){
+            if ($(this).val() === "yes") {
+                $("#shipping_configuration_box").show();
+            } else {
+                $("#shipping_configuration_box").hide();
+            }
         });
     });
     flatpickr('.discount-range', {
