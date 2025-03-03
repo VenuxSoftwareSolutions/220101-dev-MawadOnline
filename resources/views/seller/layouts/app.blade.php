@@ -938,8 +938,7 @@
                         $('#variant_informations').find('.attributes-units').each(function(key,
                             element_original) {
                             if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
+                                $(element).find(`option[value="${$(element_original).val()}"]`).prop('selected', true);
                             }
                         })
                     });
