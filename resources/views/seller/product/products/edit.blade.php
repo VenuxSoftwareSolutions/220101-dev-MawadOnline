@@ -2919,7 +2919,6 @@
                                 );
                             $('body input[name="activate_attributes"]').prop("checked", false);
                             $('#variant_informations').hide();
-                            $('#variant_informations').hide();
                             $('body .div-btn').hide();
                             $('body #bloc_variants_created').hide();
                         }
@@ -5601,8 +5600,7 @@
 
                             });
 
-                            $(element).find('.attributes-units').each(function(index,
-                                child_element_units) {
+                            $(element).find('.attributes-units').each(function(index, child_element_units) {
                                 if ($(child_element_units).val() == '') {
                                     check_units_empty = false;
                                 }
