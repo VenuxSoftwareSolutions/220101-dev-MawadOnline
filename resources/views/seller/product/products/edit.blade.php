@@ -2724,7 +2724,6 @@
                 });
         }
 
-
         function generateSlug(text) {
             return text
                 .toString() // Ensure it's a string
@@ -2853,13 +2852,6 @@
                             AIZ.plugins.bootstrapSelect('refresh');
                         } else {
                             $('body input[name="activate_attributes"]').prop('checked', false);
-                            // Swal.fire({
-                            //     title: 'Cancelled',
-                            //     text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
-                            //     icon: 'error',
-                            //     scrollbarPadding: false,
-                            //     backdrop:false,
-                            // })
 
                             var title = "{{ translate('Product Category') }}";
                             var message =
@@ -2872,13 +2864,7 @@
                         }
                     } else {
                         $('body input[name="activate_attributes"]').prop('checked', false);
-                        // Swal.fire({
-                        //     title: 'Cancelled',
-                        //     text: 'Select a category before activating the variant option.',
-                        //     icon: 'error',
-                        //     scrollbarPadding: false,
-                        //     backdrop:false,
-                        // });
+                        
                         var title = "{{ translate('Product Category') }}";
                         var message =
                             '{{ translate('Select a category before activating the variant option.') }}';
@@ -3100,7 +3086,6 @@
                                         index, element) {
                                         if ($(element).attr("name") ==
                                             undefined) {
-                                            console.log('done done')
                                             var id_attribute = $(element).data(
                                                 'id_attributes');
                                             var name = 'unit_variant[' +
@@ -3153,9 +3138,7 @@
                         AIZ.plugins.bootstrapSelect('refresh');
                     }
                 });
-
-
-            })
+            });
 
             //Change label of input value by name of file selected
             $('body').on('change', '.photos_variant', function() {
@@ -3173,13 +3156,6 @@
                 // Maximum number of allowed files
                 var maxFiles = 10;
                 if (all_files_length > maxFiles) {
-                    // Swal.fire({
-                    //     title: 'Cancelled',
-                    //     text: '{{ translate('You can only upload a maximum of 10 files.') }}',
-                    //     icon: 'error',
-                    //     scrollbarPadding: false,
-                    //     backdrop:false,
-                    // });
                     var title = "{{ translate('Variant Media') }}";
                     var message = '{{ translate('You can only upload a maximum of 10 files.') }}';
 
@@ -3189,13 +3165,6 @@
                     $('#modal-info').modal('show');
                     this.value = ''; // Clear the file input
                 } else if (all_files_length == 0) {
-                    // Swal.fire({
-                    //     title: 'Cancelled',
-                    //     text: '{{ translate('You need to select at least one picture.') }}',
-                    //     icon: 'error',
-                    //     scrollbarPadding: false,
-                    //     backdrop:false,
-                    // });
                     var title = "{{ translate('Variant Media') }}";
                     var message = '{{ translate('You need to select at least one picture.') }}';
 
@@ -4945,7 +4914,7 @@
                 } else {
                     $(this).parent().parent().parent().find('#bloc_default_shipping').empty();
                 }
-            })
+            });
 
             $('#bloc_third_party input[type="number"], select.calculate').on('input change', function() {
                 let weight = $(this).parent().parent().find('#weight').val();
@@ -5742,11 +5711,6 @@
                     }
 
                     var check_thumbnail_images = true;
-                    // if ($('#image-preview-Thumbnail').children('div').length > 0) {
-                    //     var check_thumbnail_images = true;
-                    // } else {
-                    //     var check_thumbnail_images = false;
-                    // }
 
                     if ($('body #photoUploadThumbnailSeconde')[0].files.length == 0) {
                         if (check_thumbnail_images != true) {
