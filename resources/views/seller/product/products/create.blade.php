@@ -556,27 +556,27 @@
 
                                 </div>
                                 <div class="col-12 d-flex justify-content-center mt-3">
-                                    <div class="col-10 col-md-7 sbu-upload-box p-4">
-                                       <!-- <div class="col-12 fs-18 font-prmopt d-flex justify-content-center dark-c3 sbu-upload-title p-3">AI Product Bulk Upload</div> -->
-                                        <div class="col-12 mt-3 d-flex justify-content-center">
-                                            <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                    </svg>
-
-                                                Import CSV File
-                                            </button>
-                                        </div>
-                                        <!--
-                                        <div class="col-12 mt-3 d-flex justify-content-center sbu-upload-box-dad fs-20">
-                                            Drag & Drop Field
-                                        </div>
-                                            -->
+                                <div class="col-10 col-md-7 sbu-upload-box p-4">
+                                    <div class="col-12 mt-3 d-flex justify-content-center">
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" id="upload-btn">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Import CSV File
+                                        </button>
+                                        <input type="file" id="file-upload" accept=".csv" style="display: none;">
+                                    </div>
+                                    <div class="col-12 mt-3 d-flex justify-content-center">
+                                        <div id="file-name" class="fs-16 dark-c3"></div>
                                     </div>
                                 </div>
+                    </div>
+
+
+
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev4Btn">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -6200,6 +6200,15 @@
             }
         });
     });
+    document.getElementById('upload-btn').addEventListener('click', function() {
+        document.getElementById('file-upload').click();
+    });
+
+    document.getElementById('file-upload').addEventListener('change', function(event) {
+        const fileName = event.target.files.length > 0 ? event.target.files[0].name : "No file selected";
+        document.getElementById('file-name').textContent = fileName;
+    });
+
     flatpickr('.discount-range', {
             mode: "range",
             dateFormat: "Y-m-d",
