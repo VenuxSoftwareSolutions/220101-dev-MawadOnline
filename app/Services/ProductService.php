@@ -637,6 +637,7 @@ class ProductService
         }
 
         $pricing = [];
+
         if (
             (isset($collection['from'])) &&
             (isset($collection['to'])) &&
@@ -679,11 +680,13 @@ class ProductService
         unset($collection['parent_id']);
 
         $tags = [];
+
         if ($collection['tags'][0] != null) {
             foreach (json_decode($collection['tags'][0]) as $key => $tag) {
                 array_push($tags, $tag->value);
             }
         }
+
         $collection['tags'] = implode(',', $tags);
 
         if (isset($collection['stock_visibility_state'])) {
@@ -693,6 +696,7 @@ class ProductService
         }
 
         $shipping = [];
+
         if (
             (isset($collection['from_shipping'])) &&
             (isset($collection['to_shipping'])) &&
@@ -771,6 +775,7 @@ class ProductService
         $unit_general_attributes_data = [];
 
         //check if product has old variants
+        
         if (array_key_exists('variant', $data)) {
             foreach ($collection['variant']['sku'] as $key => $sku) {
                 if (! array_key_exists($key, $variants_data)) {
@@ -1106,6 +1111,16 @@ class ProductService
                 $variants_new_data[$ids[1]]['unit_price'] = $value;
             }
 
+            if (strpos($key, 'variant-unit_sale_price') === 0) {
+                $ids = explode('-', $key);
+
+                if (! array_key_exists($ids[2], $variants_new_data)) {
+                    $variants_new_data[$ids[2]] = [];
+                }
+
+                $variants_new_data[$ids[2]]['unit_price'] = $value;
+            }
+
             if (strpos($key, 'variant-published-') === 0) {
                 $ids = explode('-', $key);
                 if (! array_key_exists($ids[2], $variants_data)) {
@@ -1202,47 +1217,47 @@ class ProductService
 
             if (strpos($key, 'estimated_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (! array_key_exists($ids[1], $variants_data)) {
-                    $variants_data[$ids[1]] = [];
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
                 }
 
-                $variants_data[$ids[1]]['estimated_sample'] = $value;
+                $variants_new_data[$ids[1]]['estimated_sample'] = $value;
             }
 
             if (strpos($key, 'estimated_shipping_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (! array_key_exists($ids[1], $variants_data)) {
-                    $variants_data[$ids[1]] = [];
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
                 }
 
-                $variants_data[$ids[1]]['estimated_shipping_sample'] = $value;
+                $variants_new_data[$ids[1]]['estimated_shipping_sample'] = $value;
             }
 
             if (strpos($key, 'shipping_amount-') === 0) {
                 $ids = explode('-', $key);
-                if (! array_key_exists($ids[1], $variants_data)) {
-                    $variants_data[$ids[1]] = [];
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
                 }
 
-                $variants_data[$ids[1]]['shipping_amount'] = $value;
+                $variants_new_data[$ids[1]]['shipping_amount'] = $value;
             }
 
             if (strpos($key, 'variant_shipper_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (! array_key_exists($ids[1], $variants_data)) {
-                    $variants_data[$ids[1]] = [];
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
                 }
 
-                $variants_data[$ids[1]]['variant_shipper_sample'] = $value;
+                $variants_new_data[$ids[1]]['variant_shipper_sample'] = $value;
             }
 
             if (strpos($key, 'paid_sample-') === 0) {
                 $ids = explode('-', $key);
-                if (! array_key_exists($ids[1], $variants_data)) {
-                    $variants_data[$ids[1]] = [];
+                if (! array_key_exists($ids[1], $variants_new_data)) {
+                    $variants_new_data[$ids[1]] = [];
                 }
 
-                $variants_data[$ids[1]]['paid_sample'] = $value;
+                $variants_new_data[$ids[1]]['paid_sample'] = $value;
             }
         }
 
@@ -1286,6 +1301,7 @@ class ProductService
             ->pluck('id')
             ->toArray();
 
+        //dd($variants_new_data, $variants_data, $data);
         if (! isset($data['activate_attributes'])) {
             //Create product without variants
             $collection = $collection->toArray();
@@ -2369,40 +2385,43 @@ class ProductService
                     }
 
                     if (isset($variant['variant_shipper_sample'])) {
-                        $data['shipper_sample'] = $variant['variant_shipper_sample'];
+                        $sample_shipping['shipper_sample'] = $variant['variant_shipper_sample'];
                     } else {
-                        $data['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
+                        $sample_shipping['shipper_sample'] = $shipping_sample_parent['shipper_sample'];
                     }
 
                     if (isset($variant['estimated_sample'])) {
-                        $data['estimated_sample'] = $variant['estimated_sample'];
+                        $sample_shipping['estimated_sample'] = $variant['estimated_sample'];
                     } else {
-                        $data['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
+                        $sample_shipping['estimated_sample'] = $shipping_sample_parent['estimated_sample'];
                     }
 
                     if (isset($variant['estimated_shipping_sample'])) {
-                        $data['estimated_shipping_sample'] = $variant['estimated_shipping_sample'];
+                        $sample_shipping['estimated_shipping_sample'] = $variant['estimated_shipping_sample'];
                     } else {
-                        $data['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
+                        $sample_shipping['estimated_shipping_sample'] = $shipping_sample_parent['estimated_shipping_sample'];
                     }
 
                     if (isset($variant['paid_sample'])) {
-                        $data['paid_sample'] = $variant['paid_sample'];
+                        $sample_shipping['paid_sample'] = $variant['paid_sample'];
                     } else {
-                        $data['paid_sample'] = $shipping_sample_parent['paid_sample'];
+                        $sample_shipping['paid_sample'] = $shipping_sample_parent["paid_sample"];
                     }
 
                     if (isset($variant['shipping_amount'])) {
-                        $data['shipping_amount'] = $variant['shipping_amount'];
+                        $sample_shipping['shipping_amount'] = $variant['shipping_amount'];
                     } else {
-                        $data['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
+                        $sample_shipping['shipping_amount'] = $shipping_sample_parent['shipping_amount'];
                     }
 
                     if (isset($variant['sample_available'])) {
-                        $data['sample_available'] = $variant['sample_available'];
+                        $collection['sample_available'] = $variant['sample_available'];
                     } else {
-                        $data['sample_available'] = 0;
+                        $collection['sample_available'] = 0;
                     }
+
+                    $collection['low_stock_quantity'] = isset($variant['stock']) ?
+                        $variant['stock'] : null;
 
                     if (! isset($variant['sample_price'])) {
                         $collection['vat_sample'] = $vat_user->vat_registered;
@@ -2710,7 +2729,9 @@ class ProductService
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                $current_shipping['shipping_charge'] = $variant['shipping_details']['shipping_charge'][$key];
+                                $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge']) ? 
+                                    $variant['shipping_details']['shipping_charge'][$key] 
+                                    : null;
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
                                 $current_shipping['vat_shipping'] = $vat_user->vat_registered;
                                 $current_shipping['product_id'] = $new_product->id;
@@ -2726,6 +2747,8 @@ class ProductService
                     } else {
                         $this->storeShipping($new_product->id, $shipping);
                     }
+
+                    $this->storeSampleShipping($new_product->id, $sample_shipping);
                 }
 
                 // Update the approved field in the parent product
