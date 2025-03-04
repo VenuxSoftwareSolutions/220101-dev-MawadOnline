@@ -3094,3 +3094,10 @@ if (function_exists('getAramexShippingDuration') === false) {
         ]);
     }
 }
+
+if (function_exists('roundUpToTwoDigits') === false) {
+    function roundUpToTwoDigits($number)
+    {
+        return ceil($number * 100) / 100;
+    }
+}

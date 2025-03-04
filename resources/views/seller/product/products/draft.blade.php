@@ -255,7 +255,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-from-label">
                                         {{ __('Unit of Sale Price') }}
-                                        <small>({{ __('VAT Exclusive') }})</small>
+                                        <small>({{ __('VAT Inclusive') }})</small>
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-md-8">
@@ -640,7 +640,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3" id="sample-price-wrapper" @if($product->sample_available == 0) style="display: none;" @endif>
-                                        <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                        <label class="col-md-2 col-from-label">
+                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                        </label>
                                         <div class="col-md-10">
                                             <input type="number" min="1" step="0.01"
                                                 class="form-control sample_price_parent" id="sample_price_parent"
@@ -1376,7 +1378,9 @@
                                         </div>
                                     </div>
                                     <div class="row mb-3">
-                                        <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                        <label class="col-md-2 col-from-label">
+                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                        </label>
                                         <div class="col-md-10">
                                             <input type="text" class="form-control sample_price">
                                         </div>
@@ -1483,7 +1487,7 @@
                                                 <div class="mx-0 row bloc_pricing_configuration_variant">
                                                     <label class="col-md-2 col-from-label">
                                                         {{ __('Unit of Sale Price') }}
-                                                        <small>({{ __('VAT Exclusive') }})</small>
+                                                        <small>({{ __('VAT Inclusive') }})</small>
                                                         <span class="text-danger">*</span>
                                                     </label>
                                                     <div class="col-md-10">
@@ -1841,7 +1845,9 @@
                                                     </div>
                                                     <div class="row mb-3">
                                                         <label
-                                                            class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
+                                                            class="col-md-2 col-from-label">
+                                                            {{ translate('Sample price') }} <small>({{ __("VAT Inclusive") }})</small>
+                                                        </label>
                                                         <div class="col-md-10">
                                                             <input type="number" min="1" step="0.01"
                                                                 class="form-control sample_price"
@@ -2844,6 +2850,7 @@
                 .replace(/[^\w\-]+/g, '') // Remove non-word characters (except hyphens)
                 .replace(/\-\-+/g, '-'); // Replace multiple hyphens with a single one
         }
+
         $(document).ready(function() {
             @if (count($product->getChildrenProducts()) > 0)
                 $('#variant_informations').show();
@@ -2857,13 +2864,10 @@
                 $('#btn-create-variant').hide();
             @endif
 
-
             $('body #bloc_pricing_configuration_variant').hide();
             $('body #bloc_sample_pricing_configuration_variant').hide();
             $('body .btn-variant-pricing').hide();
 
-            var numbers_variant = "{{ count($product->getChildrenProducts()) }}";
-            numbers_variant = parseInt(numbers_variant);
             var today = moment().startOf("day");
             var initial_attributes = $('#attributes').val();
             Array.prototype.diff = function(a) {
@@ -2948,13 +2952,6 @@
                             AIZ.plugins.bootstrapSelect('refresh');
                         } else {
                             $('body input[name="activate_attributes"]').prop('checked', false);
-                            // Swal.fire({
-                            //     title: 'Cancelled',
-                            //     text: 'You are unable to enable the variant option because the selected category lacks any attributes.',
-                            //     icon: 'error',
-                            //     scrollbarPadding: false,
-                            //     backdrop:false,
-                            // })
 
                             var title = "{{ translate('Product Category') }}";
                             var message =
@@ -3323,347 +3320,6 @@
                 }
             });
 
-            //Create variant when click on button create variant
-            $('body').on('click', '#btn-create-variant', function() {
-                if ($('#attributes option:selected').length > 0) {
-                    // Clone the original div
-                    var clonedDiv = $('#variant_informations').clone();
-
-                    // Add some unique identifier to the cloned div (optional)
-                    clonedDiv.attr('class', 'clonedDiv');
-                    clonedDiv.attr('data-id', numbers_variant);
-                    // Disable all input elements in the cloned div
-                    //clonedDiv.find('input').prop('readonly', true);
-
-                    // Append the cloned div to the container
-                    var count = numbers_variant + 1;
-                    //add attribute name for each input cloned
-                    @if (app()->getLocale() == 'ae')
-                        var html_to_add =
-                            '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
-                    @else
-                        var html_to_add =
-                            '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
-                    @endif
-                    clonedDiv.find('h3').after(html_to_add);
-                    //clonedDiv.find('.fa-circle-xmark').hide();
-                    clonedDiv.find('.fa-circle-check').hide();
-                    clonedDiv.find('#btn-add-pricing-variant').hide();
-                    clonedDiv.find('div.row').each(function() {
-                        // Check if the div has display:none set
-                        if ($(this).css('display') === 'none') {
-                            // If it's set to display:none, change it to its default value
-                            $(this).css('display', '');
-                        }
-                    });
-                    clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
-                    clonedDiv.find('.sku').prop('readonly', true);
-                    clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
-                    clonedDiv.find('.sample_description').attr('name', 'sample_description-' +
-                        numbers_variant);
-                    clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
-                    clonedDiv.find('.sample_description_parent').attr('name', 'sample_description-' +
-                        numbers_variant);
-                    clonedDiv.find('.sample_price_parent').attr('name', 'sample_price-' + numbers_variant);
-                    clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant +
-                        '[]');
-                    clonedDiv.find('.photos_variant').attr('id', 'photos_variant-' + numbers_variant);
-                    clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
-                    clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
-                    clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
-                    clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing-' +
-                        numbers_variant);
-                    clonedDiv.find('.variant-published').attr('name', 'variant-published-' +
-                        numbers_variant);
-                    clonedDiv.find('.min-qty-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[from][]');
-                    });
-                    clonedDiv.find('.max-qty-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[to][]');
-                    });
-                    clonedDiv.find('.unit-price-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[unit_price][]');
-                    });
-                    clonedDiv.find('.discount_percentage-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[discount_percentage][]');
-                    });
-                    clonedDiv.find('.discount_amount-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[discount_amount][]');
-                    });
-                    clonedDiv.find('.discount-range-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[discount_range][]');
-                        $(element).daterangepicker({
-                            timePicker: true,
-                            autoUpdateInput: false,
-                            minDate: today,
-                            locale: {
-                                format: 'DD-MM-Y HH:mm:ss',
-                                separator: " to ",
-                            },
-                        });
-
-                        var format = 'DD-MM-Y HH:mm:ss';
-                        var separator = " to ";
-                        $(element).on("apply.daterangepicker", function(ev, picker) {
-                            $(this).val(
-                                picker.startDate.format(format) +
-                                separator +
-                                picker.endDate.format(format)
-                            );
-                        });
-                    });
-                    clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
-                    clonedDiv.find('.variant-shipping').attr('data-id', numbers_variant);
-                    clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
-                    clonedDiv.find('.discount_type-variant').each(function(index, element) {
-                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
-                            '[discount_type][]');
-                        $('#variant_informations').find('.discount_type-variant').each(function(key,
-                            element_original) {
-                            if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
-                            }
-                        })
-                    });
-                    clonedDiv.find('.attributes').each(function(index, element) {
-                        // Retrieve the data-id_attributes value of the current input
-                        var dataIdValue = $(element).data('id_attributes');
-                        var value = 0;
-                        var check = false;
-                        if ($(element).attr('data-type')) {
-                            $('#variant_informations').find('.color').each(function(key,
-                                element_original) {
-                                if ($(element_original).data('id_attributes') ==
-                                    dataIdValue) {
-                                    value = $(element_original).val();
-                                    $(element).attr('name', 'attributes-' + dataIdValue +
-                                        '-' + numbers_variant + '[]');
-                                    check = true;
-                                }
-                            })
-
-                            $(element).val(value);
-                        }
-
-                        // Change the attribute name of the current input
-                        if (check == false) {
-                            $(element).attr('name', 'attributes-' + dataIdValue + '-' +
-                                numbers_variant);
-                        }
-
-                    });
-
-                    clonedDiv.find('.attributes-units').each(function(index, element) {
-                        // Retrieve the data-id_attributes value of the current input
-                        var dataIdValue = $(element).data('id_attributes');
-
-                        // Change the attribute name of the current input
-                        $(element).attr('name', 'attributes_units-' + dataIdValue + '-' +
-                            numbers_variant);
-                        $('#variant_informations').find('.attributes-units').each(function(key,
-                            element_original) {
-                            if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
-                            }
-                        })
-                    });
-
-                    clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
-                        numbers_variant);
-                    clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' +
-                        numbers_variant);
-                    clonedDiv.find('.variant-sample-pricing').attr('data-id_newvariant', numbers_variant);
-                    clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' +
-                        numbers_variant);
-                    clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
-
-                    clonedDiv.find('.min-qty-shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
-                    });
-
-                    clonedDiv.find('.max-qty-shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
-                    });
-
-                    var id_shipper = 0;
-                    clonedDiv.find('.shipper').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[shipper][' + id_shipper + '][]');
-                        $('#variant_informations #table_shipping_configuration').find('.shipper')
-                            .each(function(key, element_original) {
-                                if (index == key) {
-                                    $(element_original).val().forEach(value => {
-                                        $(element).find('option[value="' + value + '"]')
-                                            .prop('selected', true);
-                                    });
-                                }
-                            })
-
-                        id_shipper++;
-                    });
-
-                    clonedDiv.find('.estimated_order').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[estimated_order][]');
-                    });
-
-                    clonedDiv.find('.estimated_shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[estimated_shipping][]');
-                    });
-
-                    clonedDiv.find('.paid').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
-                        $('#variant_informations #table_shipping_configuration').find('.paid').each(
-                            function(key, element_original) {
-                                if (index == key) {
-                                    $(element).find('option[value="' + $(element_original)
-                                        .val() + '"]').prop('selected', true);
-                                }
-                            })
-                    });
-
-                    clonedDiv.find('.vat_shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[vat_shipping][]');
-                    });
-
-                    clonedDiv.find('.shipping_charge').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[shipping_charge][]');
-                        $('#variant_informations #table_shipping_configuration').find(
-                            '.shipping_charge').each(function(key, element_original) {
-                            if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
-                            }
-                        })
-                    });
-
-                    clonedDiv.find('.flat_rate_shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[flat_rate_shipping][]');
-                    });
-
-                    clonedDiv.find('.charge_per_unit_shipping').each(function(index, element) {
-                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
-                            '[charge_per_unit_shipping][]');
-                    });
-
-                    clonedDiv.find('.shipper_sample').each(function(index, element) {
-                        $(element).attr('name', 'variant_shippers_sample-' + numbers_variant);
-                        $('#variant_informations #table_sample_configuration').find(
-                            '.shipper_sample').each(function(key, element_original) {
-                            if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
-                            }
-                        })
-                    });
-
-                    clonedDiv.find('.paid_sample').each(function(index, element) {
-                        $(element).attr('name', 'paid_sample-' + numbers_variant);
-                        $('#variant_informations #table_sample_configuration').find('.paid_sample')
-                            .each(function(key, element_original) {
-                                if (index == key) {
-                                    $(element).find('option[value="' + $(element_original)
-                                        .val() + '"]').prop('selected', true);
-                                }
-                            })
-                    });
-
-                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
-                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' +
-                        numbers_variant);
-                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
-
-                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id',
-                        numbers_variant);
-                    clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
-                    clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
-                    clonedDiv.find('.delete_pricing_canfiguration').attr('data-newvariant-id',
-                        numbers_variant);
-
-                    // $('#bloc_variants_created').prepend(clonedDiv);
-                    // var divId = "#bloc_variants_created";
-
-                    // // Get the length of all h3 tags under the specific div
-                    // var h3Count = $(divId + " h3").length;
-
-                    // // Loop through each h3 tag and display its order
-                    // $(divId + " h3").each(function(index) {
-                    //     var order = h3Count - index; // Number in descending order
-                    //     $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
-                    // });
-                    // numbers_variant++;
-
-                    if (clonedDiv.find('.sku').val() == '') {
-                        var title = "{{ translate('Form validation') }}";
-                        var message =
-                            '{{ translate('The SKU field must be filled before creating the variant.') }}';
-                        $('#title-modal').text(title);
-                        $('#text-modal').text(message);
-
-                        $('#modal-info').modal('show')
-                    } else {
-                        $('#bloc_variants_created').show();
-                        $('#bloc_variants_created').prepend(clonedDiv);
-                        var divId = "#bloc_variants_created";
-
-                        // Get the length of all h3 tags under the specific div
-                        var h3Count = $(divId + " h3").length;
-
-
-                        // Loop through each h3 tag and display its order
-                        $(divId + " h3").each(function(index) {
-                            var order = h3Count - index; // Number in descending order
-                            $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
-                        });
-                        numbers_variant++;
-                        //AIZ.plugins.bootstrapSelect('refresh');
-
-                        $('#variant_informations').find(
-                            'input[type="text"], input[type="number"], input[type="checkbox"], input[type="radio"], select'
-                        ).each(function() {
-                            // Reset text and number inputs
-                            if ($(this).is('input[type="text"]') || $(this).is(
-                                    'input[type="number"]')) {
-                                $(this).val(''); // Clear the value for text and number inputs
-                            }
-                            // Reset checkboxes and radio buttons
-                            else if ($(this).is('input[type="radio"]')) {
-                                $(this).prop('checked',
-                                    false); // Uncheck checkboxes and radio buttons
-                            }
-                            // Reset select options
-                            else if ($(this).is('select')) {
-                                $(this).val(''); // Reset to the first option (index 0)
-                            }
-                        });
-
-                        $('#variant_informations').find('.filter-option-inner-inner').each(function() {
-                            $(this).text('Nothing selected')
-                        });
-                    }
-                } else {
-                    var title = "{{ translate('Create variant') }}";
-                    var message =
-                        '{{ translate('A minimum of one attribute must be selected in order to create a variant.') }}';
-                    $('#title-modal').text(title);
-                    $('#text-modal').text(message);
-
-                    $('#modal-info').modal('show')
-                }
-            });
-
             //enabled all input under specific variant to edit
             $('body').on('click', '.fa-pen-to-square', function() {
                 $(this).parent().find('input').prop('readonly', false);
@@ -3745,13 +3401,15 @@
                     let oldVariantUnitPrice = $(this).data("unit_price");
 
                     let unitPriceElement = $(`
-                        <label class="col-md-2 col-from-label">
-                            {{ __("Unit of Sale Price") }}
-                            <small>({{ __("VAT Exclusive") }})</small>
-                            <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-md-10">
-                            <input type="number" class="form-control" name="variant[unit_sale_price][${old_variant}]" value="${oldVariantUnitPrice}" placeholder="{{ __("Unit of Sale Price") }}">
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-from-label">
+                                {{ __("Unit of Sale Price") }}
+                                <small>({{ __("VAT Inclusive") }})</small>
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" name="variant[unit_sale_price][${old_variant === undefined ? is_variant : old_variant}]" value="${oldVariantUnitPrice ?? 0}" placeholder="{{ __("Unit of Sale Price") }}">
+                            </div>
                         </div>
                     `);
 
@@ -3882,8 +3540,8 @@
                     }
 
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').show();
-                    $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').append(
-                        unitPriceElement);
+                    $(this).parent().parent().parent()
+                        .find('#bloc_pricing_configuration_variant').append(unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('.bloc_pricing_configuration_variant').empty();
                 }

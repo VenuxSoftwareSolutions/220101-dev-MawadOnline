@@ -146,7 +146,7 @@ class CartController extends Controller
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
-                $parent  = Product::where('id', $request->id)->first();
+        $parent  = Product::where('id', $request->id)->first();
 
         if ($parent != null) {
             if ($parent->is_parent == 0) {
@@ -419,13 +419,15 @@ class CartController extends Controller
             }
 
             if (isset($pricing['from']) && is_array($pricing['from']) && count($pricing['from']) > 0) {
-                if (!isset($min))
+                if (!isset($min)) {
                     $min = min($pricing['from']);
+                }
             }
 
             if (isset($pricing['to']) && is_array($pricing['to']) && count($pricing['to']) > 0) {
-                if (!isset($max))
+                if (!isset($max)) {
                     $max = max($pricing['to']);
+                }
             }
 
             $revision_parent_video_provider = Revision::whereNull('deleted_at')
@@ -495,7 +497,7 @@ class CartController extends Controller
                             // Calculate the discounted price
                             $discountedPrice = $variantPricing - $discountAmount;
                         }
-                    } else if ($lastItem['variant_pricing-from']['discount']['type'][0] == "amount") {
+                    } elseif ($lastItem['variant_pricing-from']['discount']['type'][0] == "amount") {
                         // Calculate the discount amount based on the given amount
                         $amount = $lastItem['variant_pricing-from']['discount']['amount'][0];
 
@@ -540,7 +542,7 @@ class CartController extends Controller
                                 // Calculate the discounted price
                                 $discountedPrice = $variantPricing - $discountAmount;
                             }
-                        } else if ($pricing['discount_type'][0] == "amount") {
+                        } elseif ($pricing['discount_type'][0] == "amount") {
                             // Calculate the discount amount based on the given amount
                             $amount = $pricing['discount_amount'][0];
 
@@ -638,7 +640,7 @@ class CartController extends Controller
 
         $carts->each(function ($cart) {
             if ($cart->user !== null) {
-                $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+                $cart->user->wishlists->each(fn ($wishlist) => $wishlist->delete());
             }
         });
 
@@ -675,8 +677,11 @@ class CartController extends Controller
 
             if ($request->has("sample")) {
                 return $this->handleAddingSampleProductToCart(
-                    $product, $userId, $request->variationId,
-                    $request->quantity, $dataProduct["detailedProduct"]
+                    $product,
+                    $userId,
+                    $request->variationId,
+                    $request->quantity,
+                    $dataProduct["detailedProduct"]
                 );
             }
 
@@ -747,7 +752,7 @@ class CartController extends Controller
 
             $carts->each(function ($cart) {
                 if ($cart->user !== null) {
-                    $cart->user->wishlists->each(fn($wishlist) => $wishlist->delete());
+                    $cart->user->wishlists->each(fn ($wishlist) => $wishlist->delete());
                 }
             });
 
@@ -757,7 +762,7 @@ class CartController extends Controller
                 'modal_view' => view('frontend.' . get_setting('homepage_select') . '.partials.addedToCart', compact('product', 'cart'))->render(),
                 'nav_cart_view' => view('frontend.' . get_setting('homepage_select') . '.partials.cart')->render(),
             ];
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::info("Error while adding product to cart, with message: {$e->getMessage()}");
 
             return response()->json(["error" => true, "message" => __("Something went wrong!")], 500);
@@ -807,7 +812,7 @@ class CartController extends Controller
                 "product_stock" => $product_stock,
                 "total" => $total,
                 "product_name_with_choice" => $product_name_with_choice,
-                "stockStatus" =>$stockStatus,
+                "stockStatus" => $stockStatus,
                 "outOfStockItems" => $outOfStockItems,
                 "stockAlert" => $stockAlert
             ];
@@ -954,7 +959,7 @@ class CartController extends Controller
                 "product_stock" => $product_stock,
                 "total" => $total,
                 "product_name_with_choice" => $product_name_with_choice,
-                "stockStatus" =>$stockStatus,
+                "stockStatus" => $stockStatus,
                 "outOfStockItems" => $outOfStockItems,
                 "stockAlert" => $stockAlert
             ];
