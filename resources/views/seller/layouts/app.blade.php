@@ -833,8 +833,7 @@
                     });
 
                     clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
-                    clonedDiv.find('.sample_description').attr('name', 'sample_description-' +
-                        numbers_variant);
+                    clonedDiv.find('.sample_description').attr('name', `sample_description-${numbers_variant}`);
                     clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
                     clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant +
                         '[]');
@@ -908,14 +907,12 @@
                         let dataIdValue = $(element).data('id_attributes');
                         let value = 0;
                         let check = false;
+
                         if ($(element).attr('data-type')) {
-                            $('#variant_informations').find('.color').each(function(key,
-                                element_original) {
-                                if ($(element_original).data('id_attributes') ==
-                                    dataIdValue) {
+                            $('#variant_informations').find('.color').each(function(key, element_original) {
+                                if ($(element_original).data('id_attributes') == dataIdValue) {
                                     value = $(element_original).val();
-                                    $(element).attr('name', 'attributes-' + dataIdValue +
-                                        '-' + numbers_variant + '[]');
+                                    $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}[]`);
                                     check = true;
                                 }
                             })
@@ -924,21 +921,26 @@
                         }
 
                         if (check == false) {
-                            $(element).attr('name', 'attributes-' + dataIdValue + '-' +
-                                numbers_variant);
+                            $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}`);
                         }
                     });
 
                     clonedDiv.find('.attributes-units').each(function(index, element) {
                         let dataIdValue = $(element).data('id_attributes');
 
+                        if(dataIdValue === undefined) {
+                            dataIdValue = $(element).find("select").data('id_attributes');
+                        }
+
                         let attrName = `attributes_units-${dataIdValue}-${numbers_variant}`;
                         $(element).attr('name', attrName);
 
-                        $('#variant_informations').find('.attributes-units').each(function(key,
-                            element_original) {
+                        $('#variant_informations').find('.attributes-units').each(function(key, element_original) {
                             if (index == key) {
-                                $(element).find(`option[value="${$(element_original).val()}"]`).prop('selected', true);
+                                let value = $(element_original).val();
+                                if(value !== "") {
+                                    $(element).find(`option[value="${value}"]`).prop('selected', true);
+                                }
                             }
                         })
                     });
