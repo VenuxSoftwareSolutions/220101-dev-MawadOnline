@@ -36,5 +36,6 @@ class VerifyCsrfToken extends Middleware
         '/rozer*',
         '/phonepe*',
         'social-login/apple/callback',
+        '/admin/stripe/webhooks',
     ];
 }
