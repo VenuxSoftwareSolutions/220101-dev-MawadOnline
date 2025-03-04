@@ -9,7 +9,11 @@ class Shipping extends Model
 {
     use HasFactory;
 
-    function product()
+    protected $casts = [
+        'is_sample' => 'boolean',
+    ];
+
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }

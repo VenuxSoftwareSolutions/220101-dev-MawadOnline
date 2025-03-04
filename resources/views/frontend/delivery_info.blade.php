@@ -90,35 +90,27 @@
                                                     </div>
                                                     <div class="mt-3">
                                                         <h6 class="fs-14 fw-500">{{ translate('Shipping Options') }}</h6>
-                                                        @php
-                                                            $shippers = [];
-                                                            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id]);
-                                                            if ($shippingOptions) {
-                                                                $shippers = explode(',', $shippingOptions->shipper);
-                                                                $duration = $shippingOptions->estimated_order + $shippingOptions->estimated_shipping;
-                                                            }
-
-                                                            $productWeight = getProductWeightGeneralAttribute($product->id);
-                                                        @endphp
                                                         <div
-                                                            class="border p-2 mb-2 @if (in_array("third_party", $shippers) && $productWeight === null) d-none @endif">
+                                                            class="border p-2 mb-2 @if (in_array("third_party", $shippings[$product->id]["shippers"]) && $shippings[$product->id]["productWeight"] === null) d-none @endif">
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <label for="shipping_method_{{ $product->id }}"
                                                                         class="fs-14 text-secondary">{{ translate('Shipping Method') }}:</label>
-                                                                    <script>
-                                                                        window.shippingMethodSelectFirstChange_{{ $product->id }} = true;
-                                                                    </script>
                                                                     <select data-prod="{{ $product->id }}"
                                                                         name="shipping_method_{{ $product->id }}"
                                                                         id="shipping_method_{{ $product->id }}"
-                                                                        class="form-control fs-14 text-dark fw-500"
+                                                                        class="shipping_method form-control fs-14 text-dark fw-500"
                                                                         @if ($shippers_areas->count() > 0) onchange="toggleShippersArea(this, '{{ $product->id }}')" @endif>
                                                                         <option value="">
                                                                             {{ translate('Please choose shipper') }}
                                                                         </option>
-                                                                        @foreach ($shippers as $option)
-                                                                            <option value="{{ $option }}">
+                                                                        @foreach ($shippings[$product->id]["shippers"] as $key => $option)
+                                                                            <option
+                                                                               value="{{ $option }}"
+                                                                               data-has_shipping_options="{{ json_encode($shippings[$product->id]["shippingOptions"][$key] !== null) }}"
+                                                                               data-paid="{{ $shippings[$product->id]["shippingOptions"][$key]->paid }}"
+                                                                               data-duration="{{ $shippings[$product->id]["durations"][$key] }}"
+                                                                               data-charge="{{ formatChargeBasedOnChargeType($shippings[$product->id]["shippingOptions"][$key], $carts) }}">
                                                                                 {{ ucfirst($option === 'third_party' ? __('MawadOnline 3rd Party Shipping') : $option) }}
                                                                             </option>
                                                                         @endforeach
@@ -147,7 +139,7 @@
                                                                     @endforeach
                                                                 </div>
                                                             </div>
-                                                            <div class="row">
+                                                            <div class="row duration-wrapper_{{ $product->id }}__clz">
                                                                 <div class="col-md-6">
                                                                     <span
                                                                         class="fs-14 text-secondary">{{ translate('Duration') }}:</span>
@@ -159,77 +151,10 @@
                                                                 <div class="col-md-12">
                                                                     <span
                                                                         class="fs-14 text-secondary">{{ translate('Charge') }}:</span>
-                                                                    <span class="fs-14 text-dark"
+                                                                    <span class="charge-result fs-14 text-dark"
                                                                         id="charge-result_{{ $product->id }}">N/A</span>
                                                                 </div>
                                                             </div>
-                                                            <script>
-                                                                document.addEventListener("DOMContentLoaded", function() {
-                                                                    $("#shipping_method_{{ $product->id }}").on("change", function() {
-                                                                        if (["vendor", ""].includes($(this).val()) === false &&
-                                                                            shippingMethodSelectFirstChange_{{ $product->id }} === true) {
-                                                                            @if ($shippingOptions !== null)
-                                                                                $("#charge-result_{{ $product->id }}").html(`
-                                                                                    <span class="p-1 bg-black-20 rounded">
-                                                                                        <span
-                                                                                            class="spinner-border spinner-border-sm"
-                                                                                            role="status"
-                                                                                            aria-hidden="true"></span>
-                                                                                        <span
-                                                                                            class="visually-hidden">Loading...</span>
-                                                                                    </span>
-                                                                                `);
-
-                                                                                $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
-                                                                                    product_id: {{ $product->id }},
-                                                                                }).then(
-                                                                                    function({
-                                                                                        error,
-                                                                                        data,
-                                                                                        message
-                                                                                    }) {
-                                                                                        shippingMethodSelectFirstChange_{{ $product->id }} = false;
-                                                                                        if (error === true) {
-                                                                                            throw new Error(message);
-                                                                                        } else if (data?.HasErrors === false) {
-                                                                                            @php
-                                                                                                $quantity = $carts->filter(fn($cart) => $cart->product_id === $product->id)->first()->quantity;
-                                                                                                $aramexShippingDuration = getAramexShippingDuration($product, $quantity);
-                                                                                            @endphp
-                                                                                            $("#shipping_duration_{{ $product->id }}").html(
-                                                                                                '{{ $aramexShippingDuration }}');
-
-                                                                                            $("#charge-result_{{ $product->id }}").html(
-                                                                                                `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
-                                                                                            ).removeClass("text-dark").addClass("text-success").addClass(
-                                                                                                "fw-700");
-                                                                                        } else {
-                                                                                            $("#charge-result_{{ $product->id }}").html("N/A");
-                                                                                            AIZ.plugins.notify('danger', data["Notifications"][0]["Message"]
-                                                                                                .split(" - ")[1]);
-                                                                                        }
-                                                                                    }).catch(() => {
-                                                                                    $("#charge-result_{{ $product->id }}").html("N/A");
-                                                                                    AIZ.plugins.notify('danger', '{{ __('Something went wrong!') }}')
-                                                                                });
-                                                                            @else
-                                                                                $("#charge-result_{{ $product->id }}").html(
-                                                                                    '{{ __('Free (handled by vendor)') }}');
-                                                                            @endif
-                                                                        } else if (["vendor"].includes($(this).val()) === true) {
-                                                                            $("#shipping_duration_{{ $product->id }}").html(
-                                                                                '{{ $duration . ' ' . __('days') }}');
-                                                                            @if ($shippingOptions !== null && $shippingOptions->paid === 'vendor')
-                                                                                $("#charge-result_{{ $product->id }}").html(
-                                                                                    '{{ __('Free (handled by vendor)') }}');
-                                                                            @elseif ($shippingOptions !== null && $shippingOptions->paid === 'buyer')
-                                                                                $("#charge-result_{{ $product->id }}").html(
-                                                                                    '{{ formatChargeBasedOnChargeType($shippingOptions, $carts) }}');
-                                                                            @endif
-                                                                        }
-                                                                    });
-                                                                });
-                                                            </script>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -581,5 +506,68 @@
                 shippersAreaContainer.style.display = 'none';
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            $(".shipping_method").on("change", function() {
+                let productId = $(this).data("prod");
+                let duration = $(this).find("option:selected").data("duration");
+
+                $(`#shipping_duration_${productId}`).html("N/A");
+
+                if (["vendor", ""].includes($(this).val()) === false) {
+                    if ($(this).find("option:selected").data("has_shipping_options") === true) {
+                        $(`#shipping_duration_${productId}`).html(duration);
+
+                        $(`#charge-result_${productId}`).html(`
+                            <span class="p-1 bg-black-20 rounded">
+                                <span
+                                    class="spinner-border spinner-border-sm"
+                                    role="status"
+                                    aria-hidden="true"></span>
+                                <span
+                                    class="visually-hidden">Loading...</span>
+                            </span>
+                        `);
+
+                        $.post("{{ route('user.orders', ['user_id' => auth()->user()->id]) }}", {
+                            product_id: productId,
+                        }).then(
+                            function({
+                                error,
+                                data,
+                                message
+                            }) {
+                                if (error === true) {
+                                    throw new Error(message);
+                                } else if (data?.HasErrors === false) {
+                                    $(`#charge-result_${productId}`).html(
+                                        `${data["TotalAmount"]["Value"]} ${data["TotalAmount"]["CurrencyCode"]}`
+                                    ).removeClass("text-dark")
+                                        .addClass("text-success")
+                                        .addClass("fw-700");
+                                } else {
+                                    $(`#charge-result_${productId}`).html("N/A");
+                                    AIZ.plugins.notify('danger', data["Notifications"][0]["Message"].split(" - ")[1]);
+                                }
+                            }).catch(() => {
+                                $(`#charge-result_${productId}`).html("N/A");
+                                AIZ.plugins.notify('danger', '{{ __('Something went wrong!') }}')
+                            });
+                    } else {
+                        $(`#charge-result_${productId}`).html('{{ __('Free (handled by vendor)') }}');
+                    }
+                } else if (["vendor"].includes($(this).val()) === true) {
+                    let paidBy = $(this).find("option:selected").data("paid");
+
+                    $(`#shipping_duration_${productId}`).html(`${duration} {{ __('days') }}`);
+
+                    if (paidBy === 'vendor') {
+                        $(`#charge-result_${productId}`).html('{{ __('Free (handled by vendor)') }}');
+                    } else if (paidBy === 'buyer') {
+                        $(`#charge-result_${productId}`).html($(this).find("option:selected").data("charge"));
+                    }
+                }
+            });
+        });
     </script>
 @endsection
