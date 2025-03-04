@@ -445,6 +445,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     //Reviews
+    Route::resource('reviews', ReviewController::class);
     Route::controller(ReviewController::class)->group(function () {
         Route::get('/reviews', 'index')->name('reviews.index');
         Route::post('/reviews/published', 'updatePublished')->name('reviews.published');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Auth;
 
 class ReviewController extends Controller
@@ -25,7 +26,7 @@ class ReviewController extends Controller
     {
         $reviews = Review::query();
         if ($request->rating) {
-            $reviews->orderBy('rating', explode(",", $request->rating)[1]);
+            $reviews->orderBy('rating', explode(',', $request->rating)[1]);
         }
         $reviews = $reviews->orderBy('created_at', 'desc')->paginate(15);
         return view('backend.product.reviews.index', compact('reviews'));
@@ -51,32 +52,58 @@ class ReviewController extends Controller
     {
         $request->validate([
             'comment' => 'required|string|max:255',
+            'rating' => 'required_if:has_rating,false|numeric|min:1|max:5'
+
         ]);
 
-        $review = new Review;
-        $review->product_id = $request->product_id;
-        $review->user_id = Auth::user()->id;
-        $review->rating = $request->rating;
-        $review->comment = $request->comment;
-        $review->name = Auth::user()->name;
-        $review->status = 0;
-        $review->viewed = '0';
-        $review->save();
-        $product = Product::findOrFail($request->product_id);
-        if (Review::where('product_id', $product->id)->where('status', 1)->count() > 0) {
-            $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating') / Review::where('product_id', $product->id)->where('status', 1)->count();
-        } else {
-            $product->rating = 0;
+        $maxReviews = get_setting('max_reviews_per_product');
+        $existingReviewsCount = Review::where('product_id', $request->product_id)
+        ->where('user_id', Auth::id())
+        ->count();
+        if ($existingReviewsCount >= $maxReviews) {
+            return back()->withErrors(['max' => 'Maximum allowed reviews for this product is reached.']);
         }
-        $product->save();
+        
 
-        if ($product->added_by == 'seller') {
-            $seller = $product->user->shop;
-            $seller->rating = (($seller->rating * $seller->num_of_reviews) + $review->rating) / ($seller->num_of_reviews + 1);
-            $seller->num_of_reviews += 1;
-            $seller->save();
-        }
+        DB::transaction(function () use ($request) {
+            $review = new Review();
+            $existingRatingReview = Review::where('product_id', $request->product_id)
+            ->where('user_id', Auth::id())
+            ->whereNotNull('rating')
+            ->first();
+            $review->product_id = $request->product_id;
+            $review->user_id = Auth::user()->id;
+            $review->rating =  $request->rating;
+            $review->comment = $request->comment;
+            $review->name = Auth::user()->name;
+            $review->status = 0;
+            $review->viewed = '0';
+            $review->save();
+            $product = Product::where('id', $request->product_id)->lockForUpdate()->firstOrFail();
+            $approvedReviewsCount = Review::where('product_id', $product->id)->where('status', 1)->count();
+            if ($approvedReviewsCount > 0) {
+                $totalRating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating');
+                $product->rating = $totalRating / $approvedReviewsCount;
+            } else {
+                $product->rating = 0;
+            }
+            $product->save();
 
+            if ($product->added_by == 'seller') {
+                $seller = $product->user->shop;
+                $approvedSellerReviews = Review::whereIn('product_id', $seller->products->pluck('id'))
+                    ->where('status', 1)
+                    ->get();
+
+                if ($approvedSellerReviews->count() > 0) {
+                    $seller->rating = $approvedSellerReviews->sum('rating') / $approvedSellerReviews->count();
+                } else {
+                    $seller->rating = 0;
+                }
+                $seller->num_of_reviews = $approvedSellerReviews->count();
+                $seller->save();
+            }
+        });
         flash(translate('Review has been submitted successfully'))->success();
         return back();
     }
@@ -128,30 +155,40 @@ class ReviewController extends Controller
 
     public function updatePublished(Request $request)
     {
-        $review = Review::findOrFail($request->id);
-        $review->status = $request->status;
-        $review->save();
+        DB::transaction(function () use ($request) {
+   
+            $review = Review::findOrFail($request->id);
+            $review->status = $request->status;
+            $review->save();
 
-        $product = Product::findOrFail($review->product->id);
-        if (Review::where('product_id', $product->id)->where('status', 1)->count() > 0) {
-            $product->rating = Review::where('product_id', $product->id)->where('status', 1)->sum('rating') / Review::where('product_id', $product->id)->where('status', 1)->count();
-        } else {
-            $product->rating = 0;
-        }
-        $product->save();
+            $product = Product::where('id', $review->product_id)->lockForUpdate()->firstOrFail();
+            $approvedReviewsCount = Review::where('product_id', $product->id)
+            ->where('status', 1)
+            ->count();
 
-        if ($product->added_by == 'seller') {
-            $seller = $product->user->shop;
-            if ($review->status) {
-                $seller->rating = (($seller->rating * $seller->num_of_reviews) + $review->rating) / ($seller->num_of_reviews + 1);
-                $seller->num_of_reviews += 1;
+            if ($approvedReviewsCount > 0) {
+                $totalRating = Review::where('product_id', $product->id)
+                    ->where('status', 1)
+                    ->sum('rating');
+                $product->rating = $totalRating / $approvedReviewsCount;
             } else {
-                $seller->rating = (($seller->rating * $seller->num_of_reviews) - $review->rating) / max(1, $seller->num_of_reviews - 1);
-                $seller->num_of_reviews -= 1;
+                $product->rating = 0;
             }
+           $product->save();
 
-            $seller->save();
-        }
+            if ($product->added_by == 'seller') {
+                $seller = $product->user->shop;
+                if ($review->status) {
+                    $seller->rating = ($seller->rating * $seller->num_of_reviews + $review->rating) / ($seller->num_of_reviews + 1);
+                    $seller->num_of_reviews += 1;
+                } else {
+                    $seller->rating = ($seller->rating * $seller->num_of_reviews - $review->rating) / max(1, $seller->num_of_reviews - 1);
+                    $seller->num_of_reviews -= 1;
+                }
+
+                $seller->save();
+            }
+        });
 
         return 1;
     }
@@ -159,7 +196,9 @@ class ReviewController extends Controller
     public function product_review_modal(Request $request)
     {
         $product = Product::where('id', $request->product_id)->first();
-        $review = Review::where('user_id', Auth::user()->id)->where('product_id', $product->id)->first();
+        $review = Review::where('user_id', Auth::user()->id)
+            ->where('product_id', $product->id)
+            ->first();
         return view('frontend.user.product_review_modal', compact('product', 'review'));
     }
 }
