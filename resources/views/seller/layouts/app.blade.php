@@ -822,16 +822,18 @@
                     clonedDiv.find('h3').after(html_to_add);
                     clonedDiv.find('.fa-circle-check').hide();
                     clonedDiv.find('#btn-add-pricing-variant').hide();
+
                     clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
                     clonedDiv.find('.sku').prop('readonly', true);
+
                     clonedDiv.find('div.row').each(function() {
                         if ($(this).css('display') === 'none') {
                             $(this).css('display', '');
                         }
                     });
+
                     clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
-                    clonedDiv.find('.sample_description').attr('name', 'sample_description-' +
-                        numbers_variant);
+                    clonedDiv.find('.sample_description').attr('name', `sample_description-${numbers_variant}`);
                     clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
                     clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant +
                         '[]');
@@ -839,6 +841,7 @@
                     clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
                     clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
                     clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
+
                     clonedDiv.find('.min-qty-variant').each(function(index, element) {
                         $(element).attr('name', 'variant_pricing-from' + numbers_variant +
                             '[from][]');
@@ -883,8 +886,10 @@
                             );
                         });
                     });
+
                     clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
-                    clonedDiv.find('.variant-shipping').attr('data-id_variant', numbers_variant);
+                    let attrName = "@if(Route::currentRouteName() === "seller.products.create") data-id_variant @else data-id @endif".trim();
+                    clonedDiv.find('.variant-shipping').attr(attrName, numbers_variant);
 
                     clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
                     clonedDiv.find('.discount_type-variant').each(function(index, element) {
@@ -902,14 +907,12 @@
                         let dataIdValue = $(element).data('id_attributes');
                         let value = 0;
                         let check = false;
+
                         if ($(element).attr('data-type')) {
-                            $('#variant_informations').find('.color').each(function(key,
-                                element_original) {
-                                if ($(element_original).data('id_attributes') ==
-                                    dataIdValue) {
+                            $('#variant_informations').find('.color').each(function(key, element_original) {
+                                if ($(element_original).data('id_attributes') == dataIdValue) {
                                     value = $(element_original).val();
-                                    $(element).attr('name', 'attributes-' + dataIdValue +
-                                        '-' + numbers_variant + '[]');
+                                    $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}[]`);
                                     check = true;
                                 }
                             })
@@ -918,21 +921,26 @@
                         }
 
                         if (check == false) {
-                            $(element).attr('name', 'attributes-' + dataIdValue + '-' +
-                                numbers_variant);
+                            $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}`);
                         }
                     });
 
                     clonedDiv.find('.attributes-units').each(function(index, element) {
                         let dataIdValue = $(element).data('id_attributes');
 
-                        $(element).attr('name', 'attributes_units-' + dataIdValue + '-' +
-                            numbers_variant);
-                        $('#variant_informations').find('.attributes-units').each(function(key,
-                            element_original) {
+                        if(dataIdValue === undefined) {
+                            dataIdValue = $(element).find("select").data('id_attributes');
+                        }
+
+                        let attrName = `attributes_units-${dataIdValue}-${numbers_variant}`;
+                        $(element).attr('name', attrName);
+
+                        $('#variant_informations').find('.attributes-units').each(function(key, element_original) {
                             if (index == key) {
-                                $(element).find('option[value="' + $(element_original)
-                                    .val() + '"]').prop('selected', true);
+                                let value = $(element_original).val();
+                                if(value !== "") {
+                                    $(element).find(`option[value="${value}"]`).prop('selected', true);
+                                }
                             }
                         })
                     });
@@ -954,6 +962,7 @@
                     });
 
                     let id_shipper = 0;
+
                     clonedDiv.find('.shipper').each(function(index, element) {
                         $(element).attr('name', 'variant_shipping-' + numbers_variant +
                             '[shipper][' + id_shipper + '][]');
@@ -1051,22 +1060,19 @@
                     clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
 
                     if (clonedDiv.find('.sku').val() == '') {
-                        var title = "{{ translate('Form validation') }}";
-                        var message =
-                            '{{ translate('The SKU field must be filled before creating the variant.') }}';
-                        $('#title-modal').text(title);
-                        $('#text-modal').text(message);
+                        $('#title-modal').text("{{ translate('Form validation') }}");
+                        $('#text-modal').html('{{ translate('The SKU field must be filled before creating the variant.') }}');
 
                         $('#modal-info').modal('show')
                     } else {
                         $('#bloc_variants_created').show();
                         $('#bloc_variants_created').prepend(clonedDiv);
-                        var divId = "#bloc_variants_created";
+                        let divId = "#bloc_variants_created";
 
-                        var h3Count = $(divId + " h3").length;
+                        let h3Count = $(divId + " h3").length;
 
                         $(divId + " h3").each(function(index) {
-                            var order = h3Count - index;
+                            let order = h3Count - index;
                             $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
                         });
                         numbers_variant++;
@@ -1077,8 +1083,7 @@
                             if ($(this).is('input[type="text"]') || $(this).is(
                                     'input[type="number"]')) {
                                 $(this).val('');
-                            }
-                            else if ($(this).is('input[type="radio"]')) {
+                            } else if ($(this).is('input[type="radio"]')) {
                                 $(this).prop('checked',
                                     false);
                             } else if ($(this).is('select')) {
@@ -1091,11 +1096,8 @@
                         });
                     }
                 } else {
-                    var title = "{{ translate('Create variant') }}";
-                    var message =
-                        '{{ translate('A minimum of one attribute must be selected in order to create a variant.') }}';
-                    $('#title-modal').text(title);
-                    $('#text-modal').text(message);
+                    $('#title-modal').text("{{ translate('Create variant') }}");
+                    $('#text-modal').html('{{ translate('A minimum of one attribute must be selected in order to create a variant.') }}');
 
                     $('#modal-info').modal('show')
                 }

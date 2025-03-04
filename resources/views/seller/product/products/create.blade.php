@@ -3529,12 +3529,6 @@
                         })
                     });
 
-                    clonedDiv.find('.multi-select-container').each(function(index, element) {
-                        if (index % 2 != 0) {
-                            $(element).remove();
-                        }
-                    })
-
                     clonedDiv.find('.paid').each(function(index, element) {
                         $(element).attr('name', `variant_shipping-${id}[paid][]`)
 
