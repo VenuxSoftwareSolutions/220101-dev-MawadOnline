@@ -53,6 +53,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\AramexController;
 use App\Http\Controllers\MawadIndexController;
 use Inertia\Inertia;
+use App\Http\Controllers\StripeWebhooksController;
 
 /*
   |--------------------------------------------------------------------------
@@ -516,3 +517,4 @@ Route::controller(MawadIndexController::class)->prefix("/mawad")->group(function
     Route::get("/index", "index")->name("mawad.index");
     Route::get("/revisions", "fixRevisionsUnitPriceMwdCommission");
 });
+Route::any('/admin/stripe/webhooks', [StripeWebhooksController::class,'handle'])->name('stripe.webhook');
