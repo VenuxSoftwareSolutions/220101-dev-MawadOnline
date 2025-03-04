@@ -5700,7 +5700,7 @@
 
                                 });
 
-                                $(element).find('.attributes-units').each(function(index,
+                                $(element).find('.attributes-units:not(.dropdown)').each(function(index,
                                     child_element_units) {
                                     if ($(child_element_units).val() == '') {
                                         check_units_empty = false;
