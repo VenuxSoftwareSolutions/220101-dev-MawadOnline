@@ -275,18 +275,6 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-from-label">
-                                        {{ __('Unit of Sale Price') }}
-                                        <small>({{ __('VAT Inclusive') }})</small>
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="col-md-8">
-                                        <input type="number" class="form-control" name="unit_sale_price"
-                                            value="{{ old('unit_sale_price') }}"
-                                            placeholder="{{ __('Unit of Sale Price') }}" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{ translate('Country of origin') }}</label>
                                     <div class="col-md-8">
                                         <div class="form-item">
@@ -439,11 +427,22 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style d-none">
+                            <div id="bloc-pricing-parent" class="bloc-default-shipping-style">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
-                                <table class="table" id="table_pricing_configuration"
-                                    class="bloc_pricing_configuration_variant">
+                                <div class="form-group row mb-3">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Inclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ old('unit_sale_price') }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
+                                <table class="d-none table bloc_pricing_configuration_variant" id="table_pricing_configuration">
                                     <thead>
                                         <tr>
                                             <th>{{ translate('From QTY') }}</th>
