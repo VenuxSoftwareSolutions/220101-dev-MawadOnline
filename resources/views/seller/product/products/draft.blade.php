@@ -3147,7 +3147,6 @@
                                         index, element) {
                                         if ($(element).attr("name") ==
                                             undefined) {
-                                            console.log('done done')
                                             var id_attribute = $(element).data(
                                                 'id_attributes');
                                             var name = 'unit_variant[' +
@@ -3190,7 +3189,6 @@
                                         index, element) {
                                         if ($(element).attr("name") ==
                                             undefined) {
-                                            console.log('done done')
                                             var id_attribute = $(element).data(
                                                 'id_attributes');
                                             var name = 'unit_variant[' +
