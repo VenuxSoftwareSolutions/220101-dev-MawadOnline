@@ -155,16 +155,16 @@ class StripeController extends Controller
 
                 switch ($paymentType) {
                     case 'cart_payment':
-                        return (new CheckoutController)
+                        return (new CheckoutController())
                             ->checkout_done(session()->get('combined_order_id'), json_encode($payment));
                     case 'wallet_payment':
-                        return (new WalletController)
+                        return (new WalletController())
                             ->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'customer_package_payment':
-                        return (new CustomerPackageController)
+                        return (new CustomerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'seller_package_payment':
-                        return (new SellerPackageController)
+                        return (new SellerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     default:
                         flash(translate('Unknown payment type'))->error();
