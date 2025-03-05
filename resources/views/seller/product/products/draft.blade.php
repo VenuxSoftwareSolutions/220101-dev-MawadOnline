@@ -253,18 +253,6 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-from-label">
-                                        {{ __('Unit of Sale Price') }}
-                                        <small>({{ __('VAT Inclusive') }})</small>
-                                        <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="col-md-8">
-                                        <input type="number" class="form-control" name="unit_sale_price"
-                                            value="{{ $product->unit_price }}"
-                                            placeholder="{{ __('Unit of Sale Price') }}" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
                                     <label class="col-md-3 col-from-label">{{ translate('Country of origin') }}</label>
                                     <div class="col-md-8">
                                         <div class="form-item">
@@ -467,11 +455,22 @@
                         </div>
                         <hr> --}}
                         <div>
-                            <div class="bloc-default-shipping-style d-none">
+                            <div class="bloc-default-shipping-style">
                                 <h6>{{ translate('Default Product Pricing Configuration') }}</h6>
                                 <hr>
-                                <table class="table" id="table_pricing_configuration"
-                                    class="bloc_pricing_configuration_variant">
+                                <div class="form-group row mb-3">
+                                    <label class="col-md-3 col-from-label">
+                                        {{ __('Unit of Sale Price') }}
+                                        <small>({{ __('VAT Inclusive') }})</small>
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-md-8">
+                                        <input type="number" class="form-control" name="unit_sale_price"
+                                            value="{{ $product->unit_price }}"
+                                            placeholder="{{ __('Unit of Sale Price') }}" />
+                                    </div>
+                                </div>
+                                <table class="d-none table bloc_pricing_configuration_variant" id="table_pricing_configuration">
                                     <thead>
                                         <tr>
                                             <th>{{ translate('From QTY') }}</th>
@@ -611,18 +610,6 @@
                                 <h6>{{ translate('Default Sample Pricing Configuration') }}</h6>
                                 <hr>
                                 <div id="sample_parent">
-                                    {{-- <div class="row mb-3">
-                                        <div class="col-md-3">
-                                            <input type="text" class="form-control" value="{{translate('VAT')}}" disabled>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <label class="aiz-switch aiz-switch-success mb-0">
-                                                <input value="1" type="checkbox" name="vat_sample" @if ($vat_user->vat_registered == 1) checked @endif>
-                                                <span></span>
-                                            </label>
-                                        </div>
-                                    </div> --}}
-
                                     <div class="row mb-3">
                                         <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
                                         <div class="col-md-10">
@@ -5102,7 +5089,7 @@
 
                     let oldVariantId = $(this).data('id_old_variant');
                     let newVariantId = $(this).data('id_new_variant')
-                    
+
                     clonedDiv.find('.paid_sample').find(`option[value="${paid_sample}"]`).prop(
                         'selected', true);
 
