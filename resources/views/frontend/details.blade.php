@@ -249,7 +249,7 @@
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
-            <span class="fs-16 font-prompt-md">Tags:</span>
+            <span class="fs-16 font-prompt-md">{{ __("Tags") }}:</span>
             <span class="fs-16 font-prompt">
                 @if (is_array($previewData['detailedProduct']['tags']))
                     @foreach ($previewData['detailedProduct']['tags'] as $tag)
