@@ -72,7 +72,7 @@ class StripeController extends Controller
             }
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config("app.stripe_secret"));
 
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
@@ -130,7 +130,7 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $stripe = new StripeClient(config("app.stripe_secret"));
 
         try {
             $paymentIntentId = $request->query('payment_intent');
@@ -212,7 +212,7 @@ class StripeController extends Controller
                 'email' => 'required|email',
             ]);
 
-            $stripe = new StripeClient(env('STRIPE_SECRET'));
+            $stripe = new StripeClient(config("app.stripe_secret"));
 
             $payment_methods = [];
 
