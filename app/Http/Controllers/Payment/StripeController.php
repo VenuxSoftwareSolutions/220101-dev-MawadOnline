@@ -72,7 +72,7 @@ class StripeController extends Controller
             }
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config("app.stripe_secret"));
 
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
@@ -130,7 +130,7 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $stripe = new StripeClient(config("app.stripe_secret"));
 
         try {
             $paymentIntentId = $request->query('payment_intent');
@@ -155,16 +155,16 @@ class StripeController extends Controller
 
                 switch ($paymentType) {
                     case 'cart_payment':
-                        return (new CheckoutController)
+                        return (new CheckoutController())
                             ->checkout_done(session()->get('combined_order_id'), json_encode($payment));
                     case 'wallet_payment':
-                        return (new WalletController)
+                        return (new WalletController())
                             ->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'customer_package_payment':
-                        return (new CustomerPackageController)
+                        return (new CustomerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'seller_package_payment':
-                        return (new SellerPackageController)
+                        return (new SellerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     default:
                         flash(translate('Unknown payment type'))->error();
@@ -212,7 +212,7 @@ class StripeController extends Controller
                 'email' => 'required|email',
             ]);
 
-            $stripe = new StripeClient(env('STRIPE_SECRET'));
+            $stripe = new StripeClient(config("app.stripe_secret"));
 
             $payment_methods = [];
 
