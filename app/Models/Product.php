@@ -707,7 +707,7 @@ class Product extends Model
 
     public function getSampleDetails()
     {
-        if ($this->sample_price === 0) {
+        if ($this->sample_price === 0 || $this->sample_available === 0) {
             return [];
         }
 
