@@ -2721,6 +2721,19 @@ button {
 
 
     </script> --}}
+
+
+<script>
+    // Add event listeners to all file inputs with the class 'custom-file-input'
+    document.querySelectorAll('.custom-file-input').forEach(function (input) {
+        input.addEventListener('change', function (e) {
+            var fileName = e.target.files[0].name; // Get the selected file name
+            var label = e.target.nextElementSibling; // Get the associated label
+            label.innerText = fileName; // Update the label text
+        });
+    });
+</script>
+
     <script>
         $(document).ready(function() {
             $('.datepicker').datepicker({
