@@ -6205,9 +6205,70 @@
     });
 
     document.getElementById('file-upload').addEventListener('change', function(event) {
-        const fileName = event.target.files.length > 0 ? event.target.files[0].name : "No file selected";
-        document.getElementById('file-name').textContent = fileName;
+            const file = event.target.files[0];
+            const fileNameDisplay = document.getElementById('file-name');
+
+            if (!file) {
+                fileNameDisplay.textContent = "No file selected";
+                return;
+            }
+
+            if (!file.name.endsWith('.csv')) {
+                fileNameDisplay.textContent = "Invalid file format. Please upload a CSV file.";
+                event.target.value = ''; 
+                return;
+            }
+
+            const maxSize = 5 * 1024 * 1024; 
+            if (file.size > maxSize) {
+                fileNameDisplay.textContent = "File is too large. Max size is 5MB.";
+                event.target.value = ''; 
+                return;
+            }
+
+            fileNameDisplay.textContent = file.name;
     });
+    
+    
+    
+    
+    
+    
+    document.getElementById('next4Btn').addEventListener('click', function() {
+        const fileInput = document.getElementById('file-upload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a CSV file first.");
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append("file", file);
+        
+        fetch('{{ route('seller.vendor.fileupload') }}', {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+            },
+        })
+
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("File uploaded successfully.");
+                // the WebSocket function 
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error("Upload error:", error);
+            alert("An error occurred while uploading the file.");
+        });
+    });
+
 
     flatpickr('.discount-range', {
             mode: "range",

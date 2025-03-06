@@ -10,8 +10,7 @@ use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\CatalogController;
 use App\Http\Controllers\Seller\DiscountController;
 use App\Http\Controllers\Seller\CouponController;
-
-
+use App\Http\Controllers\Seller\SmartBulkUploadController;
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
@@ -92,6 +91,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/products/bulk-downlod', 'download_file')->name('products.bulk_upload.download_file');
 
     });
+    //smart bulk upload 
+    Route::post('/upload-vendor-products', [SmartBulkUploadController::class, 'uploadVendorProducts'])->name('vendor.fileupload');
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {
