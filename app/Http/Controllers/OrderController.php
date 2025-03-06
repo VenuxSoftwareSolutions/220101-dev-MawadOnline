@@ -840,7 +840,7 @@ class OrderController extends Controller
             $refundHistories->description_error = $refund->description_error = $result->failure_reason;
             $refundHistories->payment_refund_id = $refund->payment_refund_id = $result->id;
             $refundHistories->payment_charge_id = $refund->payment_charge_id = $result->charge;
-            $refundHistories->amount = $refund->amount = $result->amount;
+            $refundHistories->amount = $refund->amount = number_format($result->amount/100,2);
             $refund->save();
             $refundHistories->refund_id = $refund->id;
             $refundHistories->save();
