@@ -24,7 +24,7 @@ class RefundController extends Controller
             $newRefund->description_error = $result->failure_reason;
             $newRefund->payment_refund_id = $result->id;
             $newRefund->payment_charge_id = $result->charge;
-            $newRefund->amount = $result->amount;
+            $newRefund->amount = number_format($result->amount/100,2);
             $newRefund->refund_id = $refund->id;
             $refund->refund_status = $result->status;
             $refund->save();
