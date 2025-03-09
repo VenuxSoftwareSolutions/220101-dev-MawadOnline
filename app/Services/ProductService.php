@@ -1917,7 +1917,6 @@ class ProductService
                                         ]);
                                     }
                                 }
-
                             }
                         }
 
@@ -2707,7 +2706,6 @@ class ProductService
 
                                 array_push($all_data_to_insert, $current_data);
                             }
-
                         }
 
                         PricingConfiguration::insert($all_data_to_insert);
