@@ -93,6 +93,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     });
     //smart bulk upload 
     Route::post('/upload-vendor-products', [SmartBulkUploadController::class, 'uploadVendorProducts'])->name('vendor.fileupload');
+    Route::post('set-shipping-config', [SmartBulkUploadController::class, 'setShippingConfig'])->name('shipping.config');
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {

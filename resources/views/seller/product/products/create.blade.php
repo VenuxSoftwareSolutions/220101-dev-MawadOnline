@@ -4133,7 +4133,8 @@
                 dropifyInput.val('');
             }
 
-            function removeDropifyThumbnail() {
+            function removeDropifyThumbnail() {        mwd3pProductShippingEnabled: true
+
                 dropifyInputThumbnail.closest('.dropify-wrapper').find('.dropify-clear').remove();
                 dropifyInputThumbnail.unwrap().siblings().remove();
                 dropifyInputThumbnail.removeClass('dropify').removeAttr('data-plugin-init');
@@ -6200,6 +6201,7 @@
             }
         });
     });
+
     document.getElementById('upload-btn').addEventListener('click', function() {
         document.getElementById('file-upload').click();
     });
@@ -6258,7 +6260,6 @@
         .then(data => {
             if (data.success) {
                 alert("File uploaded successfully.");
-                // the WebSocket function 
             } else {
                 alert("Error: " + data.message);
             }
@@ -6268,7 +6269,56 @@
             alert("An error occurred while uploading the file.");
         });
     });
+   
+    document.getElementById('next5Btn').addEventListener('click', function () {
+        console.log("clicked");
+        let shippingData = [];
 
+        document.querySelectorAll('#bloc_shipping_configuration tr').forEach(row => {
+            let fromQty = row.querySelector('.min-qty-shipping')?.value;
+            let toQty = row.querySelector('.max-qty-shipping')?.value;
+            // Use either flat_rate or per unit shipping input (adjust as needed)
+            let charge = row.querySelector('.flat_rate_shipping')?.value || row.querySelector('.charge_per_unit_shipping')?.value;
+
+            if (fromQty && toQty && charge) {
+                shippingData.push({
+                    from_qty: fromQty,
+                    to_qty: toQty,
+                    charge: charge
+                });
+            }
+        });
+
+        let mwd3pEnabled = document.getElementById('third_party_activate_sample').checked;
+
+        let requestData = {
+            vendor_user_id: '{{ auth()->id() }}', 
+            job_id: sessionStorage.getItem('job_id') || generateJobId(), 
+            shipping_details: shippingData,
+            mwd3pProductShippingEnabled: mwd3pEnabled
+        };
+        fetch("{{ route('seller.shipping.config') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    function generateJobId() {
+        let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; //for testing
+        sessionStorage.setItem('job_id', jobId);
+        return jobId;
+    }
 
     flatpickr('.discount-range', {
             mode: "range",
@@ -6280,6 +6330,7 @@
                 console.log("To:", selectedDates[1]);
             }
         });
+
     // added code for discount table
     // Add new row to the discount configuration table
 

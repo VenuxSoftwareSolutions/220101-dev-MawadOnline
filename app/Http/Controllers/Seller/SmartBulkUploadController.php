@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Upload;
 use Auth;
 use WebSocket\Client;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 
 class SmartBulkUploadController extends Controller
 {
+    private $apiUrl;
+    public function __construct()
+    {
+        $this->apiUrl = env('API_URL', 'http://194.31.150.9:5050/mwd/rest');
+    }
+
     public function uploadVendorProducts(Request $request)
     {
         // Validate file
@@ -79,5 +88,54 @@ class SmartBulkUploadController extends Controller
     
         
     }
-    
+    public function setShippingConfig(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'job_id' => 'required|string',
+            'vendor_user_id' => 'required|numeric',
+            'shipping_details' => 'required|array',
+            'shipping_details.*.from_qty' => 'required|numeric',
+            'shipping_details.*.to_qty' => 'required|numeric',
+            'shipping_details.*.charge' => 'required|numeric',
+            'mwd3pProductShippingEnabled' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $vendorProductShipping = array_map(function ($item) {
+            return [
+                'fromQty' => (float)$item['from_qty'],
+                'toQty'   => (float)$item['to_qty'],
+                'charge'  => (float)$item['charge']
+            ];
+        }, $request->input('shipping_details'));
+        $requestBody = [
+            'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
+            'vendorUserId' => (int)$request->input('vendor_user_id'),
+            'vendorProductShipping' => $vendorProductShipping,
+            'mwd3pProductShippingEnabled' => filter_var($request->input('mwd3pProductShippingEnabled'), FILTER_VALIDATE_BOOLEAN)
+        ];
+        Log::info('Shipping Config Request Payload:', $requestBody);
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ])->post("{$this->apiUrl}/bulkupload/setShippingConfig", $requestBody);
+
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('Error in setShippingConfig:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'API call failed'
+            ], 500);
+        }
+    }
+
 }
