@@ -23,7 +23,6 @@ class SmartBulkUploadController extends Controller
 
     public function uploadVendorProducts(Request $request)
     {
-        // Validate file
         $validator = Validator::make($request->all(), [
             'file' => 'required|mimes:csv,txt|max:5120'
         ]);
@@ -137,5 +136,94 @@ class SmartBulkUploadController extends Controller
             ], 500);
         }
     }
+    public function setDiscountConfig(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'job_id' => 'required|string',
+            'discount_config' => 'required|array',
+            'discount_config.*.fromQty' => 'required|numeric',
+            'discount_config.*.toQty' => 'required|numeric',
+            'discount_config.*.startDate' => 'required|date',
+            'discount_config.*.endDate' => 'required|date|after:start_date',
+            'discount_config.*.pct' => 'required|numeric|min:0|max:100'
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+    
+        $discountConfig = array_map(function ($item) {
+            return [
+                'fromQty' => (int)$item['fromQty'],
+                'toQty' => (int)$item['toQty'],
+                'startDate' => $item['startDate'],
+                'endDate' => $item['endDate'],
+                'pct' => (float)$item['pct']
+            ];
+        }, $request->input('discount_config'));
+    
+        $requestBody = [
+            'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
+            'vendorUserId' => (int)$request->input('vendor_user_id'),
+            'discountConfig' => $discountConfig
+        ];
+    
+        Log::info('Discount Config Request Payload:', $requestBody);
+    
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ])->post("{$this->apiUrl}/bulkupload/setDiscountConfig", $requestBody);
+    
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('Error in setDiscountConfig:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'API call failed'
+            ], 500);
+        }
+    }
+    public function submitJob(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'job_id' => 'required|string',
+            'vendor_user_id' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+
+        $requestBody = [
+            'jobId' => $request->input('job_id'),
+            'vendorUserId' => (int)$request->input('vendor_user_id')
+        ];
+
+        Log::info('Submit Job Request Payload:', $requestBody);
+
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ])->post("{$this->apiUrl}/bulkupload/submitJob", $requestBody);
+
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('Error in submitJob:', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'API call failed'
+            ], 500);
+        }
+    }
+
 
 }

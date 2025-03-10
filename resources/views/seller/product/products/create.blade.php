@@ -6231,11 +6231,6 @@
             fileNameDisplay.textContent = file.name;
     });
     
-    
-    
-    
-    
-    
     document.getElementById('next4Btn').addEventListener('click', function() {
         const fileInput = document.getElementById('file-upload');
         const file = fileInput.files[0];
@@ -6271,13 +6266,11 @@
     });
    
     document.getElementById('next5Btn').addEventListener('click', function () {
-        console.log("clicked");
         let shippingData = [];
 
         document.querySelectorAll('#bloc_shipping_configuration tr').forEach(row => {
             let fromQty = row.querySelector('.min-qty-shipping')?.value;
             let toQty = row.querySelector('.max-qty-shipping')?.value;
-            // Use either flat_rate or per unit shipping input (adjust as needed)
             let charge = row.querySelector('.flat_rate_shipping')?.value || row.querySelector('.charge_per_unit_shipping')?.value;
 
             if (fromQty && toQty && charge) {
@@ -6314,6 +6307,81 @@
         });
     });
 
+    document.getElementById('next6Btn').addEventListener('click', function () {
+        let discountConfig = [];
+
+        $('#bloc_shipping_configuration tr').each(function () {
+            let fromQty = $(this).find('.min-qty-shipping').val();
+            let toQty = $(this).find('.max-qty-shipping').val();
+            let unitPrice = $(this).find('.estimated_order').val();
+            let discountRange = $(this).find('.discount-range').val();
+            console.log("Discount Range Value:", discountRange); // Debugging
+
+            let discountPct = $(this).find('.charge_per_unit_shipping').val();
+
+            if (fromQty && toQty && discountRange && discountPct) {
+                let dates = discountRange ? discountRange.split(" to ") : [];
+                if (dates.length !== 2) {
+                    console.error("Invalid date range:", discountRange);
+                    return;
+                }
+                discountConfig.push({
+                    fromQty: parseInt(fromQty),
+                    toQty: parseInt(toQty),
+                    startDate: dates[0].trim() + "T00:00:00",
+                    endDate: dates[1].trim() + "T23:59:59",
+                    pct: parseFloat(discountPct)
+                });
+            }
+        });
+
+        fetch("{{ route('seller.discount.config') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                vendor_user_id: 335,
+                job_id: sessionStorage.getItem('job_id') || generateJobId(), 
+                discount_config: discountConfig
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Discount API Response:", data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+    });
+
+    });
+    
+    document.querySelector('.sbu-s1-btn-start').addEventListener('click', function () {
+        let jobId = sessionStorage.getItem('job_id') || generateJobId(); 
+
+        let requestBody = {
+            vendor_user_id: 335,
+            job_id: jobId
+        };
+
+        fetch("{{ route('seller.job.submit') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Job Submission API Response:", data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    });
+
     function generateJobId() {
         let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; //for testing
         sessionStorage.setItem('job_id', jobId);
@@ -6323,11 +6391,15 @@
     flatpickr('.discount-range', {
             mode: "range",
             dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "Y-m-d to Y-m-d",
             allowInput: true,
             minDate: "today",
             onClose: function(selectedDates) {
-                console.log("From:", selectedDates[0]);
-                console.log("To:", selectedDates[1]);
+                if (selectedDates.length === 2) {
+                    console.log("From:", selectedDates[0].toISOString().split('T')[0]);
+                    console.log("To:", selectedDates[1].toISOString().split('T')[0]);
+                }
             }
         });
 

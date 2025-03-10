@@ -94,6 +94,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     //smart bulk upload 
     Route::post('/upload-vendor-products', [SmartBulkUploadController::class, 'uploadVendorProducts'])->name('vendor.fileupload');
     Route::post('set-shipping-config', [SmartBulkUploadController::class, 'setShippingConfig'])->name('shipping.config');
+    Route::post('/set-discount-config', [SmartBulkUploadController::class, 'setDiscountConfig'])->name('discount.config');
+    Route::post('/submit-job', [SmartBulkUploadController::class, 'submitJob'])->name('job.submit');
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {
