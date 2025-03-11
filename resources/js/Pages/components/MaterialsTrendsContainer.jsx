@@ -130,7 +130,6 @@ export default function MaterialsTrendsContainer() {
                                 </Box>
                             </div>
                         )}
-                        {/* end card-body*/}
                     </div>
                 </div>
             </div>
