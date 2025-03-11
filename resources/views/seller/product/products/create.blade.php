@@ -6174,18 +6174,11 @@
             $("#smartbulk-4").hide();
             $("#smartbulk-3").show();
         });
-        $("#next5Btn").click(function() {
-            $("#smartbulk-5").hide();
-            $("#smartbulk-6").show();
-        });
         $("#prev5Btn").click(function() {
             $("#smartbulk-5").hide();
             $("#smartbulk-4").show();
         });
-        $("#next6Btn").click(function() {
-            $("#smartbulk-6").hide();
-            $("#smartbulk-7").show();
-        });
+       
         $("#prev6Btn").click(function() {
             $("#smartbulk-6").hide();
             $("#smartbulk-5").show();
@@ -6205,6 +6198,14 @@
             text: message,
             confirmButtonText: 'Okay'
         });
+    }
+    function showSuccess(message) {
+        Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: message,
+                    confirmButtonText: 'Okay'
+                })
     }
     document.getElementById('upload-btn').addEventListener('click', function() {
         document.getElementById('file-upload').click();
@@ -6265,20 +6266,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: "File uploaded successfully.",
-                    confirmButtonText: 'Okay'
-                }).then(() => {
+                showSuccess("File uploaded successfully.");
+              
                     $("#smartbulk-4").hide();
                     $("#smartbulk-5").show();
-                });
+
             } else {
                 showError("Error: " + data.message);
             }
         })
-
         .catch(error => {
             console.error("Upload error:", error);
             showError("An error occurred while uploading the file.");
@@ -6287,11 +6283,23 @@
    
     document.getElementById('next5Btn').addEventListener('click', function () {
         let shippingData = [];
-
+        let isValid = true;
         document.querySelectorAll('#bloc_shipping_configuration tr').forEach(row => {
             let fromQty = row.querySelector('.min-qty-shipping')?.value;
             let toQty = row.querySelector('.max-qty-shipping')?.value;
             let charge = row.querySelector('.flat_rate_shipping')?.value || row.querySelector('.charge_per_unit_shipping')?.value;
+            
+            
+
+            if (isNaN(fromQty) || isNaN(toQty) || isNaN(charge)) {
+                showError("Please enter numeric values for quantities and charge.");
+                return;
+            }
+
+            if (parseInt(fromQty) >= parseInt(toQty)) {
+                showError('The "From Quantity" must be less than "To Quantity".');
+                return;
+            }
 
             if (fromQty && toQty && charge) {
                 shippingData.push({
@@ -6320,31 +6328,77 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
+            if (data.success) {
+                showSuccess("Shipping configuration has been saved successfully!");
+                $("#smartbulk-5").hide();
+                $("#smartbulk-6").show();
+
+               
+            } else {
+                showError(data.message || 'Something went wrong, please try again.');
+
+               
+            }
         })
         .catch(error => {
             console.error('Error:', error);
+            showError('There was a problem connecting to the server. Please check your internet connection and try again.');
+
         });
     });
 
     document.getElementById('next6Btn').addEventListener('click', function () {
         let discountConfig = [];
+        let isValid = true;
 
         $('#bloc_shipping_configuration tr').each(function () {
             let fromQty = $(this).find('.min-qty-shipping').val();
             let toQty = $(this).find('.max-qty-shipping').val();
             let unitPrice = $(this).find('.estimated_order').val();
             let discountRange = $(this).find('.discount-range').val();
-            console.log("Discount Range Value:", discountRange); // Debugging
 
             let discountPct = $(this).find('.charge_per_unit_shipping').val();
+            if (!fromQty || !toQty || !discountRange || !discountPct) {
+                showError("All discount configuration fields are required. Please complete all fields before submitting.");
+                isValid = false;
+                return false;
+            }
+            if (isNaN(fromQty) || isNaN(toQty) || isNaN(discountPct)) {
+                showError("Please enter numeric values for quantities and discount percentage.");
+                isValid = false;
+                return false;
+            }
+            if (parseInt(fromQty) >= parseInt(toQty)) {
+                showError('The "From Quantity" must be less than "To Quantity".');
+                isValid = false;
+                return false;
+            }
+            if (parseFloat(discountPct) < 0 || parseFloat(discountPct) > 100) {
+                showError("Discount percentage must be between 0 and 100.");
+                isValid = false;
+                return false;
+            }
+            let dates = discountRange.split(" to ");
+            if (dates.length !== 2) {
+                showError("Invalid discount date range format. Use 'YYYY-MM-DD to YYYY-MM-DD'.");
+                isValid = false;
+                return false;
+            }
+            let startDate = dates[0].trim();
+            let endDate = dates[1].trim();
+            if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+                showError("Invalid date format in discount range.");
+                isValid = false;
+                return false;
+            }
+            if (Date.parse(startDate) >= Date.parse(endDate)) {
+                showError('Start date must be before end date in discount range.');
+                isValid = false;
+                return false;
+            }
 
             if (fromQty && toQty && discountRange && discountPct) {
-                let dates = discountRange ? discountRange.split(" to ") : [];
-                if (dates.length !== 2) {
-                    console.error("Invalid date range:", discountRange);
-                    return;
-                }
+
                 discountConfig.push({
                     fromQty: parseInt(fromQty),
                     toQty: parseInt(toQty),
@@ -6352,7 +6406,10 @@
                     endDate: dates[1].trim() + "T23:59:59",
                     pct: parseFloat(discountPct)
                 });
+                return;
+
             }
+            
         });
 
         fetch("{{ route('seller.discount.config') }}", {
@@ -6369,21 +6426,36 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Discount API Response:", data);
+            if (data.success) {
+                showSuccess("Discount configuration has been saved successfully!");
+                $("#smartbulk-6").hide();
+                $("#smartbulk-7").show();
+
+               
+            } else {
+                showError(data.message || 'Something went wrong, please try again.');               
+            }        
         })
         .catch(error => {
             console.error("Error:", error);
+            showError('There was a problem connecting to the server. Please check your internet connection and try again.');
     });
 
     });
     
     document.querySelector('.sbu-s1-btn-start').addEventListener('click', function () {
         let jobId = sessionStorage.getItem('job_id') || generateJobId(); 
-
         let requestBody = {
             vendor_user_id: 335,
             job_id: jobId
         };
+        Swal.fire({
+            title: 'Submitting job...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
         fetch("{{ route('seller.job.submit') }}", {
             method: 'POST',
@@ -6396,14 +6468,24 @@
         .then(response => response.json())
         .then(data => {
             console.log("Job Submission API Response:", data);
+            if (data.success) {
+                showSuccess("Congratulations! Your Products Have Been Uploaded successfully");
+
+               
+            } else {
+                showError(data.message || 'Something went wrong, please try again.');               
+            }        
+
         })
         .catch(error => {
             console.error("Error:", error);
+            showError('There was a problem connecting to the server. Please check your internet connection and try again.');
+
         });
     });
 
     function generateJobId() {
-        let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; //for testing
+        let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; 
         sessionStorage.setItem('job_id', jobId);
         return jobId;
     }

@@ -142,7 +142,6 @@ class SmartBulkUploadController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'job_id' => 'required|string',
-            'discount_config' => 'required|array',
             'discount_config.*.fromQty' => 'required|numeric',
             'discount_config.*.toQty' => 'required|numeric',
             'discount_config.*.startDate' => 'required|date',
@@ -173,7 +172,6 @@ class SmartBulkUploadController extends Controller
             'discountConfig' => $discountConfig
         ];
     
-        Log::info('Discount Config Request Payload:', $requestBody);
     
         try {
             $response = Http::withHeaders([
