@@ -483,13 +483,13 @@
                                     <ul class="fs-16 p-0 font-prompt dark-c3 line-h mt5px float-left">
                                         <li><strong>Product Name –</strong> Helps attract buyers with clear, searchable titles.</li>
                                         <li><strong>Brand –</strong> Ensures correct classification and brand recognition.</li>
-                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting (Price in ADE).</li>
-                                        <li><strong>Unit Price –</strong> Essential for listing products and enabling transactions.</li>
+                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting .</li>
+                                        <li><strong>Unit Price –</strong> Essential for listing products and enabling transactions (Price in AED VAT inclusive).</li>
                                         <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, per
                                             kilogram).</li>
-                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations.</li>
-                                        <li><strong>Product Package Weight –</strong> Helps with shipping cost estimation.</li>
-                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence.</li>
+                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations measured using one of these units(Millimeter, Centimeter, Meter, Inch or Feet).</li>
+                                        <li><strong>Product Package Weight –</strong> Helps with shipping cost estimation measured using one of these units(Gram, Kilogram  or Pound).</li>
+                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence (Supported Formats: jpg, jpeg, png, webp, gif, avif, bmp, tiff or heic).</li>
                                         <li><strong>Country of Origin –</strong> Indicates where the product is manufactured or sourced from.</li>
                                         <!--<li><strong>Technical Documents Link –</strong> Upload CAD/BIM files, spec sheets, or certifications.</li>
                                         <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
@@ -639,10 +639,10 @@
                                             &bull; You can adjust every product’s data later in the “edit product” in the Product List. However, for bulk action, it is preferable to apply the general rule here.
                                         </li>
                                     </ul>
-                                    <div class="fs-16 p-0 pt-3">
+{{--                                     <div class="fs-16 p-0 pt-3">
                                         Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
                                     </div>
-                                    <div class="card mt-3" id="shipping_configuration_box">
+ --}}                                    <div class="card mt-3" id="shipping_configuration_box">
                                         <div class="card-header">
                                             <h5 class="mb-0 h6">{{ translate('Default Shipping Configuration') }}</h5>
                                         </div>
@@ -6226,9 +6226,9 @@
                 return;
             }
 
-            const maxSize = 5 * 1024 * 1024; 
+            const maxSize = 50 * 1024 * 1024; 
             if (file.size > maxSize) {
-                showError("File is too large. Max size is 5MB.");
+                showError("File is too large. Max size is 50MB.");
                 event.target.value = ''; 
                 return;
             }
@@ -6245,7 +6245,7 @@
             return;
         }
         Swal.fire({
-            title: 'Uploading...',
+            title: 'Validating File...',
             allowOutsideClick: false,
             didOpen: () => {
                 Swal.showLoading();
@@ -6266,7 +6266,7 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showSuccess("File uploaded successfully.");
+                showSuccess("File Received successfully.");
               
                     $("#smartbulk-4").hide();
                     $("#smartbulk-5").show();
@@ -6353,11 +6353,7 @@
             let discountRange = $(this).find('.discount-range').val();
 
             let discountPct = $(this).find('.charge_per_unit_shipping').val();
-            if (!fromQty || !toQty || !discountRange || !discountPct) {
-                showError("All discount configuration fields are required. Please complete all fields before submitting.");
-                isValid = false;
-                return false;
-            }
+           
             if (isNaN(fromQty) || isNaN(toQty) || isNaN(discountPct)) {
                 showError("Please enter numeric values for quantities and discount percentage.");
                 isValid = false;

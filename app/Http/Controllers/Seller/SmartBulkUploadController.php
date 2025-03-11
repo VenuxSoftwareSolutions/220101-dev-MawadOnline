@@ -26,7 +26,7 @@ class SmartBulkUploadController extends Controller
     public function uploadVendorProducts(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'file' => 'required|mimes:csv,txt|max:5120'
+            'file' => 'required|mimes:csv,txt|max:51200'
         ]);
     
         if ($validator->fails()) {
