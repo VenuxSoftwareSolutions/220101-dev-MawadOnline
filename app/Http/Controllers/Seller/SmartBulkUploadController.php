@@ -16,9 +16,11 @@ use Illuminate\Support\Facades\Log;
 class SmartBulkUploadController extends Controller
 {
     private $apiUrl;
+    private $wsUrl;
     public function __construct()
     {
         $this->apiUrl = env('API_URL', 'http://194.31.150.9:5050/mwd/rest');
+        $this->wsUrl = env('WS_URL', 'ws://194.31.150.9:5050/mwd/ws');
     }
 
     public function uploadVendorProducts(Request $request)
@@ -33,33 +35,32 @@ class SmartBulkUploadController extends Controller
                 'message' => $validator->errors()->first()
             ], 400);
         }
-        $file = $request->file('file');
+        if ($request->hasFile('file')) {
+
+            $file = $request->file('file');
+            $extension = strtolower($file->getClientOriginalExtension());
 
             $upload = new Upload;
             $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $path = 'uploads/all/';
-            $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.csv' ;
-            $extension = 'csv';
+            $path = 'uploads/SmartBulkUpload/';
+            $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.' . $extension;
+            $filename = $file->storeAs($path, $filename, 'local');
 
             try {
                
-                $filename = 'test.csv';
-                //$size = Storage::disk('local')->size($path . $filename);
+                $size = Storage::disk('local')->size($filename);
     
                 $upload->extension = $extension;
                 $upload->file_name = 'public/' . $path . $filename;
                 $upload->user_id = Auth::id();
                 $upload->type = 'document';
-                $upload->file_size = '27271';
+                $upload->file_size = $size;
                 $upload->save();
-    
-                $wsUrl = "ws://194.31.150.9:5050/mwd/ws/bulkupload/setVendorProductsFile";
-                $jobId = md5(uniqid(rand(), true)); // Generate UUID
-            
+                $wsUrl = "{$this->wsUrl}/bulkupload/setVendorProductsFile";
                 $data = [
                     'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
-                    'vendorUserId' => 335,
-                    'vendorProductsFile' =>  'vendorfile.csv'
+                    'vendorUserId' =>  Auth::id(),
+                    'vendorProductsFile' =>   basename($filename)
                 ];
             
                 $client = new Client($wsUrl);
@@ -84,8 +85,9 @@ class SmartBulkUploadController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
             }
-    
-        
+        }
+        return response()->json(['error' => 'No file provided.'], 400);
+
     }
     public function setShippingConfig(Request $request)
     {
