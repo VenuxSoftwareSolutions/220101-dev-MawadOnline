@@ -6169,10 +6169,7 @@
             $("#smartbulk-3").hide();
             $("#smartbulk-2").show();
         });
-        $("#next4Btn").click(function() {
-            $("#smartbulk-4").hide();
-            $("#smartbulk-5").show();
-        });
+       
         $("#prev4Btn").click(function() {
             $("#smartbulk-4").hide();
             $("#smartbulk-3").show();
@@ -6201,7 +6198,14 @@
             }
         });
     });
-
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: message,
+            confirmButtonText: 'Okay'
+        });
+    }
     document.getElementById('upload-btn').addEventListener('click', function() {
         document.getElementById('file-upload').click();
     });
@@ -6216,14 +6220,14 @@
             }
 
             if (!file.name.endsWith('.csv')) {
-                fileNameDisplay.textContent = "Invalid file format. Please upload a CSV file.";
+                showError("Invalid file format. Please upload a CSV file.");
                 event.target.value = ''; 
                 return;
             }
 
             const maxSize = 5 * 1024 * 1024; 
             if (file.size > maxSize) {
-                fileNameDisplay.textContent = "File is too large. Max size is 5MB.";
+                showError("File is too large. Max size is 5MB.");
                 event.target.value = ''; 
                 return;
             }
@@ -6236,9 +6240,16 @@
         const file = fileInput.files[0];
 
         if (!file) {
-            alert("Please select a CSV file first.");
+            showError("Please select a CSV file first.");
             return;
         }
+        Swal.fire({
+            title: 'Uploading...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
 
         let formData = new FormData();
         formData.append("file", file);
@@ -6254,14 +6265,23 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert("File uploaded successfully.");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: "File uploaded successfully.",
+                    confirmButtonText: 'Okay'
+                }).then(() => {
+                    $("#smartbulk-4").hide();
+                    $("#smartbulk-5").show();
+                });
             } else {
-                alert("Error: " + data.message);
+                showError("Error: " + data.message);
             }
         })
+
         .catch(error => {
             console.error("Upload error:", error);
-            alert("An error occurred while uploading the file.");
+            showError("An error occurred while uploading the file.");
         });
     });
    
