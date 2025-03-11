@@ -6313,7 +6313,6 @@
         let mwd3pEnabled = document.getElementById('third_party_activate_sample').checked;
 
         let requestData = {
-            vendor_user_id: '{{ auth()->id() }}', 
             job_id: sessionStorage.getItem('job_id') || generateJobId(), 
             shipping_details: shippingData,
             mwd3pProductShippingEnabled: mwd3pEnabled
@@ -6332,12 +6331,8 @@
                 showSuccess("Shipping configuration has been saved successfully!");
                 $("#smartbulk-5").hide();
                 $("#smartbulk-6").show();
-
-               
             } else {
-                showError(data.message || 'Something went wrong, please try again.');
-
-               
+                showError(data.message || 'Something went wrong, please try again.'); 
             }
         })
         .catch(error => {
@@ -6419,7 +6414,6 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                vendor_user_id: 335,
                 job_id: sessionStorage.getItem('job_id') || generateJobId(), 
                 discount_config: discountConfig
             })

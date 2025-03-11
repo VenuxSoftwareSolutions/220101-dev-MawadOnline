@@ -94,7 +94,6 @@ class SmartBulkUploadController extends Controller
 
         $validator = Validator::make($request->all(), [
             'job_id' => 'required|string',
-            'vendor_user_id' => 'required|numeric',
             'shipping_details' => 'required|array',
             'shipping_details.*.from_qty' => 'required|numeric',
             'shipping_details.*.to_qty' => 'required|numeric',
@@ -118,7 +117,7 @@ class SmartBulkUploadController extends Controller
         }, $request->input('shipping_details'));
         $requestBody = [
             'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
-            'vendorUserId' => (int)$request->input('vendor_user_id'),
+            'vendorUserId' => Auth::id(),
             'vendorProductShipping' => $vendorProductShipping,
             'mwd3pProductShippingEnabled' => filter_var($request->input('mwd3pProductShippingEnabled'), FILTER_VALIDATE_BOOLEAN)
         ];
@@ -168,7 +167,7 @@ class SmartBulkUploadController extends Controller
     
         $requestBody = [
             'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
-            'vendorUserId' => (int)$request->input('vendor_user_id'),
+            'vendorUserId' => Auth::id(),
             'discountConfig' => $discountConfig
         ];
     
@@ -192,7 +191,6 @@ class SmartBulkUploadController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'job_id' => 'required|string',
-            'vendor_user_id' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -204,10 +202,9 @@ class SmartBulkUploadController extends Controller
 
         $requestBody = [
             'jobId' => $request->input('job_id'),
-            'vendorUserId' => (int)$request->input('vendor_user_id')
+            'vendorUserId' => Auth::id(),
         ];
 
-        Log::info('Submit Job Request Payload:', $requestBody);
 
         try {
             $response = Http::withHeaders([
