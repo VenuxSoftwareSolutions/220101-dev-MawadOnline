@@ -1,6 +1,6 @@
-import CustomLineChart from "./CustomLineChart";
+import { CustomLineChart } from "./CustomLineChart";
 
-export default function Cart({ title, subTitle, evolution }) {
+export function Cart({ category, subCategory, evolution }) {
     return (
         <div className="card">
             <div className="card-body">

@@ -7,7 +7,7 @@ import {
     YAxis,
 } from "recharts";
 
-export default function CustomLineChart({ data }) {
+export function CustomLineChart({ data }) {
     return (
         <ResponsiveContainer width="100%" height={150}>
             <LineChart data={data}>

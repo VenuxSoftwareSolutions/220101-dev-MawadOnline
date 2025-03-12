@@ -6,7 +6,7 @@ import { usePage } from "@inertiajs/react";
 import { SparklineChart } from "./SparklineChart";
 import { SpinnerWrapper } from "./SpinnerWrapper";
 
-export default function MaterialsTrendsContainer() {
+export function MaterialsTrendsContainer() {
     const { props } = usePage();
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
