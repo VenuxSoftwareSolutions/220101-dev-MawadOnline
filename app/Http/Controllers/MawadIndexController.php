@@ -11,15 +11,17 @@ use Carbon\Carbon;
 
 class MawadIndexController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filter = $request->query('filter', 'avg');
         $categoriesWithRevisions = $this->getCategoriesWithRevisions();
 
         $top10Categories = $this->getTop10CategoriesEvolutionInLast7Days();
 
         return Inertia::render('Home', [
             "categories" => $categoriesWithRevisions,
-            "top10Categories" => $top10Categories
+            "top10Categories" => $top10Categories,
+            "filter" => $filter
         ]);
     }
 
