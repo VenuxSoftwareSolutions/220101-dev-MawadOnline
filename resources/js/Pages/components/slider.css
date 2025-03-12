@@ -1,0 +1,50 @@
+.chart-slider-container {
+    position: relative;
+}
+
+.custom-prev,
+.custom-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: white;
+    border: 2px solid #e6e6e6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.custom-prev {
+    left: -10px;
+}
+
+.custom-next {
+    right: -10px;
+}
+
+.custom-prev:hover,
+.custom-next:hover {
+    background: #f0f0f0;
+}
+
+.custom-prev::before,
+.custom-next::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #555;
+    border-right: 2px solid #555;
+    transform: rotate(225deg);
+}
+
+.custom-next::before {
+    transform: rotate(45deg);
+}
