@@ -6,10 +6,11 @@ export function Cart({ category, subCategory, evolution }) {
             <div className="card-body">
                 <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column">
-                        <h5 className="card-title">{title}</h5>
-                        <h6 className="card-subtitle mb-2 text-muted">
-                            {subTitle}
-                        </h6>
+                        <small className="card-subtitle mb-2 text-muted">
+                            Main Category / {subCategory}
+                        </small>
+
+                        <h5 className="card-title">{category}</h5>
                     </div>
                     <button className="my-3 btn btn-primary btn-xs">
                         Buy product
