@@ -82,7 +82,9 @@ class HomeController extends Controller
                 ->orderBy('id', 'desc')->limit(12)->get();
         });
 
-        return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
+        $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.newest_products_section';
+
+        return view($viewPath, compact('newest_products'));
     }
 
     public function load_featured_section()
@@ -97,7 +99,9 @@ class HomeController extends Controller
     {
         $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.best_selling_section';
 
-        return view($viewPath);
+        $best_selling_products = get_best_selling_products(20);
+
+        return view($viewPath, compact("best_selling_products"));
     }
 
     public function load_auction_products_section()
