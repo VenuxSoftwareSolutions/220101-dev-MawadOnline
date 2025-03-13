@@ -46,7 +46,8 @@ class ProductService
             $collection = collect($data);
 
             $vat_user = BusinessInformation::where(
-                'user_id', auth()->user()->owner_id
+                'user_id',
+                auth()->user()->owner_id
             )->first();
 
             $approved = 1;
@@ -775,7 +776,7 @@ class ProductService
         $unit_general_attributes_data = [];
 
         //check if product has old variants
-        
+
         if (array_key_exists('variant', $data)) {
             foreach ($collection['variant']['sku'] as $key => $sku) {
                 if (! array_key_exists($key, $variants_data)) {
@@ -2729,8 +2730,8 @@ class ProductService
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge']) ? 
-                                    $variant['shipping_details']['shipping_charge'][$key] 
+                                $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge']) ?
+                                    $variant['shipping_details']['shipping_charge'][$key]
                                     : null;
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
                                 $current_shipping['vat_shipping'] = $vat_user->vat_registered;
@@ -2852,7 +2853,7 @@ class ProductService
         } else {
             $collection['sku'] = $collection['name'];
         }
-        
+
         if (isset($collection['quantite_stock_warning'])) {
             $collection['low_stock_quantity'] = $collection['quantite_stock_warning'];
             unset($collection['quantite_stock_warning']);
@@ -4178,8 +4179,8 @@ class ProductService
                                         $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                         $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                         $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                        $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge'][$key]) ? 
-                                            $variant['shipping_details']['shipping_charge'][$key] 
+                                        $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge'][$key]) ?
+                                            $variant['shipping_details']['shipping_charge'][$key]
                                             : null;
                                         $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
                                         $current_shipping['vat_shipping'] = $vat_user->vat_registered;
@@ -4372,8 +4373,8 @@ class ProductService
                     $randomString = Str::random(5);
                     $collection['slug'] = $collection['slug'].'-'.$randomString;
 
-                    $collection["unit_price"] = isset($variant["unit_price"]) === true ? 
-                        $variant["unit_price"] 
+                    $collection["unit_price"] = isset($variant["unit_price"]) === true ?
+                        $variant["unit_price"]
                         : $collection['unit_sale_price'];
 
                     unset($collection["variant"]);
@@ -4381,7 +4382,7 @@ class ProductService
                     $new_product = Product::create($collection);
 
                     //attributes of variant
-                    if(array_key_exists("attributes", $variant)) {
+                    if (array_key_exists("attributes", $variant)) {
                         foreach ($variant['attributes'] as $key => $value_attribute) {
                             if ($value_attribute != null) {
                                 if (in_array($key, $ids_attributes_list)) {
@@ -4413,17 +4414,17 @@ class ProductService
                                     $attribute_product->is_variant = 1;
                                     $attribute_product->id_units = $variant['units'][$key];
                                     $attribute_product->value = $value_attribute;
-    
+
                                     try {
                                         $unit = Unity::find($variant['units'][$key]);
                                         $default_attribute_unit = null;
-    
+
                                         if ($unit->default_unit === null) {
                                             $default_attribute_unit = $unit;
                                         } else {
                                             $default_attribute_unit = Unity::find($unit->default_unit);
                                         }
-    
+
                                         if ($default_attribute_unit !== null) {
                                             $attribute_product->default_unit_id = $default_attribute_unit->id;
                                             $attribute_product->default_unit_conv_value = $unit->rate * $value_attribute;
@@ -4438,7 +4439,7 @@ class ProductService
                                         ));
                                         return null;
                                     }
-    
+
                                     $attribute_product->save();
                                 } else {
                                     $attribute_product = new ProductAttributeValues();
@@ -4636,9 +4637,9 @@ class ProductService
                     if (array_key_exists('shipping_details', $variant)) {
                         foreach ($variant['shipping_details']['from'] as $key => $from) {
                             if (
-                                ($from != null) && 
-                                ($variant['shipping_details']['to'][$key] != null) && 
-                                ($variant['shipping_details']['shipper'][$key] != null) && 
+                                ($from != null) &&
+                                ($variant['shipping_details']['to'][$key] != null) &&
+                                ($variant['shipping_details']['shipper'][$key] != null) &&
                                 ($variant['shipping_details']['estimated_order'][$key] != null)
                             ) {
                                 $current_shipping = [];
@@ -4655,8 +4656,8 @@ class ProductService
                                 $current_shipping['estimated_order'] = $variant['shipping_details']['estimated_order'][$key];
                                 $current_shipping['estimated_shipping'] = $variant['shipping_details']['estimated_shipping'][$key];
                                 $current_shipping['paid'] = $variant['shipping_details']['paid'][$key];
-                                $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge']) ? 
-                                    $variant['shipping_details']['shipping_charge'][$key] 
+                                $current_shipping['shipping_charge'] = isset($variant['shipping_details']['shipping_charge']) ?
+                                    $variant['shipping_details']['shipping_charge'][$key]
                                     : null;
                                 $current_shipping['flat_rate_shipping'] = $variant['shipping_details']['flat_rate_shipping'][$key];
                                 $current_shipping['vat_shipping'] = $vat_user->vat_registered;
@@ -7153,6 +7154,4 @@ class ProductService
 
         return $selected_attribute_values;
     }
-
-
 }
