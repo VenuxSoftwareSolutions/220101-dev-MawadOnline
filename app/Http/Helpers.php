@@ -64,6 +64,8 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
+use App\Utility\CartUtility;
+use App\Models\Discount;
 
 if (! function_exists('humanFileSize')) {
     function humanFileSize($bytes, $decimals = 2)
@@ -3099,5 +3101,34 @@ if (function_exists('roundUpToTwoDigits') === false) {
     function roundUpToTwoDigits($number)
     {
         return ceil($number * 100) / 100;
+    }
+}
+
+if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
+    function calculatePriceWithDiscountAndMwdCommission($product, $qty = 1, $withDiscount = true)
+    {
+        try {
+            $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+            $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+            $priceVatIncl = $product->unit_price;
+
+            $priceAfterDiscountVatIncl = $withDiscount === true ? CartUtility::priceProduct($product->id, $qty) : $priceVatIncl;
+
+            $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+            $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+            $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+            $priceAfterMwdCommission = roundUpToTwoDigits(
+                $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+            );
+
+            return $priceAfterMwdCommission;
+        } catch (Exception $e) {
+            Log::error("Error while calculating mwd commission for product #{$product->id} price, with message: {$e->getMessage()}");
+            return $product->unit_price;
+        }
     }
 }
