@@ -6011,7 +6011,10 @@ class ProductService
             }
         }
 
-        $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : ($lastItem["unit_price"] ?? $parent->unit_price);
+        $selectedProduct = $lastItem["unit_price"] ? get_single_product($variationId) : $parent;
+        $price = calculatePriceWithDiscountAndMwdCommission($selectedProduct);
+
+        $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : $price;
 
         if (
             isset($lastItem['variant_pricing-from']['discount']['date']) &&
@@ -6142,6 +6145,8 @@ class ProductService
             ];
         }
 
+        $sampleDetails = $parent->getSampleDetails();
+
         return [
             'name' => $name,
             'brand' => $brand ? $brand->name : '',
@@ -6150,7 +6155,7 @@ class ProductService
             'short_description' => $short_description,
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
-            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? ($lastItem["unit_price"] ?? $parent->unit_price),
+            'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? $price,
             'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
             'general_attributes' => $attributesGeneralArray,
             'attributes' => $attributes ?? [],
@@ -6186,7 +6191,7 @@ class ProductService
             'outStock' => get_single_product(
                 isset($variationId) ? $variationId : $parent->id
             )->getTotalQuantity() <= 0,
-            "sampleDetails" => $parent->getSampleDetails(),
+            "sampleDetails" => $sampleDetails,
         ];
     }
 
