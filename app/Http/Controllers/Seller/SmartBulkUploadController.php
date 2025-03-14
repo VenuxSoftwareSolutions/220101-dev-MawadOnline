@@ -98,7 +98,7 @@ class SmartBulkUploadController extends Controller
             'shipping_details.*.from_qty' => 'required|numeric',
             'shipping_details.*.to_qty' => 'required|numeric',
             'shipping_details.*.charge' => 'required|numeric',
-            'mwd3pProductShippingEnabled' => 'required'
+            'mwd3p_enabled' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -119,9 +119,8 @@ class SmartBulkUploadController extends Controller
             'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
             'vendorUserId' => Auth::id(),
             'vendorProductShipping' => $vendorProductShipping,
-            'mwd3pProductShippingEnabled' => filter_var($request->input('mwd3pProductShippingEnabled'), FILTER_VALIDATE_BOOLEAN)
+            'mwd3pProductShippingEnabled' => filter_var($request->input('mwd3p_enabled'), FILTER_VALIDATE_BOOLEAN)
         ];
-        Log::info('Shipping Config Request Payload:', $requestBody);
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
