@@ -2999,6 +2999,7 @@
                                 $("#percent").removeClass("bg-primary");
 
                                 $("#qty-interval").text(response.formattedPrice)
+                                $("#product-price > strong > span").text(response.formattedPrice)
                                 $("#chosen_price").text(response.formattedTotal)
                                 $("#percent").text('')
                             }
