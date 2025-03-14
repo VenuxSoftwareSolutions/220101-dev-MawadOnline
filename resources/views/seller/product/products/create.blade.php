@@ -481,20 +481,20 @@
                                         Ensure your file includes the following key details:
                                     </span>
                                     <ul class="fs-16 p-0 font-prompt dark-c3 line-h mt5px float-left">
-                                        <li><strong>Product Name –</strong> Helps attract buyers with clear, searchable titles.</li>
+                                        <li><strong>Product Name –</strong> Helps attract buyers with clear and searchable titles.</li>
                                         <li><strong>Brand –</strong> Ensures correct classification and brand recognition.</li>
-                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for your internal tracking and accounting .</li>
-                                        <li><strong>Unit Price –</strong> Essential for listing products and enabling transactions (Price in AED VAT inclusive).</li>
-                                        <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, per
-                                            kilogram).</li>
-                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations measured using one of these units(Millimeter, Centimeter, Meter, Inch or Feet).</li>
-                                        <li><strong>Product Package Weight –</strong> Helps with shipping cost estimation measured using one of these units(Gram, Kilogram  or Pound).</li>
-                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence (Supported Formats: jpg, jpeg, png, webp, gif, avif, bmp, tiff or heic).</li>
-                                        <li><strong>Country of Origin –</strong> Indicates where the product is manufactured or sourced from.</li>
+                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for internal tracking and accounting.</li>
+                                        <li><strong>Unit Price –</strong> Required for listing products and enabling transactions (price in AED, VAT inclusive).</li>
+                                        <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, or per kilogram).</li>
+                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations. Measurements should be in one of the following units: millimeters, centimeters, meters, inches, or feet.</li>
+                                        <li><strong>Product Package Weight –</strong> Helps estimate shipping costs. Weight should be measured in one of the following units: grams, kilograms, or pounds.</li>
+                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence. Supported formats: JPG, JPEG, PNG, WEBP, GIF, AVIF, BMP, TIFF, or HEIC.</li>
+                                        <li><strong>Country of Origin –</strong> Specifies where the product is manufactured or sourced from.</li>
                                         <!--<li><strong>Technical Documents Link –</strong> Upload CAD/BIM files, spec sheets, or certifications.</li>
                                         <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
                                     </ul>
                                 </div>
+                                
                                 <div class="col-12 p-0 py-1 d-flex justify-content-start">
                                     <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev2Btn">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
