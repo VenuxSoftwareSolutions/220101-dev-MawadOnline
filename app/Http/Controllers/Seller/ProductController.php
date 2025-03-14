@@ -1731,7 +1731,6 @@ class ProductController extends Controller
                 if (! isset($variation[$attributeId]) ||
                     (is_array($variation[$attributeId]) && $valueString !== $value) ||
                     (! is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
-
                     $matchesCheckedAttributes = false;
                     break;
                 }
@@ -1772,14 +1771,16 @@ class ProductController extends Controller
                     }
 
                     $sku = $variation['sku'] ?? null;
-                    $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
-                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? $product->unit_price;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? 1;
+
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? calculatePriceWithDiscountAndMwdCommission($product);
+
                     $total = (
                         isset($variation['variant_pricing-from']['from'][0]) &&
                         isset($variation['variant_pricing-from']['unit_price'][0])
                     ) ? (
                         $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0]
-                    ) : $product->unit_price;
+                    ) : calculatePriceWithDiscountAndMwdCommission($product);
 
                     if (
                         isset($variation['variant_pricing-from']['discount']['date']) &&
@@ -1870,6 +1871,8 @@ class ProductController extends Controller
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $minimum) {
                         $outStock = true;
+                    } else {
+                        $maximum = (float) $product_stock;
                     }
                 }
             }
@@ -1883,7 +1886,10 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => $price ? single_price($price) : null,
+                "unit_price" => $product->unit_price,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? $total ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
@@ -1903,7 +1909,10 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => $price ? single_price($price) : null,
+                "unit_price" => $product->unit_price,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? $total ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
