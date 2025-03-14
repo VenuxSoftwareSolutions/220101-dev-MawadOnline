@@ -6353,7 +6353,7 @@ class ProductService
                 'unit_price' => $unitPrice ?? $data['detailedProduct']["price"],
                 'qty' => $qty,
                 'total' => single_price($total),
-                'sampleTotal' => single_price($data['detailedProduct']['sampleDetails']["sample_price"] * $qty),
+                'sampleTotal' => isset($data['detailedProduct']['sampleDetails']["sample_price"]) ? single_price($data['detailedProduct']['sampleDetails']["sample_price"] * $qty) : 0,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'totalDiscount' => $totalDiscount,
