@@ -5728,7 +5728,7 @@ class ProductService
                 $product = Product::find($children_id);
                 $variations[$children_id]['sku'] = $product ? $product->sku : null;
                 $variations[$children_id]['slug'] = $product ? $product->slug : null;
-                $variations[$children_id]["unit_price"] = $product ? $product->unit_price : $parent->unit_price;
+                $variations[$children_id]["unit_price"] = calculatePriceWithDiscountAndMwdCommission($product ? $product : $parent);
 
                 $variations[$children_id]['variant_pricing-from']['from'] = PricingConfiguration::where('id_products', $children_id)->pluck('from')->toArray();
                 $variations[$children_id]['variant_pricing-from']['to'] = PricingConfiguration::where('id_products', $children_id)->pluck('to')->toArray();
@@ -6011,7 +6011,7 @@ class ProductService
             }
         }
 
-        $selectedProduct = $lastItem["unit_price"] ? get_single_product($variationId) : $parent;
+        $selectedProduct = isset($lastItem) && $lastItem["unit_price"] ? get_single_product($variationId) : $parent;
         $price = calculatePriceWithDiscountAndMwdCommission($selectedProduct);
 
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : $price;
