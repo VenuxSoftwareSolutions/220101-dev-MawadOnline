@@ -6343,6 +6343,10 @@ class ProductService
                 $minimum = min($valuesFrom);
             }
 
+            if (isset($variations[$request->variationId])) {
+                $unitPrice = $variations[$request->variationId]["unit_price"];
+            }
+
             $total = $qty * ($unitPrice ?? $data['detailedProduct']["price"]);
 
             if (isset($discountPrice) && $discountPrice > 0) {
