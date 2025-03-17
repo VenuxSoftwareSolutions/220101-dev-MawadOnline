@@ -694,6 +694,10 @@
                                                 <span class="radio-label no"><span>No</span></span>
                                             </label>
                                         </div>
+                                        <div class="fs-14 text-muted mt-2">
+                                            
+                                            Shipping duration for buyers will be displayed as 2 to 3 days, including your order preparation days.
+                                        </div>
                                         <div class="alert alert-warning mt-2 fs-14">
                             Note: If using MawadOnline 3rd Party Shipping, ensure product package dimensions 
                             and weight are specified for each product in the CSV file.
@@ -742,7 +746,7 @@
                                     <div class="fs-16 p-0 pt-3">
                                         Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
                                     </div>
-                                    <img class="sbu-discount-img lazyload mt-3" src="{{ static_asset('assets/img/discountexample.png') }}">
+                                    {{-- <img class="sbu-discount-img lazyload mt-3" src="{{ static_asset('assets/img/discountexample.png') }}"> --}}
                                     <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
                                         <li>
                                             &bull; Sell in bulk at retail price (not recommended).
@@ -6224,18 +6228,12 @@
     }
 
     flatpickr('.discount-range', {
-    mode: "range",
-    dateFormat: "Y-m-d",
-    altInput: true,
-    altFormat: "Y-m-d to Y-m-d",
-    allowInput: true,
-    minDate: "today",
-        onClose: function(selectedDates, dateStr, instance) {
-            if (selectedDates.length === 2) {
-                let formattedRange = selectedDates[0].toISOString().split('T')[0] + " to " + selectedDates[1].toISOString().split('T')[0];
-                instance.input.value = formattedRange; 
-            }
-        }
+        mode: "range",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "Y-m-d to Y-m-d", 
+        allowInput: true,
+        minDate: "today"
     });
 
 
@@ -6277,10 +6275,7 @@
             dateFormat: "Y-m-d",
             allowInput: true,
             minDate: "today",
-            onClose: function(selectedDates) {
-                console.log("From:", selectedDates[0]);
-                console.log("To:", selectedDates[1]);
-            }
+          
         });
         $('body').on('click', '.delete-discount-row', function() {
                 $(this).parent().parent().remove();
