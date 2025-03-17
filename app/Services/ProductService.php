@@ -6014,6 +6014,8 @@ class ProductService
         $selectedProduct = isset($lastItem) && $lastItem["unit_price"] ? get_single_product($variationId) : $parent;
         $price = calculatePriceWithDiscountAndMwdCommission($selectedProduct);
 
+        $priceAfterMwdCommission = calculatePriceWithDiscountAndMwdCommission($selectedProduct, 1, false);
+
         $total = isset($pricing['from'][0]) && isset($pricing['unit_price'][0]) ? $pricing['from'][0] * $pricing['unit_price'][0] : $price;
 
         if (
@@ -6156,6 +6158,7 @@ class ProductService
             'main_photos' => $lastItem['storedFilePaths'] ?? $storedFilePaths, // Add stored file paths to the detailed product data
             'quantity' => $lastItem['variant_pricing-from']['from'][0] ?? $pricing['from'][0] ?? '',
             'price' => $lastItem['variant_pricing-from']['unit_price'][0] ?? $pricing['unit_price'][0] ?? $price,
+            "priceAfterMwdCommission" => $priceAfterMwdCommission,
             'total' => isset($lastItem['variant_pricing-from']['from'][0]) && isset($lastItem['variant_pricing-from']['unit_price'][0]) ? $lastItem['variant_pricing-from']['from'][0] * $lastItem['variant_pricing-from']['unit_price'][0] : $total,
             'general_attributes' => $attributesGeneralArray,
             'attributes' => $attributes ?? [],
