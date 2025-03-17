@@ -333,7 +333,7 @@
             $niveau++;
             $attribue = App\Models\Attribute::find($attributeId);
         @endphp
-        @if ($attribue['name'] == 'Manufacturer')
+        @if (is_null($attribue) === false && $attribue['name'] == 'Manufacturer')
             <div class="col-4 col-sm-4 mb-2">
                 <div class="fs-16 font-prompt-md attrib-name">
                     {{ $attribue ? $attribue->getTranslation('name') : '' }}:
@@ -346,7 +346,7 @@
                 </div>
             </div>
         @endif
-        @if ($attribue['name'] == 'Manufacturer')
+        @if (is_null($attribue) === false && $attribue['name'] == 'Manufacturer')
             <div class="col-8 col-sm-8">
             @else
                 <div class="col-10 col-sm-10">
