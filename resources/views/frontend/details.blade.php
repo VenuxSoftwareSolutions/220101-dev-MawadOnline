@@ -197,7 +197,13 @@
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                         <span>{{ single_price($previewData['detailedProduct']['discountedPrice']) }}</span>
                     @else
-                        <span>{{ single_price($previewData['detailedProduct']['price']) }}</span> /
+                        <span>
+                            {{ single_price($previewData['detailedProduct']['price']) }}
+                            @if($previewData['detailedProduct']['priceAfterMwdCommission'] !== $previewData['detailedProduct']['price'])
+                                <small><del class="fw-400 text-secondary">{{ single_price($previewData['detailedProduct']['priceAfterMwdCommission']) }}</del></small>
+                            @endif
+                        </span>
+ /
                         {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
                 </strong>
