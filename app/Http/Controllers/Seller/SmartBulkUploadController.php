@@ -42,16 +42,18 @@ class SmartBulkUploadController extends Controller
 
             $upload = new Upload;
             $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $path = 'uploads/SmartBulkUpload/';
+            $path = '/';
             $filename = preg_replace('/[^A-Za-z0-9\-]/', '', $upload->file_original_name) . '.' . $extension;
-            $filename = $file->storeAs($path, $filename, 'local');
+            // Save file in /home/mwd/SmartBulkUpload
+            $storedFilePath = $file->storeAs($path, $filename, 'mwd_storage');
 
             try {
                
-                $size = Storage::disk('local')->size($filename);
+                $size = Storage::disk('mwd_storage')->size($storedFilePath);
+
     
                 $upload->extension = $extension;
-                $upload->file_name = 'public/' . $path . $filename;
+                $upload->file_name = '/home/mwd/SmartBulkUpload/' . $filename;
                 $upload->user_id = Auth::id();
                 $upload->type = 'document';
                 $upload->file_size = $size;
@@ -78,7 +80,7 @@ class SmartBulkUploadController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'File uploaded and sent to WebSocket successfully!',
-                    'file_path' => $path,
+                    'file_path' => $storedFilePath,
                     'websocket_response' => $response
                 ]);
         
