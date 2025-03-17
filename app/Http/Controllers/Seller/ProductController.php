@@ -1910,6 +1910,11 @@ class ProductController extends Controller
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
                 'formattedPrice' => isset($price) === true ? single_price($price) : null,
+                'formattedMwdCommissionPrice' =>  isset($variationId) ? single_price(calculatePriceWithDiscountAndMwdCommission(
+                    get_single_product($variationId),
+                    $quantity ?? 1,
+                    false
+                )) : null,
                 "unit_price" => isset($variationId) ? get_single_product($variationId)->unit_price : null,
                 'total' => $totalDiscount ?? $total ?? null,
                 'formattedTotal' => $totalDiscount ?? isset($total) ? single_price($total) : null,

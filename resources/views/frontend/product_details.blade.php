@@ -2999,7 +2999,19 @@
                                 $("#percent").removeClass("bg-primary");
 
                                 $("#qty-interval").text(response.formattedPrice)
-                                $("#product-price > strong > span").text(response.formattedPrice)
+
+
+                                if(
+                                    $("#product-price > strong > span > small > del").length > 0 &&
+                                    response.formattedMwdCommissionPrice !== null
+                                ) {
+                                    $("#product-price > strong > span").html(
+                                         `${response.formattedPrice} <small><del class="fw-400 text-secondary">${response.formattedMwdCommissionPrice}</del></small>`
+                                    );
+                                } else {
+                                    $("#product-price > strong > span").text(response.formattedPrice)
+                                }
+
                                 $("#chosen_price").text(response.formattedTotal)
                                 $("#percent").text('')
                             }
