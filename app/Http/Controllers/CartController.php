@@ -738,7 +738,11 @@ class CartController extends Controller
             }
 
             // Calculate the price and tax
-            $price = CartUtility::priceProduct($request->variationId, $request->quantity);
+            $price = calculatePriceWithDiscountAndMwdCommission(
+                get_single_product($request->variationId),
+                $request->quantity
+            );
+
             $tax = 0;
 
             // Save the cart data
