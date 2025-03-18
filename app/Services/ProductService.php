@@ -6149,6 +6149,15 @@ class ProductService
 
         $sampleDetails = $parent->getSampleDetails();
 
+        if (get_setting("sample_price_mwd_commission") === "on") {
+            $sampleDetails["sample_price_after_mwd_commission"] = calculatePriceWithDiscountAndMwdCommission(
+                $selectedProduct,
+                1,
+                false,
+                true
+            );
+        }
+
         return [
             'name' => $name,
             'brand' => $brand ? $brand->name : '',
