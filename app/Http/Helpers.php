@@ -3105,13 +3105,13 @@ if (function_exists('roundUpToTwoDigits') === false) {
 }
 
 if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
-    function calculatePriceWithDiscountAndMwdCommission($product, $qty = 1, $withDiscount = true)
+    function calculatePriceWithDiscountAndMwdCommission($product, $qty = 1, $withDiscount = true, $is_sample = false)
     {
         try {
             $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
             $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
 
-            $priceVatIncl = $product->unit_price;
+            $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
 
             $priceAfterDiscountVatIncl = $withDiscount === true ? CartUtility::priceProduct($product->id, $qty) : $priceVatIncl;
 
