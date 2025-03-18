@@ -33,9 +33,12 @@ class DatabaseSeeder extends Seeder
         /* $this->call(TranslationCatalogueSeeder::class); */
         /* $this->call(ProductSeeder::class); */
         //$this->call(UnitsSeeder::class);
+        /* $this->call([ */
+        /*     BusinessSettingsTableSeeder::class, */
+        /* ]); */
+
         $this->call([
-            BusinessSettingsTableSeeder::class,
+            SampleMwdCommissionInBusinessSettingsTable::class,
         ]);
-    
     }
 }
