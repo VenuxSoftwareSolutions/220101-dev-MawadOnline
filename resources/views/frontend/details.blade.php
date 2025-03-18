@@ -218,7 +218,23 @@
 
             <div id="product-sample-price" class="d-none align-items-center">
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
-                    <span>{{ single_price(isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0 ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span>
+                    <span>
+                        @if(
+                            isset($previewData['detailedProduct']['sampleDetails']) &&
+                            count($previewData['detailedProduct']['sampleDetails']) > 0
+                        )
+                            @if(
+                                isset($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) &&
+                                $previewData['detailedProduct']['sampleDetails']['sample_price'] !== $previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']
+                            )
+                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) }}
+                            @else
+                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}
+                            @endif
+                        @else
+                            {{ single_price(0) }}
+                        @endif
+                    </span>
                     /
                     {{ __('Sample') }}
                 </strong>
