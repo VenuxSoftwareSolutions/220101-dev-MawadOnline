@@ -26,7 +26,15 @@ export function CartsWrapper() {
                     }}
                 >
                     {top10Categories.map(
-                        ({ category, parentCategory, evolution }, index) => (
+                        (
+                            {
+                                category,
+                                parentCategory,
+                                evolution,
+                                priceChange,
+                            },
+                            index
+                        ) => (
                             <SwiperSlide
                                 key={`${category}_${parentCategory}-${index}`}
                             >
@@ -35,6 +43,7 @@ export function CartsWrapper() {
                                         category={category}
                                         subCategory={parentCategory}
                                         evolution={evolution}
+                                        priceChange={priceChange}
                                     />
                                 </div>
                             </SwiperSlide>

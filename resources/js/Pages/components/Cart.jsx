@@ -1,6 +1,6 @@
 import { CustomLineChart } from "./CustomLineChart";
 
-export function Cart({ category, subCategory, evolution }) {
+export function Cart({ category, subCategory, evolution, priceChange }) {
     return (
         <div className="card">
             <div className="card-body">
@@ -17,8 +17,40 @@ export function Cart({ category, subCategory, evolution }) {
                     </button>
                 </div>
                 <hr />
-                <div className="card-text">
+                <div
+                    className="card-text d-flex justify-content-between"
+                    style={{ gap: "50px" }}
+                >
                     <CustomLineChart data={evolution} />
+                    <div className="d-flex flex-column align-items-center justify-content-center">
+                        <div
+                            className={`px-5 py-3 badge border border-${
+                                priceChange.percentage <= 0
+                                    ? "success bg-success"
+                                    : "danger bg-danger"
+                            }`}
+                        >
+                            <span className="text-white font-weight-bold">
+                                {priceChange.percentage}%
+                            </span>
+                            {priceChange.percentage !== 0 ? (
+                                <i
+                                    className={`ml-3 las la-arrow-${
+                                        priceChange.percentage > 0
+                                            ? "up"
+                                            : "down"
+                                    }`}
+                                />
+                            ) : null}
+                        </div>
+                        <div
+                            className={`font-weight-bold px-4 py-3 text-${
+                                priceChange.absolute <= 0 ? "success" : "danger"
+                            }`}
+                        >
+                            {priceChange.absolute}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
