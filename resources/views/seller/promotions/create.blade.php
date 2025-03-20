@@ -571,22 +571,20 @@
             const DiscountContainer = document.getElementById('DiscountContainer');
             const maxQuantityInput = document.getElementById('max_qty');
             const minQuantityInput = document.getElementById('min_qty');
+            const maxDiscountInput = document.querySelector('[name="max_discount"]');
+
 
            
 
 
             function updateScopeView(scope) {
                 scopeInput.value = scope;
-                productSelect.disabled = true;
-                productSelect.value = "";
-                categorySelect.disabled = true;
-                categorySelect.value = "";
-                orderAmountInput.disabled = true;
-                orderAmountInput.value = "";
-                productCategoryContainer.style.display = "none";
-                multiTreeContainer.style.display = "none";
-                maxQuantityInput.disabled = true ;
-                minQuantityInput.disabled = true ; 
+                productSelect.parentElement.style.display = "none";
+                categorySelect.parentElement.style.display = "none";
+                orderAmountInput.parentElement.style.display = "none";
+                maxQuantityInput.parentElement.style.display = "none";
+                minQuantityInput.parentElement.style.display = "none";
+                maxDiscountInput.parentElement.style.display = "none";
 
                 const multiTreeParams = {
                     sortable: true,
@@ -605,14 +603,11 @@
                 };
 
                 if (scope === "product") {
-                    productCategoryContainer.style.display = "block";
-                    maxQuantityInput.style.display = "block";
 
-                    productSelect.disabled = false;
-                    categorySelect.disabled = false;
-                    maxQuantityInput.disabled = false ;
-                    minQuantityInput.disabled = false ; 
-
+                    categorySelect.parentElement.style.display = "block";
+                    productSelect.parentElement.style.display = "block";
+                    maxQuantityInput.parentElement.style.display = "block";
+                    minQuantityInput.parentElement.style.display = "block";
 
 
                 } else if (scope === "category") {
@@ -622,22 +617,35 @@
                      }
 
                     $("select#multiTreeCategory").treeMultiselect(multiTreeParams);
-                    productSelect.value = null;
-                    productSelect.disabled = true;
+
+                   productSelect.parentElement.style.display = "block";
 
 
 
                 } else if (scope === "ordersOverAmount") {
                     // Enable order amount field only
-                    orderAmountInput.disabled = false;
-                    productCategoryContainer.style.display = "block";
+                    orderAmountInput.parentElement.style.display = "block";
+                    productCategoryContainer.parentElement.style.display = "block";
+                    maxDiscountInput.parentElement.style.display = "block";
 
                 } else if (scope === "allOrders") {
                     // All fields remain disabled except the discount fields
-                    productCategoryContainer.style.display = "block";
+                    productCategoryContainer.parentElement.style.display = "block";
+                    maxDiscountInput.parentElement.style.display = "block";
+
                 }
 
                 $('.aiz-selectpicker').selectpicker('refresh');
+                removeEmptyRows();
+
+            }
+            function removeEmptyRows() {
+                $(".row").each(function () {
+                    const visibleInputs = $(this).find(".col-md-6:visible");
+                    if (visibleInputs.length === 1) {
+                        visibleInputs.removeClass("col-md-6").addClass("col-md-12");
+                    }
+                });
             }
 
             categorySelect.addEventListener('change', function () {
