@@ -13,13 +13,15 @@ export function CartsWrapper() {
         props: { top10Categories },
     } = usePage();
 
+    const slidesPerView = 2.5;
+
     return (
         <div className="container my-2">
             <div className="row chart-slider-container">
                 <Swiper
                     modules={[Navigation]}
                     spaceBetween={2}
-                    slidesPerView={3.5}
+                    slidesPerView={slidesPerView}
                     navigation={{
                         nextEl: ".custom-next",
                         prevEl: ".custom-prev",
