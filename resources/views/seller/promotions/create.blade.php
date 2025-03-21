@@ -880,10 +880,6 @@
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
             const maxQuantityInput = document.getElementById('max_qty');
             const minQuantityInput = document.getElementById('min_qty');
-
-           
-           
-
             // Function to render the form based on the selected scope
             function renderForm(scope) {
                 const formContainer = document.getElementById('formContainer');
@@ -1005,7 +1001,7 @@
                 const endDate = form.querySelector("input[name='end_date']").value;
                 const scope = form.querySelector("input[name='scope']").value;                
                 const percent = form.querySelector("input[name='discount_percentage']").value;
-                const maxDiscount = form.querySelector("input[name='max_discount']").value ?? null;;
+                const maxDiscount = form.querySelector("input[name='max_discount']")?.value ?? null;
                 const productId = form.querySelector("select[name='product_id']")?.value ?? null;
                 const categoryId = form.querySelector("select[name='category_id']")?.value ?? null;
                 const orderAmount = form.querySelector("#order_amount")?.value ?? null;

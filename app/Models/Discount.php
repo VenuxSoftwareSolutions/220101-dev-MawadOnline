@@ -117,12 +117,17 @@ class Discount extends Model
             return false;
         }
 
-        if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
-            return true;
-        } elseif ($newDiscountData['max_discount'] < $existingDiscount->max_discount) {
-            return false;
+        $ignoreMaxForExisting = in_array($existingDiscount->scope, ['product', 'category']);
+        $ignoreMaxForNew = in_array($newDiscountData['scope'], ['product', 'category']);
+    
+        if (!$ignoreMaxForExisting && !$ignoreMaxForNew) {
+            if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
+                return true;
+            } elseif ($newDiscountData['max_discount'] < $existingDiscount->max_discount) {
+                return false;
+            }
         }
-
+        
         return Carbon::now()->greaterThan($existingDiscount->created_at);
     }
 
@@ -146,17 +151,21 @@ class Discount extends Model
         }
 
         $highestPriorityDiscount = $discounts->sort(function ($a, $b) {
+            $aMax = in_array($a->scope, ['product', 'category']) ? PHP_INT_MAX : $a->max_discount;
+            $bMax = in_array($b->scope, ['product', 'category']) ? PHP_INT_MAX : $b->max_discount;
+    
             return [
                 $b->discount_percentage,
-                $b->max_discount,
+                $bMax,
                 $b->created_at,
             ] <=> [
                 $a->discount_percentage,
-                $a->max_discount,
+                $aMax,
                 $a->created_at,
             ];
         })->first();
-
+    
+    
         return $highestPriorityDiscount;
     }
 
@@ -177,10 +186,13 @@ class Discount extends Model
             throw new \Exception('Discount does not apply to this product category.');
         }
 
-        return [
-            'discount_percentage' => $highestDiscount->discount_percentage,
-            'max_discount_amount' => $highestDiscount->max_discount,
-        ];
+        $result = ['discount_percentage' => $highestDiscount->discount_percentage];
+    
+        if (!in_array($highestDiscount->scope, ['product', 'category'])) {
+            $result['max_discount_amount'] = $highestDiscount->max_discount;
+        }
+    
+        return $result;
     }
     
     public function isApplicableForQuantity($qty)
