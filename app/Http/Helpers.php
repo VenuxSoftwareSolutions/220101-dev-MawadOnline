@@ -3132,3 +3132,39 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
         }
     }
 }
+
+if (function_exists('calculateMwdIndexPrice') === false) {
+    function calculateMwdIndexPrice($product_id, $unit_price)
+    {
+
+        try {
+            $product = Product::find($product_id);
+
+            if ($product === null) {
+                throw new Exception("Product with id #{$product_id} is not found!");
+            }
+
+            $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+            $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+            $priceVatIncl = $unit_price;
+
+            $priceAfterDiscountVatIncl = CartUtility::priceProduct($product->id, 1, $unit_price);
+
+            $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+            $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+            $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+            $priceAfterMwdCommission = roundUpToTwoDigits(
+                $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+            );
+
+            return $priceAfterMwdCommission;
+        } catch (Exception $e) {
+            Log::error("Error while calculating mwd commission for product #{$product_id} price in revisions, with message: {$e->getMessage()}");
+            return $unit_price;
+        }
+    }
+}
