@@ -171,12 +171,20 @@
         div.tree-multiselect div.title:hover {
             cursor: pointer;
         }
-
-        div.tree-multiselect input[type=checkbox] {
-            display: inline;
-            margin-right: 5px;
+        .tree-multiselect div.item:not([data-leaf="true"]) > input[type="checkbox"] {
+            display: none !important;
+        }
+        /* Show checkboxes for leaf nodes */
+        .tree-multiselect div.item[data-leaf="true"] > input[type="checkbox"] {
+            display: inline-block !important;
         }
 
+      /*   div.tree-multiselect input[type=checkbox] {
+            display: inline;
+
+            margin-right: 5px;
+        }
+  */
         div.tree-multiselect input[type=checkbox]:not([disabled]):hover {
             cursor: pointer;
         }
