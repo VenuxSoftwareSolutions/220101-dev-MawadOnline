@@ -514,4 +514,5 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
 
 Route::controller(MawadIndexController::class)->prefix("/mawad")->group(function () {
     Route::get("/index", "index")->name("mawad.index");
+    Route::get("/revisions", "fixRevisionsUnitPriceMwdCommission");
 });

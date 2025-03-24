@@ -208,4 +208,27 @@ class MawadIndexController extends Controller
                 return $category;
             })->toArray();
     }
+
+    public function fixRevisionsUnitPriceMwdCommission()
+    {
+        $revisions = Revision::withTrashed()
+            ->where("revisionable_type", "App\Models\Product")
+            ->where("key", "unit_price")->get();
+
+        $revisions->each(function ($revision) {
+            $revision->mwd_new_value = calculateMwdIndexPrice(
+                $revision->revisionable_id,
+                $revision->new_value
+            );
+
+            if ($revision->old_value !== null) {
+                $revision->mwd_old_value = calculateMwdIndexPrice(
+                    $revision->revisionable_id,
+                    $revision->old_value
+                );
+            }
+
+            $revision->save();
+        });
+    }
 }
