@@ -16,7 +16,7 @@ class MawadIndexController extends Controller
         $filter = $request->query('filter', 'avg');
         $categoriesWithRevisions = $this->getCategoriesWithRevisions();
 
-        $top10Categories = $this->getTop10CategoriesEvolutionInLast7Days();
+        $top10Categories = $this->getTopCategoriesEvolutionInLastDays(7, $filter);
 
         return Inertia::render('Home', [
             "categories" => $categoriesWithRevisions,
@@ -25,59 +25,126 @@ class MawadIndexController extends Controller
         ]);
     }
 
-    public function getTop10CategoriesEvolutionInLast7Days()
+    public function getFormattedDateRanges($period = 7)
     {
-        $startDate = Carbon::now()->subDays(6)->toDateString();
+        $startDate = Carbon::now()->subDays($period - 1)->toDateString();
         $endDate = Carbon::now()->toDateString();
+        return [
+            "$startDate 00:00:00", "$endDate 23:59:59"
+        ];
+    }
 
-        $categories = DB::table('categories as c')
-            ->leftJoin('categories as parent', 'c.parent_id', '=', 'parent.id')
+    public function getTopCategoriesEvolutionInLastDays($period = 7, $filter = "avg")
+    {
+        $datesRanges = $this->getFormattedDateRanges($period);
+
+        // top 10 categories based on price changes
+        $topCategories = DB::table('categories as c')
             ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
             ->join('products', 'product_categories.product_id', '=', 'products.id')
-            ->join('revisions', function ($join) use ($startDate, $endDate) {
+            ->join('revisions', function ($join) use ($datesRanges) {
                 $join->on('revisions.revisionable_id', '=', 'products.id')
                      ->where('revisions.key', '=', 'unit_price')
-                     ->whereBetween('revisions.created_at', [$startDate, $endDate]);
+                     ->whereBetween('revisions.created_at', $datesRanges);
             })
             ->where('products.approved', 1)
             ->where('products.published', 1)
             ->select([
                 'c.id',
+            ])
+            ->groupBy('c.id')
+            ->limit(10)
+            ->pluck('c.id')
+            ->toArray();
+
+        $categories = DB::table('categories as c')
+            ->leftJoin('categories as parent', 'c.parent_id', '=', 'parent.id')
+            ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
+            ->join('products', 'product_categories.product_id', '=', 'products.id')
+            ->join('revisions', function ($join) use ($datesRanges) {
+                $join->on('revisions.revisionable_id', '=', 'products.id')
+                     ->where('revisions.key', '=', 'unit_price')
+                     ->whereBetween('revisions.created_at', $datesRanges);
+            })
+            ->where('products.approved', 1)
+            ->where('products.published', 1)
+            ->whereIn('c.id', $topCategories)
+            ->select([
+                'c.id',
+                'revisions.revisionable_id as product_id',
                 'c.name AS category_name',
                 'parent.name AS parent_category_name',
                 DB::raw('DATE(revisions.created_at) AS date'),
-                DB::raw('AVG(revisions.new_value) AS price')
+                DB::raw('AVG(revisions.mwd_new_value) AS avg_price'),
+                DB::raw('MIN(revisions.mwd_new_value) AS lowest_price')
             ])
             ->groupBy('c.id', 'c.name', 'parent.name', 'date')
             ->orderBy('c.id')
             ->orderBy('date')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
 
         $formattedData = [];
+        $dateRange = [];
+
+        // generate an array of the last X days
+        for ($i = 0; $i < $period; $i++) {
+            $dateRange[] = Carbon::now()->subDays($period - 1 - $i)->toDateString();
+        }
 
         foreach ($categories as $data) {
-            $categoryPrices = [];
-            $dates = collect(range(0, 6))->map(function ($offset) {
-                return Carbon::now()->subDays($offset)->toDateString();
-            })->flip()->map(fn () => 0)->toArray();
+            $categoryId = $data->id;
 
-            $dates[$data->date] = roundUpToTwoDigits($data->price);
-
-            foreach ($dates as $date => $price) {
-                $categoryPrices[] = [
-                    'date' => $date,
-                    'price' => $price
+            if (!isset($formattedData[$categoryId])) {
+                $formattedData[$categoryId] = [
+                    "category" => $data->category_name,
+                    "parentCategory" => $data->parent_category_name,
+                    "evolution" => [],
+                    "product_id" => $data->product_id
                 ];
             }
 
-            $formattedData[] = [
-                "category" => $data->category_name,
-                "parentCategory" => $data->parent_category_name,
-                "evolution" => $categoryPrices
+            $formattedData[$categoryId]['evolution'][$data->date] = $filter === "avg" ?
+                $data->avg_price : $data->lowest_price;
+        }
+
+        foreach ($formattedData as &$categoryData) {
+            $lastKnownPrice = 0;
+            $filledEvolution = [];
+            $firstPrice = 0;
+            $lastPrice = 0;
+
+            foreach ($dateRange as $date) {
+                if (isset($categoryData['evolution'][$date])) {
+                    $lastKnownPrice = $categoryData['evolution'][$date];
+                }
+
+                if (!$firstPrice && $lastKnownPrice !== 0) {
+                    $firstPrice = $lastKnownPrice;
+                }
+
+                $lastPrice = $lastKnownPrice;
+
+                $filledEvolution[] = [
+                    'date' => $date,
+                    'price' => roundUpToTwoDigits($lastKnownPrice)
+                ];
+            }
+
+            $absoluteChange = roundUpToTwoDigits($lastPrice - $firstPrice);
+            $percentageChange = $firstPrice ? roundUpToTwoDigits(($absoluteChange / $firstPrice) * 100) : 0;
+
+            $categoryData['evolution'] = $filledEvolution;
+            $categoryData['priceChange'] = [
+                "absolute" => $absoluteChange,
+                "formattedAbsolute" => single_price($absoluteChange),
+                "percentage" => $percentageChange,
+                "firstPrice" => $firstPrice,
+                "lastPrice" => $lastPrice
             ];
         }
 
-        return $formattedData;
+        return array_values($formattedData);
     }
 
     public function getCategoriesWithRevisions()
