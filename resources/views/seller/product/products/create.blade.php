@@ -725,7 +725,211 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Step 4.5 - Image Upload -->
+                    <div class="card-body hidden" id="smart-image">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-start">
+                            <div class="col-12">
+                                <!-- Updated Title Section -->
+                                <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
+                                    <span class="dark-c3 p-0">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Product Images Upload
+                                    </span>
+                                </div>
                     
+                                <div class="col-12 p-0 pt-2">
+                                    <div class="fs-16 p-0 pt-3">
+                                        Please upload product images following these requirements:
+                                    </div>
+                                    <!-- Updated List Style -->
+                                    <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
+                                        <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
+                                            <li>&bull; Images should be in JPG or PNG format</li>
+                                            <li>&bull; Maximum file size 5MB per image</li>
+                                            <li>&bull; Images should be named with product SKU</li>
+                                        </ul>
+                                    </div>
+                    
+                                    <!-- Updated Upload Button -->
+                                    <div class="col-12 mt-3">
+                                        <input type="file" id="folderInput" webkitdirectory multiple hidden>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" 
+                                                onclick="document.getElementById('folderInput').click()">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Select Images Folder
+                                        </button>
+                                    </div>
+                    
+                                    <!-- Rest of the content remains the same -->
+                                    <div class="mt-4">
+                                        <div class="fs-16 font-prompt dark-c3 mb-2">
+                                            <b>Upload Validation Results:</b>
+                                        </div>
+                                        <div class="alert alert-info fs-14">
+                                            Please review and fix any validation errors before proceeding
+                                        </div>
+                                        
+                                        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-bordered" id="errorsTable">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th class="font-prmopt">File Path</th>
+                                                        <th class="font-prmopt">Error</th>
+                                                        <th class="font-prmopt">Product SKU</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Error rows will be inserted here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                    
+                                    <div class="mt-4">
+                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
+                                                onclick="reprocessFailed()">
+                                            Re-process Failed Images
+                                        </button>
+                                    </div>
+                    
+                                    <div class="col-12 py-3 d-flex justify-content-start pl-0">
+                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prevImageBtn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" 
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" 
+                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Previous
+                                        </button>
+                                        <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="nextImageBtn">
+                                            Next Step
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" 
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" 
+                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body hidden" id="smart-doc">
+                        <div class="col-12 p-3 pt-0 d-flex justify-content-start">
+                            <div class="col-12">
+                                <!-- Title Section -->
+                                <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
+                                    <span class="dark-c3 p-0">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M21 7V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V7C3 4 4.5 2 8 2H16C19.5 2 21 4 21 7Z" 
+                                                  stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M14.5 4.5V6.5C14.5 7.6 15.4 8.5 16.5 8.5H18.5" 
+                                                  stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8 13H12" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M8 17H16" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
+                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Product Documents Upload
+                                    </span>
+                                </div>
+                    
+                                <div class="col-12 p-0 pt-2">
+                                    <!-- Requirements List -->
+                                    <div class="fs-16 p-0 pt-3">
+                                        Please upload product documents following these requirements:
+                                    </div>
+                                    <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
+                                        <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
+                                            <li>&bull; Documents should be in PDF or DOCX format</li>
+                                            <li>&bull; Maximum file size 10MB per document</li>
+                                            <li>&bull; Files should be named with product SKU</li>
+                                        </ul>
+                                    </div>
+                    
+                                    <!-- Upload Button -->
+                                    <div class="col-12 mt-3">
+                                        <input type="file" id="docFolderInput" webkitdirectory multiple hidden>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" 
+                                                onclick="document.getElementById('docFolderInput').click()">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Select Documents Folder
+                                        </button>
+                                    </div>
+                    
+                                    <!-- Validation Results -->
+                                    <div class="mt-4">
+                                        <div class="fs-16 font-prompt dark-c3 mb-2">
+                                            <b>Upload Validation Results:</b>
+                                        </div>
+                                        <div class="alert alert-info fs-14">
+                                            Please review and fix any validation errors before proceeding
+                                        </div>
+                                        
+                                        <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table table-bordered" id="docErrorsTable">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th class="font-prmopt">File Path</th>
+                                                        <th class="font-prmopt">Error</th>
+                                                        <th class="font-prmopt">Product SKU</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Error rows will be inserted here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                    
+                                    <!-- Reprocess Button -->
+                                    <div class="mt-4">
+                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
+                                                onclick="reprocessFailedDocs()">
+                                            Re-process Failed Documents
+                                        </button>
+                                    </div>
+                    
+                                    <!-- Navigation Buttons -->
+                                    <div class="col-12 py-3 d-flex justify-content-start pl-0">
+                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prevDocBtn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" 
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" 
+                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            Previous
+                                        </button>
+                                        <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="nextDocBtn">
+                                            Next Step
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" 
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" 
+                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Step 6 -- Discount -->
                     <div class="card-body hidden" id="smartbulk-6">
                         <div class="col-12 p-3 pt-0 d-flex justify-content-start">
@@ -5842,14 +6046,31 @@
             $("#smartbulk-2").show();
         });
        
+        $("#prevImageBtn").click(function() {
+            $("#smart-image").hide();
+            $("#smartbulk-4").show();
+        });
+        $("#nextImageBtn").click(function() {
+            $("#smart-image").hide();
+            $("#smart-doc").show();
+        });
         $("#prev4Btn").click(function() {
             $("#smartbulk-4").hide();
             $("#smartbulk-3").show();
         });
+        $("#nextDocBtn").click(function() {
+            $("#smart-doc").hide();
+            $("#smartbulk-5").show();
+        });
+        $("#prevDocBtn").click(function() {
+            $("#smart-doc").hide();
+            $("#smart-image").show();
+        });
         $("#prev5Btn").click(function() {
             $("#smartbulk-5").hide();
-            $("#smartbulk-4").show();
+            $("#smart-doc").show();
         });
+        
        
         $("#prev6Btn").click(function() {
             $("#smartbulk-6").hide();
@@ -5941,7 +6162,7 @@
                 showSuccess("File Received successfully.");
               
                     $("#smartbulk-4").hide();
-                    $("#smartbulk-5").show();
+                    $("#smart-image").show();
 
             } else {
                 showError("Error: " + data.message);
