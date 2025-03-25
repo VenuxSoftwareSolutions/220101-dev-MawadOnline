@@ -8,7 +8,7 @@ export default function Home() {
             className="px-5 pt-5 pb-2"
             style={{ backgroundColor: "#e0e4eafc" }}
         >
-            <section className="px-5 pt-5 pb-2">
+            <section className="px-5 pb-2">
                 <HeaderContainer />
                 <CartsWrapper />
                 <div className="container">
