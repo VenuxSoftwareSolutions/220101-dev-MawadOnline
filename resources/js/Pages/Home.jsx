@@ -1,6 +1,7 @@
 import { HeaderContainer } from "./components/HeaderContainer";
 import { MaterialsTrendsContainer } from "./components/MaterialsTrendsContainer";
 import { CartsWrapper } from "./components/CartsWrapper";
+import { HistoricalGraphWrapper } from "./components/HistoricalGraphWrapper";
 
 export default function Home() {
     return (
@@ -11,11 +12,7 @@ export default function Home() {
             <section className="px-5 pb-2">
                 <HeaderContainer />
                 <CartsWrapper />
-                <div className="container">
-                    <div className="row">
-                        <div className="col">Coming soon</div>
-                    </div>
-                </div>
+                <HistoricalGraphWrapper />
                 <MaterialsTrendsContainer />
             </section>
         </div>

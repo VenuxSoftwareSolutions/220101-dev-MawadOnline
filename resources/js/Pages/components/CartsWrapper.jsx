@@ -10,7 +10,7 @@ import "./slider.css";
 
 export function CartsWrapper() {
     const {
-        props: { top10Categories },
+        props: { top10CategoriesEvolution },
     } = usePage();
 
     const slidesPerView = 2.5;
@@ -27,7 +27,7 @@ export function CartsWrapper() {
                         prevEl: ".custom-prev",
                     }}
                 >
-                    {top10Categories.map(
+                    {top10CategoriesEvolution.map(
                         (
                             {
                                 category,
