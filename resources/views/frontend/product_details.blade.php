@@ -2978,9 +2978,7 @@
                         if (response.price > 0) {
                             $("#product-add-to-cart-btn").attr("disabled", response.outStock === true);
                             $('#variationId').val(response.variationId);
-                            $("#qty-interval").text(response.price);
                             $("#quantity").val(response.quantity === "" ? 0 : response.quantity);
-                            $("#chosen_price").text(response.total);
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
 
@@ -3000,10 +2998,24 @@
                                 $("#previous-price").text('');
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.price)
-                                $("#chosen_price").text(response.total)
+                                $("#qty-interval").text(response.formattedPrice)
+
+
+                                if(
+                                    $("#product-price > strong > span > small > del").length > 0 &&
+                                    response.formattedMwdCommissionPrice !== null
+                                ) {
+                                    $("#product-price > strong > span").html(
+                                         `${response.formattedPrice} <small><del class="fw-400 text-secondary">${response.formattedMwdCommissionPrice}</del></small>`
+                                    );
+                                } else {
+                                    $("#product-price > strong > span").text(response.formattedPrice)
+                                }
+
+                                $("#chosen_price").text(response.formattedTotal)
                                 $("#percent").text('')
                             }
+
                             $('.aiz-plus-minus input').each(function() {
                                 var $this = $(this);
                                 var min = parseInt($(this).attr("min"));
