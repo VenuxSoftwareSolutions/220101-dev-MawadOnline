@@ -6,6 +6,7 @@ import { Cart } from "./Cart";
 
 import "swiper/css";
 import "swiper/css/navigation";
+
 import "./slider.css";
 
 export function CartsWrapper() {
