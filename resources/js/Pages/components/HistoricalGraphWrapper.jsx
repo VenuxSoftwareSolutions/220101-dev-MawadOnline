@@ -9,17 +9,22 @@ import {
 } from "recharts";
 import { usePage } from "@inertiajs/react";
 
-import { handleFilterChange } from "../helper.js";
+import {
+    handleFilterChange,
+    useFormatCurrency,
+    formatDate,
+} from "../helper.js";
 
 export function HistoricalGraphWrapper() {
     const [isMounted, setIsMounted] = useState(false);
 
-    const { top10Categories, categoryPrices } = usePage().props;
+    const { top10Categories, categoryPrices, language } = usePage().props;
 
+    const locale = language || "en";
     const periods = [
-        { label: "1 Week", value: "1w" },
-        { label: "2 Weeks", value: "2w" },
-        { label: "1 Month", value: "1m" },
+        { label: "7D", value: "1w" },
+        { label: "2W", value: "2w" },
+        { label: "1M", value: "1m" },
     ];
 
     const { category_id, period } = Object.fromEntries(
@@ -33,6 +38,8 @@ export function HistoricalGraphWrapper() {
     const handleCategoryIdFilterChange = (newCategoryIdFilter) => {
         handleFilterChange({ category_id: newCategoryIdFilter });
     };
+
+    const formatCurrency = useFormatCurrency();
 
     useEffect(() => {
         setIsMounted(true);
@@ -51,8 +58,13 @@ export function HistoricalGraphWrapper() {
                     <div className="card">
                         <div className="card-body">
                             <div className="card-title row">
-                                <div className="col d-flex justify-content-between">
-                                    <h5>Historical Report</h5>
+                                <div
+                                    className="col-4 d-flex align-items-center justify-content-between"
+                                    style={{ gap: "10px" }}
+                                >
+                                    <h5 className="text-nowrap">
+                                        Historical Report
+                                    </h5>
                                     <select
                                         className="form-control"
                                         name="category_id"
@@ -74,11 +86,11 @@ export function HistoricalGraphWrapper() {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="d-flex justify-content-between">
+                                <div className="col d-flex align-items-center justify-content-end">
                                     {periods.map(({ label, value }) => (
                                         <button
                                             key={value}
-                                            className="m-2 px-1 btn btn-primary btn-sm text-white"
+                                            className="m-2 p-1 rounded btn btn-primary btn-sm text-white"
                                             style={{
                                                 backgroundColor:
                                                     period !== undefined &&
@@ -96,10 +108,25 @@ export function HistoricalGraphWrapper() {
                                 </div>
                             </div>
                             <ResponsiveContainer width="100%" height={400}>
-                                <LineChart data={categoryPrices}>
+                                <LineChart
+                                    data={categoryPrices}
+                                    margin={{
+                                        top: 20,
+                                        right: 30,
+                                        left: 20,
+                                        bottom: 5,
+                                    }}
+                                >
                                     <XAxis dataKey="date" />
-                                    <YAxis />
-                                    <Tooltip />
+                                    <YAxis tickFormatter={formatCurrency} />
+                                    <Tooltip
+                                        formatter={(value) =>
+                                            formatCurrency(value)
+                                        }
+                                        labelFormatter={(label) =>
+                                            formatDate(label, locale)
+                                        }
+                                    />
                                     <Line
                                         type="monotone"
                                         dataKey="price"
