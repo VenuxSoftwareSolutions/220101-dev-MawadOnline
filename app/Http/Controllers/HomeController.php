@@ -82,7 +82,9 @@ class HomeController extends Controller
                 ->orderBy('id', 'desc')->limit(12)->get();
         });
 
-        return view('frontend.'.get_setting('homepage_select').'.partials.newest_products_section', compact('newest_products'));
+        $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.newest_products_section';
+
+        return view($viewPath, compact('newest_products'));
     }
 
     public function load_featured_section()
@@ -97,7 +99,9 @@ class HomeController extends Controller
     {
         $viewPath = 'frontend.'.get_setting('homepage_select').'.partials.best_selling_section';
 
-        return view($viewPath);
+        $best_selling_products = get_best_selling_products(20);
+
+        return view($viewPath, compact("best_selling_products"));
     }
 
     public function load_auction_products_section()
@@ -169,11 +173,14 @@ class HomeController extends Controller
     public function cart_login(Request $request)
     {
         $user = null;
-        if ($request->get('phone') != null) {
+        /* if ($request->get('phone') != null) {
             $user = User::whereIn('user_type', ['customer', 'seller'])->where('phone', "+{$request['country_code']}{$request['phone']}")->first();
         } elseif ($request->get('email') != null) {
             $user = User::whereIn('user_type', ['customer', 'seller'])->where('email', $request->email)->first();
-        }
+        } */
+        $user = User::whereIn('user_type', ['customer', 'seller'])
+        ->where('email', $request->email)
+        ->first();
 
         if ($user != null) {
             if (Hash::check($request->password, $user->password)) {
