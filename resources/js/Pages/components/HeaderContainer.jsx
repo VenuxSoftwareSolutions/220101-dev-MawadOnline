@@ -44,7 +44,7 @@ export function HeaderContainer() {
                         }}
                         onClick={() => handleFilterChange("avg")}
                     >
-                        Avg. Price
+                        Average Price
                     </button>
                     <button
                         className="my-3 btn btn-primary btn-sm text-white"
