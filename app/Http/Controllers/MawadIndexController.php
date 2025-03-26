@@ -23,6 +23,7 @@ class MawadIndexController extends Controller
         $top10CategoriesEvolution = $this->getTopCategoriesEvolutionInLastDays($default_period, $filter);
         $top10Categories = $this->getTop10CategoriesInLastDays($default_period);
 
+        $defaultCurrency = get_system_default_currency();
         $categoryId = $request->query('category_id', $top10Categories[0]->id);
 
         $categoryPrices = $this->getPriceEvolution($categoryId, $period, $filter);
@@ -32,7 +33,9 @@ class MawadIndexController extends Controller
             "top10Categories" => $top10Categories,
             "top10CategoriesEvolution" => $top10CategoriesEvolution,
             "categoryPrices" => $categoryPrices,
-            "filter" => $filter
+            "filter" => $filter,
+            "defaultCurrency" => $defaultCurrency->symbol,
+            "language" => app()->getLocale()
         ]);
     }
 
