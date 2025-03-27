@@ -50,7 +50,7 @@ class StoreBusinessInfoRequest extends FormRequest
             'state' => 'nullable|exists:emirates,id',
             'area_id' => 'nullable|exists:areas,id',
             'street' => 'nullable|string|max:128|regex:/\D/',
-            'building' => 'nullable|string|max:64|regex:/\D/',
+            'building' => 'nullable|string|max:64',
             'unit' => 'nullable|string|max:64',
             'po_box' => 'nullable|string|max:32',
             'landline' => 'nullable|string|max:16',
