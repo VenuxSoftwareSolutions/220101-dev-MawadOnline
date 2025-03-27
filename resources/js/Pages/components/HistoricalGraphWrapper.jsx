@@ -22,9 +22,12 @@ export function HistoricalGraphWrapper() {
 
     const locale = language || "en";
     const periods = [
-        { label: "7D", value: "1w" },
-        { label: "2W", value: "2w" },
-        { label: "1M", value: "1m" },
+        { label: "7D", value: "1w", isShown: true },
+        { label: "2W", value: "2w", isShown: true },
+        { label: "1M", value: "1m", isShown: true },
+        { label: "3M", value: "3m", isShown: false },
+        { label: "6M", value: "6m", isShown: false },
+        { label: "1Y", value: "1y", isShown: false },
     ];
 
     const { category_id, period } = Object.fromEntries(
@@ -87,24 +90,31 @@ export function HistoricalGraphWrapper() {
                                     </select>
                                 </div>
                                 <div className="col d-flex align-items-center justify-content-end">
-                                    {periods.map(({ label, value }) => (
-                                        <button
-                                            key={value}
-                                            className="m-2 p-1 rounded btn btn-primary btn-sm text-white"
-                                            style={{
-                                                backgroundColor:
-                                                    period !== undefined &&
-                                                    period === value
-                                                        ? "var(--primary)"
-                                                        : "#e4aa8f",
-                                            }}
-                                            onClick={() =>
-                                                handlePeriodFilterChange(value)
-                                            }
-                                        >
-                                            {label}
-                                        </button>
-                                    ))}
+                                    {periods.map(
+                                        ({ label, value, isShown }) => {
+                                            return isShown === true ? (
+                                                <button
+                                                    key={value}
+                                                    className="m-2 p-1 rounded btn btn-primary btn-sm text-white"
+                                                    style={{
+                                                        backgroundColor:
+                                                            period !==
+                                                                undefined &&
+                                                            period === value
+                                                                ? "var(--primary)"
+                                                                : "#e4aa8f",
+                                                    }}
+                                                    onClick={() =>
+                                                        handlePeriodFilterChange(
+                                                            value
+                                                        )
+                                                    }
+                                                >
+                                                    {label}
+                                                </button>
+                                            ) : null;
+                                        }
+                                    )}
                                 </div>
                             </div>
                             <ResponsiveContainer width="100%" height={400}>
