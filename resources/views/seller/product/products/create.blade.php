@@ -903,7 +903,8 @@
                                     <!-- Reprocess Button -->
                                     <div class="mt-4">
                                         <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
-                                                onclick="reprocessFailedDocs()">
+                                        id="reprocessDocBtn" onclick="reprocessFailedDocs()">
+                                                
                                             Re-process Failed Documents
                                         </button>
                                     </div>
@@ -6057,10 +6058,6 @@
             $("#smartbulk-4").hide();
             $("#smartbulk-3").show();
         });
-        $("#nextDocBtn").click(function() {
-            $("#smart-doc").hide();
-            $("#smartbulk-5").show();
-        });
         $("#prevDocBtn").click(function() {
             $("#smart-doc").hide();
             $("#smart-image").show();
@@ -6468,6 +6465,271 @@
             return path;
     }
 
+    const docTableBody = document.querySelector('#docErrorsTable tbody');
+    let docErrors = [];
+
+    function addToDocErrorsTable(errorRecord) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${errorRecord.dispalyFilePath}</td>
+        <td>${errorRecord.error}</td>
+    `;
+    
+    if (errorRecord.errorCode == -30) {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.readOnly = true;
+        input.dataset.errorIndex = docErrors.length - 1;
+        
+        input.addEventListener("click", async function () {
+            const { value: userInput } = await Swal.fire({
+                title: 'Enter Product SKU',
+                input: 'text',
+                inputAttributes: { autocapitalize: 'off' },
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                showLoaderOnConfirm: true,
+                preConfirm: (input) => {
+                    if (!input) {
+                        Swal.showValidationMessage('SKU cannot be empty');
+                    }
+                    return input;
+                }
+            });
+
+            if (userInput) {
+                input.value = userInput;
+                docErrors[input.dataset.errorIndex].userSetSku = userInput;
+            }
+        });            
+        
+        row.appendChild(document.createElement("td")).appendChild(input);
+    }
+    docTableBody.appendChild(row);
+    updateDocReprocessButton();
+}
+
+    function clearDocErrorsTable() {
+    docTableBody.innerHTML = '';
+    updateDocReprocessButton();
+}
+
+    // Document Processing Logic
+    const allowedDocTypes = ["application/pdf"];
+
+    document.getElementById("docFolderInput").addEventListener("change", function(event) {
+    const files = event.target.files;
+    processDocFiles(files);
+});
+
+    async function processDocFiles(files) {
+    clearDocErrorsTable();
+    docErrors = [];            
+    updateDocReprocessButton();
+    
+    Swal.fire({
+        title: 'Processing Documents...',
+        html: `0/${files.length} files processed`,
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    let processedCount = 0;
+    for (const file of files) {
+        if (allowedDocTypes.includes(file.type)) {
+            await uploadDoc(file, null);
+            processedCount++;
+            Swal.getHtmlContainer().innerHTML = 
+                `${processedCount}/${files.length} files processed`;
+        }
+    }
+
+    Swal.close();
+    if (docErrors.length === 0) {
+        showSuccess('All documents processed successfully!');
+    }
+}
+
+    async function reprocessFailedDocs() {
+    const { isConfirmed } = await Swal.fire({
+        title: 'Reprocess failed documents?',
+        text: 'This will attempt to upload all failed files again',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Reprocess'
+    });
+    
+    if (!isConfirmed) return;
+
+    clearDocErrorsTable();
+    const errorsCopy = _.cloneDeep(docErrors);
+    docErrors = [];
+    updateDocReprocessButton();
+    
+    Swal.fire({
+        title: 'Reprocessing...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    for (const errRec of errorsCopy) {
+        await uploadDoc(errRec.file, errRec.userSetSku);
+    }
+    
+    Swal.close();
+    if (docErrors.length === 0) {
+        Swal.fire({
+            icon: 'success',
+            title: 'All errors resolved!',
+            timer: 2000
+        });
+    }
+    updateDocReprocessButton();
+}
+
+    function updateDocReprocessButton() {
+    const reprocessBtn = document.getElementById('reprocessDocBtn');
+    reprocessBtn.disabled = docErrors.length === 0;
+}
+
+    async function uploadDoc(file, userSetSku) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+
+        reader.onload = async function(event) {
+            const blob = new Blob([event.target.result], { type: "application/pdf" });
+            await uploadDocFile(blob, file, userSetSku);
+            resolve();
+        };
+
+        reader.onerror = (errorEvent) => {
+            showError('File read error: ' + errorEvent.target.error.name);
+            reject(errorEvent);
+        };
+    });
+}
+
+    async function uploadDocFile(blob, file, userSetSku) {
+    let errorRecord = null;
+    
+    try {
+        if (blob.size > 2 * 1024 * 1024) {
+            throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
+        }
+
+        const headers = {
+            "Content-Type": "application/octet-stream",
+            "job-id": "c4ca4238-a0b9-2382-0dcc-509a6f75849b",
+            "vendor-user-id": 337,
+            "file-name": file.name,
+            "file-path": file.webkitRelativePath,
+            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+        };
+
+        if (userSetSku != null) {
+            headers["user-set-sku"] = userSetSku;
+        }
+
+        const response = await fetch("{{ route('seller.bulk.upload-doc') }}", {
+            method: "POST",
+            headers: headers,
+            body: blob
+        });
+
+        const resp = await response.json();
+        
+        if (resp.success !== true) {
+            errorRecord = {
+                dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                file: file,
+                error: resp.message || 'Unknown error',
+                errorCode: resp.code,
+                userSetSku: userSetSku
+            };
+        }
+    } catch (err) {
+        console.error("Upload failed:", err);
+        errorRecord = {
+            dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+            file: file,
+            error: err.message,
+            errorCode: -1,
+            userSetSku: userSetSku
+        };
+    } finally {
+        if (errorRecord) {
+            docErrors.push(errorRecord);
+            addToDocErrorsTable(errorRecord);
+        }
+    }
+}
+
+    // Document Next Step Handler
+    document.getElementById('nextDocBtn').addEventListener('click', async function() {
+        if (docErrors.length > 0) {
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'Unresolved Issues',
+                html: `You have ${docErrors.length} unresolved errors.`,
+                showDenyButton: true,
+                confirmButtonText: 'Stay and Fix Errors',
+                denyButtonText: 'Proceed Anyway',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel'
+            });
+
+            if (result.isDenied) {
+                const confirmProceed = await Swal.fire({
+                    title: 'Proceed with Errors?',
+                    html: `You're about to proceed with ${docErrors.length} unresolved issues.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Continue',
+                    cancelButtonText: 'Go Back'
+                });
+
+                if (confirmProceed.isConfirmed) {
+                    Swal.fire({
+                        title: 'Transitioning...',
+                        allowOutsideClick: false,
+                        timer: 1000,
+                        didOpen: () => Swal.showLoading(),
+                        willClose: () => {
+                            $("#smart-doc").hide();
+                            $("#smartbulk-5").show();
+                        }
+                    });
+                }
+                return;
+            }
+            return;
+        }
+
+        const confirm = await Swal.fire({
+            title: 'Finalize Document Uploads?',
+            text: 'You won\'t be able to modify these uploads after proceeding',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Continue'
+        });
+
+        if (confirm.isConfirmed) {
+            Swal.fire({
+                title: 'Finalizing Uploads...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                willClose: () => {
+                    $("#smart-doc").hide();
+                    $("#smartbulk-5").show();
+                }
+            });
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateDocReprocessButton();
+    });
 
 
     document.getElementById('next4Btn').addEventListener('click', function() {

@@ -249,4 +249,31 @@ class SmartBulkUploadController extends Controller
             ], 503);
         }
     }
+    public function uploadDoc(Request $request)
+    {
+        try {
+            $headers = array_filter($request->headers->all(), function($key) {
+                return !in_array(strtolower($key), ['x-csrf-token', 'host']);
+            }, ARRAY_FILTER_USE_KEY);
+
+            $content = $request->getContent();
+
+            $response = Http::withHeaders($headers)
+                ->withBody($content, 'application/octet-stream')
+                ->post("{$this->apiUrl}/bulkupload/uploadProductDoc");
+
+            return response()->json(
+                $response->json(),
+                $response->status()
+            );
+
+        } catch (\Exception $e) {
+            Log::error('Bulk document upload failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Upload service unavailable',
+                'code' => -1
+            ], 503);
+        }
+    }
 }
