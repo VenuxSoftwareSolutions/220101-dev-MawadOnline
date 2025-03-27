@@ -202,29 +202,29 @@ class MawadIndexController extends Controller
                 'categories.id',
                 'categories.name AS subcategory',
                 'parent_categories.name as parentCategory',
-                DB::raw('AVG(products.unit_price) AS avgPrice'),
-                DB::raw('MIN(products.unit_price) AS lowestPrice'),
+                DB::raw('AVG(revisions.mwd_new_value) AS avgPrice'),
+                DB::raw('MIN(revisions.mwd_new_value) AS lowestPrice'),
                 DB::raw('MAX(revisions.created_at) AS last_revision_date'),
                 DB::raw('CONCAT("[",
                     GROUP_CONCAT(
-                        revisions.new_value ORDER BY revisions.created_at DESC SEPARATOR ","
+                        revisions.mwd_new_value ORDER BY revisions.created_at DESC SEPARATOR ","
                     ),
                 "]") AS trend'),
                 /* percentage change = 100.0 x (New Price - Old Price) / (Old Price) */
                 DB::raw('(
-                    ( (SELECT new_value FROM revisions
+                    ( (SELECT mwd_new_value FROM revisions
                        WHERE revisions.revisionable_id = products.id
                          AND revisions.key = "unit_price"
                        ORDER BY revisions.created_at DESC
                        LIMIT 1)
                     -
-                    (SELECT old_value FROM revisions
+                    (SELECT mwd_old_value FROM revisions
                      WHERE revisions.revisionable_id = products.id
                        AND revisions.key = "unit_price"
                      ORDER BY revisions.created_at DESC
                      LIMIT 1)
                     ) /
-                    (SELECT old_value FROM revisions
+                    (SELECT mwd_old_value FROM revisions
                      WHERE revisions.revisionable_id = products.id
                        AND revisions.key = "unit_price"
                      ORDER BY revisions.created_at DESC
