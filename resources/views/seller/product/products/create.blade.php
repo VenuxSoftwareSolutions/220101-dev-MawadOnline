@@ -2173,6 +2173,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js"
         integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pica/8.0.0/pica.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
@@ -6099,6 +6101,15 @@
                     confirmButtonText: 'Okay'
                 })
     }
+    function showWarning(message) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Notice',
+        text: message,
+        confirmButtonText: 'OK'
+    });
+}
+
     document.getElementById('upload-btn').addEventListener('click', function() {
         document.getElementById('file-upload').click();
     });
@@ -6127,7 +6138,295 @@
 
             fileNameDisplay.textContent = file.name;
     });
-    
+
+    //image folder upload
+    const tableBody = document.querySelector('#errorsTable tbody');
+    let errors = [];
+
+    function addToErrorsTable(errorRecord) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${errorRecord.dispalyFilePath}</td>
+            <td>${errorRecord.error}</td>
+        `;
+        
+        if (errorRecord.errorCode == -30) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.readOnly = true;
+            input.dataset.errorIndex = errors.length - 1;
+            
+            input.addEventListener("click", async function () {
+                const { value: userInput } = await Swal.fire({
+                    title: 'Enter Product SKU',
+                    input: 'text',
+                    inputAttributes: { autocapitalize: 'off' },
+                    showCancelButton: true,
+                    confirmButtonText: 'Save',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (input) => {
+                        if (!input) {
+                            Swal.showValidationMessage('SKU cannot be empty');
+                        }
+                        return input;
+                    }
+                });
+
+                if (userInput) {
+                    input.value = userInput;
+                    errors[input.dataset.errorIndex].userSetSku = userInput;
+                }
+            });            
+            
+            row.appendChild(document.createElement("td")).appendChild(input);
+        }
+        tableBody.appendChild(row);
+    }
+
+    function clearErrorsTable() {
+        tableBody.innerHTML = '';
+    }
+
+    // Image Processing Logic
+    const pica = window.pica();
+    const MAX_DIM = 1280;
+    const allowedTypes = [
+        "image/jpeg", "image/png", "image/gif", "image/bmp",
+        "image/tiff", "image/webp", "image/heif", "image/heic", "image/avif"
+    ];        
+
+    document.getElementById("folderInput").addEventListener("change", function(event) {
+        const files = event.target.files;
+        processFiles(files);
+    });
+
+    async function processFiles(files) {
+        clearErrorsTable();
+        errors = [];            
+        Swal.fire({
+            title: 'Processing Files...',
+            html: `0/${files.length} files processed`,
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        let processedCount = 0;
+        for (const file of files) {
+            if (allowedTypes.includes(file.type)) {
+                await resizeAndUpload(file, null);
+                processedCount++;
+                Swal.getHtmlContainer().innerHTML = 
+                    `${processedCount}/${files.length} files processed`;
+            }
+        }
+
+        Swal.close();
+        if (errors.length === 0) {
+            showSuccess('All files processed successfully!');
+        }
+    }
+
+    async function reprocessFailed() {
+        const { value: confirm } = await Swal.fire({
+            title: 'Reprocess Errors?',
+            text: 'This will attempt to upload all failed files again',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Reprocess'
+        });
+
+        if (confirm) {
+            clearErrorsTable();
+            const errorsCopy = _.cloneDeep(errors);
+            errors = [];            
+            for (const errRec of errorsCopy) {
+                await resizeAndUpload(errRec.file, errRec.userSetSku);
+            }
+        }
+    }        
+
+    function resizeAndUpload(file, userSetSku) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+
+                img.onload = function() {                    
+                    let imgCanvas = document.createElement("canvas");
+                    let ctx = imgCanvas.getContext("2d");
+
+                    imgCanvas.width = img.width;
+                    imgCanvas.height = img.height;
+                    ctx.drawImage(img, 0, 0, imgCanvas.width, imgCanvas.height);
+
+                    processImage(imgCanvas, file, userSetSku, resolve, reject);
+                };
+            };
+
+            reader.onerror = (errorEvent) => {
+                showError('File read error: ' + errorEvent.target.error.name);
+                reject(errorEvent);
+            };
+        });
+    }
+
+    function processImage(imgCanvas, file, userSetSku, resolve, reject) {                    
+        let newWidth = imgCanvas.width - 1;
+        let newHeight = imgCanvas.height - 1;
+        
+        let orgSize = imgCanvas.width * imgCanvas.height;
+        if (orgSize > MAX_DIM * MAX_DIM) {
+            let scalingFactor = Math.min(MAX_DIM / imgCanvas.width, MAX_DIM / imgCanvas.height);
+            newWidth = Math.floor(imgCanvas.width * scalingFactor);
+            newHeight = Math.floor(imgCanvas.height * scalingFactor);
+        }
+
+        const newCanvas = document.createElement("canvas");
+        newCanvas.width = newWidth;
+        newCanvas.height = newHeight;
+
+        pica.resize(imgCanvas, newCanvas)
+          .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
+          .then(blob => uploadFile(blob, file, userSetSku))
+          .then(resolve)
+          .catch(reject);           
+    }
+
+    async function uploadFile(blob, file, userSetSku) {
+        let jpgFilename = toJpgFilename(file.name);
+        let errorRecord = null;
+        
+        try {
+            if (blob.size > 2 * 1024 * 1024) {
+                throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
+            }
+
+            // Modified headers to match Laravel endpoint expectations
+            const formData = new FormData();
+            formData.append('image', blob, jpgFilename);
+            formData.append('file_path', file.webkitRelativePath);
+            if (userSetSku) formData.append('user_set_sku', userSetSku);
+
+            // Added required parameters for Java backend validation
+            formData.append('job_id', 'c4ca4238-a0b9-2382-0dcc-509a6f75849b');
+            formData.append('vendor_id', 337);
+
+            const response = await fetch("{{ route('seller.bulk.upload-image') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: formData
+            });
+
+            const resp = await response.json();
+            
+            // Maintain original error handling structure
+            if (!resp.success) {
+                errorRecord = {
+                    dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                    file: file,
+                    error: resp.message || 'Unknown error',
+                    errorCode: resp.code || -1,
+                    userSetSku: userSetSku
+                };
+            }
+        } catch (err) {
+            console.error("Upload failed:", err);
+            errorRecord = {
+                dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                file: file,
+                error: err.message,
+                errorCode: -1,
+                userSetSku: userSetSku
+            };
+        } finally {
+            if (errorRecord) {
+                errors.push(errorRecord);
+                addToErrorsTable(errorRecord);
+            }
+        }
+    }
+    // Next Step Handler
+    document.getElementById('nextImageBtn').addEventListener('click', async function() {
+        if (errors.length > 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Pending Issues',
+                html: `You have ${errors.length} unresolved errors.<br>Please resolve them before proceeding.`,
+                confirmButtonText: 'Review Errors'
+            });
+            return;
+        }
+
+        const { value: confirm } = await Swal.fire({
+            title: 'Finalize Uploads?',
+            text: 'You won\'t be able to modify these uploads after proceeding',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Continue'
+        });
+
+        if (confirm) {
+            Swal.fire({
+                title: 'Finalizing Uploads...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                const response = await fetch("{{ route('seller.bulk.finalize-images') }}", {
+                    method: 'POST',
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        job_id: "81dc9bdb-52d0-4dc2-0036-dbd8313ed055",
+                        vendor_id: 337
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'All images processed!',
+                        html: `${data.processed_count} images uploaded successfully`
+                    });
+                    $("#smart-image").hide();
+                    $("#smart-doc").show();
+                } else {
+                    showError(data.message || 'Finalization failed');
+                }
+            } catch (error) {
+                showError('Failed to finalize uploads: ' + error.message);
+            }
+        }
+    });
+
+
+    // Utility Functions
+    function getDirectoryPath(fullPath) {
+        if (!fullPath.includes('/')) return '';
+        const parts = fullPath.split('/');
+        parts.pop(); 
+        return parts.join('/') + '/';
+    }
+
+    function toJpgFilename(filename) {
+        return filename.replace(/(_converted)?(\.[^.]+)?$/, '_converted.jpg');
+    }    
+
+    function removeFirstFolder(path) {
+        return path.replace(/^[\/\\]?[^\/\\]+[\/\\]?/, '').replace(/_converted\.\w+$/, '');
+    }
+
+
     document.getElementById('next4Btn').addEventListener('click', function() {
         const fileInput = document.getElementById('file-upload');
         const file = fileInput.files[0];
@@ -6441,6 +6740,7 @@
         });
     });
 
+    
     function generateJobId() {
         let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; 
         sessionStorage.setItem('job_id', jobId);
