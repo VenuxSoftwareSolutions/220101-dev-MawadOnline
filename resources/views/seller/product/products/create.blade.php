@@ -797,11 +797,13 @@
                     
                                     <div class="mt-4">
                                         <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
-                                                onclick="reprocessFailed()">
+                                                id="reprocessBtn" 
+                                                onclick="reprocessFailed()" 
+                                                disabled>
                                             Re-process Failed Images
                                         </button>
                                     </div>
-                    
+                                                        
                                     <div class="col-12 py-3 d-flex justify-content-start pl-0">
                                         <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prevImageBtn">
                                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -6134,6 +6136,11 @@
 
             fileNameDisplay.textContent = file.name;
     });
+    function updateReprocessButton() {
+        const reprocessBtn = document.getElementById('reprocessBtn');
+        reprocessBtn.disabled = errors.length === 0;
+    }   
+
 
     //image folder upload
     const tableBody = document.querySelector('#errorsTable tbody');
@@ -6177,10 +6184,12 @@
             row.appendChild(document.createElement("td")).appendChild(input);
         }
         tableBody.appendChild(row);
+        updateReprocessButton();
     }
 
     function clearErrorsTable() {
         tableBody.innerHTML = '';
+        updateReprocessButton(); 
     }
 
     // Image Processing Logic
@@ -6198,7 +6207,8 @@
 
     async function processFiles(files) {
         clearErrorsTable();
-        errors = [];            
+        errors = [];  
+        updateReprocessButton();          
         Swal.fire({
             title: 'Processing Files...',
             html: `0/${files.length} files processed`,
@@ -6223,23 +6233,45 @@
     }
 
     async function reprocessFailed() {
-        const { value: confirm } = await Swal.fire({
-            title: 'Reprocess Errors?',
+        const { isConfirmed } = await Swal.fire({
+            title: 'Reprocess failed images?',
             text: 'This will attempt to upload all failed files again',
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Reprocess'
         });
+        
+        if (!isConfirmed) return;
 
-        if (confirm) {
-            clearErrorsTable();
-            const errorsCopy = _.cloneDeep(errors);
-            errors = [];            
-            for (const errRec of errorsCopy) {
-                await resizeAndUpload(errRec.file, errRec.userSetSku);
-            }
+        clearErrorsTable();
+        const errorsCopy = _.cloneDeep(errors);
+        errors = [];
+        updateReprocessButton(); 
+        
+        Swal.fire({
+            title: 'Reprocessing...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        for (const errRec of errorsCopy) {
+            await resizeAndUpload(errRec.file, errRec.userSetSku);
         }
-    }        
+        
+        Swal.close();
+        if (errors.length === 0) {
+            Swal.fire({
+                icon: 'success',
+                title: 'All errors resolved!',
+                timer: 2000
+            });
+        }
+        updateReprocessButton(); 
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateReprocessButton();
+    });
 
     function resizeAndUpload(file, userSetSku) {
         return new Promise((resolve, reject) => {
