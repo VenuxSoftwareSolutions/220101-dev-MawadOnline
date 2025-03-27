@@ -18,10 +18,10 @@ class MawadIndexController extends Controller
 
         $categoriesWithRevisions = $this->getCategoriesWithRevisions();
 
-        $default_period = 7;
+        $defaultPeriod = 7;
 
-        $top10CategoriesEvolution = $this->getTopCategoriesEvolutionInLastDays($default_period, $filter);
-        $top10Categories = $this->getTop10CategoriesInLastDays($default_period);
+        $top10CategoriesEvolution = $this->getTopCategoriesEvolutionInLastDays($defaultPeriod, $filter);
+        $top10Categories = $this->getTop10CategoriesInLastDays($defaultPeriod);
 
         $defaultCurrency = get_system_default_currency();
         $categoryId = $request->query('category_id', $top10Categories[0]->id);
