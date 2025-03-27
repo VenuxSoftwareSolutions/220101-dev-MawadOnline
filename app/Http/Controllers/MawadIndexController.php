@@ -113,8 +113,9 @@ class MawadIndexController extends Controller
                 'c.name AS category_name',
                 'parent.name AS parent_category_name',
                 DB::raw('DATE(revisions.created_at) AS date'),
-                DB::raw('AVG(revisions.mwd_new_value) AS avg_price'),
-                DB::raw('MIN(revisions.mwd_new_value) AS lowest_price')
+                $filter === "avg" ?
+                    DB::raw('AVG(revisions.mwd_new_value) AS price')
+                    : DB::raw('MIN(revisions.mwd_new_value) AS price')
             ])
             ->groupBy('c.id', 'c.name', 'parent.name', 'date')
             ->orderBy('c.id')
@@ -142,8 +143,7 @@ class MawadIndexController extends Controller
                 ];
             }
 
-            $formattedData[$categoryId]['evolution'][$data->date] = $filter === "avg" ?
-                $data->avg_price : $data->lowest_price;
+            $formattedData[$categoryId]['evolution'][$data->date] = $data->price;
         }
 
         foreach ($formattedData as &$categoryData) {
