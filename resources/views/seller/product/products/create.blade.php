@@ -6051,10 +6051,6 @@
             $("#smart-image").hide();
             $("#smartbulk-4").show();
         });
-        $("#nextImageBtn").click(function() {
-            $("#smart-image").hide();
-            $("#smart-doc").show();
-        });
         $("#prev4Btn").click(function() {
             $("#smartbulk-4").hide();
             $("#smartbulk-3").show();
@@ -6304,36 +6300,39 @@
                 throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
             }
 
-            // Modified headers to match Laravel endpoint expectations
-            const formData = new FormData();
-            formData.append('image', blob, jpgFilename);
-            formData.append('file_path', file.webkitRelativePath);
-            if (userSetSku) formData.append('user_set_sku', userSetSku);
+            const headers = {
+                "Content-Type": "application/octet-stream",
+                "job-id": "c4ca4238-a0b9-2382-0dcc-509a6f75849b",
+                "vendor-user-id": 337,
+                "file-name": jpgFilename,
+                "file-path": file.webkitRelativePath,
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            };
 
-            // Added required parameters for Java backend validation
-            formData.append('job_id', 'c4ca4238-a0b9-2382-0dcc-509a6f75849b');
-            formData.append('vendor_id', 337);
+            if (userSetSku != null) {
+                headers["user-set-sku"] = userSetSku;
+            }
+
+
 
             const response = await fetch("{{ route('seller.bulk.upload-image') }}", {
                 method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: formData
+                headers: headers,
+                body: blob
             });
 
             const resp = await response.json();
             
             // Maintain original error handling structure
-            if (!resp.success) {
+            if (resp.success !== true) {
                 errorRecord = {
                     dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
                     file: file,
                     error: resp.message || 'Unknown error',
-                    errorCode: resp.code || -1,
+                    errorCode: resp.code,
                     userSetSku: userSetSku
                 };
-            }
+        }
         } catch (err) {
             console.error("Upload failed:", err);
             errorRecord = {
@@ -6353,16 +6352,46 @@
     // Next Step Handler
     document.getElementById('nextImageBtn').addEventListener('click', async function() {
         if (errors.length > 0) {
-            Swal.fire({
+            const result = await Swal.fire({
                 icon: 'warning',
-                title: 'Pending Issues',
-                html: `You have ${errors.length} unresolved errors.<br>Please resolve them before proceeding.`,
-                confirmButtonText: 'Review Errors'
+                title: 'Unresolved Issues',
+                html: `You have ${errors.length} unresolved errors.`,
+                showDenyButton: true,
+                confirmButtonText: 'Stay and Fix Errors',
+                denyButtonText: 'Proceed Anyway',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel'
             });
-            return;
+
+            if (result.isDenied) {
+                const confirmProceed = await Swal.fire({
+                    title: 'Proceed with Errors?',
+                    html: `You're about to proceed with ${errors.length} unresolved issues.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Continue',
+                    cancelButtonText: 'Go Back'
+                });
+
+                if (confirmProceed.isConfirmed) {
+                    // Final loading indicator before transition
+                    Swal.fire({
+                        title: 'Transitioning...',
+                        allowOutsideClick: false,
+                        timer: 1000,
+                        didOpen: () => Swal.showLoading(),
+                        willClose: () => {
+                            $("#smart-image").hide();
+                            $("#smart-doc").show();
+                        }
+                    });
+                }
+                return;
+            }
+            return; 
         }
 
-        const { value: confirm } = await Swal.fire({
+        const confirm = await Swal.fire({
             title: 'Finalize Uploads?',
             text: 'You won\'t be able to modify these uploads after proceeding',
             icon: 'question',
@@ -6370,42 +6399,16 @@
             confirmButtonText: 'Yes, Continue'
         });
 
-        if (confirm) {
+        if (confirm.isConfirmed) {
             Swal.fire({
                 title: 'Finalizing Uploads...',
                 allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-
-            try {
-                const response = await fetch("{{ route('seller.bulk.finalize-images') }}", {
-                    method: 'POST',
-                    headers: {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        job_id: "81dc9bdb-52d0-4dc2-0036-dbd8313ed055",
-                        vendor_id: 337
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'All images processed!',
-                        html: `${data.processed_count} images uploaded successfully`
-                    });
+                didOpen: () => Swal.showLoading(),
+                willClose: () => {
                     $("#smart-image").hide();
                     $("#smart-doc").show();
-                } else {
-                    showError(data.message || 'Finalization failed');
                 }
-            } catch (error) {
-                showError('Failed to finalize uploads: ' + error.message);
-            }
+            });
         }
     });
 
@@ -6419,12 +6422,20 @@
     }
 
     function toJpgFilename(filename) {
-        return filename.replace(/(_converted)?(\.[^.]+)?$/, '_converted.jpg');
-    }    
+        return filename.includes(".") 
+            ? filename.replace(/\.\w+$/, ".jpg")
+            : filename + ".jpg";
+    }
+
 
     function removeFirstFolder(path) {
-        return path.replace(/^[\/\\]?[^\/\\]+[\/\\]?/, '').replace(/_converted\.\w+$/, '');
+            path = path.trim();
+            path = path.replace(/^[/\\]+/, ""); 
+            path = path.replace(/^[^/\\]+[/\\]/, "");
+            path = path.replace(/^[/\\]+/, ""); 
+            return path;
     }
+
 
 
     document.getElementById('next4Btn').addEventListener('click', function() {

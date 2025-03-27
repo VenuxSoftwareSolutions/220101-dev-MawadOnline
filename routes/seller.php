@@ -98,8 +98,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::post('/submit-job', [SmartBulkUploadController::class, 'submitJob'])->name('job.submit');
     Route::post('/bulk/upload-image', [SmartBulkUploadController::class, 'uploadImage'])
      ->name('bulk.upload-image');
-    Route::post('/bulk/finalize-images', [SmartBulkUploadController::class, 'finalizeImages'])
-     ->name('bulk.finalize-images');
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {

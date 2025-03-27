@@ -224,105 +224,29 @@ class SmartBulkUploadController extends Controller
     }
     public function uploadImage(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'image' => 'required|file|image|max:2048',
-            'file_path' => 'required|string|max:512',
-            'user_set_sku' => 'nullable|string|max:255'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
         try {
-            $javaEndpoint = "{$this->apiUrl}/bulkupload/uploadProductImage";
-            $file = $request->file('image');
-            $jpgFilename = $this->toJpgFilename($file->getClientOriginalName());
-            $originalPath = $this->normalizeCsvPath($request->input('file_path'));
-            $fullJavaPath = pathinfo($originalPath, PATHINFO_DIRNAME) . '/' . $jpgFilename;
+            $headers = array_filter($request->headers->all(), function($key) {
+                return !in_array(strtolower($key), ['x-csrf-token', 'host']);
+            }, ARRAY_FILTER_USE_KEY);
 
-            $headers = [
-                "Content-Type" => "application/octet-stream",
-                "job-id" => "81dc9bdb-52d0-4dc2-0036-dbd8313ed055",
-                "vendor-user-id" => 337,
-                "file-name" => $jpgFilename,
-                "file-path" => $fullJavaPath
-            ];
-            $csvStylePath = $headers['file-path'] . '/' . $jpgFilename;
-            \Log::debug('Normalized CSV path', [
-                'full_path' => $csvStylePath,
-                'match_attempt' => "Looking for: " . ltrim($csvStylePath, '/')
-            ]);
-
-            if ($request->filled('user_set_sku')) {
-                $headers["user-set-sku"] = $request->input('user_set_sku');
-            }
-            \Log::debug('Sending to Java API', [
-                'headers' => $headers,
-                'filename' => $jpgFilename,
-                'file_path' => $request->input('file_path')
-
-            ]);
-
+            $content = $request->getContent();
 
             $response = Http::withHeaders($headers)
-                ->withBody(file_get_contents($file->getRealPath()), 'application/octet-stream')
-                ->post($javaEndpoint);
-            \Log::debug('Java API response', [
-                'status' => $response->status(),
-                'body' => $response->body()
-            ]);
+                ->withBody($content, 'application/octet-stream')
+                ->post("{$this->apiUrl}/bulkupload/uploadProductImage");
 
-            $responseData = $response->json();
-
-            if (!$response->successful() || $responseData['success'] !== true) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $responseData['message'] ?? 'Image validation failed',
-                    'code' => $responseData['code'] ?? -1
-                ], 400);
-            }
-
-            $path = Storage::putFileAs(
-                'bulk-uploads/' . $headers['job-id'],
-                $file,
-                $this->normalizeCsvPath($request->input('file_path'))
+            return response()->json(
+                $response->json(),
+                $response->status()
             );
 
-            return response()->json([
-                'success' => true,
-                'path' => $path,
-                'message' => 'Image uploaded and validated successfully'
-            ]);
-
         } catch (\Exception $e) {
-            \Log::error('Upload failed: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-
+            Log::error('Bulk image upload failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Upload failed: ' . $e->getMessage(),
+                'message' => 'Upload service unavailable',
                 'code' => -1
-            ], 500);
+            ], 503);
         }
-    }
-
-    private function toJpgFilename($filename)
-    {
-        $base = pathinfo($filename, PATHINFO_FILENAME);
-        return $base . '.jpg';
-    }
-    private function normalizeCsvPath($path)
-    {
-        $path = preg_replace('/^[^\/]+\//', '', $path);
-
-        $path = str_replace('\\', '/', $path);
-
-        $path = preg_replace('/(_converted)+\.jpg$/i', '.jpg', $path);
-
-        return trim($path, "/ \t\n\r\0\x0B");
     }
 }
