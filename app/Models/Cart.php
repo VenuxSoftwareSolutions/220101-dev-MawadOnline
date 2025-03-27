@@ -12,6 +12,10 @@ class Cart extends Model
 
     protected $with = ['user', 'product', 'address'];
 
+    protected $casts = [
+        "is_sample" => "boolean"
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

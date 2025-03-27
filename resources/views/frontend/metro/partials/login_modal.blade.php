@@ -12,15 +12,15 @@
                     <form class="form-default" role="form" action="{{ route('cart.login.submit') }}" method="POST">
                         @csrf
 
-                        @if (addon_is_activated('otp_system'))
+                        {{-- @if (addon_is_activated('otp_system')) --}}
                             <!-- Phone -->
-                            <div class="form-group phone-form-group mb-1">
+{{--                             <div class="form-group phone-form-group mb-1">
                                 <input type="tel" id="phone-code"
                                     class="form-control{{ $errors->has('phone') ? ' is-invalid' : '' }}"
                                     value="{{ old('phone') }}" placeholder="" name="phone" autocomplete="off">
                             </div>
-                            <!-- Country Code -->
-                            <input type="hidden" name="country_code" value="">
+ --}}                            <!-- Country Code -->
+                            {{-- <input type="hidden" name="country_code" value=""> --}}
                             <!-- Email -->
                             <div class="form-group email-form-group mb-1 d-none">
                                 <input type="email"
@@ -34,11 +34,11 @@
                                 @endif
                             </div>
                             <!-- Use Email Instead -->
-                            <div class="form-group text-right">
+                           {{--  <div class="form-group text-right">
                                 <button class="btn btn-link p-0 text-primary" type="button"
                                     onclick="toggleEmailPhone(this)"><i>*{{ translate('Use Email Instead') }}</i></button>
-                            </div>
-                        @else
+                            </div> --}}
+                        {{-- @else --}}
                             <!-- Email -->
                             <div class="form-group">
                                 <input type="email"
@@ -51,7 +51,7 @@
                                     </span>
                                 @endif
                             </div>
-                        @endif
+                        {{-- @endif --}}
 
                         <!-- Password -->
                         <div class="form-group">

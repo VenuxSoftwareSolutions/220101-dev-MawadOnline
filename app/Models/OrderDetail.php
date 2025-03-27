@@ -52,4 +52,9 @@ class OrderDetail extends Model
     {
         return $this->hasMany(StockDetails::class, 'order_detail_id');
     }
+
+    public function commissionVat()
+    {
+        return $this->hasOne(CommissionVat::class, "sub_order_id");
+    }
 }

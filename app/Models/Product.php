@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-    use EnhancedRevisionableTrait, SoftDeletes;
+    use EnhancedRevisionableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -176,6 +177,7 @@ class Product extends Model
         static::deleting(function ($product) {
             // Automatically delete related stock summaries
             $product->stockSummaries()->delete();
+            $product->shippingRelation()->delete();
         });
     }
 
@@ -330,7 +332,11 @@ class Product extends Model
 
     public function scopeIsApprovedPublished($query)
     {
-        return $query->where('approved', '1')->where('published', 1);
+        return $query->where('products.approved', '1')->where('published', 1);
+    }
+    public function scopeNonAuction($query)
+    {
+        return $query->where('auction_product', 0);
     }
 
     public function getChildrenProducts()
@@ -543,7 +549,20 @@ class Product extends Model
 
     public function getShipping()
     {
-        return Shipping::where('product_id', $this->id)->get();
+        return Shipping::where('product_id', $this->id)
+                        // when from != to => it's a product shipping
+                       ->whereColumn('from_shipping', '!=', 'to_shipping')
+                       ->get();
+    }
+
+    public function getSampleShipping()
+    {
+        return Shipping::where('product_id', $this->id)
+                        // when from = to = 1 => it's a sample shipping
+                       ->where('from_shipping', 1)
+                       ->where('to_shipping', 1)
+                       ->where("is_sample", true)
+                       ->get();
     }
 
     public function getIdsChildrens()
@@ -623,11 +642,22 @@ class Product extends Model
         }
     }
 
-    public function shippingOptions($qty)
+    public function shippingOptions($qty, $is_sample = false)
     {
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
+            ->where("is_sample", $is_sample)
+            ->get();
+    }
+
+    public function thirdPartyShippingOptions($qty, $is_sample = false)
+    {
+        return Shipping::where('product_id', $this->id)
+            ->where('from_shipping', '<=', $qty)
+            ->where('to_shipping', '>=', $qty)
+            ->where("shipper", "third_party")
+            ->where("is_sample", $is_sample)
             ->first();
     }
 
@@ -677,11 +707,11 @@ class Product extends Model
 
     public function getSampleDetails()
     {
-        if ($this->sample_price === 0) {
+        if ($this->sample_price === 0 || $this->sample_available === 0) {
             return [];
         }
 
-        $tableName = (new Product)->getTable();
+        $tableName = (new Product())->getTable();
         $columns = DB::getSchemaBuilder()->getColumnListing($tableName);
 
         $sampleColumns = array_filter($columns, function ($column) {

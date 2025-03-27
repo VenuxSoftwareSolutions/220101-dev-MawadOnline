@@ -10,7 +10,7 @@
                             <div class="col-md-5 fw-600">{{ translate('Product') }}</div>
                             <div class="col fw-600">{{ translate('Stock Status') }}</div>
                             <div class="col fw-600">{{ translate('Price') }}</div>
-                            <div class="col fw-600">{{ translate('Tax') }}</div>
+                            <div class="col fw-600 d-none">{{ translate('Tax') }}</div>
                             <div class="col fw-600">{{ translate('Subtotal') }}</div>
                             <div class="col-auto fw-600">{{ translate('Remove') }}</div>
                         </div>
@@ -62,8 +62,8 @@
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Stock Status') }}</span>
                                             <span
-                                                class="fw-700 fs-14 {{ $data[$key]["is_sample"] === false && $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $data[$key]["is_sample"] === true ? __("Sample available") : $data[$key]["stockStatus"] }}</span>
-                                            @if ($data[$key]["is_sample"] === false && $data[$key]["stockAlert"])
+                                                class="fw-700 fs-14 {{ isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === true ? __("Sample available") : $data[$key]["stockStatus"] }}</span>
+                                            @if (isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && $data[$key]["stockAlert"])
                                                 <span class="badge badge-warning">{{ $data[$key]["stockAlert"] }}</span>
                                             @endif
                                         </div>
@@ -75,7 +75,7 @@
                                                 class="fw-700 fs-14">{{ cart_product_price($cartItem, $data[$key]["product"], true, false) }}</span>
                                         </div>
                                         <!-- Tax -->
-                                        <div class="col-md col-4 order-3 order-md-0 my-3 my-md-0">
+                                        <div class="d-none col-md col-4 order-3 order-md-0 my-3 my-md-0">
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none">{{ translate('Tax') }}</span>
                                             <span class="fw-700 fs-14">0</span>
@@ -99,7 +99,7 @@
                                 </li>
                             @endforeach
                         </ul>
-                        @if ($data[$key]["is_sample"] === false && count($data[$key]["outOfStockItems"]) > 0)
+                        @if (isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && count($data[$key]["outOfStockItems"]) > 0)
                             <div class="alert alert-warning mt-3">
                                 {{ translate('Some products were out of stock and have been moved to your Wishlist.') }}
                             </div>

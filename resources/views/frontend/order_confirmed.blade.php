@@ -241,7 +241,7 @@
                                                         </td>
                                                     </tr>
                                                     <!-- Tax -->
-                                                    <tr>
+                                                    <tr class="d-none">
                                                         <th class="border-top-0 py-2">{{ translate('Tax') }}</th>
                                                         <td class="text-right border-top-0 pr-0 py-2">
                                                             <span>{{ single_price($order->orderDetails->sum('tax')) }}</span>

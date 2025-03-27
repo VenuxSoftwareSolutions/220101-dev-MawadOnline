@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\CustomerPackageController;
 use App\Http\Controllers\SellerPackageController;
 use App\Http\Controllers\WalletController;
+use App\Models\Cart;
 use App\Models\CombinedOrder;
 use App\Models\Currency;
 use App\Models\CustomerPackage;
@@ -19,7 +20,6 @@ use Session;
 use Stripe\Checkout\Session as StripeSession;
 use Stripe\Stripe;
 use Stripe\StripeClient;
-use App\Models\Cart;
 
 class StripeController extends Controller
 {
@@ -47,7 +47,7 @@ class StripeController extends Controller
             }
         }
 
-        return view('frontend.payment.stripe', compact("amount", "client_reference_id"));
+        return view('frontend.payment.stripe', compact('amount', 'client_reference_id'));
     }
 
     public function create_checkout_session(Request $request)
@@ -72,7 +72,7 @@ class StripeController extends Controller
             }
         }
 
-        Stripe::setApiKey(env('STRIPE_SECRET'));
+        Stripe::setApiKey(config("app.stripe_secret"));
 
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
@@ -130,7 +130,7 @@ class StripeController extends Controller
 
     public function success(Request $request)
     {
-        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $stripe = new StripeClient(config("app.stripe_secret"));
 
         try {
             $paymentIntentId = $request->query('payment_intent');
@@ -140,7 +140,7 @@ class StripeController extends Controller
 
                 Cart::where('user_id', auth()->user()->id)
                     ->get()
-                    ->each(function($cart) {
+                    ->each(function ($cart) {
                         $cart->delete();
                     });
 
@@ -155,19 +155,20 @@ class StripeController extends Controller
 
                 switch ($paymentType) {
                     case 'cart_payment':
-                        return (new CheckoutController)
+                        return (new CheckoutController())
                             ->checkout_done(session()->get('combined_order_id'), json_encode($payment));
                     case 'wallet_payment':
-                        return (new WalletController)
+                        return (new WalletController())
                             ->wallet_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'customer_package_payment':
-                        return (new CustomerPackageController)
+                        return (new CustomerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     case 'seller_package_payment':
-                        return (new SellerPackageController)
+                        return (new SellerPackageController())
                             ->purchase_payment_done(session()->get('payment_data'), json_encode($payment));
                     default:
                         flash(translate('Unknown payment type'))->error();
+
                         return redirect()->route('home');
                 }
             } else {
@@ -175,7 +176,7 @@ class StripeController extends Controller
 
                 Cart::where('user_id', auth()->user()->id)
                     ->get()
-                    ->each(function($cart) {
+                    ->each(function ($cart) {
                         $cart->delete();
                     });
 
@@ -186,7 +187,7 @@ class StripeController extends Controller
 
             Cart::where('user_id', auth()->user()->id)
                 ->get()
-                ->each(function($cart) {
+                ->each(function ($cart) {
                     $cart->delete();
                 });
 
@@ -211,7 +212,7 @@ class StripeController extends Controller
                 'email' => 'required|email',
             ]);
 
-            $stripe = new StripeClient(env('STRIPE_SECRET'));
+            $stripe = new StripeClient(config("app.stripe_secret"));
 
             $payment_methods = [];
 
@@ -219,7 +220,7 @@ class StripeController extends Controller
 
             // @todo add more payment types
             if ($request->session()->get('payment_type') == 'cart_payment') {
-                $payment_methods[] = "card" ;
+                $payment_methods[] = 'card';
             }
 
             $intent = $stripe->paymentIntents->create([
@@ -233,18 +234,18 @@ class StripeController extends Controller
             ]);
 
             return response()->json(['client_secret' => $intent->client_secret]);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while processing stripe payment intent, with message: {$e->getMessage()}");
 
             Cart::where('user_id', auth()->user()->id)
                 ->get()
-                ->each(function($cart) {
+                ->each(function ($cart) {
                     $cart->delete();
                 });
 
             return response()->json([
-                "error" => true,
-                "message" => __("Something went wrong!")
+                'error' => true,
+                'message' => __('Something went wrong!'),
             ], 500);
         }
     }

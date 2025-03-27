@@ -67,58 +67,35 @@ class Attribute extends Model
 
     public function get_attribute_units()
     {
-        $units = AttributesUnity::where('attribute_id', $this->id)->pluck('unite_id')->toArray();
-
-        return $units;
+        return AttributesUnity::where('attribute_id', $this->id)
+            ->pluck('unite_id')
+            ->toArray();
     }
 
     public function get_units()
     {
         $units = $this->get_attribute_units();
-        $units = Unity::whereIn('id', $units)->get();
 
-        return $units;
+        return Unity::whereIn('id', $units)->get();
     }
 
-    public function max_min_value($conditions = null, $unit = null)
+    public function getDefaultUnit()
     {
-        $productAttributeValues = $this->attribute_values_filter($conditions);
+        return $this->get_units()
+                   ->filter(fn ($unit) => $unit->default_unit === $unit->id)
+                   ->first();
+    }
 
-        $attribute_max = 1;
-        $attribute_min = 0;
-        $unit_select = Unity::find($unit);
-
-        foreach ($productAttributeValues as $value) {
-            $unit = Unity::find($value->id_units);
-
-            if ($unit_select && $unit) {
-                $attribute_value = intval($value->value) * $unit->rate / $unit_select->rate;
-            } else {
-                $attribute_value = intval($value->value);
-            }
-            if ($attribute_value > $attribute_max) {
-                $attribute_max = $attribute_value;
-            } elseif ($attribute_min == 0) {
-                $attribute_min = $attribute_value;
-            } elseif ($attribute_value < $attribute_min) {
-                $attribute_min = $attribute_value;
-            }
-        }
-
-        if ($attribute_max) {
-            $attribute_max = $attribute_max;
-        } else {
-            $attribute_max = 9999;
-        }
-        if ($attribute_min && ! ($attribute_max == $attribute_min)) {
-            $attribute_min = $attribute_min;
-        } else {
-            $attribute_min = 0;
-        }
-
+    function max_min_value($conditions, $unit_id) {
+        $result = \DB::table('product_attribute_values')
+            ->where('id_attribute', $this->id)
+            ->where('id_units', $unit_id)
+            ->selectRaw('MIN(value) as min_value, MAX(value) as max_value')
+            ->first();
+    
         return [
-            'min' => $attribute_min,
-            'max' => $attribute_max,
+            'min' => $result->min_value ?? 0,
+            'max' => $result->max_value ?? 1,
         ];
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
 
 class ResizeImageCommand extends Command
 {
@@ -13,14 +12,12 @@ class ResizeImageCommand extends Command
      *
      * @var string
      */
-    
-     protected $signature = 'image:resize 
-     {input : Path to the input image} 
-     {output : Path to save the processed image} 
-     {--maxDimension=1200 : Maximum dimension for resizing} 
-     {--quality=90 : Compression quality (1-100)}';
- 
-
+    protected $signature = 'image:resize 
+        {input : Path to the input image} 
+        {output : Path to save the processed image} 
+        {--maxDimension=1200 : Maximum dimension for resizing} 
+        {--quality=90 : Compression quality for JPEG (1-100)} 
+        {--driver=gd : Image driver to use (gd or imagick)}' ;
 
     /**
      * The console command description.
@@ -38,10 +35,18 @@ class ResizeImageCommand extends Command
     {
         $inputPath = $this->argument('input');
         $outputPath = $this->argument('output');
-        $maxDimension = (int)$this->option('maxDimension');
-        $quality = (int)$this->option('quality');
+        $maxDimension = (int) $this->option('maxDimension');
+        $quality = (int) $this->option('quality');
+        $driverOption = $this->option('driver');
 
+        // Validate driver
+        if (!in_array($driverOption, ['gd', 'imagick'])) {
+            $this->error("Invalid driver specified. Use 'gd' or 'imagick'.");
+            return Command::FAILURE;
+        }
 
+        // Create the ImageManager instance with the chosen driver
+        $manager = $driverOption === 'gd' ? ImageManager::gd() : ImageManager::imagick();
 
         if (!file_exists($inputPath)) {
             $this->error("Input file does not exist: $inputPath");
@@ -50,7 +55,7 @@ class ResizeImageCommand extends Command
 
         try {
             // Load the image
-            $img = Image::make($inputPath);
+            $img = $manager->read($inputPath);
 
             // Get original dimensions
             $originalWidth = $img->width();
@@ -60,20 +65,46 @@ class ResizeImageCommand extends Command
             if ($originalWidth > $maxDimension || $originalHeight > $maxDimension) {
                 $scalingFactor = $maxDimension / max($originalWidth, $originalHeight);
 
-                $newWidth = $originalWidth * $scalingFactor;
-                $newHeight = $originalHeight * $scalingFactor;
+                $newWidth = (int)($originalWidth * $scalingFactor);
+                $newHeight = (int)($originalHeight * $scalingFactor);
                 $img->resize($newWidth, $newHeight, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
             }
 
-            // Encode and save as JPG
-            $img->encode('jpg', $quality)->save($outputPath);
+        // Encode and save based on file extension
+        $extension = strtolower(pathinfo($outputPath, PATHINFO_EXTENSION));
 
-            $this->info("Image processed successfully and saved to: $outputPath");
+        switch ($extension) {
+            case 'webp':
+                $img->toWebp($quality)->save($outputPath);
+                break;
+            case 'avif':
+                $img->toAvif($quality)->save($outputPath);
+                break;
+            case 'bmp':
+            case 'bitmap':
+                $img->toBitmap($quality)->save($outputPath);
+                break;
+            case 'gif':
+                $img->toGif($quality)->save($outputPath);
+                break;
+            case 'png':
+                $img->toPng($quality)->save($outputPath);
+                break;
+            case 'heic':
+                $img->toHeic($quality)->save($outputPath);
+                break;
+            case 'jpg':
+            case 'jpeg':
+            default:
+                $img->toJpeg($quality)->save($outputPath);
+                break;
+        }
+
+        $this->info("Image successfully saved in {$extension} format at: $outputPath");
             return Command::SUCCESS;
-
         } catch (\Exception $e) {
             $this->error("An error occurred: " . $e->getMessage());
             return Command::FAILURE;

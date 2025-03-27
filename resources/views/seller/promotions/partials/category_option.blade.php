@@ -1,5 +1,5 @@
 <option value="{{ $category->id }}" data-section="{{ $category->path }}"
-    @if ($category->isLeaf) data-leaf="true" @endif>
+    @if ($category->is_leaf) data-leaf="true" @endif>
     {{ $category->name }}
 </option>
 

@@ -171,12 +171,20 @@
         div.tree-multiselect div.title:hover {
             cursor: pointer;
         }
-
-        div.tree-multiselect input[type=checkbox] {
-            display: inline;
-            margin-right: 5px;
+        .tree-multiselect div.item:not([data-leaf="true"]) > input[type="checkbox"] {
+            display: none !important;
+        }
+        /* Show checkboxes for leaf nodes */
+        .tree-multiselect div.item[data-leaf="true"] > input[type="checkbox"] {
+            display: inline-block !important;
         }
 
+      /*   div.tree-multiselect input[type=checkbox] {
+            display: inline;
+
+            margin-right: 5px;
+        }
+  */
         div.tree-multiselect input[type=checkbox]:not([disabled]):hover {
             cursor: pointer;
         }
@@ -283,7 +291,7 @@
 
         <div class="tab-content p-4 border border-top-0" id="discountTabsContent">
             <div class="tab-pane fade show active" id="product" role="tabpanel">
-                <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
+               {{--  <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
                     @csrf
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -362,6 +370,16 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
+                            <label for="min_qty" class="form-label">Minimum Quantity</label>
+                            <input type="number" class="form-control" id="min_qty" name="min_qty" placeholder="Minimum quantity" min="1">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="max_qty" class="form-label">Maximum Quantity</label>
+                            <input type="number" class="form-control" id="max_qty" name="max_qty" placeholder="Maximum quantity" min="1">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
                             <label for="maxDiscount" class="form-label">Max Use	Discount</label>
                             <input type="number" class="form-control" name="max_discount"
                                 placeholder="Maximum discount amount">
@@ -393,7 +411,320 @@
                     <div id="DiscountContainer" class="text-center">
                         <button type="submit" class="btn btn-dark-custom">Add Discount</button>
                     </div>
-                </form>
+                </form> --}}
+                <div id="formContainer">
+                    
+                </div>
+                
+                <template id="productScopeTemplate">
+                    <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="scope" value="product">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="discount" onclick="updateFormAndUrl()"  id="discount" checked>
+                                    <label class="form-check-label" for="discount">Discount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="coupon" onclick="updateFormAndUrl()" id="coupons">
+                                    <label class="form-check-label" for="coupons">Coupons</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" name="end_date" required>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productCategory" class="form-label">Category</label>
+                                <select class="form-control aiz-selectpicker" id="productCategory" name="category_id">
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="product_id" class="form-label">Product</label>
+                                <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
+                                    <option value="" selected>Select product</option>
+                                </select>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="percent" class="form-label">Percent</label>
+                                <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="min_qty" class="form-label">Minimum Quantity</label>
+                                <input type="number" class="form-control" id="min_qty" name="min_qty" placeholder="Minimum quantity" min="1">
+                            </div>
+
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="max_qty" class="form-label">Maximum Quantity</label>
+                                <input type="number" class="form-control" id="max_qty" name="max_qty" placeholder="Maximum quantity" min="1">
+                            </div>
+                        </div>
+                        <div class="row" id="couponCodeContainer" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-label"></div>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                    <span id="generatedCode" style="  text-align: center;"></span>
+                                    
+                                    <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
+                                        <i class="fas fa-copy" aria-hidden="true"></i>
+                                        <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="code" id="code">
+                        
+                            <div class="col-md-12 text-center">
+                                <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
+                                <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
+                            </div>
+                        </div>
+                        
+        
+                        <div id="DiscountContainer" class="text-center">
+                            <button type="submit" class="btn btn-dark-custom">Add Discount</button>
+                        </div>        
+                    </form>
+                </template>
+                
+                <template id="categoryScopeTemplate">
+                    <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="scope" value="category">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="discount" onclick="updateFormAndUrl()"  id="discount" checked>
+                                    <label class="form-check-label" for="discount">Discount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="coupon" onclick="updateFormAndUrl()" id="coupons">
+                                    <label class="form-check-label" for="coupons">Coupons</label>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" name="end_date" required>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="multiTreeCategory" class="form-label">Category</label>
+                                <select id="multiTreeCategory" name="category_id" multiple="multiple">
+                                    @foreach ($nestedCategories as $category)
+                                        @include('seller.promotions.partials.category_option', [
+                                            'category' => $category,
+                                        ])
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="percent" class="form-label">Percent</label>
+                                <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
+                            </div>
+                        </div>
+                        <div class="row" id="couponCodeContainer" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-label"></div>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                    <span id="generatedCode" style="  text-align: center;"></span>
+                                    
+                                    <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
+                                        <i class="fas fa-copy" aria-hidden="true"></i>
+                                        <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="code" id="code">
+                        
+                            <div class="col-md-12 text-center">
+                                <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
+                                <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
+                            </div>
+                        </div>
+                        
+        
+                        <div id="DiscountContainer" class="text-center">
+                            <button type="submit" class="btn btn-dark-custom">Add Discount</button>
+                        </div>                    
+                    </form>
+                </template>
+                
+                <template id="ordersOverAmountScopeTemplate">
+                    <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="scope" value="ordersOverAmount">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="discount" onclick="updateFormAndUrl()"  id="discount" checked>
+                                    <label class="form-check-label" for="discount">Discount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="coupon" onclick="updateFormAndUrl()" id="coupons">
+                                    <label class="form-check-label" for="coupons">Coupons</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" name="end_date" required>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="order_amount" class="form-label">Minimum Order Amount</label>
+                                <input type="number" class="form-control" id="order_amount" name="min_order_amount" placeholder="Minimum order amount">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="percent" class="form-label">Percent</label>
+                                <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="maxDiscount" class="form-label">Maximum discount amount</label>
+                                <input type="number" class="form-control" name="max_discount"
+                                    placeholder="Maximum discount amount">
+                            </div>
+                        </div>
+                
+                        <div class="row" id="couponCodeContainer" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-label"></div>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                    <span id="generatedCode" style="  text-align: center;"></span>
+                                    
+                                    <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
+                                        <i class="fas fa-copy" aria-hidden="true"></i>
+                                        <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="code" id="code">
+                        
+                            <div class="col-md-12 text-center">
+                                <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
+                                <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
+                            </div>
+                        </div>
+                        
+        
+                        <div id="DiscountContainer" class="text-center">
+                            <button type="submit" class="btn btn-dark-custom">Add Discount</button>
+                        </div>      
+                    </form>
+                </template>
+                
+                <template id="allOrdersScopeTemplate">
+                    <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="scope" value="allOrders">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="discount" onclick="updateFormAndUrl()"  id="discount" checked>
+                                    <label class="form-check-label" for="discount">Discount</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="attributes" type="radio" name="offerType" value="coupon" onclick="updateFormAndUrl()" id="coupons">
+                                    <label class="form-check-label" for="coupons">Coupons</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="startDate" class="form-label">Start Date</label>
+                                <input type="date" class="form-control" name="start_date" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate" class="form-label">End Date</label>
+                                <input type="date" class="form-control" name="end_date" required>
+                            </div>
+                        </div>
+                
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="percent" class="form-label">Percent</label>
+                                <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="maxDiscount" class="form-label">Maximum discount amount</label>
+                                <input type="number" class="form-control" name="max_discount"
+                                    placeholder="Maximum discount amount">
+                            </div>
+                        </div>
+                
+                        <div class="row" id="couponCodeContainer" style="display: none;">
+                            <div class="col-md-12 mb-3">
+                                <div class="form-label"></div>
+                                <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+                                    <span id="generatedCode" style="  text-align: center;"></span>
+                                    
+                                    <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
+                                        <i class="fas fa-copy" aria-hidden="true"></i>
+                                        <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="code" id="code">
+                        
+                            <div class="col-md-12 text-center">
+                                <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
+                                <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
+                            </div>
+                        </div>
+                        
+        
+                        <div id="DiscountContainer" class="text-center">
+                            <button type="submit" class="btn btn-dark-custom">Add Discount</button>
+                        </div>      
+                    </form>
+                </template>
+                
             </div>
         </div>
     </div>
@@ -430,7 +761,7 @@
 
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tree-multiselect@2.6.3/dist/jquery.tree-multiselect.min.js"></script>
+    <script src="{{ static_asset('assets/js/jquery.tree-multiselect.min.js') }}"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
         function generateCouponCode() {
@@ -555,119 +886,115 @@
             const multiTreeContainer = document.getElementById("multiTreeContainer");
             const productCategoryContainer = document.getElementById("productCategoryContainer");
             const getProductByCategoryUrl = @json(route('seller.discounts.getproductbycategory'));
-            const discountRadio = document.getElementById('discount');
-            const couponRadio = document.getElementById('coupons');
-            const couponCodeContainer = document.getElementById('couponCodeContainer');
-            const DiscountContainer = document.getElementById('DiscountContainer');
+            const maxQuantityInput = document.getElementById('max_qty');
+            const minQuantityInput = document.getElementById('min_qty');
+            // Function to render the form based on the selected scope
+            function renderForm(scope) {
+                const formContainer = document.getElementById('formContainer');
+                let templateId;
 
-           
-
-
-            function updateScopeView(scope) {
-                scopeInput.value = scope;
-                productSelect.disabled = true;
-                productSelect.value = "";
-                categorySelect.disabled = true;
-                categorySelect.value = "";
-                orderAmountInput.disabled = true;
-                orderAmountInput.value = "";
-                productCategoryContainer.style.display = "none";
-                multiTreeContainer.style.display = "none";
-
-                const multiTreeParams = {
-                    sortable: true,
-                    searchable: true,
-                    searchParams: ['section', 'text'],
-                    onChange: function (allSelectedItems, addedItems, removedItems) {
-                        addedItems.forEach(item => {
-                            if (!$(item).data('leaf')) {
-                                $(item).prop('selected', false);
-                            }
-                        });
-                    },
-                    startCollapsed: true,
-                    maxSelections: 1,
-                    freeze: false
-                };
-
-                if (scope === "product") {
-                    productCategoryContainer.style.display = "block";
-                    productSelect.disabled = false;
-                    categorySelect.disabled = false;
-
-
-                } else if (scope === "category") {
-                    multiTreeContainer.style.display = "block";
-                    if ($("select#multiTreeCategory").next(".tree-multiselect").length) {
-                        $("select#multiTreeCategory").next(".tree-multiselect").remove();
-                     }
-
-                    $("select#multiTreeCategory").treeMultiselect(multiTreeParams);
-                    productSelect.value = null;
-                    productSelect.disabled = true;
-
-
-
-                } else if (scope === "ordersOverAmount") {
-                    // Enable order amount field only
-                    orderAmountInput.disabled = false;
-                    productCategoryContainer.style.display = "block";
-
-                } else if (scope === "allOrders") {
-                    // All fields remain disabled except the discount fields
-                    productCategoryContainer.style.display = "block";
+                switch (scope) {
+                    case 'product':
+                        templateId = 'productScopeTemplate';
+                        break;
+                    case 'category':
+                        templateId = 'categoryScopeTemplate';
+                        break;
+                    case 'ordersOverAmount':
+                        templateId = 'ordersOverAmountScopeTemplate';
+                        break;
+                    case 'allOrders':
+                        templateId = 'allOrdersScopeTemplate';
+                        break;
+                    default:
+                        templateId = 'productScopeTemplate';
                 }
 
-                $('.aiz-selectpicker').selectpicker('refresh');
-            }
+                const template = document.getElementById(templateId);
+                const formHTML = template.content.cloneNode(true);
+                formContainer.innerHTML = '';
+                formContainer.appendChild(formHTML);
+                if (scope === 'product') {
+                    const categorySelect = document.getElementById('productCategory');
+                    const productSelect = document.getElementById('product_id');
 
-            categorySelect.addEventListener('change', function () {
-                const selectedCategoryId = this.value;
-                if (selectedCategoryId) {
-                    $.ajax({
-                        url: getProductByCategoryUrl,
-                        type: 'GET',
-                        data: { category_id: selectedCategoryId },
-                        success: function (response) {
-                            productSelect.innerHTML = '<option value="" selected>Select product</option>';
-                            response.products.forEach(function (product) {
-                                const option = new Option(product.name, product.id);
-                                productSelect.add(option);
+                    categorySelect.addEventListener('change', function () {
+                        const selectedCategoryId = this.value;
+                        if (selectedCategoryId) {
+                            $.ajax({
+                                url: getProductByCategoryUrl, 
+                                type: 'GET',
+                                data: { category_id: selectedCategoryId },
+                                success: function (response) {
+                                    productSelect.innerHTML = '<option value="" selected>Select product</option>';
+                                    response.products.forEach(function (product) {
+                                        const option = new Option(product.name, product.id);
+                                        productSelect.add(option);
+                                    });
+                                    $('.aiz-selectpicker').selectpicker('refresh');
+                                }
                             });
+                        } else {
+                            productSelect.innerHTML = '<option value="" selected>Select product</option>';
                             $('.aiz-selectpicker').selectpicker('refresh');
                         }
                     });
-                } else {
-                    productSelect.innerHTML = '<option value="" selected>Select product</option>';
-                    $('.aiz-selectpicker').selectpicker('refresh');
                 }
-            });
 
-            document.querySelectorAll('.tab-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const scope = this.getAttribute('data-scope');
-                    updateScopeView(scope);
+  
 
-                    document.querySelectorAll('.tab-card').forEach(card => card.classList.remove(
-                        'active'));
-                    this.classList.add('active');
+                if (scope === 'category') {
+                    $("select#multiTreeCategory").treeMultiselect({
 
-                    updateFormAndUrl(scope);
+                        sortable: true,
+                        searchable: true,
+                        allowBatchSelection: false,
+                        startCollapsed: true,
+                        maxSelections: 1,
+                    });
+                }
+                $('.aiz-selectpicker').selectpicker('refresh');
+                const discountRadio = document.getElementById('discount');
+                const couponRadio = document.getElementById('coupons');
+                const couponCodeContainer = document.getElementById('couponCodeContainer');
+                const DiscountContainer = document.getElementById('DiscountContainer');
 
-                });
-            });
-            const urlParams = new URLSearchParams(window.location.search);
-            const selectedScope = urlParams.get('scope') || 'product';
-            if (selectedScope) {
-                updateScopeView(selectedScope);
+                discountRadio.addEventListener('change', toggleCouponFields);
+                couponRadio.addEventListener('change', toggleCouponFields);
+
+                function toggleCouponFields() {
+
+                    if (couponRadio.checked) {
+                        couponCodeContainer.style.display = 'block';
+                        DiscountContainer.style.display = 'none';
+                    } else {
+                        couponCodeContainer.style.display = 'none';
+                        DiscountContainer.style.display = 'block';
+                    }
+                }
+                toggleCouponFields();
+           
+            }
 
                 document.querySelectorAll('.tab-card').forEach(card => {
-                    card.classList.remove('active');
+                    card.addEventListener('click', function () {
+                        const scope = this.getAttribute('data-scope');
+                        renderForm(scope);
+
+                        document.querySelectorAll('.tab-card').forEach(card => card.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const selectedScope = urlParams.get('scope') || 'product';
+                renderForm(selectedScope);
+
+                document.querySelectorAll('.tab-card').forEach(card => {
                     if (card.getAttribute('data-scope') === selectedScope) {
                         card.classList.add('active');
                     }
                 });
-            }
             updateFormAndUrl(selectedScope);
 
             function showError(message) {
@@ -679,17 +1006,19 @@
                 });
             }
 
-            function validateForm() {
+            function validateForm(form) {
                 const startDate = form.querySelector("input[name='start_date']").value;
                 const endDate = form.querySelector("input[name='end_date']").value;
-                const scope = document.getElementById("scope").value;
+                const scope = form.querySelector("input[name='scope']").value;                
                 const percent = form.querySelector("input[name='discount_percentage']").value;
-                const maxDiscount = form.querySelector("input[name='max_discount']").value;
-                const productId = form.querySelector("select[name='product_id']").value;
-                const categoryId = form.querySelector("select[name='category_id']").value;
-                const orderAmount = form.querySelector("#order_amount").value;
+                const maxDiscount = form.querySelector("input[name='max_discount']")?.value ?? null;
+                const productId = form.querySelector("select[name='product_id']")?.value ?? null;
+                const categoryId = form.querySelector("select[name='category_id']")?.value ?? null;
+                const orderAmount = form.querySelector("#order_amount")?.value ?? null;
                 const generatedCode = document.getElementById("code").value;
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
+                const maxQty = form.querySelector("input[name='max_qty']")?.value ?? null;
+                const minQty = form.querySelector("input[name='min_qty']")?.value ?? null;
 
                 if (!startDate) return showError("Start date is required.");
                 if (!endDate) return showError("End date is required.");
@@ -710,15 +1039,35 @@
                 if (offerType === "coupon" && (!generatedCode)) {
                     return showError ("Please generate a coupon code before submitting.");
                 }
+                if (minQty && (minQty === "" || isNaN(minQty) || minQty <= 0))
+                    return showError("Minimum quantity must be a positive number.");
+                if ( maxQty &&(maxQty === "" || isNaN(maxQty) || maxQty <= 0))
+                    return showError("Maximum quantity must be a positive number.");
+                if (maxQty &&(Number(maxQty) < Number(minQty)))
+                    return showError("Maximum quantity must be greater than or equal to the minimum quantity.");
+
                 return true;
             }
 
-            $('#discountForm').on('submit', function(e) {
-                e.preventDefault();
-                if (validateForm()) {
-                    submitDiscountForm(false); 
-                }
-            });
+            document.addEventListener('submit', function(e) {
+    if (e.target.matches('#discountForm')) {
+        e.preventDefault();
+        if (validateForm(e.target)) { 
+            submitDiscountForm(false);
+        }
+    }
+});
+
+// Update coupon activation handler
+document.addEventListener('click', function(e) {
+    if (e.target.matches('#activateButton')) {
+        e.preventDefault();
+        const form = document.getElementById('discountForm');
+        if (validateForm(form)) {
+            submitCouponForm(false);
+        }
+    }
+});
             $('#activateButton').on('click', function(e) {
                 e.preventDefault();
                 if (validateForm()) {
@@ -731,20 +1080,9 @@
             });
            
             
-            discountRadio.addEventListener('change', toggleCouponFields);
-            couponRadio.addEventListener('change', toggleCouponFields);
-            function toggleCouponFields() {
-
-                if (couponRadio.checked) {
-                    couponCodeContainer.style.display = 'block';
-                    DiscountContainer.style.display = 'none';
-                } else {
-                    couponCodeContainer.style.display = 'none';
-                    DiscountContainer.style.display = 'block';
-                }
-            }
-            toggleCouponFields();
-           
+        
         });
+
+
     </script>
 @endsection

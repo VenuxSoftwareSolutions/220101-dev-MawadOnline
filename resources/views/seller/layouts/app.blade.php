@@ -184,6 +184,11 @@
             border: 1px solid #1b3a57 !important;
             /* Navy blue border on hover */
         }
+        .disabled-look__clz {
+            opacity: 1;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 
     <!-- Font Awesome CSS -->
@@ -286,13 +291,11 @@
             border-radius: 5px;
             padding: 15px 26px;
         }
-    </style>
-    <style>
+
         .coming-soon-container {
             text-align: center;
             padding: 50px;
             background-color: #f7f8fa;
-            /* Adjust the background color if needed */
         }
 
         .coming-soon-container img {
@@ -412,14 +415,698 @@
 
     @yield('modal')
 
-
     <script src="{{ static_asset('assets/js/vendors.js') }}"></script>
     <script src="{{ static_asset('assets/js/aiz-core.js') }}"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <!-- Select extension -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        var numbers_variant = 0;
+
+        $(document).ready(function() {
+            $('body').on('change', '.shipper', function() {
+                let count_shippers = parseInt($(this).data("count_shippers"));
+                let selected = $(this).val();
+
+                if(["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find("input,select").each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null);
+
+                            if (selected === "third_party") {
+                                if(
+                                    [
+                                        "paid[]",
+                                        "shipping_charge[]"
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("paid") === true ||
+                                    $(el).attr("class").includes("shipping_charge") === true
+                                ) {
+                                    $(el).addClass("disabled-look__clz")
+                                } else if(
+                                    [
+                                        "from_shipping[]",
+                                        "to_shipping[]",
+                                        "estimated_order[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    [
+                                       "min-qty-shipping", "max-qty-shipping"
+                                    ].includes($(el).attr("id")) === true ||
+                                    $(el).attr("class").includes("estimated_order") === true ||
+                                    $(el).attr("class").includes("min-qty-shipping") ||
+                                    $(el).attr("class").includes("max-qty-shipping")
+                                ) {
+                                    $(el).attr("readonly", false);
+                                } else {
+                                    $(el).attr("readonly", true);
+                                }
+                            } else {
+                                if($(el).hasClass("disabled-look__clz")) {
+                                    $(el).removeClass("disabled-look__clz");
+                                } else {
+                                    $(el).attr("readonly", false);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $(this).parent().parent().find("input,select").each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null)
+
+                            if (
+                                [
+                                    "paid[]",
+                                    "shipping_charge[]"
+                                ].includes($(el).attr("name")) === true ||
+                                $(el).attr("class").includes("paid") === true ||
+                                $(el).attr("class").includes("shipping_charge") === true
+                            ) {
+                                $(el).addClass("disabled-look__clz")
+                            } else {
+                                $(el).attr("readonly", true)
+                            }
+                        }
+                    });
+                }
+
+                if (selected.indexOf('third_party') !== -1) {
+                     $(this).parent().parent().find('.paid').find("option:last")
+                            .prop("selected", true);
+
+                    if (count_shippers == 0) {
+                        let title = "{{ translate('Default Shipping Configuration') }}";
+                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+                    } else {
+                        let weight = $('#weight').val();
+                        let length = $('#length').val();
+                        let width = $('#width').val();
+                        let height = $('#height').val();
+                        let breakable = $('#breakable').val();
+                        let min_third_party = $('#min_third_party').val();
+                        let max_third_party = $('#max_third_party').val();
+                        let unit_third_party = $('#unit_third_party').val();
+
+                        if ((weight == '') || (length == '') || (width == '') || (height == '') || (
+                                min_third_party == '') || (max_third_party == '')) {
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
+                                "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').html(message);
+
+                            $('#modal-info').modal('show');
+                        } else {
+                            length = parseInt(length);
+                            height = parseInt(height);
+                            width = parseInt(width);
+                            weight = parseInt(weight);
+                            let volumetric_weight = (length * height * width) / 5000;
+                            let chargeable_weight = 0;
+                            let html = '';
+
+                            if (volumetric_weight > weight) {
+                                chargeable_weight = volumetric_weight;
+                            } else {
+                                chargeable_weight = weight;
+                            }
+
+                            if (chargeable_weight > 30) {
+                                let title = "{{ translate('Default Shipping Configuration') }}";
+                                let message = "{{ translate('Chargeable Weight = ') }}" + Number(
+                                        chargeable_weight.toFixed(2)) +
+                                    ", {{ translate('then not accepted by our shipper') }}";
+
+                                $('#title-modal').text(title);
+                                $('#text-modal').text(message);
+
+                                $('#modal-info').modal('show');
+                            } else {
+                                $(this).parent().parent().find('.estimated_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.shipping_charge').find("option:first")
+                                    .prop("selected", true);
+                                $(this).parent().parent().find('.shipping_charge').addClass('disabled-look__clz');
+
+                                $(this).parent().parent().find('.paid').find("option:last")
+                                    .prop("selected", true);
+                                $(this).parent().parent().find('.paid').addClass("disabled-look__clz");
+
+                                $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                                $(this).parent().parent().find('.estimated_shipping').val(null);
+
+                                $(this).parent().parent().find('.flat_rate_shipping').prop('readonly',
+                                    true);
+                                $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                            }
+                        }
+                    }
+                }
+
+                if (selected.indexOf('vendor') !== -1) {
+                    $(this).parent().parent().find('.estimated_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.shipping_charge').find("option:first").prop("selected",
+                        true);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.charge_per_unit_shipping').val(null);
+                    $(this).parent().parent().find('.paid').val(null);
+                    $(this).parent().parent().find('.estimated_shipping').val(null);
+                    $(this).parent().parent().find('.flat_rate_shipping').prop('readonly', false);
+                    $(this).parent().parent().find('.flat_rate_shipping').val(null);
+                }
+            });
+
+            $('body').on('change', '.shipper_sample', function() {
+                let count_shippers = parseInt($(this).data("count_shippers"));
+                let selected = $(this).val();
+
+                if (["vendor", "third_party"].includes(selected) === true) {
+                    $(this).parent().parent().find('input,select').each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null);
+
+                            if (selected === "third_party") {
+                                if(
+                                    [
+                                        "paid_sample[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("paid_sample") === true
+                                ) {
+                                    $(el).addClass("disabled-look__clz")
+                                } else if(
+                                    [
+                                        "estimated_sample[]",
+                                    ].includes($(el).attr("name")) === true ||
+                                    $(el).attr("class").includes("estimated_sample") === true
+                                ) {
+                                    $(el).attr("readonly", false);
+                                } else {
+                                    $(el).attr("readonly", true);
+                                }
+                            } else {
+                                if($(el).hasClass("disabled-look__clz")) {
+                                    $(el).removeClass("disabled-look__clz");
+                                } else {
+                                    $(el).attr("readonly", false);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $(this).parent().parent().find('input,select').each(function(index, el) {
+                        if(index !== 0) {
+                            $(el).val(null)
+
+                            if (
+                                [
+                                    "paid_sample[]",
+                                ].includes($(el).attr("name")) === true
+                            ) {
+                                $(el).addClass("disabled-look__clz")
+                            } else {
+                                $(el).attr("readonly", true)
+                            }
+                        }
+                    });
+                }
+
+                if (selected.indexOf('third_party') !== -1) {
+                    $(this).parent().parent().find('.shipping_amount').val('');
+                    $(this).parent().parent().find('.shipping_amount').prop('readonly', true);
+                    $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                    $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', true);
+                    $(this).parent().parent().find('.paid_sample').find("option:last").prop("selected", true);
+
+                    if (count_shippers == 0) {
+                        let title = "{{ translate('Default Shipping Configuration') }}";
+                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).find("option:first").prop("selected", true)
+                        $(this).parent().parent().find('.shipping_amount').val('');
+                        $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
+                        $(this).parent().parent().find('.estimated_shipping_sample').val('');
+                        $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', false);
+                        $(this).parent().parent().find('.paid_sample').find("option:first").prop("selected", true);
+                    } else {
+                        let weight = $('#package_weight_sample').val();
+                        let length = $('#length_sample').val();
+                        let width = $('#width_sample').val();
+                        let height = $('#height_sample').val();
+                        let breakable = $('#breakable_sample').val();
+                        let min_third_party = $('#min_third_party_sample').val();
+                        let max_third_party = $('#max_third_party_sample').val();
+                        let unit_third_party = $('#unit_third_party_sample').val();
+
+                        if ((weight == '') || (length == '') || (width == '') || (height == '') || (
+                                min_third_party == '') || (max_third_party == '')) {
+                            let title = "{{ translate('Default Shipping Configuration') }}";
+                            let message =
+                                "{{ translate('Please ensure that all required fields are filled to know all information about your package.') }}";
+
+                            $('#title-modal').text(title);
+                            $('#text-modal').html(message);
+
+                            $('#modal-info').modal('show');
+                        } else {
+                            length = parseInt(length);
+                            height = parseInt(height);
+                            width = parseInt(width);
+                            weight = parseInt(weight);
+                            let volumetric_weight = (length * height * width) / 5000;
+                            let chargeable_weight = 0;
+                            let unit = $('#weight_unit_sample').val();
+                            let max = 30;
+                            if (unit == "pounds") {
+                                max *= 2.2;
+                            }
+                            let html = '';
+                            if (volumetric_weight > weight) {
+                                chargeable_weight = volumetric_weight;
+                            } else {
+                                chargeable_weight = weight;
+                            }
+
+                            if (unit == "pounds") {
+                                chargeable_weight *= 2.2;
+                            }
+
+                            if (chargeable_weight > max) {
+                                var title = "{{ translate('Default Shipping Configuration') }}";
+                                var message = "{{ translate('Chargeable Weight = ') }}" + Number(
+                                        chargeable_weight.toFixed(2)) +
+                                    ", {{ translate('then not accepted by our shipper') }}";
+
+                                $('#title-modal').text(title);
+                                $('#text-modal').text(message);
+
+                                $('#modal-info').modal('show');
+                            }
+                        }
+                    }
+                }
+
+                if (selected.indexOf('vendor') !== -1) {
+                    $(this).parent().parent().find('.shipping_amount').prop('readonly', false);
+                    $(this).parent().parent().find('.estimated_shipping_sample').prop('readonly', false);
+                    $(this).parent().parent().find('.paid_sample').val('');
+                }
+            });
+
+            $('body').on('click', '#third_party_activate', function() {
+                if ($(this).is(':checked')) {
+                    let count_shippers = parseInt($(this).data("count_shippers"));
+
+                    if (count_shippers == 0) {
+                        $('body input[name="activate_third_party"]').prop('checked', false);
+
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).prop('checked', false)
+                    } else {
+                        $('#bloc_third_party input[type="number"]').each(function() {
+                            $(this).prop('readonly', false);
+                        });
+
+                        $('#bloc_third_party select').each(function() {
+                            $(this).prop('disabled', false);
+                        });
+                    }
+                } else {
+                    $('#bloc_third_party input[type="number"]').each(function() {
+                        $(this).prop('readonly', true);
+                    });
+
+                    $('#bloc_third_party select').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+
+                    $('#bloc_third_party input[type="number"]').val('').prop('readonly', true);
+                }
+            });
+
+            $('body').on('click', '#third_party_activate_sample', function() {
+                if ($(this).is(':checked')) {
+                    let count_shippers = parseInt($(this).data("count_shippers"));
+
+                    if (count_shippers == 0) {
+                        $('body input[name="activate_third_party"]').prop('checked', false);
+                        var title = "{{ translate('Default Shipping Configuration') }}";
+                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+
+                        $('#title-modal').text(title);
+                        $('#text-modal').html(message);
+
+                        $('#modal-info').modal('show');
+
+                        $(this).prop('checked', false)
+                    } else {
+                        $('#bloc_third_party_sample input[type="number"]').each(function() {
+                            $(this).prop('readonly', false);
+                        });
+
+                        $('#bloc_third_party_sample select').each(function() {
+                            $(this).prop('disabled', false);
+                        });
+                    }
+                } else {
+                    $('#bloc_third_party_sample input[type="number"]').each(function() {
+                        $(this).prop('readonly', true);
+                    });
+
+                    $('#bloc_third_party_sample select').each(function() {
+                        $(this).prop('disabled', true);
+                    });
+
+                    $('#bloc_third_party_sample input[type="number"]').val('').prop('readonly', true);
+                }
+            });
+
+            $('body').on('click', '#btn-create-variant', function() {
+                if ($('#attributes option:selected').length > 0) {
+                    let clonedDiv = $('body #variant_informations').clone();
+
+                    clonedDiv.attr('class', 'clonedDiv');
+                    clonedDiv.removeAttr('id');
+                    clonedDiv.attr('data-id', numbers_variant);
+
+                    let count = numbers_variant + 1;
+
+                    @if (app()->getLocale() == 'ae')
+                        let html_to_add =
+                            '<div style="float: left; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+                    @else
+                        let html_to_add =
+                            '<div style="float: right; margin-top: -35px"><i class="fa-regular fa-circle-xmark fa-lx delete-variant" style="font-size: 16px;" title="delete this variant"></i></div>'
+                    @endif
+
+                    clonedDiv.find('h3').after(html_to_add);
+                    clonedDiv.find('.fa-circle-check').hide();
+                    clonedDiv.find('#btn-add-pricing-variant').hide();
+
+                    clonedDiv.find('.sku').attr('name', 'sku-' + numbers_variant);
+                    clonedDiv.find('.sku').prop('readonly', true);
+
+                    clonedDiv.find('div.row').each(function() {
+                        if ($(this).css('display') === 'none') {
+                            $(this).css('display', '');
+                        }
+                    });
+
+                    clonedDiv.find('.vat_sample').attr('name', 'vat_sample-' + numbers_variant);
+                    clonedDiv.find('.sample_description').attr('name', `sample_description-${numbers_variant}`);
+                    clonedDiv.find('.sample_price').attr('name', 'sample_price-' + numbers_variant);
+                    clonedDiv.find('.photos_variant').attr('name', 'photos_variant-' + numbers_variant +
+                        '[]');
+                    clonedDiv.find('.photos_variant').attr('id', 'photos_variant-' + numbers_variant);
+                    clonedDiv.find('.custom-file-label').attr('for', 'photos_variant-' + numbers_variant);
+                    clonedDiv.find('.variant-pricing').attr('name', 'variant-pricing-' + numbers_variant);
+                    clonedDiv.find('.variant-pricing').attr('data-variant', numbers_variant);
+
+                    clonedDiv.find('.min-qty-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[from][]');
+                    });
+                    clonedDiv.find('.max-qty-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[to][]');
+                    });
+                    clonedDiv.find('.unit-price-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[unit_price][]');
+                    });
+                    clonedDiv.find('.discount_percentage-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_percentage][]');
+                    });
+                    clonedDiv.find('.discount_amount-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_amount][]');
+                    });
+                    clonedDiv.find('.discount-range-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_range][]');
+                        $(element).daterangepicker({
+                            timePicker: true,
+                            autoUpdateInput: false,
+                            minDate: today,
+                            locale: {
+                                format: 'DD-MM-Y HH:mm:ss',
+                                separator: " to ",
+                            },
+                        });
+
+                        let format = 'DD-MM-Y HH:mm:ss';
+                        let separator = " to ";
+
+                        $(element).on("apply.daterangepicker", function(ev, picker) {
+                            $(this).val(
+                                picker.startDate.format(format) +
+                                separator +
+                                picker.endDate.format(format)
+                            );
+                        });
+                    });
+
+                    clonedDiv.find('.variant-shipping').attr('name', 'variant-shipping-' + numbers_variant);
+                    let attrName = "@if(Route::currentRouteName() === "seller.products.create") data-id_variant @else data-id @endif".trim();
+                    clonedDiv.find('.variant-shipping').attr(attrName, numbers_variant);
+
+                    clonedDiv.find('.stock-warning').attr('name', 'stock-warning-' + numbers_variant);
+                    clonedDiv.find('.discount_type-variant').each(function(index, element) {
+                        $(element).attr('name', 'variant_pricing-from' + numbers_variant +
+                            '[discount_type][]');
+                        $('#variant_informations').find('.discount_type-variant').each(function(key,
+                            element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+                    clonedDiv.find('.attributes').each(function(index, element) {
+                        let dataIdValue = $(element).data('id_attributes');
+                        let value = 0;
+                        let check = false;
+
+                        if ($(element).attr('data-type')) {
+                            $('#variant_informations').find('.color').each(function(key, element_original) {
+                                if ($(element_original).data('id_attributes') == dataIdValue) {
+                                    value = $(element_original).val();
+                                    $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}[]`);
+                                    check = true;
+                                }
+                            })
+
+                            $(element).val(value);
+                        }
+
+                        if (check == false) {
+                            $(element).attr('name', `attributes-${dataIdValue}-${numbers_variant}`);
+                        }
+                    });
+
+                    clonedDiv.find('.attributes-units').each(function(index, element) {
+                        let dataIdValue = $(element).data('id_attributes');
+
+                        if(dataIdValue === undefined) {
+                            dataIdValue = $(element).find("select").data('id_attributes');
+                        }
+
+                        let attrName = `attributes_units-${dataIdValue}-${numbers_variant}`;
+                        $(element).attr('name', attrName);
+
+                        $('#variant_informations').find('.attributes-units').each(function(key, element_original) {
+                            if (index == key) {
+                                let value = $(element_original).val();
+                                if(value !== "") {
+                                    $(element).find(`option[value="${value}"]`).prop('selected', true);
+                                }
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.variant-sample-available').attr('name', 'variant-sample-available' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-pricing').attr('name', 'variant-sample-pricing' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-shipping').attr('name', 'variant-sample-shipping' +
+                        numbers_variant);
+                    clonedDiv.find('.variant-sample-shipping').attr('data-id_new_variant', numbers_variant);
+
+                    clonedDiv.find('.min-qty-shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[from][]');
+                    });
+
+                    clonedDiv.find('.max-qty-shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[to][]');
+                    });
+
+                    let id_shipper = 0;
+
+                    clonedDiv.find('.shipper').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[shipper][' + id_shipper + '][]');
+                        $('#variant_informations #table_shipping_configuration').find('.shipper')
+                            .each(function(key, element_original) {
+                                if (index == key) {
+                                    $(element_original).val().forEach(value => {
+                                        $(element).find('option[value="' + value + '"]')
+                                            .prop('selected', true);
+                                    });
+                                }
+                            })
+
+                        id_shipper++;
+                    });
+
+                    clonedDiv.find('.estimated_order').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[estimated_order][]');
+                    });
+
+                    clonedDiv.find('.estimated_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[estimated_shipping][]');
+                    });
+
+                    clonedDiv.find('.paid').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant + '[paid][]');
+                        $('#variant_informations #table_shipping_configuration').find('.paid').each(
+                            function(key, element_original) {
+                                if (index == key) {
+                                    $(element).find('option[value="' + $(element_original)
+                                        .val() + '"]').prop('selected', true);
+                                }
+                            })
+                    });
+
+                    clonedDiv.find('.vat_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[vat_shipping][]');
+                    });
+
+                    clonedDiv.find('.shipping_charge').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[shipping_charge][]');
+                        $('#variant_informations #table_shipping_configuration').find(
+                            '.shipping_charge').each(function(key, element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.flat_rate_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[flat_rate_shipping][]');
+                    });
+
+                    clonedDiv.find('.charge_per_unit_shipping').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipping-' + numbers_variant +
+                            '[charge_per_unit_shipping][]');
+                    });
+
+                    clonedDiv.find('.shipper_sample').each(function(index, element) {
+                        $(element).attr('name', 'variant_shipper_sample-' + numbers_variant + '[]');
+                        $('#variant_informations #table_sample_configuration').find(
+                            '.shipper_sample').each(function(key, element_original) {
+                            if (index == key) {
+                                $(element).find('option[value="' + $(element_original)
+                                    .val() + '"]').prop('selected', true);
+                            }
+                        })
+                    });
+
+                    clonedDiv.find('.paid_sample').each(function(index, element) {
+                        $(element).attr('name', 'paid_sample-' + numbers_variant);
+                        $('#variant_informations #table_sample_configuration').find('.paid_sample')
+                            .each(function(key, element_original) {
+                                if (index == key) {
+                                    $(element).find('option[value="' + $(element_original)
+                                        .val() + '"]').prop('selected', true);
+                                }
+                            })
+                    });
+
+                    clonedDiv.find('.estimated_sample').attr('name', 'estimated_sample-' + numbers_variant);
+                    clonedDiv.find('.estimated_shipping_sample').attr('name', 'estimated_shipping_sample-' +
+                        numbers_variant);
+                    clonedDiv.find('.shipping_amount').attr('name', 'shipping_amount-' + numbers_variant);
+
+                    clonedDiv.find('.delete_shipping_canfiguration').attr('data-variant-id',
+                        numbers_variant);
+                    clonedDiv.find('.btn-add-shipping').attr('data-variant-id', numbers_variant);
+                    clonedDiv.find('.btn-add-pricing').attr('data-newvariant-id', numbers_variant);
+
+                    if (clonedDiv.find('.sku').val() == '') {
+                        $('#title-modal').text("{{ translate('Form validation') }}");
+                        $('#text-modal').html('{{ translate('The SKU field must be filled before creating the variant.') }}');
+
+                        $('#modal-info').modal('show')
+                    } else {
+                        $('#bloc_variants_created').show();
+                        $('#bloc_variants_created').prepend(clonedDiv);
+                        let divId = "#bloc_variants_created";
+
+                        let h3Count = $(divId + " h3").length;
+
+                        $(divId + " h3").each(function(index) {
+                            let order = h3Count - index;
+                            $(this).text("{{ translate('Variant Information') }}" + ' ' + order);
+                        });
+                        numbers_variant++;
+
+                        $('#variant_informations').find(
+                            'input[type="text"], input[type="number"], input[type="checkbox"], input[type="radio"], select'
+                        ).each(function() {
+                            if ($(this).is('input[type="text"]') || $(this).is(
+                                    'input[type="number"]')) {
+                                $(this).val('');
+                            } else if ($(this).is('input[type="radio"]')) {
+                                $(this).prop('checked',
+                                    false);
+                            } else if ($(this).is('select')) {
+                                $(this).val('');
+                            }
+                        });
+
+                        $('#variant_informations').find('.filter-option-inner-inner').each(function() {
+                            $(this).text('Nothing selected')
+                        });
+                    }
+                } else {
+                    $('#title-modal').text("{{ translate('Create variant') }}");
+                    $('#text-modal').html('{{ translate('A minimum of one attribute must be selected in order to create a variant.') }}');
+
+                    $('#modal-info').modal('show')
+                }
+            });
+        });
+    </script>
+
     @yield('script')
+
     <!-- Include MultiSelect JS -->
     <script src="https://cdn.rawgit.com/nobleclem/jQuery-MultiSelect/master/jquery.multiselect.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
@@ -475,7 +1162,7 @@
                     }
                 } else {
                     $("#search-menu").html(
-                        `<li class="aiz-side-nav-item"><span	class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
+                        `<li class="aiz-side-nav-item"><span class="text-center text-muted d-block">{{ translate('Nothing Found') }}</span></li>`
                         );
                 }
             } else {

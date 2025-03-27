@@ -132,6 +132,11 @@ return [
 
     'system_key' => env('PLATFORM_KEY'),
 
+    // those keys added here because in prod env the `env` helper return `null`
+    // @see https://github.com/laravel/framework/issues/21727
+    'stripe_key' => env('STRIPE_KEY'),
+    'stripe_secret' => env("STRIPE_SECRET"),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

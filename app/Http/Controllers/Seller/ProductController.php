@@ -40,6 +40,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Log;
+use Exception;
+use App\Rules\NonOverlappingShippingQuantityPerShipper;
 
 class ProductController extends Controller
 {
@@ -170,15 +172,18 @@ class ProductController extends Controller
 
                 if (count($shipper_areas) > 0) {
                     foreach ($shipper_areas as $area) {
-                        $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
-                        if (count($warhouses) > 0) {
+                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)
+                            ->where('emirate_id', $area->emirate_id)
+                            ->where('area_id', $area->area_id)
+                            ->get();
+
+                        if (count($warehouses) > 0) {
                             if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -287,10 +292,12 @@ class ProductController extends Controller
 
             if ($product->is_draft == 1) {
                 return redirect()->route(
-                    'seller.products.edit', [
+                    'seller.products.edit',
+                    [
                         'id' => $product->id,
                         'lang' => env('DEFAULT_LANGUAGE'),
-                    ]);
+                    ]
+                );
             } else {
                 return redirect()->route('seller.products');
             }
@@ -775,16 +782,25 @@ class ProductController extends Controller
 
     public function delete_shipping(Request $request)
     {
-        $shipping = Shipping::find($request->id);
-        if ($shipping != null) {
-            $shipping->delete();
+        try {
+            $shipping = Shipping::find($request->id);
 
-            return response()->json([
-                'status' => 'success',
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'failed',
+            if ($shipping != null) {
+                $shipping->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'failed',
+                ]);
+            }
+        } catch (Exception $e) {
+            Log::error("Error while deleting shipping #{$request->id}, with message: {$e->getMessage()}");
+
+            response()->json([
+                "status" => "failed"
             ]);
         }
     }
@@ -795,13 +811,16 @@ class ProductController extends Controller
 
         $rules = [
             'unit_sale_price' => ['required', 'numeric'],
-            'from_shipping' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
-            ],
-            'to_shipping' => ['required', 'array'],
-            'from_shipping.*' => 'numeric',
-            'to_shipping.*' => 'numeric',
+            'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                $request->get("shipper"),
+                $request->get("from_shipping"),
+                $request->get("to_shipping")
+            )],
+            'from_shipping' => 'bail|required|array',
+            'to_shipping' => 'bail|required|array',
+            'shipper.*' => 'bail|required|string',
+            'from_shipping.*' => 'bail|required|integer|min:1',
+            'to_shipping.*' => 'bail|required|integer|min:1',
         ];
 
         $variantsPricing = collect($request->all())
@@ -819,6 +838,24 @@ class ProductController extends Controller
                     new NoPricingOverlap($from, $to, false, $index),
                 ];
             }
+        }
+
+        foreach (
+            $request->collect()
+                   ->filter(
+                       fn ($value, $key) => str_starts_with($key, 'variant_shipping-')
+                   )->all() as $value
+        ) {
+            $request->validate([
+                'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                    $value["shipper"],
+                    $value["from"],
+                    $value["to"],
+                    true
+                )],
+                'from' => 'bail|required|array',
+                'to' => 'bail|required|array',
+            ]);
         }
 
         $request->validate($rules);
@@ -897,7 +934,7 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService)->generate_combination($options);
+        $combinations = (new CombinationService())->generate_combination($options);
 
         return view('backend.product.products.sku_combinations', compact('combinations', 'unit_price', 'colors_active', 'product_name'));
     }
@@ -955,7 +992,7 @@ class ProductController extends Controller
             }
         }
 
-        $combinations = (new CombinationService)->generate_combination($options);
+        $combinations = (new CombinationService())->generate_combination($options);
 
         return view('backend.product.products.sku_combinations_edit', compact('combinations', 'unit_price', 'colors_active', 'product_name', 'product'));
     }
@@ -1126,9 +1163,13 @@ class ProductController extends Controller
 
         // Store all necessary data in the session for preview
         $request->session()->put(
-            'productPreviewData', compact(
-                'detailedProduct', 'product_queries',
-                'total_query', 'reviews', 'review_status'
+            'productPreviewData',
+            compact(
+                'detailedProduct',
+                'product_queries',
+                'total_query',
+                'reviews',
+                'review_status'
             )
         );
 
@@ -1424,7 +1465,7 @@ class ProductController extends Controller
             [$startDate, $endDate] = explode(' to ', $dateRange);
 
             // Convert date strings to DateTime objects for comparison
-            $currentDate = new DateTime; // Current date/time
+            $currentDate = new DateTime(); // Current date/time
             $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
             $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -1471,7 +1512,7 @@ class ProductController extends Controller
                 [$startDate, $endDate] = explode(' to ', $dateRange);
 
                 // Convert date strings to DateTime objects for comparison
-                $currentDate = new DateTime; // Current date/time
+                $currentDate = new DateTime(); // Current date/time
                 $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                 $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -1690,7 +1731,6 @@ class ProductController extends Controller
                 if (! isset($variation[$attributeId]) ||
                     (is_array($variation[$attributeId]) && $valueString !== $value) ||
                     (! is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
-
                     $matchesCheckedAttributes = false;
                     break;
                 }
@@ -1731,14 +1771,16 @@ class ProductController extends Controller
                     }
 
                     $sku = $variation['sku'] ?? null;
-                    $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
-                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? $product->unit_price;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? 1;
+
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? calculatePriceWithDiscountAndMwdCommission($product);
+
                     $total = (
                         isset($variation['variant_pricing-from']['from'][0]) &&
                         isset($variation['variant_pricing-from']['unit_price'][0])
                     ) ? (
                         $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0]
-                    ) : $product->unit_price;
+                    ) : calculatePriceWithDiscountAndMwdCommission($product);
 
                     if (
                         isset($variation['variant_pricing-from']['discount']['date']) &&
@@ -1750,7 +1792,7 @@ class ProductController extends Controller
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -1829,6 +1871,8 @@ class ProductController extends Controller
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $minimum) {
                         $outStock = true;
+                    } else {
+                        $maximum = (float) $product_stock;
                     }
                 }
             }
@@ -1842,7 +1886,10 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => $price ? single_price($price) : null,
+                "unit_price" => isset($variationId) ? get_single_product($variationId)->unit_price : null,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? $total ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
@@ -1862,7 +1909,15 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => isset($price) === true ? single_price($price) : null,
+                'formattedMwdCommissionPrice' =>  isset($variationId) ? single_price(calculatePriceWithDiscountAndMwdCommission(
+                    get_single_product($variationId),
+                    $quantity ?? 1,
+                    false
+                )) : null,
+                "unit_price" => isset($variationId) ? get_single_product($variationId)->unit_price : null,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? isset($total) ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
