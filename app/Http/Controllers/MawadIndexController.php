@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Category;
 use App\Models\Revision;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class MawadIndexController extends Controller
 {
@@ -29,13 +29,13 @@ class MawadIndexController extends Controller
         $categoryPrices = $this->getPriceEvolution($categoryId, $period, $filter);
 
         return Inertia::render('Home', [
-            "categories" => $categoriesWithRevisions,
-            "top10Categories" => $top10Categories,
-            "top10CategoriesEvolution" => $top10CategoriesEvolution,
-            "categoryPrices" => $categoryPrices,
-            "filter" => $filter,
-            "defaultCurrency" => $defaultCurrency->symbol,
-            "language" => app()->getLocale()
+            'categories' => $categoriesWithRevisions,
+            'top10Categories' => $top10Categories,
+            'top10CategoriesEvolution' => $top10CategoriesEvolution,
+            'categoryPrices' => $categoryPrices,
+            'filter' => $filter,
+            'defaultCurrency' => $defaultCurrency->symbol,
+            'language' => app()->getLocale(),
         ]);
     }
 
@@ -43,8 +43,9 @@ class MawadIndexController extends Controller
     {
         $startDate = Carbon::now()->subDays($period - 1)->toDateString();
         $endDate = Carbon::now()->toDateString();
+
         return [
-            "$startDate 00:00:00", "$endDate 23:59:59"
+            "$startDate 00:00:00", "$endDate 23:59:59",
         ];
     }
 
@@ -53,26 +54,26 @@ class MawadIndexController extends Controller
         $datesRanges = $this->getFormattedDateRanges($period);
 
         return DB::table('categories as c')
-                    ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
-                    ->join('products', 'product_categories.product_id', '=', 'products.id')
-                    ->join('revisions', function ($join) use ($datesRanges) {
-                        $join->on('revisions.revisionable_id', '=', 'products.id')
-                             ->where('revisions.key', '=', 'unit_price')
-                             ->whereBetween('revisions.created_at', $datesRanges);
-                    })
-                    ->where('products.approved', 1)
-                    ->where('products.published', 1)
-                    ->select([
-                        'c.id',
-                        'c.name'
-                    ])
-                    ->groupBy('c.id')
-                    ->limit(10)
-                    ->get()
-                    ->toArray();
+            ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
+            ->join('products', 'product_categories.product_id', '=', 'products.id')
+            ->join('revisions', function ($join) use ($datesRanges) {
+                $join->on('revisions.revisionable_id', '=', 'products.id')
+                    ->where('revisions.key', '=', 'unit_price')
+                    ->whereBetween('revisions.created_at', $datesRanges);
+            })
+            ->where('products.approved', 1)
+            ->where('products.published', 1)
+            ->select([
+                'c.id',
+                'c.name',
+            ])
+            ->groupBy('c.id')
+            ->limit(10)
+            ->get()
+            ->toArray();
     }
 
-    public function getTopCategoriesEvolutionInLastDays($period = 7, $filter = "avg")
+    public function getTopCategoriesEvolutionInLastDays($period = 7, $filter = 'avg')
     {
         $datesRanges = $this->getFormattedDateRanges($period);
 
@@ -82,8 +83,8 @@ class MawadIndexController extends Controller
             ->join('products', 'product_categories.product_id', '=', 'products.id')
             ->join('revisions', function ($join) use ($datesRanges) {
                 $join->on('revisions.revisionable_id', '=', 'products.id')
-                     ->where('revisions.key', '=', 'unit_price')
-                     ->whereBetween('revisions.created_at', $datesRanges);
+                    ->where('revisions.key', '=', 'unit_price')
+                    ->whereBetween('revisions.created_at', $datesRanges);
             })
             ->where('products.approved', 1)
             ->where('products.published', 1)
@@ -101,8 +102,8 @@ class MawadIndexController extends Controller
             ->join('products', 'product_categories.product_id', '=', 'products.id')
             ->join('revisions', function ($join) use ($datesRanges) {
                 $join->on('revisions.revisionable_id', '=', 'products.id')
-                     ->where('revisions.key', '=', 'unit_price')
-                     ->whereBetween('revisions.created_at', $datesRanges);
+                    ->where('revisions.key', '=', 'unit_price')
+                    ->whereBetween('revisions.created_at', $datesRanges);
             })
             ->where('products.approved', 1)
             ->where('products.published', 1)
@@ -113,9 +114,9 @@ class MawadIndexController extends Controller
                 'c.name AS category_name',
                 'parent.name AS parent_category_name',
                 DB::raw('DATE(revisions.created_at) AS date'),
-                $filter === "avg" ?
+                $filter === 'avg' ?
                     DB::raw('AVG(revisions.mwd_new_value) AS price')
-                    : DB::raw('MIN(revisions.mwd_new_value) AS price')
+                    : DB::raw('MIN(revisions.mwd_new_value) AS price'),
             ])
             ->groupBy('c.id', 'c.name', 'parent.name', 'date')
             ->orderBy('c.id')
@@ -134,12 +135,12 @@ class MawadIndexController extends Controller
         foreach ($categories as $data) {
             $categoryId = $data->id;
 
-            if (!isset($formattedData[$categoryId])) {
+            if (! isset($formattedData[$categoryId])) {
                 $formattedData[$categoryId] = [
-                    "category" => $data->category_name,
-                    "parentCategory" => $data->parent_category_name,
-                    "evolution" => [],
-                    "product_id" => $data->product_id
+                    'category' => $data->category_name,
+                    'parentCategory' => $data->parent_category_name,
+                    'evolution' => [],
+                    'product_id' => $data->product_id,
                 ];
             }
 
@@ -157,7 +158,7 @@ class MawadIndexController extends Controller
                     $lastKnownPrice = $categoryData['evolution'][$date];
                 }
 
-                if (!$firstPrice && $lastKnownPrice !== 0) {
+                if (! $firstPrice && $lastKnownPrice !== 0) {
                     $firstPrice = $lastKnownPrice;
                 }
 
@@ -165,7 +166,7 @@ class MawadIndexController extends Controller
 
                 $filledEvolution[] = [
                     'date' => $date,
-                    'price' => roundUpToTwoDigits($lastKnownPrice)
+                    'price' => roundUpToTwoDigits($lastKnownPrice),
                 ];
             }
 
@@ -174,11 +175,11 @@ class MawadIndexController extends Controller
 
             $categoryData['evolution'] = $filledEvolution;
             $categoryData['priceChange'] = [
-                "absolute" => $absoluteChange,
-                "formattedAbsolute" => single_price($absoluteChange),
-                "percentage" => $percentageChange,
-                "firstPrice" => $firstPrice,
-                "lastPrice" => $lastPrice
+                'absolute' => $absoluteChange,
+                'formattedAbsolute' => single_price($absoluteChange),
+                'percentage' => $percentageChange,
+                'firstPrice' => $firstPrice,
+                'lastPrice' => $lastPrice,
             ];
         }
 
@@ -192,9 +193,9 @@ class MawadIndexController extends Controller
             ->join('products', 'product_categories.product_id', '=', 'products.id')
             ->join('revisions', function ($join) {
                 $join->on('revisions.revisionable_id', '=', 'products.id')
-                     ->where('revisions.key', '=', 'unit_price')
+                    ->where('revisions.key', '=', 'unit_price')
                      // the requirements is the last 90 days
-                     ->where('revisions.created_at', '>=', DB::raw('NOW() - INTERVAL 90 DAY'));
+                    ->where('revisions.created_at', '>=', DB::raw('NOW() - INTERVAL 90 DAY'));
             })
             ->where('products.approved', 1)
             ->where('products.published', 1)
@@ -229,7 +230,7 @@ class MawadIndexController extends Controller
                        AND revisions.key = "unit_price"
                      ORDER BY revisions.created_at DESC
                      LIMIT 1)
-                ) * 100 AS priceChange')
+                ) * 100 AS priceChange'),
             ])
             ->groupBy('categories.id', 'parent_categories.name', 'categories.name')
             ->get()
@@ -239,10 +240,12 @@ class MawadIndexController extends Controller
                     if (empty($acc) || end($acc) !== $num) {
                         $acc[] = $num;
                     }
+
                     return $acc;
                 }, []);
 
                 $category->priceChange = roundUpToTwoDigits($category->priceChange);
+
                 return $category;
             })->toArray();
     }
@@ -250,8 +253,8 @@ class MawadIndexController extends Controller
     public function fixRevisionsUnitPriceMwdCommission()
     {
         $revisions = Revision::withTrashed()
-            ->where("revisionable_type", "App\Models\Product")
-            ->where("key", "unit_price")->get();
+            ->where('revisionable_type', "App\Models\Product")
+            ->where('key', 'unit_price')->get();
 
         $revisions->each(function ($revision) {
             $revision->mwd_new_value = calculateMwdIndexPrice(
@@ -270,16 +273,16 @@ class MawadIndexController extends Controller
         });
     }
 
-    public function getPriceEvolution($categoryId, $period, $filter = "avg")
+    public function getPriceEvolution($categoryId, $period, $filter = 'avg')
     {
         $startDate = match ($period) {
-            '1w'  => Carbon::now()->subDays(7),
-            '2w'  => Carbon::now()->subDays(14),
+            '1w' => Carbon::now()->subDays(7),
+            '2w' => Carbon::now()->subDays(14),
             '1m' => Carbon::now()->subMonth(),
             '3m' => Carbon::now()->subMonths(3),
             '6m' => Carbon::now()->subMonths(6),
-            '1y'  => Carbon::now()->subYear(),
-            default  => Carbon::now()->subDays(7)
+            '1y' => Carbon::now()->subYear(),
+            default => Carbon::now()->subDays(7)
         };
 
         return DB::table('revisions')
@@ -289,15 +292,16 @@ class MawadIndexController extends Controller
             ->whereBetween('revisions.created_at', [$startDate, Carbon::now()])
             ->select([
                 DB::raw('DATE(revisions.created_at) as date'),
-                $filter === "avg" ? DB::raw('AVG(revisions.mwd_new_value) as price') : DB::raw('MIN(revisions.mwd_new_value) as price')
+                $filter === 'avg' ? DB::raw('AVG(revisions.mwd_new_value) as price') : DB::raw('MIN(revisions.mwd_new_value) as price'),
             ])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get()
-            ->map(function ($data) use ($filter) {
+            ->map(function ($data) {
                 $data->price = roundUpToTwoDigits(
                     $data->price
                 );
+
                 return $data;
             })->toArray();
     }
