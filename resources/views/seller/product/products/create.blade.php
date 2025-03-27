@@ -749,8 +749,8 @@
                                     <!-- Updated List Style -->
                                     <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
-                                            <li>&bull; Images should be in JPG or PNG format</li>
-                                            <li>&bull; Maximum file size 5MB per image</li>
+                                            <li>&bull; Images should be in JPG, JPEG, PNG, WebP, GIF, BMP, TIFF, or HEIC format.</li>
+                                            <li>&bull; Maximum file size 2MB per image</li>
                                             <li>&bull; Images should be named with product SKU</li>
                                         </ul>
                                     </div>
@@ -842,20 +842,19 @@
                                             <path d="M8 17H16" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
                                                   stroke-linecap="round" stroke-linejoin="round"/>
                                         </svg>
-                                        Product Documents Upload
-                                    </span>
+                                        Product Data Sheet Upload                                    </span>
                                 </div>
                     
                                 <div class="col-12 p-0 pt-2">
                                     <!-- Requirements List -->
                                     <div class="fs-16 p-0 pt-3">
-                                        Please upload product documents following these requirements:
+                                        Please upload Product Data Sheet  following these requirements:
                                     </div>
                                     <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
-                                            <li>&bull; Documents should be in PDF or DOCX format</li>
-                                            <li>&bull; Maximum file size 10MB per document</li>
-                                            <li>&bull; Files should be named with product SKU</li>
+                                            <li>&bull; Documents should be in PDF format</li>
+                                            <li>&bull; Maximum file size 2MB per document</li>
+                                            {{-- <li>&bull; Files should be named with product SKU</li> --}}
                                         </ul>
                                     </div>
                     
