@@ -52,7 +52,7 @@ class MawadIndexController extends Controller
     {
         $datesRanges = $this->getFormattedDateRanges($period);
 
-        return $topCategories = DB::table('categories as c')
+        return DB::table('categories as c')
                     ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
                     ->join('products', 'product_categories.product_id', '=', 'products.id')
                     ->join('revisions', function ($join) use ($datesRanges) {
