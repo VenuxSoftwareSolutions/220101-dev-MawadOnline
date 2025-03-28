@@ -276,33 +276,70 @@ class MawadIndexController extends Controller
     public function getPriceEvolution($categoryId, $period, $filter = 'avg')
     {
         $startDate = match ($period) {
-            '1w' => Carbon::now()->subDays(7),
-            '2w' => Carbon::now()->subDays(14),
+            '1w' => Carbon::now()->subDays(6),
+            '2w' => Carbon::now()->subDays(13),
             '1m' => Carbon::now()->subMonth(),
-            '3m' => Carbon::now()->subMonths(3),
-            '6m' => Carbon::now()->subMonths(6),
-            '1y' => Carbon::now()->subYear(),
+            '3m' => Carbon::now()->subMonths(2),
+            '6m' => Carbon::now()->subMonths(5),
+            '1y' => Carbon::now()->subMonths(11),
             default => Carbon::now()->subDays(7)
         };
 
-        return DB::table('revisions')
+        // grouping method (by day or by month)
+        $groupBy = in_array($period, ['1w', '2w', '1m'])
+            ? 'DATE(revisions.created_at)'
+            : 'DATE_FORMAT(revisions.created_at, "%Y-%m")';
+
+        $rawData = DB::table('revisions')
             ->join('products', 'products.id', '=', 'revisions.revisionable_id')
             ->where('revisions.key', 'unit_price')
             ->where('products.category_id', $categoryId)
             ->whereBetween('revisions.created_at', [$startDate, Carbon::now()])
             ->select([
-                DB::raw('DATE(revisions.created_at) as date'),
-                $filter === 'avg' ? DB::raw('AVG(revisions.mwd_new_value) as price') : DB::raw('MIN(revisions.mwd_new_value) as price'),
+                DB::raw("$groupBy as date"),
+                $filter === 'avg'
+                    ? DB::raw('AVG(revisions.mwd_new_value) as price')
+                    : DB::raw('MIN(revisions.mwd_new_value) as price'),
             ])
             ->groupBy('date')
             ->orderBy('date', 'asc')
             ->get()
             ->map(function ($data) {
-                $data->price = roundUpToTwoDigits(
-                    $data->price
-                );
-
+                $data->price = roundUpToTwoDigits($data->price);
                 return $data;
-            })->toArray();
+            })->keyBy('date')
+            ->toArray();
+
+        // generate full range of dates (days or months)
+        $datesPeriod = collect();
+        $current = clone $startDate;
+        $now = Carbon::now();
+
+        while ($current < $now) {
+            $formattedDate = in_array($period, ['1w', '2w', '1m'])
+                ? $current->format('Y-m-d')
+                : $current->format('Y-m');
+
+            $datesPeriod->push($formattedDate);
+
+            in_array($period, ['1w', '2w', '1m']) ? $current->addDay() : $current->addMonth();
+        }
+
+        // fill missing dates with last known price
+        $filledData = [];
+        $lastPrice = null;
+
+        foreach ($datesPeriod as $date) {
+            if (isset($rawData[$date])) {
+                $lastPrice = $rawData[$date]->price;
+            }
+
+            $filledData[] = (object) [
+                'date' => $date,
+                'price' => $lastPrice !== null ? roundUpToTwoDigits($lastPrice) : 0,
+            ];
+        }
+
+        return $filledData;
     }
 }
