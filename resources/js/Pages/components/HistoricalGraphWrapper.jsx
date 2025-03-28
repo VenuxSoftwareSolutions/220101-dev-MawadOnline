@@ -127,7 +127,12 @@ export function HistoricalGraphWrapper() {
                                         bottom: 5,
                                     }}
                                 >
-                                    <XAxis dataKey="date" />
+                                    <XAxis
+                                        dataKey="date"
+                                        tickFormatter={(label) =>
+                                            formatDate(label, locale)
+                                        }
+                                    />
                                     <YAxis tickFormatter={formatCurrency} />
                                     <Tooltip
                                         formatter={(value) =>

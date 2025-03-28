@@ -24,10 +24,18 @@ export function useFormatCurrency() {
 }
 
 export function formatDate(dateString, locale) {
+    let dateParts = dateString.split("-");
+    if (dateParts.length === 2) {
+        dateString += "-01";
+    }
+
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat(locale, {
-        day: "numeric",
-        month: "long",
+
+    let _locale = locale === "en" ? `${locale}-GB` : locale;
+
+    return new Intl.DateTimeFormat(_locale, {
+        day: dateParts.length === 3 ? "numeric" : undefined,
+        month: "short",
         year: "numeric",
     }).format(date);
 }

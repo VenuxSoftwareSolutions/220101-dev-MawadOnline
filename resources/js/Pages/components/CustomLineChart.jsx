@@ -27,7 +27,10 @@ export function CustomLineChart({ data }) {
                     bottom: 5,
                 }}
             >
-                <XAxis dataKey="date" />
+                <XAxis
+                    dataKey="date"
+                    tickFormatter={(label) => formatDate(label, locale)}
+                />
                 <YAxis tickFormatter={formatCurrency} />
                 <Tooltip
                     labelFormatter={(label) => formatDate(label, locale)}
