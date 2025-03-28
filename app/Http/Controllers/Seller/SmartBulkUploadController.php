@@ -11,6 +11,7 @@ use Auth;
 use WebSocket\Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 
 class SmartBulkUploadController extends Controller
@@ -38,6 +39,16 @@ class SmartBulkUploadController extends Controller
         if ($request->hasFile('file')) {
 
             $file = $request->file('file');
+            $fileHash = hash_file('sha256', $file->path());
+            $jobId = Str::uuid()->toString(); 
+            session([
+                'bulk_job' => [
+                    'id' => $jobId,
+                    'file_hash' => $fileHash,
+                    'steps_completed' => 0
+                ]
+            ]);
+    
             $extension = strtolower($file->getClientOriginalExtension());
 
             $upload = new Upload;
@@ -60,13 +71,12 @@ class SmartBulkUploadController extends Controller
                 $upload->save();
                 $wsUrl = "{$this->wsUrl}/bulkupload/setVendorProductsFile";
                 $data = [
-                    'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
+                    'jobId' => $jobId,
                     'vendorUserId' => Auth::id(),
                     'vendorProductsFile' => basename($filename)
                 ];
 
                 $client = new Client($wsUrl);
-
 
                 // Send data
                 $client->send(json_encode($data));
@@ -79,9 +89,10 @@ class SmartBulkUploadController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'File uploaded and sent to WebSocket successfully!',
+                    'message' => 'File uploaded and sent to Server successfully!',
                     'file_path' => $storedFilePath,
-                    'websocket_response' => $response
+                    'websocket_response' => $response,
+                    'job_id' => $jobId,
                 ]);
 
             } catch (\Exception $e) {
@@ -118,7 +129,7 @@ class SmartBulkUploadController extends Controller
             ];
         }, $request->input('shipping_details'));
         $requestBody = [
-            'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
+            'jobId' => $request->input('job_id'), 
             'vendorUserId' => Auth::id(),
             'vendorProductShipping' => $vendorProductShipping,
             'mwd3pProductShippingEnabled' => filter_var($request->input('mwd3p_enabled'), FILTER_VALIDATE_BOOLEAN)
@@ -167,7 +178,7 @@ class SmartBulkUploadController extends Controller
         }, $request->input('discount_config'));
 
         $requestBody = [
-            'jobId' => '81dc9bdb-52d0-4dc2-0036-dbd8313ed055',
+            'jobId' => $request->input('job_id'),            
             'vendorUserId' => Auth::id(),
             'discountConfig' => $discountConfig
         ];
@@ -275,5 +286,22 @@ class SmartBulkUploadController extends Controller
                 'code' => -1
             ], 503);
         }
+    }
+    public function checkJobStatus(Request $request)
+    {
+        $currentJob = session('bulk_job', null);
+        $fileHash = $request->input('file_hash');
+
+        if ($currentJob && $currentJob['file_hash'] === $fileHash) {
+            return response()->json([
+                'active_job' => true,
+                'job_id' => $currentJob['id'],
+                'completed_steps' => $currentJob['steps_completed']
+            ]);
+        }
+
+        return response()->json([
+            'active_job' => false
+        ]);
     }
 }

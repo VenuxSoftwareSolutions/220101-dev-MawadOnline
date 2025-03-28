@@ -200,111 +200,137 @@
                 right: -11px !important;
             }
         }
-        .add_prod_btnlist{
-            padding:10px 20px;
-            background:#fff;
-            border:none;
+
+        .add_prod_btnlist {
+            padding: 10px 20px;
+            background: #fff;
+            border: none;
             border-radius: 8px;
         }
-        .hidden{display: none;}
-        .active_btnlist{
+
+        .hidden {
+            display: none;
+        }
+
+        .active_btnlist {
             color: #ffffff !important;
             background: #2e294e;
-        }.active_btnlist:hover{
+        }
+
+        .active_btnlist:hover {
             color: #ffffff;
             background: #2e294e;
         }
-        .sbu-s1-desc{
+
+        .sbu-s1-desc {
             border: solid 1px #fefefe;
             border-radius: 16px;
             background: #fafafa;
             text-align: center;
             color: #3A3B40;
         }
-        .sbu-s1-title{
+
+        .sbu-s1-title {
             text-align: center;
             color: #3A3B40;
         }
-        .sbu-s1-btn-ex{
-            border:solid 1px #f4f4f4;
+
+        .sbu-s1-btn-ex {
+            border: solid 1px #f4f4f4;
             border-radius: 8px;
             color: #2e294e;
             background: #f9f9f9;
         }
-        .sbu-s1-btn-arrow{
-            border:none;
+
+        .sbu-s1-btn-arrow {
+            border: none;
             border-radius: 8px;
             color: #378AB6;
             background: none;
         }
-        .sbu-s1-btn-sub{
-            border:none;
+
+        .sbu-s1-btn-sub {
+            border: none;
             border-radius: 12px;
             color: #ffffff;
             background: #378AB6;
         }
-        .sbu-s1-btn-prev{
-            border:solid 1px #378AB6;
+
+        .sbu-s1-btn-prev {
+            border: solid 1px #378AB6;
             border-radius: 12px;
             color: #378AB6;
             background: #ffffff;
         }
-        .sbu-s1-btn-ex-l{
-            border:solid 1px #2e294e;
+
+        .sbu-s1-btn-ex-l {
+            border: solid 1px #2e294e;
             border-radius: 8px;
             color: #2e294e;
             background: #f9f9f9;
         }
-        .dark-c3{
+
+        .dark-c3 {
             color: #3A3B40;
         }
-        .line-h{
+
+        .line-h {
             line-height: 27px;
         }
-        .mt5px{
+
+        .mt5px {
             margin-top: 5px;
         }
-        .sbu-save-icon{
+
+        .sbu-save-icon {
             position: relative;
             top: -2px;
         }
-        .sbu-save-img{
+
+        .sbu-save-img {
             width: 380px;
             height: auto;
             border-radius: 12px;
             border: solid 6px #f2f2f2;
         }
-        .sbu-discount-img{
+
+        .sbu-discount-img {
             width: 100%;
             height: auto;
             border-radius: 12px;
             border: solid 6px #f2f2f2;
         }
-        .sbu-upload-box{
-            border:dashed 3px #e4e4e4;
+
+        .sbu-upload-box {
+            border: dashed 3px #e4e4e4;
             border-radius: 12px;
             background: #fafafa;
         }
-        .sbu-upload-title{
+
+        .sbu-upload-title {
             background: #ffffff;
             border-radius: 12px;
-            border:solid 1px #e4e4e4;
+            border: solid 1px #e4e4e4;
         }
-        .sbu-s1-btn-imp{
-            border:solid 1px #CB774B;
+
+        .sbu-s1-btn-imp {
+            border: solid 1px #CB774B;
             border-radius: 8px;
             color: #CB774B;
             background: #fff;
         }
-        .sbu-s1-btn-start{
-            border:none;
+
+        .sbu-s1-btn-start {
+            border: none;
             border-radius: 8px;
             color: #ffffff;
             background: #378AB6;
         }
-        .sbu-upload-box-dad{
+
+        .sbu-upload-box-dad {
             color: #bebebe;
         }
+
         .radio-group {
             display: flex;
             gap: 20px;
@@ -330,41 +356,50 @@
             color: #555;
         }
 
-        input[type="radio"] + .radio-label {
+        input[type="radio"]+.radio-label {
             border-color: #f2f2f2;
             background-color: #f2f2f2;
         }
 
-        input[type="radio"]:checked + .radio-label {
+        input[type="radio"]:checked+.radio-label {
             border-color: #5FA38E;
             background-color: #5FA38E;
         }
 
-        input[type="radio"]:checked + .radio-label span {
+        input[type="radio"]:checked+.radio-label span {
             color: white;
         }
 
-        .yes { color: #5FA38E; }
-        .no { color: #E2BE6A; }
-        .border-b-title{
+        .yes {
+            color: #5FA38E;
+        }
+
+        .no {
+            color: #E2BE6A;
+        }
+
+        .border-b-title {
             border-bottom: solid 1px #ececec;
         }
-        .sbu-s2-title-icon{
+
+        .sbu-s2-title-icon {
             position: relative;
             top: -2px;
         }
 
-        .input-disc-box{
+        .input-disc-box {
             width: 138px;
             height: auto;
             background: #ececec;
         }
-        .input-disc-percent{
+
+        .input-disc-percent {
             width: 38px;
             height: 100%;
             line-height: 42px;
         }
-        #shipping_configuration_box{
+
+        #shipping_configuration_box {
             display: none;
         }
     </style>
@@ -413,34 +448,51 @@
                                     <b>Smart</b> Bulk Upload
                                 </div>
                                 <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4">
-                                    This system is a huge time saver. With the ability to upload up to 1,000,000 products at once, managing your inventory has never been easier.
+                                    This system is a huge time saver. With the ability to upload up to 1,000,000 products at
+                                    once, managing your inventory has never been easier.
                                 </div>
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <div class="col-12 col-md-8 d-flex justify-content-between">
-                                    <button class="fs-16 font-prmopt sbu-s1-btn-ex py-2 px-3">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9 11V17L11 15" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9 17L7 15" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-ex py-2 px-3">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 11V17L11 15" stroke="#2e294e" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M9 17L7 15" stroke="#292D32" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                    stroke="#2e294e" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
-                                        Export
-                                    </button>
+                                            Export
+                                        </button>
                                         <button class="fs-16 font-prmopt sbu-s1-btn-arrow py-2 px-3">
                                             Then
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.4297 5.92999L20.4997 12L14.4297 18.07" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M3.5 12H20.33" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M14.4297 5.92999L20.4997 12L14.4297 18.07" stroke="#378AB6"
+                                                    stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M3.5 12H20.33" stroke="#378AB6" stroke-width="1.5"
+                                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
 
                                         </button>
                                         <button class="fs-16 font-prmopt sbu-s1-btn-ex py-2 px-3">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M9 17V11L7 13" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M9 11L11 13" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#2e294e" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M9 11L11 13" stroke="#2e294e" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                    stroke="#2e294e" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#2e294e"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
 
                                             Import
                                         </button>
@@ -449,9 +501,13 @@
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="startNowBtn">
                                         Start Now
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
 
                                     </button>
                                 </div>
@@ -464,49 +520,76 @@
                             <div class="col-10 col-md-6">
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
-                                        <svg width="24" height="24" class="sbu-s2-title-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9 11V17L11 15" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9 17L7 15" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="24" height="24" class="sbu-s2-title-icon" viewBox="0 0 24 24"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 11V17L11 15" stroke="#3A3B40" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M9 17L7 15" stroke="#3A3B40" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#3A3B40"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                         Export CSV File
                                     </span>
                                 </div>
                                 <div class="col-12 p-0 pt-3">
                                     <span class="col-12 p-0 fs-16 font-prompt dark-c3 float-left">
-                                        From your inventory management or database software, export your product data in MS Excel format.
+                                        From your inventory management or database software, export your product data in MS
+                                        Excel format.
                                     </span>
                                     <span class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         Ensure your file includes the following key details:
                                     </span>
                                     <ul class="fs-16 p-0 font-prompt dark-c3 line-h mt5px float-left">
-                                        <li><strong>Product Name –</strong> Helps attract buyers with clear and searchable titles.</li>
-                                        <li><strong>Brand –</strong> Ensures correct classification and brand recognition.</li>
-                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for internal tracking and accounting.</li>
-                                        <li><strong>Unit Price –</strong> Required for listing products and enabling transactions (price in AED, VAT inclusive).</li>
-                                        <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per piece, per square meter, or per kilogram).</li>
-                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and delivery calculations. Measurements should be in one of the following units: millimeters, centimeters, meters, inches, or feet.</li>
-                                        <li><strong>Product Package Weight –</strong> Helps estimate shipping costs. Weight should be measured in one of the following units: grams, kilograms, or pounds.</li>
-                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer confidence. Supported formats: JPG, JPEG, PNG, WEBP, GIF, AVIF, BMP, TIFF, or HEIC.</li>
-                                        <li><strong>Country of Origin –</strong> Specifies where the product is manufactured or sourced from.</li>
+                                        <li><strong>Product Name –</strong> Helps attract buyers with clear and searchable
+                                            titles.</li>
+                                        <li><strong>Brand –</strong> Ensures correct classification and brand recognition.
+                                        </li>
+                                        <li><strong>Your SKU –</strong> (Stock Keeping Unit) – Used for internal tracking
+                                            and accounting.</li>
+                                        <li><strong>Unit Price –</strong> Required for listing products and enabling
+                                            transactions (price in AED, VAT inclusive).</li>
+                                        <li><strong>Unit of Sale –</strong> Specifies how the product is sold (e.g., per
+                                            piece, per square meter, or per kilogram).</li>
+                                        <li><strong>Product Package Dimensions –</strong> Important for logistics and
+                                            delivery calculations. Measurements should be in one of the following units:
+                                            millimeters, centimeters, meters, inches, or feet.</li>
+                                        <li><strong>Product Package Weight –</strong> Helps estimate shipping costs. Weight
+                                            should be measured in one of the following units: grams, kilograms, or pounds.
+                                        </li>
+                                        <li><strong>Product Photos Link –</strong> High-quality images increase buyer
+                                            confidence. Supported formats: JPG, JPEG, PNG, WEBP, GIF, AVIF, BMP, TIFF, or
+                                            HEIC.</li>
+                                        <li><strong>Country of Origin –</strong> Specifies where the product is manufactured
+                                            or sourced from.</li>
                                         <!--<li><strong>Technical Documents Link –</strong> Upload CAD/BIM files, spec sheets, or certifications.</li>
-                                        <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
+                                            <li><strong>Product Videos Link –</strong> Demonstrations or promotional videos enhance engagement.</li>-->
                                     </ul>
                                 </div>
-                                
+
                                 <div class="col-12 p-0 py-1 d-flex justify-content-start">
                                     <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev2Btn">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                         Previous
                                     </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next2Btn">
                                         Next Step
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
 
                                     </button>
                                 </div>
@@ -519,28 +602,45 @@
                             <div class="col-10 col-md-8">
                                 <div class="col-12 sbu-s1-desc fs-16 font-prmopt p-4 dark-c3">
                                     Save your Excel file in <b>CSV (UTF-8)</b> format.
-                                    <svg width="20" height="20" class="sbu-save-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M3.5 7V17C3.5 20 4.97 22 8.5 22H15.5C18.97 22 20.5 20 20.5 17V15.83C20.5 15.3 20.29 14.79 19.91 14.42L19.08 13.59C18.7 13.21 18.49 12.71 18.49 12.18V10C18.49 9.45 18.94 9 19.49 9C20.04 9 20.49 8.55 20.49 8V7C20.49 4 18.96 2 15.49 2H8.49C4.97 2 3.5 4 3.5 7Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M7.99047 21.97L7.98047 19C7.98047 17.89 8.87047 17 9.98047 17H13.9905C15.0905 17 15.9805 17.89 15.9905 18.99L16.0205 21.98" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M13.9707 7.78003H7.9707" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
+                                    <svg width="20" height="20" class="sbu-save-icon" viewBox="0 0 24 24"
+                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M3.5 7V17C3.5 20 4.97 22 8.5 22H15.5C18.97 22 20.5 20 20.5 17V15.83C20.5 15.3 20.29 14.79 19.91 14.42L19.08 13.59C18.7 13.21 18.49 12.71 18.49 12.18V10C18.49 9.45 18.94 9 19.49 9C20.04 9 20.49 8.55 20.49 8V7C20.49 4 18.96 2 15.49 2H8.49C4.97 2 3.5 4 3.5 7Z"
+                                            stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path
+                                            d="M7.99047 21.97L7.98047 19C7.98047 17.89 8.87047 17 9.98047 17H13.9905C15.0905 17 15.9805 17.89 15.9905 18.99L16.0205 21.98"
+                                            stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path d="M13.9707 7.78003H7.9707" stroke="#3A3B40" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
 
                                 </div>
                                 <div class="col-12 d-flex justify-content-center">
-                                <img class="sbu-save-img lazyload mt-3" src="{{ static_asset('assets/img/saveascsv.png') }}">
+                                    <img class="sbu-save-img lazyload mt-3"
+                                        src="{{ static_asset('assets/img/saveascsv.png') }}">
                                 </div>
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev3Btn">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                         Previous
                                     </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next3Btn">
                                         Next Step
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
 
                                     </button>
                                 </div>
@@ -556,39 +656,55 @@
 
                                 </div>
                                 <div class="col-12 d-flex justify-content-center mt-3">
-                                <div class="col-10 col-md-7 sbu-upload-box p-4">
-                                    <div class="col-12 mt-3 d-flex justify-content-center">
-                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" id="upload-btn">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                            Import CSV File
-                                        </button>
-                                        <input type="file" id="file-upload" accept=".csv" style="display: none;">
-                                    </div>
-                                    <div class="col-12 mt-3 d-flex justify-content-center">
-                                        <div id="file-name" class="fs-16 dark-c3"></div>
+                                    <div class="col-10 col-md-7 sbu-upload-box p-4">
+                                        <div class="col-12 mt-3 d-flex justify-content-center">
+                                            <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" id="upload-btn">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                        stroke="#CB774B" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                    <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B"
+                                                        stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+                                                Import CSV File
+                                            </button>
+                                            <input type="file" id="file-upload" accept=".csv"
+                                                style="display: none;">
+                                        </div>
+                                        <div class="col-12 mt-3 d-flex justify-content-center">
+                                            <div id="file-name" class="fs-16 dark-c3"></div>
+                                        </div>
                                     </div>
                                 </div>
-                    </div>
 
 
 
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev4Btn">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                         Previous
                                     </button>
                                     <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next4Btn">
                                         Next Step
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
 
                                     </button>
                                 </div>
@@ -601,7 +717,8 @@
                             <div class="col-12">
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
                                             <!-- Existing SVG path -->
                                         </svg>
                                         Product Shipping
@@ -611,7 +728,7 @@
                                     <span class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         Before we proceed, there are 2 questions that require your clarifications:
                                     </span>
-                    
+
                                     <!-- Question 1: Delivery -->
                                     <div class="col-12 mt-3">
                                         <div class="fs-16 font-prompt dark-c3 mb-2">
@@ -628,20 +745,21 @@
                                             </label>
                                         </div>
                                         <div class="fs-14 text-muted mt-2">
-                                            
-                            Shipping duration for buyers will be displayed as 2 to 3 days, including your order preparation days.
-                        </div>
+
+                                            Shipping duration for buyers will be displayed as 2 to 3 days, including your
+                                            order preparation days.
+                                        </div>
                                     </div>
-                    
+
                                     <!-- Shipping Configuration Table -->
                                     <div class="mt-4" id="shipping_configuration_box">
                                         <div class="fs-16 font-prompt dark-c3 mb-2">
                                             <b>Please enter the following shipping configuration:</b>
                                         </div>
                                         <div class="alert alert-info fs-14">
-                            Ensure your configuration includes all possible quantities from 1 to 9999.
-                        </div>
-                                        
+                                            Ensure your configuration includes all possible quantities from 1 to 9999.
+                                        </div>
+
                                         <table class="table table-bordered" id="shipping-config">
                                             <thead class="thead-light">
                                                 <tr>
@@ -653,32 +771,31 @@
                                             <tbody>
                                                 <tr>
                                                     <td>
-                                                        <input type="number" class="form-control" min="1" max="9998" 
-                                                            name="from_qty[]"                                                                             placeholder="{{ translate('From QTY') }}"
+                                                        <input type="number" class="form-control" min="1"
+                                                            max="9998" name="from_qty[]"
                                                             placeholder="{{ translate('From QTY') }}"
+                                                            placeholder="{{ translate('From QTY') }}" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control" min="2"
+                                                            max="9999" placeholder="{{ translate('To QTY') }}"
+                                                            name="to_qty[]" required>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control" step="0.01"
+                                                            placeholder="{{ translate('Charge') }}" name="charge[]"
                                                             required>
                                                     </td>
-                                                    <td>
-                                                        <input type="number" class="form-control" min="2" max="9999" 
-                                                        placeholder="{{ translate('To QTY') }}"
-                                                        name="to_qty[]" required>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" class="form-control" step="0.01" 
-                                                        placeholder="{{ translate('Charge') }}"
-                                                        name="charge[]" required>
-                                                    </td>
-                                                   
+
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        <button type="button" class="btn btn-link p-0 mt-2" 
-                                            onclick="addShippingRow()">
+                                        <button type="button" class="btn btn-link p-0 mt-2" onclick="addShippingRow()">
                                             <i class="las la-plus"></i> Add another range
                                         </button>
-                
+
                                     </div>
-                    
+
                                     <!-- Question 2: 3rd Party Shipping -->
                                     <div class="mt-5">
                                         <div class="fs-16 font-prompt dark-c3 mb-2">
@@ -695,28 +812,37 @@
                                             </label>
                                         </div>
                                         <div class="fs-14 text-muted mt-2">
-                                            
-                                            Shipping duration for buyers will be displayed as 2 to 3 days, including your order preparation days.
+
+                                            Shipping duration for buyers will be displayed as 2 to 3 days, including your
+                                            order preparation days.
                                         </div>
                                         <div class="alert alert-warning mt-2 fs-14">
-                            Note: If using MawadOnline 3rd Party Shipping, ensure product package dimensions 
-                            and weight are specified for each product in the CSV file.
-                        </div>
+                                            Note: If using MawadOnline 3rd Party Shipping, ensure product package dimensions
+                                            and weight are specified for each product in the CSV file.
+                                        </div>
                                     </div>
-                    
+
                                     <!-- Navigation Buttons -->
                                     <div class="col-12 py-3 d-flex justify-content-start pl-0">
                                         <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev5Btn">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
                                             Previous
                                         </button>
                                         <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next5Btn">
                                             Next Step
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
 
                                         </button>
                                     </div>
@@ -732,16 +858,23 @@
                                 <!-- Updated Title Section -->
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z"
+                                                stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                         Product Images Upload
                                     </span>
                                 </div>
-                    
+
                                 <div class="col-12 p-0 pt-2">
                                     <div class="fs-16 p-0 pt-3">
                                         Please upload product images following these requirements:
@@ -749,27 +882,34 @@
                                     <!-- Updated List Style -->
                                     <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
-                                            <li>&bull; Images should be in JPG, JPEG, PNG, WebP, GIF, BMP, TIFF, or HEIC format.</li>
+                                            <li>&bull; Images should be in JPG, JPEG, PNG, WebP, GIF, BMP, TIFF, or HEIC
+                                                format.</li>
                                             <li>&bull; Maximum file size 2MB per image</li>
                                             <li>&bull; Images should be named with product SKU</li>
                                         </ul>
                                     </div>
-                    
+
                                     <!-- Updated Upload Button -->
                                     <div class="col-12 mt-3">
                                         <input type="file" id="folderInput" webkitdirectory multiple hidden>
-                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" 
-                                                onclick="document.getElementById('folderInput').click()">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3"
+                                            onclick="document.getElementById('folderInput').click()">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                    stroke="#CB774B" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             Select Images Folder
                                         </button>
                                     </div>
-                    
+
                                     <!-- Rest of the content remains the same -->
                                     <div class="mt-4">
                                         <div class="fs-16 font-prompt dark-c3 mb-2">
@@ -778,7 +918,7 @@
                                         <div class="alert alert-info fs-14">
                                             Please review and fix any validation errors before proceeding
                                         </div>
-                                        
+
                                         <div class="table-container" style="max-height: 400px; overflow-y: auto;">
                                             <table class="table table-bordered" id="errorsTable">
                                                 <thead class="thead-light">
@@ -794,31 +934,34 @@
                                             </table>
                                         </div>
                                     </div>
-                    
+
                                     <div class="mt-4">
-                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
-                                                id="reprocessBtn" 
-                                                onclick="reprocessFailed()" 
-                                                disabled>
+                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" id="reprocessBtn"
+                                            onclick="reprocessFailed()" disabled>
                                             Re-process Failed Images
                                         </button>
                                     </div>
-                                                        
+
                                     <div class="col-12 py-3 d-flex justify-content-start pl-0">
-                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prevImageBtn">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" 
-                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" 
-                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                        <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4"
+                                            id="prevImageBtn">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             Previous
                                         </button>
                                         <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="nextImageBtn">
                                             Next Step
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" 
-                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" 
-                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                         </button>
                                     </div>
@@ -832,25 +975,27 @@
                                 <!-- Title Section -->
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M21 7V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V7C3 4 4.5 2 8 2H16C19.5 2 21 4 21 7Z" 
-                                                  stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.5 4.5V6.5C14.5 7.6 15.4 8.5 16.5 8.5H18.5" 
-                                                  stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8 13H12" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8 17H16" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10" 
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M21 7V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V7C3 4 4.5 2 8 2H16C19.5 2 21 4 21 7Z"
+                                                stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M14.5 4.5V6.5C14.5 7.6 15.4 8.5 16.5 8.5H18.5" stroke="#3A3B40"
+                                                stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M8 13H12" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M8 17H16" stroke="#3A3B40" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
-                                        Product Data Sheet Upload                                    </span>
+                                        Product Data Sheet Upload </span>
                                 </div>
-                    
+
                                 <div class="col-12 p-0 pt-2">
                                     <!-- Requirements List -->
                                     <div class="fs-16 p-0 pt-3">
-                                        Please upload Product Data Sheet  following these requirements:
+                                        Please upload Product Data Sheet following these requirements:
                                     </div>
                                     <div class="col-12 p-0 fs-16 font-prompt dark-c3 mt5px float-left">
                                         <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
@@ -859,22 +1004,28 @@
                                             {{-- <li>&bull; Files should be named with product SKU</li> --}}
                                         </ul>
                                     </div>
-                    
+
                                     <!-- Upload Button -->
                                     <div class="col-12 mt-3">
                                         <input type="file" id="docFolderInput" webkitdirectory multiple hidden>
-                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3" 
-                                                onclick="document.getElementById('docFolderInput').click()">
-                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <button class="fs-16 font-prmopt sbu-s1-btn-imp py-2 px-3"
+                                            onclick="document.getElementById('docFolderInput').click()">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9 17V11L7 13" stroke="#CB774B" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M9 11L11 13" stroke="#CB774B" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M22 10V15C22 20 20 22 15 22H9C4 22 2 20 2 15V9C2 4 4 2 9 2H14"
+                                                    stroke="#CB774B" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                                <path d="M22 10H18C15 10 14 9 14 6V2L22 10Z" stroke="#CB774B"
+                                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             Select Documents Folder
                                         </button>
                                     </div>
-                    
+
                                     <!-- Validation Results -->
                                     <div class="mt-4">
                                         <div class="fs-16 font-prompt dark-c3 mb-2">
@@ -883,7 +1034,7 @@
                                         <div class="alert alert-info fs-14">
                                             Please review and fix any validation errors before proceeding
                                         </div>
-                                        
+
                                         <div class="table-container" style="max-height: 400px; overflow-y: auto;">
                                             <table class="table table-bordered" id="docErrorsTable">
                                                 <thead class="thead-light">
@@ -899,32 +1050,36 @@
                                             </table>
                                         </div>
                                     </div>
-                    
+
                                     <!-- Reprocess Button -->
                                     <div class="mt-4">
-                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" 
-                                        id="reprocessDocBtn" onclick="reprocessFailedDocs()">
-                                                
+                                        <button class="btn btn-warning fs-16 font-prompt px-4 py-2" id="reprocessDocBtn"
+                                            onclick="reprocessFailedDocs()">
+
                                             Re-process Failed Documents
                                         </button>
                                     </div>
-                    
+
                                     <!-- Navigation Buttons -->
                                     <div class="col-12 py-3 d-flex justify-content-start pl-0">
                                         <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prevDocBtn">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" 
-                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" 
-                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             Previous
                                         </button>
                                         <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="nextDocBtn">
                                             Next Step
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" 
-                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" 
-                                                    stroke-linecap="round" stroke-linejoin="round"/>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                         </button>
                                     </div>
@@ -938,19 +1093,27 @@
                             <div class="col-10 col-md-9">
                                 <div class="col-12 p-0 fs-17 border-b-title font-prmopt pb-3 d-flex justify-content-start">
                                     <span class="dark-c3 p-0">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M19.5 12.5C19.5 11.12 20.62 10 22 10V9C22 5 21 4 17 4H7C3 4 2 5 2 9V9.5C3.38 9.5 4.5 10.62 4.5 12C4.5 13.38 3.38 14.5 2 14.5V15C2 19 3 20 7 20H17C21 20 22 19 22 15C20.62 15 19.5 13.88 19.5 12.5Z"
+                                                stroke="#3A3B40" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path d="M9 14.75L15 8.75" stroke="#3A3B40" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M14.9945 14.75H15.0035" stroke="#3A3B40" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M8.99451 9.25H9.00349" stroke="#3A3B40" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
 
-                                            products discount
+                                        products discount
                                     </span>
                                 </div>
                                 <div class="col-12 p-0 pt-2">
                                     <div class="fs-16 p-0 pt-3">
-                                        Our platform enables bulk sales, letting you set prices and discounts for different quantity ranges. See the example below :
+                                        Our platform enables bulk sales, letting you set prices and discounts for different
+                                        quantity ranges. See the example below :
                                     </div>
                                     {{-- <img class="sbu-discount-img lazyload mt-3" src="{{ static_asset('assets/img/discountexample.png') }}"> --}}
                                     <ul class="fs-16 p-0 py-2 font-prompt dark-c3 line-h mt5px float-left">
@@ -958,7 +1121,8 @@
                                             &bull; Sell in bulk at retail price (not recommended).
                                         </li>
                                         <li>
-                                            &bull; Set a global pricing rule for all products and fine-tune specific items later in the Products List.
+                                            &bull; Set a global pricing rule for all products and fine-tune specific items
+                                            later in the Products List.
                                         </li>
                                         <li>
                                             &bull; Skip for now and adjust prices individually later.
@@ -979,23 +1143,34 @@
                                             <tbody id="bloc_shipping_configuration">
                                                 <tr>
                                                     <td>
-                                                        <input type="number" name="fromqte" class="form-control min-qty-shipping" id="min-qty-shipping" placeholder="From QTY" value="">
+                                                        <input type="number" name="fromqte"
+                                                            class="form-control min-qty-shipping" id="min-qty-shipping"
+                                                            placeholder="From QTY" value="">
                                                     </td>
                                                     <td>
-                                                        <input type="number" name="toqte" class="form-control max-qty-shipping" id="max-qty-shipping" placeholder="To QTY" value="">
+                                                        <input type="number" name="toqte"
+                                                            class="form-control max-qty-shipping" id="max-qty-shipping"
+                                                            placeholder="To QTY" value="">
                                                     </td>
-                                                  
+
                                                     <td>
-                                                        <input type="text"  class="form-control discount-range" placeholder="Discount (Start/End)">
+                                                        <input type="text" class="form-control discount-range"
+                                                            placeholder="Discount (Start/End)">
                                                     </td>
                                                     <td>
                                                         <div class="input-disc-box float-left">
-                                                        <input type="number" name="discount" class="form-control charge_per_unit_shipping float-left"  placeholder="Discount" value="">
-                                                        <div class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">%</div>
-                                                        <div>
+                                                            <input type="number" name="discount"
+                                                                class="form-control charge_per_unit_shipping float-left"
+                                                                placeholder="Discount" value="">
+                                                            <div
+                                                                class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">
+                                                                %</div>
+                                                            <div>
                                                     </td>
                                                     <td>
-                                                        <i class="las la-plus btn-add-discount" style="margin-left: 5px; margin-top: 17px;" title="Add another ligne"></i>
+                                                        <i class="las la-plus btn-add-discount"
+                                                            style="margin-left: 5px; margin-top: 17px;"
+                                                            title="Add another ligne"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -1003,16 +1178,24 @@
                                     </div>
                                     <div class="col-12 py-3 d-flex justify-content-start">
                                         <button class="sbu-s1-btn-prev fs-16 font-prompt px-4 py-2 mr-4" id="prev6Btn">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002" stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M14.9998 19.92L8.47984 13.4C7.70984 12.63 7.70984 11.37 8.47984 10.6L14.9998 4.08002"
+                                                    stroke="#378AB6" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
                                             Previous
                                         </button>
                                         <button class="sbu-s1-btn-sub fs-16 font-prompt px-4 py-2" id="next6Btn">
                                             Next Step
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                    stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
 
                                         </button>
                                     </div>
@@ -1030,9 +1213,13 @@
                                 <div class="col-12 py-3 d-flex justify-content-center">
                                     <button class="fs-16 font-prmopt sbu-s1-btn-start py-2 px-3">
                                         Start Now
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002" stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
+                                                stroke="#ffffff" stroke-width="1.5" stroke-miterlimit="10"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -1063,8 +1250,9 @@
                                     <label class="col-md-3 col-from-label">{{ translate('Product Name') }} <span
                                             class="text-danger">*</span></label>
                                     <div class="col-md-8">
-                                        <input id="nameProduct" type="text" class="form-control" required name="name"
-                                            value="{{ old('name') }}" placeholder="{{ translate('Product Name') }}">
+                                        <input id="nameProduct" type="text" class="form-control" required
+                                            name="name" value="{{ old('name') }}"
+                                            placeholder="{{ translate('Product Name') }}">
                                     </div>
                                 </div>
                                 <div class="form-group row" id="brand">
@@ -1398,7 +1586,8 @@
                                     <label class="col-md-2 col-from-label">{{ translate('Sample Available?') }}</label>
                                     <div class="col-md-10">
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="0" name="sample_available" type="checkbox" class="sample-available" />
+                                            <input value="0" name="sample_available" type="checkbox"
+                                                class="sample-available" />
                                             <span></span>
                                         </label>
                                     </div>
@@ -1412,8 +1601,9 @@
                                 <div class="row mb-3" id="sample-price-wrapper" style="display: none;">
                                     <label class="col-md-2 col-from-label">{{ translate('Sample price') }}</label>
                                     <div class="col-md-10">
-                                        <input type="number" step="0.01" class="form-control" name="sample_price"
-                                            id="sample_price_parent" value="{{ old('sample_price') }}">
+                                        <input type="number" step="0.01" class="form-control"
+                                            name="sample_price" id="sample_price_parent"
+                                            value="{{ old('sample_price') }}">
                                     </div>
                                 </div>
 
@@ -1490,7 +1680,8 @@
                                                         name="unit_third_party" disabled>
                                                         <option value="celsius">{{ translate('Celsius') }}</option>
                                                         <option value="kelvin">{{ translate('Kelvin') }}</option>
-                                                        <option value="fahrenheit">{{ translate('Fahrenheit') }}</option>
+                                                        <option value="fahrenheit">{{ translate('Fahrenheit') }}
+                                                        </option>
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control" name="min_third_party"
@@ -1529,10 +1720,9 @@
                                         <tbody id="bloc_shipping_configuration">
                                             <tr>
                                                 <td>
-                                                    <select class="form-control shipper"
-                                                        name="shipper[]"
+                                                    <select class="form-control shipper" name="shipper[]"
                                                         id="shipper_shipping">
-                                                        <option>{{ __("Select Shipper") }}</option>
+                                                        <option>{{ __('Select Shipper') }}</option>
                                                         <option value="vendor" @selected(old('shipper.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
                                                         <option value="third_party" @selected(old('shipper.0') == 'third_party')>
@@ -1549,10 +1739,12 @@
                                                         value="{{ old('to_shipping.0') }}"></td>
 
                                                 <td><input disabled type="number" class="form-control estimated_order"
-                                                        name="estimated_order[]" value="{{ old('estimated_order.0') }}"
+                                                        name="estimated_order[]"
+                                                        value="{{ old('estimated_order.0') }}"
                                                         placeholder="{{ translate('Days') }}">
                                                 </td>
-                                                <td><input disabled type="number" class="form-control estimated_shipping"
+                                                <td><input disabled type="number"
+                                                        class="form-control estimated_shipping"
                                                         name="estimated_shipping[]"
                                                         placeholder="{{ translate('Days') }}"
                                                         value="{{ old('estimated_shipping.0') }}"></td>
@@ -1567,7 +1759,8 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <select class="form-control shipping_charge" name="shipping_charge[]">
+                                                    <select class="form-control shipping_charge"
+                                                        name="shipping_charge[]">
                                                         <option selected>
                                                             {{ translate('Choose shipping charge') }}</option>
                                                         <option value="flat" @selected(old('shipping_charge.0') == 'flat')>
@@ -1576,11 +1769,13 @@
                                                             {{ translate('Charging per Unit of Sale') }}</option>
                                                     </select>
                                                 </td>
-                                                <td><input disabled type="number" class="form-control flat_rate_shipping"
+                                                <td><input disabled type="number"
+                                                        class="form-control flat_rate_shipping"
                                                         name="flat_rate_shipping[]"
                                                         value="{{ old('flat_rate_shipping.0') }}"
                                                         placeholder="{{ translate('Flat rate amount') }}" readonly></td>
-                                                <td><input disabled type="number" class="form-control charge_per_unit_shipping"
+                                                <td><input disabled type="number"
+                                                        class="form-control charge_per_unit_shipping"
                                                         name="charge_per_unit_shipping[]"
                                                         placeholder="{{ translate('Charge unit') }}"
                                                         value="{{ old('charge_per_unit_shipping.0') }}" readonly></td>
@@ -1615,7 +1810,8 @@
                                                                     id="max-qty-shipping"
                                                                     placeholder="{{ translate('To QTY') }}"
                                                                     value="{{ old('to_shipping', [])[$index] }}"></td>
-                                                            <td><input type="number" class="form-control estimated_order"
+                                                            <td><input type="number"
+                                                                    class="form-control estimated_order"
                                                                     name="estimated_order[]"
                                                                     value="{{ old('estimated_order', [])[$index] }}"
                                                                     placeholder="{{ translate('Days') }}">
@@ -1645,7 +1841,8 @@
                                                                     <option value="flat" @selected(old('shipping_charge', [])[$index] == 'flat')>
                                                                         {{ translate('Flat-rate regardless of quantity') }}
                                                                     </option>
-                                                                    <option value="charging" @selected(old('shipping_charge', [])[$index] == 'charging')>
+                                                                    <option value="charging"
+                                                                        @selected(old('shipping_charge', [])[$index] == 'charging')>
                                                                         {{ translate('Charging per Unit of Sale') }}
                                                                     </option>
                                                                 </select>
@@ -1740,7 +1937,8 @@
                                                         name="unit_third_party_sample" disabled>
                                                         <option value="celsius">{{ translate('Celsius') }}</option>
                                                         <option value="kelvin">{{ translate('Kelvin') }}</option>
-                                                        <option value="fahrenheit">{{ translate('Fahrenheit') }}</option>
+                                                        <option value="fahrenheit">{{ translate('Fahrenheit') }}
+                                                        </option>
                                                     </select>
                                                 </td>
                                                 <td><input type="number" class="form-control"
@@ -1779,7 +1977,7 @@
                                                 <td>
                                                     <select class="form-control shipper_sample" name="shipper_sample[]"
                                                         id="shipper_sample_parent">
-                                                        <option>{{ __("Select Shipper") }}</option>
+                                                        <option>{{ __('Select Shipper') }}</option>
                                                         <option value="vendor" @selected(old('shipper_sample.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
                                                         <option value="third_party" @selected(old('shipper_sample.0') == 'third_party')>
@@ -1797,7 +1995,8 @@
                                                 <td>
                                                     <select class="form-control paid_sample" name="paid_sample[]"
                                                         id="paid_sample_parent" style="width: max-content!important;">
-                                                        <option value="" selected>{{ translate('Choose paid by') }}
+                                                        <option value="" selected>
+                                                            {{ translate('Choose paid by') }}
                                                         </option>
                                                         <option value="vendor" @selected(old('paid_sample.0') == 'vendor')>
                                                             {{ translate('vendor') }}</option>
@@ -1806,8 +2005,8 @@
                                                     </select>
                                                 </td>
                                                 <td><input disabled type="number" class="form-control shipping_amount"
-                                                        name="shipping_amount[]" value="{{ old('shipping_amount.0') }}"
-                                                        step="0.1" /></td>
+                                                        name="shipping_amount[]"
+                                                        value="{{ old('shipping_amount.0') }}" step="0.1" /></td>
                                                 <td>
                                                     <i class="las la-plus btn-add-sample-shipping"
                                                         style="margin-left: 5px; margin-top: 17px;"
@@ -1959,8 +2158,8 @@
                                     class="col-md-2 col-from-label">{{ translate('Use default sample pricing configuration') }}</label>
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-sample-pricing" checked
-                                            />
+                                        <input value="1" type="checkbox" class="variant-sample-pricing"
+                                            checked />
                                         <span></span>
                                     </label>
                                 </div>
@@ -1997,8 +2196,8 @@
                                     class="col-md-2 col-from-label">{{ translate('Use default sample Shipping') }}</label>
                                 <div class="col-md-10">
                                     <label class="aiz-switch aiz-switch-success mb-0">
-                                        <input value="1" type="checkbox" class="variant-sample-shipping" checked
-                                            />
+                                        <input value="1" type="checkbox" class="variant-sample-shipping"
+                                            checked />
                                         <span></span>
                                     </label>
                                 </div>
@@ -2036,8 +2235,8 @@
                             <div class="row">
                                 <label class="col-md-2 col-from-label">{{ translate('SKU') }}</label>
                                 <div class="col-md-10 mb-3">
-                                    <input type="text" name="product_sk" class="form-control" id="sku_product_parent"
-                                        value="{{ old('product_sk') }}">
+                                    <input type="text" name="product_sk" class="form-control"
+                                        id="sku_product_parent" value="{{ old('product_sk') }}">
                                 </div>
                             </div>
                             <div class="row">
@@ -2811,16 +3010,18 @@
                     }
                 });
         }
+
         function addShippingRow() {
             const table = document.getElementById('shipping-config').getElementsByTagName('tbody')[0];
             const newRow = table.insertRow();
-            
+
             newRow.innerHTML = `
                 <td><input type="number" class="form-control" min="1" max="9998" name="from_qty[]" required></td>
                 <td><input type="number" class="form-control" min="2" max="9999" name="to_qty[]" required></td>
                 <td><input type="number" class="form-control" step="0.01" name="charge[]" required></td>
             `;
         }
+
         function generateSlug(text) {
             return text
                 .toString() // Ensure it's a string
@@ -3423,8 +3624,7 @@
                             if ($(this).is('input[type="text"]') || $(this).is(
                                     'input[type="number"]')) {
                                 $(this).val('');
-                            }
-                            else if ($(this).is('input[type="radio"]')) {
+                            } else if ($(this).is('input[type="radio"]')) {
                                 $(this).prop('checked',
                                     false);
                             } else if ($(this).is('select')) {
@@ -3480,8 +3680,8 @@
 
                     let unitPriceElement = $(`
                         <label class="col-md-2 col-from-label">
-                            {{ __("Unit of Sale Price") }}
-                            <small>({{ __("VAT Exclusive") }})</small>
+                            {{ __('Unit of Sale Price') }}
+                            <small>({{ __('VAT Exclusive') }})</small>
                             <span class="text-danger">*</span>
                         </label>
                         <div class="col-md-10">
@@ -3490,7 +3690,7 @@
                                class="form-control"
                                name="variant-unit_sale_price-${is_variant}"
                                value="0"
-                               placeholder="{{ __("Unit of Sale Price") }}"
+                               placeholder="{{ __('Unit of Sale Price') }}"
                             />
                         </div>
                     `);
@@ -3596,7 +3796,7 @@
                         .find('#bloc_pricing_configuration_variant').show();
                     $(this).parent().parent().parent()
                         .find('#bloc_pricing_configuration_variant').append(
-                        unitPriceElement);
+                            unitPriceElement);
                 } else {
                     $(this).parent().parent().parent().find('#bloc_pricing_configuration_variant').empty();
                 }
@@ -4012,7 +4212,8 @@
                 dropifyInput.val('');
             }
 
-            function removeDropifyThumbnail() {        mwd3pProductShippingEnabled: true
+            function removeDropifyThumbnail() {
+                mwd3pProductShippingEnabled: true
 
                 dropifyInputThumbnail.closest('.dropify-wrapper').find('.dropify-clear').remove();
                 dropifyInputThumbnail.unwrap().siblings().remove();
@@ -4391,7 +4592,8 @@
                         $('body input[name="activate_third_party"]').prop('checked', false);
 
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+                        var message =
+                            '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -4432,7 +4634,8 @@
                     if (count_shippers == 0) {
                         $('body input[name="activate_third_party"]').prop('checked', false);
                         var title = "{{ translate('Default Shipping Configuration') }}";
-                        var message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+                        var message =
+                            '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -4591,7 +4794,7 @@
                     <i
                       class="las la-trash delete_sample_shipping_canfiguration"
                       style="margin-left: 5px; margin-top: 17px;"
-                      title="{{ __("Delete this ligne") }}"
+                      title="{{ __('Delete this ligne') }}"
                     ></i>
                 `;
                 clonedTr.find("td:last").append(removeIcon);
@@ -4621,7 +4824,7 @@
                 let count_shippers = {{ count($supported_shippers) }};
                 let selected = $(this).val();
 
-                if(["vendor", "third_party"].includes(selected) === true) {
+                if (["vendor", "third_party"].includes(selected) === true) {
                     $(this).parent().parent().find("input").each(function(_, el) {
                         $(el).attr("disabled", false)
                     });
@@ -4634,7 +4837,8 @@
                 if (selected.indexOf('third_party') !== -1) {
                     if (count_shippers == 0) {
                         let title = "{{ translate('Default Shipping Configuration') }}";
-                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+                        let message =
+                            '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -4827,7 +5031,7 @@
                             if (index == key) {
                                 let value = $(element_original).val();
                                 $(element).find(`option[value="${value}"]`)
-                                        .prop('selected', true);
+                                    .prop('selected', true);
                             }
                         })
                     });
@@ -5124,12 +5328,14 @@
                     $(this).parent().parent().find('.shipping_amount').prop('disabled', true);
                     $(this).parent().parent().find('.estimated_shipping_sample').val('');
                     $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', true);
-                    $(this).parent().parent().find('.paid_sample').find("option:last").prop("selected", true);
+                    $(this).parent().parent().find('.paid_sample').find("option:last").prop("selected",
+                        true);
                     $(this).parent().parent().find('.paid_sample').prop('disabled', true);
 
                     if (count_shippers == 0) {
                         let title = "{{ translate('Default Shipping Configuration') }}";
-                        let message = '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
+                        let message =
+                            '{{ __("You don't have any warehouse supported by MawadOnline 3rd party shippers. If you haven't created your warehouses, you can save the product as draft, create your warehouses by going to the Warehouses page under Inventory Management, and then you may continue editing your product.") }}';
 
                         $('#title-modal').text(title);
                         $('#text-modal').html(message);
@@ -5151,8 +5357,10 @@
                         $(this).parent().parent().find('.shipping_amount').val('');
                         $(this).parent().parent().find('.shipping_amount').prop('disabled', false);
                         $(this).parent().parent().find('.estimated_shipping_sample').val('');
-                        $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled', false);
-                        $(this).parent().parent().find('.paid_sample').find("option:first").prop("selected", true);
+                        $(this).parent().parent().find('.estimated_shipping_sample').prop('disabled',
+                        false);
+                        $(this).parent().parent().find('.paid_sample').find("option:first").prop("selected",
+                            true);
                         $(this).parent().parent().find('.paid_sample').prop('disabled', false);
                     } else {
                         let weight = $('#package_weight_sample').val();
@@ -5990,126 +6198,130 @@
             });
         });
         $(document).ready(function() {
-        $("#choice_form").show();
-        $("#classic_proc, #smart_proc").hide();
-
-        $(".btn").click(function() {
-            $(".btn").removeClass("active_btnlist");
-            $(this).addClass("active_btnlist");
-        });
-
-        $("#smartbulk").click(function() {
-            $("#smart_proc").show();
-            $("#classic_proc, #choice_form").hide();
-        });
-        
-
-        $("#classicbulk").click(function() {
-            $("#classic_proc").show();
-            $("#smart_proc, #choice_form").hide();
-        });
-
-        $("#addprod").click(function() {
             $("#choice_form").show();
             $("#classic_proc, #smart_proc").hide();
-        });
-        $("#startNowBtn").click(function() {
-            $("#smartbulk-1").hide();
-            $("#smartbulk-2").show();
-        });
-        $("#export-conf").click(function() {
-            $(this).attr("data-value", "true");
-            console.log("Export Confirm value:", $(this).attr("data-value"));
-        });/*
-        $("#next2Btn").click(function() {
-            if($("#export-conf").attr("data-value") === "true") {
+
+            $(".btn").click(function() {
+                $(".btn").removeClass("active_btnlist");
+                $(this).addClass("active_btnlist");
+            });
+
+            $("#smartbulk").click(function() {
+                $("#smart_proc").show();
+                $("#classic_proc, #choice_form").hide();
+            });
+
+
+            $("#classicbulk").click(function() {
+                $("#classic_proc").show();
+                $("#smart_proc, #choice_form").hide();
+            });
+
+            $("#addprod").click(function() {
+                $("#choice_form").show();
+                $("#classic_proc, #smart_proc").hide();
+            });
+            $("#startNowBtn").click(function() {
+                $("#smartbulk-1").hide();
+                $("#smartbulk-2").show();
+            });
+            $("#export-conf").click(function() {
+                $(this).attr("data-value", "true");
+                console.log("Export Confirm value:", $(this).attr("data-value"));
+            });
+            /*
+                    $("#next2Btn").click(function() {
+                        if($("#export-conf").attr("data-value") === "true") {
+                            $("#smartbulk-2").hide();
+                            $("#smartbulk-3").show();
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Oops...',
+                                text: 'You have to export the file first!'
+                            });
+                        }
+                    });*/
+            $("#next2Btn").click(function() {
                 $("#smartbulk-2").hide();
                 $("#smartbulk-3").show();
-            } else {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'You have to export the file first!'
-                });
-            }
-        });*/
-        $("#next2Btn").click(function() {
-            $("#smartbulk-2").hide();
-            $("#smartbulk-3").show();
-        });
-        $("#prev2Btn").click(function() {
-            $("#smartbulk-2").hide();
-            $("#smartbulk-1").show();
-        });
-        $("#next3Btn").click(function() {
-            $("#smartbulk-3").hide();
-            $("#smartbulk-4").show();
-        });
-        $("#prev3Btn").click(function() {
-            $("#smartbulk-3").hide();
-            $("#smartbulk-2").show();
-        });
-       
-        $("#prevImageBtn").click(function() {
-            $("#smart-image").hide();
-            $("#smartbulk-4").show();
-        });
-        $("#prev4Btn").click(function() {
-            $("#smartbulk-4").hide();
-            $("#smartbulk-3").show();
-        });
-        $("#prevDocBtn").click(function() {
-            $("#smart-doc").hide();
-            $("#smart-image").show();
-        });
-        $("#prev5Btn").click(function() {
-            $("#smartbulk-5").hide();
-            $("#smart-doc").show();
-        });
-        
-       
-        $("#prev6Btn").click(function() {
-            $("#smartbulk-6").hide();
-            $("#smartbulk-5").show();
-        });
-        $('input[name="deliver"]').change(function(){
-            if ($(this).val() === "yes") {
-                $("#shipping_configuration_box").show();
-            } else {
-                $("#shipping_configuration_box").hide();
-            }
-        });
-    });
-    function showError(message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Validation Error',
-            text: message,
-            confirmButtonText: 'Okay'
-        });
-    }
-    function showSuccess(message) {
-        Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: message,
-                    confirmButtonText: 'Okay'
-                })
-    }
-    function showWarning(message) {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Notice',
-        text: message,
-        confirmButtonText: 'OK'
-    });
-}
+            });
+            $("#prev2Btn").click(function() {
+                $("#smartbulk-2").hide();
+                $("#smartbulk-1").show();
+            });
+            $("#next3Btn").click(function() {
+                $("#smartbulk-3").hide();
+                $("#smartbulk-4").show();
+            });
+            $("#prev3Btn").click(function() {
+                $("#smartbulk-3").hide();
+                $("#smartbulk-2").show();
+            });
 
-    document.getElementById('upload-btn').addEventListener('click', function() {
-        document.getElementById('file-upload').click();
-    });
+            $("#prevImageBtn").click(function() {
+                $("#smart-image").hide();
+                $("#smartbulk-4").show();
+            });
+            $("#prev4Btn").click(function() {
+                $("#smartbulk-4").hide();
+                $("#smartbulk-3").show();
+            });
+            $("#prevDocBtn").click(function() {
+                $("#smart-doc").hide();
+                $("#smart-image").show();
+            });
+            $("#prev5Btn").click(function() {
+                $("#smartbulk-5").hide();
+                $("#smart-doc").show();
+            });
 
-    document.getElementById('file-upload').addEventListener('change', function(event) {
+
+            $("#prev6Btn").click(function() {
+                $("#smartbulk-6").hide();
+                $("#smartbulk-5").show();
+            });
+            $('input[name="deliver"]').change(function() {
+                if ($(this).val() === "yes") {
+                    $("#shipping_configuration_box").show();
+                } else {
+                    $("#shipping_configuration_box").hide();
+                }
+            });
+        });
+
+        function showError(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: message,
+                confirmButtonText: 'Okay'
+            });
+        }
+
+        function showSuccess(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: message,
+                confirmButtonText: 'Okay'
+            })
+        }
+
+        function showWarning(message) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Notice',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+
+        document.getElementById('upload-btn').addEventListener('click', function() {
+            document.getElementById('file-upload').click();
+        });
+
+        document.getElementById('file-upload').addEventListener('change', function(event) {
             const file = event.target.files[0];
             const fileNameDisplay = document.getElementById('file-name');
 
@@ -6120,992 +6332,1033 @@
 
             if (!file.name.endsWith('.csv')) {
                 showError("Invalid file format. Please upload a CSV file.");
-                event.target.value = ''; 
+                event.target.value = '';
                 return;
             }
 
-            const maxSize = 50 * 1024 * 1024; 
+            const maxSize = 50 * 1024 * 1024;
             if (file.size > maxSize) {
                 showError("File is too large. Max size is 50MB.");
-                event.target.value = ''; 
+                event.target.value = '';
                 return;
             }
 
             fileNameDisplay.textContent = file.name;
-    });
-    function updateReprocessButton() {
-        const reprocessBtn = document.getElementById('reprocessBtn');
-        reprocessBtn.disabled = errors.length === 0;
-    }   
+        });
+
+        function updateReprocessButton() {
+            const reprocessBtn = document.getElementById('reprocessBtn');
+            reprocessBtn.disabled = errors.length === 0;
+        }
 
 
-    //image folder upload
-    const tableBody = document.querySelector('#errorsTable tbody');
-    let errors = [];
+        //image folder upload
+        const tableBody = document.querySelector('#errorsTable tbody');
+        let errors = [];
 
-    function addToErrorsTable(errorRecord) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        function addToErrorsTable(errorRecord) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
             <td>${errorRecord.dispalyFilePath}</td>
             <td>${errorRecord.error}</td>
         `;
-        
-        if (errorRecord.errorCode == -30) {
-            const input = document.createElement("input");
-            input.type = "text";
-            input.readOnly = true;
-            input.dataset.errorIndex = errors.length - 1;
-            
-            input.addEventListener("click", async function () {
-                const { value: userInput } = await Swal.fire({
-                    title: 'Enter Product SKU',
-                    input: 'text',
-                    inputAttributes: { autocapitalize: 'off' },
-                    showCancelButton: true,
-                    confirmButtonText: 'Save',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (input) => {
-                        if (!input) {
-                            Swal.showValidationMessage('SKU cannot be empty');
+
+            if (errorRecord.errorCode == -30) {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.readOnly = true;
+                input.dataset.errorIndex = errors.length - 1;
+
+                input.addEventListener("click", async function() {
+                    const {
+                        value: userInput
+                    } = await Swal.fire({
+                        title: 'Enter Product SKU',
+                        input: 'text',
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Save',
+                        showLoaderOnConfirm: true,
+                        preConfirm: (input) => {
+                            if (!input) {
+                                Swal.showValidationMessage('SKU cannot be empty');
+                            }
+                            return input;
                         }
-                        return input;
+                    });
+
+                    if (userInput) {
+                        input.value = userInput;
+                        errors[input.dataset.errorIndex].userSetSku = userInput;
                     }
                 });
 
-                if (userInput) {
-                    input.value = userInput;
-                    errors[input.dataset.errorIndex].userSetSku = userInput;
-                }
-            });            
-            
-            row.appendChild(document.createElement("td")).appendChild(input);
+                row.appendChild(document.createElement("td")).appendChild(input);
+            }
+            tableBody.appendChild(row);
+            updateReprocessButton();
         }
-        tableBody.appendChild(row);
-        updateReprocessButton();
-    }
 
-    function clearErrorsTable() {
-        tableBody.innerHTML = '';
-        updateReprocessButton(); 
-    }
+        function clearErrorsTable() {
+            tableBody.innerHTML = '';
+            updateReprocessButton();
+        }
 
-    // Image Processing Logic
-    const pica = window.pica();
-    const MAX_DIM = 1280;
-    const allowedTypes = [
-        "image/jpeg", "image/png", "image/gif", "image/bmp",
-        "image/tiff", "image/webp", "image/heif", "image/heic", "image/avif"
-    ];        
+        // Image Processing Logic
+        const pica = window.pica();
+        const MAX_DIM = 1280;
+        const allowedTypes = [
+            "image/jpeg", "image/png", "image/gif", "image/bmp",
+            "image/tiff", "image/webp", "image/heif", "image/heic", "image/avif"
+        ];
 
-    document.getElementById("folderInput").addEventListener("change", function(event) {
-        const files = event.target.files;
-        processFiles(files);
-    });
-
-    async function processFiles(files) {
-        clearErrorsTable();
-        errors = [];  
-        updateReprocessButton();          
-        Swal.fire({
-            title: 'Processing Files...',
-            html: `0/${files.length} files processed`,
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
+        document.getElementById("folderInput").addEventListener("change", function(event) {
+            const files = event.target.files;
+            processFiles(files);
         });
 
-        let processedCount = 0;
-        for (const file of files) {
-            if (allowedTypes.includes(file.type)) {
-                await resizeAndUpload(file, null);
-                processedCount++;
-                Swal.getHtmlContainer().innerHTML = 
-                    `${processedCount}/${files.length} files processed`;
+        async function processFiles(files) {
+            clearErrorsTable();
+            errors = [];
+            updateReprocessButton();
+            Swal.fire({
+                title: 'Processing Files...',
+                html: `0/${files.length} files processed`,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            let processedCount = 0;
+            for (const file of files) {
+                if (allowedTypes.includes(file.type)) {
+                    await resizeAndUpload(file, null);
+                    processedCount++;
+                    Swal.getHtmlContainer().innerHTML =
+                        `${processedCount}/${files.length} files processed`;
+                }
+            }
+
+            Swal.close();
+            if (errors.length === 0) {
+                showSuccess('All files processed successfully!');
             }
         }
 
-        Swal.close();
-        if (errors.length === 0) {
-            showSuccess('All files processed successfully!');
-        }
-    }
+        async function reprocessFailed() {
+            const {
+                isConfirmed
+            } = await Swal.fire({
+                title: 'Reprocess failed images?',
+                text: 'This will attempt to upload all failed files again',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Reprocess'
+            });
 
-    async function reprocessFailed() {
-        const { isConfirmed } = await Swal.fire({
-            title: 'Reprocess failed images?',
-            text: 'This will attempt to upload all failed files again',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Reprocess'
-        });
-        
-        if (!isConfirmed) return;
+            if (!isConfirmed) return;
 
-        clearErrorsTable();
-        const errorsCopy = _.cloneDeep(errors);
-        errors = [];
-        updateReprocessButton(); 
-        
-        Swal.fire({
-            title: 'Reprocessing...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
+            clearErrorsTable();
+            const errorsCopy = _.cloneDeep(errors);
+            errors = [];
+            updateReprocessButton();
 
-        for (const errRec of errorsCopy) {
-            await resizeAndUpload(errRec.file, errRec.userSetSku);
-        }
-        
-        Swal.close();
-        if (errors.length === 0) {
             Swal.fire({
-                icon: 'success',
-                title: 'All errors resolved!',
-                timer: 2000
+                title: 'Reprocessing...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            for (const errRec of errorsCopy) {
+                await resizeAndUpload(errRec.file, errRec.userSetSku);
+            }
+
+            Swal.close();
+            if (errors.length === 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'All errors resolved!',
+                    timer: 2000
+                });
+            }
+            updateReprocessButton();
+        }
+
+
+
+        function resizeAndUpload(file, userSetSku) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+
+                    img.onload = function() {
+                        let imgCanvas = document.createElement("canvas");
+                        let ctx = imgCanvas.getContext("2d");
+
+                        imgCanvas.width = img.width;
+                        imgCanvas.height = img.height;
+                        ctx.drawImage(img, 0, 0, imgCanvas.width, imgCanvas.height);
+
+                        processImage(imgCanvas, file, userSetSku, resolve, reject);
+                    };
+                };
+
+                reader.onerror = (errorEvent) => {
+                    showError('File read error: ' + errorEvent.target.error.name);
+                    reject(errorEvent);
+                };
             });
         }
-        updateReprocessButton(); 
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        updateReprocessButton();
-    });
+        function processImage(imgCanvas, file, userSetSku, resolve, reject) {
+            let newWidth = imgCanvas.width - 1;
+            let newHeight = imgCanvas.height - 1;
 
-    function resizeAndUpload(file, userSetSku) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-
-                img.onload = function() {                    
-                    let imgCanvas = document.createElement("canvas");
-                    let ctx = imgCanvas.getContext("2d");
-
-                    imgCanvas.width = img.width;
-                    imgCanvas.height = img.height;
-                    ctx.drawImage(img, 0, 0, imgCanvas.width, imgCanvas.height);
-
-                    processImage(imgCanvas, file, userSetSku, resolve, reject);
-                };
-            };
-
-            reader.onerror = (errorEvent) => {
-                showError('File read error: ' + errorEvent.target.error.name);
-                reject(errorEvent);
-            };
-        });
-    }
-
-    function processImage(imgCanvas, file, userSetSku, resolve, reject) {                    
-        let newWidth = imgCanvas.width - 1;
-        let newHeight = imgCanvas.height - 1;
-        
-        let orgSize = imgCanvas.width * imgCanvas.height;
-        if (orgSize > MAX_DIM * MAX_DIM) {
-            let scalingFactor = Math.min(MAX_DIM / imgCanvas.width, MAX_DIM / imgCanvas.height);
-            newWidth = Math.floor(imgCanvas.width * scalingFactor);
-            newHeight = Math.floor(imgCanvas.height * scalingFactor);
-        }
-
-        const newCanvas = document.createElement("canvas");
-        newCanvas.width = newWidth;
-        newCanvas.height = newHeight;
-
-        pica.resize(imgCanvas, newCanvas)
-          .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
-          .then(blob => uploadFile(blob, file, userSetSku))
-          .then(resolve)
-          .catch(reject);           
-    }
-
-    async function uploadFile(blob, file, userSetSku) {
-        let jpgFilename = toJpgFilename(file.name);
-        let errorRecord = null;
-        
-        try {
-            if (blob.size > 2 * 1024 * 1024) {
-                throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
+            let orgSize = imgCanvas.width * imgCanvas.height;
+            if (orgSize > MAX_DIM * MAX_DIM) {
+                let scalingFactor = Math.min(MAX_DIM / imgCanvas.width, MAX_DIM / imgCanvas.height);
+                newWidth = Math.floor(imgCanvas.width * scalingFactor);
+                newHeight = Math.floor(imgCanvas.height * scalingFactor);
             }
 
+            const newCanvas = document.createElement("canvas");
+            newCanvas.width = newWidth;
+            newCanvas.height = newHeight;
+
+            pica.resize(imgCanvas, newCanvas)
+                .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
+                .then(blob => uploadFile(blob, file, userSetSku))
+                .then(resolve)
+                .catch(reject);
+        }
+
+        async function uploadFile(blob, file, userSetSku) {
+            let jpgFilename = toJpgFilename(file.name);
+            let errorRecord = null;
+
+            try {
+                if (blob.size > 2 * 1024 * 1024) {
+                    throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
+                }
+
+
+
+
+                const response = await fetch("{{ route('seller.bulk.upload-image') }}", {
+                    method: "POST",
+                    headers: getUploadHeaders(file, userSetSku),
+                    body: blob
+                });
+
+                const resp = await response.json();
+
+                // Maintain original error handling structure
+                if (resp.success !== true) {
+                    errorRecord = {
+                        dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                        file: file,
+                        error: resp.message || 'Unknown error',
+                        errorCode: resp.code,
+                        userSetSku: userSetSku
+                    };
+                }
+            } catch (err) {
+                console.error("Upload failed:", err);
+                errorRecord = {
+                    dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                    file: file,
+                    error: err.message,
+                    errorCode: -1,
+                    userSetSku: userSetSku
+                };
+            } finally {
+                if (errorRecord) {
+                    errors.push(errorRecord);
+                    addToErrorsTable(errorRecord);
+                }
+            }
+        }
+        // Next Step Handler
+        document.getElementById('nextImageBtn').addEventListener('click', async function() {
+            if (errors.length > 0) {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: 'Unresolved Issues',
+                    html: `You have ${errors.length} unresolved errors.`,
+                    showDenyButton: true,
+                    confirmButtonText: 'Stay and Fix Errors',
+                    denyButtonText: 'Proceed Anyway',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (result.isDenied) {
+                    const confirmProceed = await Swal.fire({
+                        title: 'Proceed with Errors?',
+                        html: `You're about to proceed with ${errors.length} unresolved issues.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Continue',
+                        cancelButtonText: 'Go Back'
+                    });
+
+                    if (confirmProceed.isConfirmed) {
+                        // Final loading indicator before transition
+                        Swal.fire({
+                            title: 'Transitioning...',
+                            allowOutsideClick: false,
+                            timer: 1000,
+                            didOpen: () => Swal.showLoading(),
+                            willClose: () => {
+                                $("#smart-image").hide();
+                                $("#smart-doc").show();
+                            }
+                        });
+                    }
+                    return;
+                }
+                return;
+            }
+
+            const confirm = await Swal.fire({
+                title: 'Finalize Uploads?',
+                text: 'You won\'t be able to modify these uploads after proceeding',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Continue'
+            });
+
+            if (confirm.isConfirmed) {
+                Swal.fire({
+                    title: 'Finalizing Uploads...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    willClose: () => {
+                        $("#smart-image").hide();
+                        $("#smart-doc").show();
+                    }
+                });
+            }
+        });
+
+
+        // Utility Functions
+        function getDirectoryPath(fullPath) {
+            if (!fullPath.includes('/')) return '';
+            const parts = fullPath.split('/');
+            parts.pop();
+            return parts.join('/') + '/';
+        }
+
+        function toJpgFilename(filename) {
+            return filename.includes(".") ?
+                filename.replace(/\.\w+$/, ".jpg") :
+                filename + ".jpg";
+        }
+
+
+        function removeFirstFolder(path) {
+                path = path.trim();
+                path = path.replace(/^[/\\]+/, "");
+                path = path.replace(/^[^/\\]+[/\\]/, "");
+                path = path.replace(/^[/\\]+/, "");
+                return path;
+        }
+
+        const docTableBody = document.querySelector('#docErrorsTable tbody');
+        let docErrors = [];
+
+        function addToDocErrorsTable(errorRecord) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td>${errorRecord.dispalyFilePath}</td>
+            <td>${errorRecord.error}</td>
+            `;
+
+            if (errorRecord.errorCode == -30) {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.readOnly = true;
+                input.dataset.errorIndex = docErrors.length - 1;
+
+                input.addEventListener("click", async function() {
+                    const {
+                        value: userInput
+                    } = await Swal.fire({
+                        title: 'Enter Product SKU',
+                        input: 'text',
+                        inputAttributes: {
+                            autocapitalize: 'off'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Save',
+                        showLoaderOnConfirm: true,
+                        preConfirm: (input) => {
+                            if (!input) {
+                                Swal.showValidationMessage('SKU cannot be empty');
+                            }
+                            return input;
+                        }
+                    });
+
+                    if (userInput) {
+                        input.value = userInput;
+                        docErrors[input.dataset.errorIndex].userSetSku = userInput;
+                    }
+                });
+
+                row.appendChild(document.createElement("td")).appendChild(input);
+            }
+            docTableBody.appendChild(row);
+            updateDocReprocessButton();
+        }
+
+        function clearDocErrorsTable() {
+            docTableBody.innerHTML = '';
+            updateDocReprocessButton();
+        }
+
+        // Document Processing Logic
+        const allowedDocTypes = ["application/pdf"];
+
+        document.getElementById("docFolderInput").addEventListener("change", function(event) {
+            const files = event.target.files;
+            processDocFiles(files);
+        });
+
+        async function processDocFiles(files) {
+            clearDocErrorsTable();
+            docErrors = [];
+            updateDocReprocessButton();
+
+            Swal.fire({
+                title: 'Processing Documents...',
+                html: `0/${files.length} files processed`,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            let processedCount = 0;
+            for (const file of files) {
+                if (allowedDocTypes.includes(file.type)) {
+                    await uploadDoc(file, null);
+                    processedCount++;
+                    Swal.getHtmlContainer().innerHTML =
+                        `${processedCount}/${files.length} files processed`;
+                }
+            }
+
+            Swal.close();
+            if (docErrors.length === 0) {
+                showSuccess('All documents processed successfully!');
+            }
+        }
+
+        async function reprocessFailedDocs() {
+            const {
+                isConfirmed
+            } = await Swal.fire({
+                title: 'Reprocess failed documents?',
+                text: 'This will attempt to upload all failed files again',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Reprocess'
+            });
+
+            if (!isConfirmed) return;
+
+            clearDocErrorsTable();
+            const errorsCopy = _.cloneDeep(docErrors);
+            docErrors = [];
+            updateDocReprocessButton();
+
+            Swal.fire({
+                title: 'Reprocessing...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            for (const errRec of errorsCopy) {
+                await uploadDoc(errRec.file, errRec.userSetSku);
+            }
+
+            Swal.close();
+            if (docErrors.length === 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'All errors resolved!',
+                    timer: 2000
+                });
+            }
+            updateDocReprocessButton();
+        }
+
+        function updateDocReprocessButton() {
+            const reprocessBtn = document.getElementById('reprocessDocBtn');
+            reprocessBtn.disabled = docErrors.length === 0;
+        }
+
+        async function uploadDoc(file, userSetSku) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(file);
+
+                reader.onload = async function(event) {
+                    const blob = new Blob([event.target.result], {
+                        type: "application/pdf"
+                    });
+                    await uploadDocFile(blob, file, userSetSku);
+                    resolve();
+                };
+
+                reader.onerror = (errorEvent) => {
+                    showError('File read error: ' + errorEvent.target.error.name);
+                    reject(errorEvent);
+                };
+            });
+        }
+
+        async function uploadDocFile(blob, file, userSetSku) {
+            let errorRecord = null;
+
+            try {
+                if (blob.size > 2 * 1024 * 1024) {
+                    throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
+                }
+
+
+                const response = await fetch("{{ route('seller.bulk.upload-doc') }}", {
+                    method: "POST",
+                    headers: getUploadHeaders(file, userSetSku),
+                    body: blob
+                });
+
+                const resp = await response.json();
+
+                if (resp.success !== true) {
+                    errorRecord = {
+                        dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                        file: file,
+                        error: resp.message || 'Unknown error',
+                        errorCode: resp.code,
+                        userSetSku: userSetSku
+                    };
+                }
+            } catch (err) {
+                console.error("Upload failed:", err);
+                errorRecord = {
+                    dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
+                    file: file,
+                    error: err.message,
+                    errorCode: -1,
+                    userSetSku: userSetSku
+                };
+            } finally {
+                if (errorRecord) {
+                    docErrors.push(errorRecord);
+                    addToDocErrorsTable(errorRecord);
+                }
+            }
+        }
+        let activeJobId = null;
+
+        // Document Next Step Handler
+        document.getElementById('nextDocBtn').addEventListener('click', async function() {
+            if (docErrors.length > 0) {
+                const result = await Swal.fire({
+                    icon: 'warning',
+                    title: 'Unresolved Issues',
+                    html: `You have ${docErrors.length} unresolved errors.`,
+                    showDenyButton: true,
+                    confirmButtonText: 'Stay and Fix Errors',
+                    denyButtonText: 'Proceed Anyway',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel'
+                });
+
+                if (result.isDenied) {
+                    const confirmProceed = await Swal.fire({
+                        title: 'Proceed with Errors?',
+                        html: `You're about to proceed with ${docErrors.length} unresolved issues.`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Continue',
+                        cancelButtonText: 'Go Back'
+                    });
+
+                    if (confirmProceed.isConfirmed) {
+                        Swal.fire({
+                            title: 'Transitioning...',
+                            allowOutsideClick: false,
+                            timer: 1000,
+                            didOpen: () => Swal.showLoading(),
+                            willClose: () => {
+                                $("#smart-doc").hide();
+                                $("#smartbulk-5").show();
+                            }
+                        });
+                    }
+                    return;
+                }
+                return;
+            }
+
+            const confirm = await Swal.fire({
+                title: 'Finalize Document Uploads?',
+                text: 'You won\'t be able to modify these uploads after proceeding',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Continue'
+            });
+
+            if (confirm.isConfirmed) {
+                Swal.fire({
+                    title: 'Finalizing Uploads...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    willClose: () => {
+                        $("#smart-doc").hide();
+                        $("#smartbulk-5").show();
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDocReprocessButton();
+            updateReprocessButton();
+
+
+        });
+        document.addEventListener('DOMContentLoaded', async () => {
+            const savedJobId = sessionStorage.getItem('activeJobId');
+            if (savedJobId) {
+                try {
+                    const response = fetch("{{ route('seller.bulk.check-job') }}", {
+                        method: 'POST',
+                        headers: {
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ job_id: savedJobId })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.valid) {
+                        activeJobId = savedJobId;
+                        showWarning('Resuming previous upload session');
+                        // Add logic to restore UI state if needed
+                    } else {
+                        sessionStorage.removeItem('activeJobId');
+                        showError('Previous upload session expired');
+                    }
+                } catch (error) {
+                    console.error('Job validation failed:', error);
+                    sessionStorage.removeItem('activeJobId');
+                    showError('Failed to verify upload session');
+                }
+            }
+        });
+        const VendorUserId = @json(auth()->id());
+
+        document.getElementById('next4Btn').addEventListener('click', function() {
+            const fileInput = document.getElementById('file-upload');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showError("Please select a CSV file first.");
+                return;
+            }
+            Swal.fire({
+                title: 'Validating File...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            fetch('{{ route('seller.vendor.fileupload') }}', {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            "content"),
+                    },
+                })
+
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        activeJobId = data.job_id;
+                        sessionStorage.setItem('activeJobId', activeJobId); 
+                        showSuccess("File Received successfully.");
+
+                        $("#smartbulk-4").hide();
+                        $("#smart-image").show();
+
+                    } else {
+                        showError("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Upload error:", error);
+                    showError("An error occurred while uploading the file.");
+                });
+        });
+
+        function getUploadHeaders(file, userSetSku = null) {
             const headers = {
                 "Content-Type": "application/octet-stream",
-                "job-id": "c4ca4238-a0b9-2382-0dcc-509a6f75849b",
-                "vendor-user-id": 337,
-                "file-name": jpgFilename,
+                "job-id": activeJobId,
+                "vendor-user-id": VendorUserId,
+                "file-name": file.name,
                 "file-path": file.webkitRelativePath,
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
             };
 
-            if (userSetSku != null) {
-                headers["user-set-sku"] = userSetSku;
-            }
-
-
-
-            const response = await fetch("{{ route('seller.bulk.upload-image') }}", {
-                method: "POST",
-                headers: headers,
-                body: blob
-            });
-
-            const resp = await response.json();
-            
-            // Maintain original error handling structure
-            if (resp.success !== true) {
-                errorRecord = {
-                    dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
-                    file: file,
-                    error: resp.message || 'Unknown error',
-                    errorCode: resp.code,
-                    userSetSku: userSetSku
-                };
+            if (userSetSku) headers["user-set-sku"] = userSetSku;
+            return headers;
         }
-        } catch (err) {
-            console.error("Upload failed:", err);
-            errorRecord = {
-                dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
-                file: file,
-                error: err.message,
-                errorCode: -1,
-                userSetSku: userSetSku
-            };
-        } finally {
-            if (errorRecord) {
-                errors.push(errorRecord);
-                addToErrorsTable(errorRecord);
-            }
-        }
-    }
-    // Next Step Handler
-    document.getElementById('nextImageBtn').addEventListener('click', async function() {
-        if (errors.length > 0) {
-            const result = await Swal.fire({
-                icon: 'warning',
-                title: 'Unresolved Issues',
-                html: `You have ${errors.length} unresolved errors.`,
-                showDenyButton: true,
-                confirmButtonText: 'Stay and Fix Errors',
-                denyButtonText: 'Proceed Anyway',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel'
-            });
 
-            if (result.isDenied) {
-                const confirmProceed = await Swal.fire({
-                    title: 'Proceed with Errors?',
-                    html: `You're about to proceed with ${errors.length} unresolved issues.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, Continue',
-                    cancelButtonText: 'Go Back'
-                });
+        document.getElementById('next5Btn').addEventListener('click', function() {
+            let shippingData = [];
+            let isValid = true;
+            let previousTo = 0;
 
-                if (confirmProceed.isConfirmed) {
-                    // Final loading indicator before transition
-                    Swal.fire({
-                        title: 'Transitioning...',
-                        allowOutsideClick: false,
-                        timer: 1000,
-                        didOpen: () => Swal.showLoading(),
-                        willClose: () => {
-                            $("#smart-image").hide();
-                            $("#smart-doc").show();
-                        }
-                    });
+            // Show spinner
+            let next5Btn = document.getElementById('next5Btn');
+            let spinner = document.createElement('span');
+            spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); // Bootstrap spinner
+            next5Btn.appendChild(spinner);
+            next5Btn.disabled = true; // Disable button to prevent multiple clicks
+
+            // Get all shipping configuration rows
+            document.querySelectorAll('#shipping-config tbody tr').forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                const fromQty = inputs[0].value;
+                const toQty = inputs[1].value;
+                const charge = inputs[2].value;
+
+                // Validate required fields
+                if (!fromQty || !toQty || !charge) {
+                    showError("Please fill all fields in row " + (index + 1));
+                    isValid = false;
+                    return;
                 }
+
+                // Validate numeric values
+                if (isNaN(fromQty) || isNaN(toQty) || isNaN(charge)) {
+                    showError("Please enter numeric values in row " + (index + 1));
+                    isValid = false;
+                    return;
+                }
+
+                // Convert to numbers
+                const numFrom = parseInt(fromQty);
+                const numTo = parseInt(toQty);
+                const numCharge = parseFloat(charge);
+
+                // Validate quantity ranges
+                if (numFrom < 1 || numFrom > 9998) {
+                    showError(`From Quantity must be between 1-9998 in row ${index + 1}`);
+                    isValid = false;
+                }
+                if (numTo < 2 || numTo > 9999) {
+                    showError(`To Quantity must be between 2-9999 in row ${index + 1}`);
+                    isValid = false;
+                }
+                if (numFrom >= numTo) {
+                    showError(`From Quantity must be less than To Quantity in row ${index + 1}`);
+                    isValid = false;
+                }
+
+                // Check for quantity gaps/overlaps
+                if (index > 0 && numFrom !== previousTo + 1) {
+                    showError(
+                        `Quantity ranges must be continuous (row ${index + 1} should start at ${previousTo + 1})`
+                        );
+                    isValid = false;
+                }
+                previousTo = numTo;
+
+                // Store valid data
+                shippingData.push({
+                    from_qty: numFrom,
+                    to_qty: numTo,
+                    charge: numCharge
+                });
+            });
+
+            // Check coverage of 1-9999 range
+            if (shippingData.length > 0) {
+                const firstFrom = shippingData[0].from_qty;
+                const lastTo = shippingData[shippingData.length - 1].to_qty;
+
+                if (firstFrom !== 1 || lastTo !== 9999) {
+                    showError("Shipping configuration must cover all quantities from 1 to 9999");
+                    isValid = false;
+                }
+            }
+
+            // Check 3rd party shipping selection
+            const thirdPartyRadio = document.querySelector('input[name="third_party"]:checked');
+            if (!thirdPartyRadio) {
+                showError("Please select an option for 3rd Party Shipping");
+                isValid = false;
+            }
+            const mwd3pEnabled = thirdPartyRadio.value === 'yes';
+
+            if (!isValid) {
+                next5Btn.removeChild(spinner);
+                next5Btn.disabled = false;
                 return;
             }
-            return; 
-        }
 
-        const confirm = await Swal.fire({
-            title: 'Finalize Uploads?',
-            text: 'You won\'t be able to modify these uploads after proceeding',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Continue'
-        });
+            // Prepare request data
+            const requestData = {
+                job_id: activeJobId,
+                shipping_details: shippingData,
+                mwd3p_enabled: mwd3pEnabled
+            };
 
-        if (confirm.isConfirmed) {
-            Swal.fire({
-                title: 'Finalizing Uploads...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading(),
-                willClose: () => {
-                    $("#smart-image").hide();
-                    $("#smart-doc").show();
-                }
-            });
-        }
-    });
-
-
-    // Utility Functions
-    function getDirectoryPath(fullPath) {
-        if (!fullPath.includes('/')) return '';
-        const parts = fullPath.split('/');
-        parts.pop(); 
-        return parts.join('/') + '/';
-    }
-
-    function toJpgFilename(filename) {
-        return filename.includes(".") 
-            ? filename.replace(/\.\w+$/, ".jpg")
-            : filename + ".jpg";
-    }
-
-
-    function removeFirstFolder(path) {
-            path = path.trim();
-            path = path.replace(/^[/\\]+/, ""); 
-            path = path.replace(/^[^/\\]+[/\\]/, "");
-            path = path.replace(/^[/\\]+/, ""); 
-            return path;
-    }
-
-    const docTableBody = document.querySelector('#docErrorsTable tbody');
-    let docErrors = [];
-
-    function addToDocErrorsTable(errorRecord) {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${errorRecord.dispalyFilePath}</td>
-        <td>${errorRecord.error}</td>
-    `;
-    
-    if (errorRecord.errorCode == -30) {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.readOnly = true;
-        input.dataset.errorIndex = docErrors.length - 1;
-        
-        input.addEventListener("click", async function () {
-            const { value: userInput } = await Swal.fire({
-                title: 'Enter Product SKU',
-                input: 'text',
-                inputAttributes: { autocapitalize: 'off' },
-                showCancelButton: true,
-                confirmButtonText: 'Save',
-                showLoaderOnConfirm: true,
-                preConfirm: (input) => {
-                    if (!input) {
-                        Swal.showValidationMessage('SKU cannot be empty');
+            // Submit data
+            fetch("{{ route('seller.shipping.config') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess("Shipping configuration saved successfully!");
+                        $("#smartbulk-5").hide();
+                        $("#smartbulk-6").show();
+                    } else {
+                        showError(data.message || 'Error saving configuration');
                     }
-                    return input;
-                }
-            });
-
-            if (userInput) {
-                input.value = userInput;
-                docErrors[input.dataset.errorIndex].userSetSku = userInput;
-            }
-        });            
-        
-        row.appendChild(document.createElement("td")).appendChild(input);
-    }
-    docTableBody.appendChild(row);
-    updateDocReprocessButton();
-}
-
-    function clearDocErrorsTable() {
-    docTableBody.innerHTML = '';
-    updateDocReprocessButton();
-}
-
-    // Document Processing Logic
-    const allowedDocTypes = ["application/pdf"];
-
-    document.getElementById("docFolderInput").addEventListener("change", function(event) {
-    const files = event.target.files;
-    processDocFiles(files);
-});
-
-    async function processDocFiles(files) {
-    clearDocErrorsTable();
-    docErrors = [];            
-    updateDocReprocessButton();
-    
-    Swal.fire({
-        title: 'Processing Documents...',
-        html: `0/${files.length} files processed`,
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
-
-    let processedCount = 0;
-    for (const file of files) {
-        if (allowedDocTypes.includes(file.type)) {
-            await uploadDoc(file, null);
-            processedCount++;
-            Swal.getHtmlContainer().innerHTML = 
-                `${processedCount}/${files.length} files processed`;
-        }
-    }
-
-    Swal.close();
-    if (docErrors.length === 0) {
-        showSuccess('All documents processed successfully!');
-    }
-}
-
-    async function reprocessFailedDocs() {
-    const { isConfirmed } = await Swal.fire({
-        title: 'Reprocess failed documents?',
-        text: 'This will attempt to upload all failed files again',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Reprocess'
-    });
-    
-    if (!isConfirmed) return;
-
-    clearDocErrorsTable();
-    const errorsCopy = _.cloneDeep(docErrors);
-    docErrors = [];
-    updateDocReprocessButton();
-    
-    Swal.fire({
-        title: 'Reprocessing...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
-
-    for (const errRec of errorsCopy) {
-        await uploadDoc(errRec.file, errRec.userSetSku);
-    }
-    
-    Swal.close();
-    if (docErrors.length === 0) {
-        Swal.fire({
-            icon: 'success',
-            title: 'All errors resolved!',
-            timer: 2000
-        });
-    }
-    updateDocReprocessButton();
-}
-
-    function updateDocReprocessButton() {
-    const reprocessBtn = document.getElementById('reprocessDocBtn');
-    reprocessBtn.disabled = docErrors.length === 0;
-}
-
-    async function uploadDoc(file, userSetSku) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-
-        reader.onload = async function(event) {
-            const blob = new Blob([event.target.result], { type: "application/pdf" });
-            await uploadDocFile(blob, file, userSetSku);
-            resolve();
-        };
-
-        reader.onerror = (errorEvent) => {
-            showError('File read error: ' + errorEvent.target.error.name);
-            reject(errorEvent);
-        };
-    });
-}
-
-    async function uploadDocFile(blob, file, userSetSku) {
-    let errorRecord = null;
-    
-    try {
-        if (blob.size > 2 * 1024 * 1024) {
-            throw new Error(`File size exceeds 2MB: (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`);
-        }
-
-        const headers = {
-            "Content-Type": "application/octet-stream",
-            "job-id": "c4ca4238-a0b9-2382-0dcc-509a6f75849b",
-            "vendor-user-id": 337,
-            "file-name": file.name,
-            "file-path": file.webkitRelativePath,
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-        };
-
-        if (userSetSku != null) {
-            headers["user-set-sku"] = userSetSku;
-        }
-
-        const response = await fetch("{{ route('seller.bulk.upload-doc') }}", {
-            method: "POST",
-            headers: headers,
-            body: blob
-        });
-
-        const resp = await response.json();
-        
-        if (resp.success !== true) {
-            errorRecord = {
-                dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
-                file: file,
-                error: resp.message || 'Unknown error',
-                errorCode: resp.code,
-                userSetSku: userSetSku
-            };
-        }
-    } catch (err) {
-        console.error("Upload failed:", err);
-        errorRecord = {
-            dispalyFilePath: removeFirstFolder(file.webkitRelativePath),
-            file: file,
-            error: err.message,
-            errorCode: -1,
-            userSetSku: userSetSku
-        };
-    } finally {
-        if (errorRecord) {
-            docErrors.push(errorRecord);
-            addToDocErrorsTable(errorRecord);
-        }
-    }
-}
-
-    // Document Next Step Handler
-    document.getElementById('nextDocBtn').addEventListener('click', async function() {
-        if (docErrors.length > 0) {
-            const result = await Swal.fire({
-                icon: 'warning',
-                title: 'Unresolved Issues',
-                html: `You have ${docErrors.length} unresolved errors.`,
-                showDenyButton: true,
-                confirmButtonText: 'Stay and Fix Errors',
-                denyButtonText: 'Proceed Anyway',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel'
-            });
-
-            if (result.isDenied) {
-                const confirmProceed = await Swal.fire({
-                    title: 'Proceed with Errors?',
-                    html: `You're about to proceed with ${docErrors.length} unresolved issues.`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, Continue',
-                    cancelButtonText: 'Go Back'
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError('Server connection error. Please try again.');
+                })
+                .finally(() => {
+                    // Hide spinner and enable button after response
+                    next5Btn.removeChild(spinner);
+                    next5Btn.disabled = false;
                 });
+        });
 
-                if (confirmProceed.isConfirmed) {
-                    Swal.fire({
-                        title: 'Transitioning...',
-                        allowOutsideClick: false,
-                        timer: 1000,
-                        didOpen: () => Swal.showLoading(),
-                        willClose: () => {
-                            $("#smart-doc").hide();
-                            $("#smartbulk-5").show();
-                        }
+
+        document.getElementById('next6Btn').addEventListener('click', function() {
+            let discountConfig = [];
+            let isValid = true;
+
+            $('#bloc_shipping_configuration tr').each(function() {
+                let fromQty = $(this).find('.min-qty-shipping').val();
+                let toQty = $(this).find('.max-qty-shipping').val();
+                let unitPrice = $(this).find('.estimated_order').val();
+                let discountRange = $(this).find('.discount-range').val();
+                let discountPct = $(this).find('.charge_per_unit_shipping').val();
+                if (!discountRange || discountRange.trim() === "") {
+                    //showError("Discount range is missing in some rows.");
+                    isValid = false;
+                    return false;
+                }
+
+                if (isNaN(fromQty) || isNaN(toQty) || isNaN(discountPct)) {
+                    showError("Please enter numeric values for quantities and discount percentage.");
+                    isValid = false;
+                    return false;
+                }
+                if (parseInt(fromQty) >= parseInt(toQty)) {
+                    showError('The "From Quantity" must be less than "To Quantity".');
+                    isValid = false;
+                    return false;
+                }
+                if (parseFloat(discountPct) < 0 || parseFloat(discountPct) > 100) {
+                    showError("Discount percentage must be between 0 and 100.");
+                    isValid = false;
+                    return false;
+                }
+                let dates = discountRange.match(/\d{4}-\d{2}-\d{2}/g); // Extract YYYY-MM-DD dates
+                if (!dates || dates.length !== 2) {
+                    //showError("Invalid discount date range format. Use 'YYYY-MM-DD to YYYY-MM-DD'.");
+                    isValid = false;
+                    return false;
+                }
+                let startDate = dates[0];
+                let endDate = dates[1];
+
+
+                if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+                    showError("Invalid date format in discount range.");
+                    isValid = false;
+                    return false;
+                }
+                if (Date.parse(startDate) >= Date.parse(endDate)) {
+                    showError('Start date must be before end date in discount range.');
+                    isValid = false;
+                    return false;
+                }
+
+                if (fromQty && toQty && discountRange && discountPct) {
+
+                    discountConfig.push({
+                        fromQty: parseInt(fromQty),
+                        toQty: parseInt(toQty),
+                        startDate: dates[0].trim() + "T00:00:00",
+                        endDate: dates[1].trim() + "T23:59:59",
+                        pct: parseFloat(discountPct)
                     });
-                }
-                return;
-            }
-            return;
-        }
+                    return;
 
-        const confirm = await Swal.fire({
-            title: 'Finalize Document Uploads?',
-            text: 'You won\'t be able to modify these uploads after proceeding',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Continue'
+                }
+
+            });
+
+            fetch("{{ route('seller.discount.config') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        job_id: activeJobId,
+                        discount_config: discountConfig
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showSuccess("Discount configuration has been saved successfully!");
+                        $("#smartbulk-6").hide();
+                        $("#smartbulk-7").show();
+
+
+                    } else {
+                        showError(data.message || 'Something went wrong, please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showError(
+                        'There was a problem connecting to the server. Please check your internet connection and try again.'
+                        );
+                });
+
         });
 
-        if (confirm.isConfirmed) {
+        document.querySelector('.sbu-s1-btn-start').addEventListener('click', function() {
+            let jobId = sessionStorage.getItem('job_id') || generateJobId();
+            let requestBody = {
+                vendor_user_id: 335,
+                job_id: activeJobId
+            };
             Swal.fire({
-                title: 'Finalizing Uploads...',
+                title: 'Submitting job...',
                 allowOutsideClick: false,
-                didOpen: () => Swal.showLoading(),
-                willClose: () => {
-                    $("#smart-doc").hide();
-                    $("#smartbulk-5").show();
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             });
-        }
-    });
 
-    document.addEventListener('DOMContentLoaded', () => {
-        updateDocReprocessButton();
-    });
-
-
-    document.getElementById('next4Btn').addEventListener('click', function() {
-        const fileInput = document.getElementById('file-upload');
-        const file = fileInput.files[0];
-
-        if (!file) {
-            showError("Please select a CSV file first.");
-            return;
-        }
-        Swal.fire({
-            title: 'Validating File...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        let formData = new FormData();
-        formData.append("file", file);
-        
-        fetch('{{ route('seller.vendor.fileupload') }}', {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
-            },
-        })
-
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccess("File Received successfully.");
-              
-                    $("#smartbulk-4").hide();
-                    $("#smart-image").show();
-
-            } else {
-                showError("Error: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Upload error:", error);
-            showError("An error occurred while uploading the file.");
-        });
-    });
-   
-    document.getElementById('next5Btn').addEventListener('click', function () {
-    let shippingData = [];
-    let isValid = true;
-    let previousTo = 0;
-    
-    // Show spinner
-    let next5Btn = document.getElementById('next5Btn');
-    let spinner = document.createElement('span');
-    spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); // Bootstrap spinner
-    next5Btn.appendChild(spinner);
-    next5Btn.disabled = true; // Disable button to prevent multiple clicks
-
-    // Get all shipping configuration rows
-    document.querySelectorAll('#shipping-config tbody tr').forEach((row, index) => {
-        const inputs = row.querySelectorAll('input');
-        const fromQty = inputs[0].value;
-        const toQty = inputs[1].value;
-        const charge = inputs[2].value;
-
-        // Validate required fields
-        if (!fromQty || !toQty || !charge) {
-            showError("Please fill all fields in row " + (index + 1));
-            isValid = false;
-            return;
-        }
-
-        // Validate numeric values
-        if (isNaN(fromQty) || isNaN(toQty) || isNaN(charge)) {
-            showError("Please enter numeric values in row " + (index + 1));
-            isValid = false;
-            return;
-        }
-
-        // Convert to numbers
-        const numFrom = parseInt(fromQty);
-        const numTo = parseInt(toQty);
-        const numCharge = parseFloat(charge);
-
-        // Validate quantity ranges
-        if (numFrom < 1 || numFrom > 9998) {
-            showError(`From Quantity must be between 1-9998 in row ${index + 1}`);
-            isValid = false;
-        }
-        if (numTo < 2 || numTo > 9999) {
-            showError(`To Quantity must be between 2-9999 in row ${index + 1}`);
-            isValid = false;
-        }
-        if (numFrom >= numTo) {
-            showError(`From Quantity must be less than To Quantity in row ${index + 1}`);
-            isValid = false;
-        }
-
-        // Check for quantity gaps/overlaps
-        if (index > 0 && numFrom !== previousTo + 1) {
-            showError(`Quantity ranges must be continuous (row ${index + 1} should start at ${previousTo + 1})`);
-            isValid = false;
-        }
-        previousTo = numTo;
-
-        // Store valid data
-        shippingData.push({
-            from_qty: numFrom,
-            to_qty: numTo,
-            charge: numCharge
-        });
-    });
-
-    // Check coverage of 1-9999 range
-    if (shippingData.length > 0) {
-        const firstFrom = shippingData[0].from_qty;
-        const lastTo = shippingData[shippingData.length - 1].to_qty;
-        
-        if (firstFrom !== 1 || lastTo !== 9999) {
-            showError("Shipping configuration must cover all quantities from 1 to 9999");
-            isValid = false;
-        }
-    }
-
-    // Check 3rd party shipping selection
-    const thirdPartyRadio = document.querySelector('input[name="third_party"]:checked');
-    if (!thirdPartyRadio) {
-        showError("Please select an option for 3rd Party Shipping");
-        isValid = false;
-    }
-    const mwd3pEnabled = thirdPartyRadio.value === 'yes';
-
-    if (!isValid) {
-        next5Btn.removeChild(spinner);
-        next5Btn.disabled = false;
-        return;
-    }
-
-    // Prepare request data
-    const requestData = {
-        job_id: sessionStorage.getItem('job_id') || generateJobId(),
-        shipping_details: shippingData,
-        mwd3p_enabled: mwd3pEnabled
-    };
-
-    // Submit data
-    fetch("{{ route('seller.shipping.config') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showSuccess("Shipping configuration saved successfully!");
-            $("#smartbulk-5").hide();
-            $("#smartbulk-6").show();
-        } else {
-            showError(data.message || 'Error saving configuration');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showError('Server connection error. Please try again.');
-    })
-    .finally(() => {
-        // Hide spinner and enable button after response
-        next5Btn.removeChild(spinner);
-        next5Btn.disabled = false;
-    });
-});
+            fetch("{{ route('seller.job.submit') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Job Submission API Response:", data);
+                    if (data.success) {
+                        showSuccess("Congratulations! Your Products Have Been Uploaded successfully");
 
 
-    document.getElementById('next6Btn').addEventListener('click', function () {
-        let discountConfig = [];
-        let isValid = true;
+                    } else {
+                        showError(data.message || 'Something went wrong, please try again.');
+                    }
 
-        $('#bloc_shipping_configuration tr').each(function () {
-            let fromQty = $(this).find('.min-qty-shipping').val();
-            let toQty = $(this).find('.max-qty-shipping').val();
-            let unitPrice = $(this).find('.estimated_order').val();
-            let discountRange = $(this).find('.discount-range').val();
-            let discountPct = $(this).find('.charge_per_unit_shipping').val();
-            if (!discountRange || discountRange.trim() === "") {
-                //showError("Discount range is missing in some rows.");
-                isValid = false;
-                return false; 
-            }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showError(
+                        'There was a problem connecting to the server. Please check your internet connection and try again.'
+                        );
 
-            if (isNaN(fromQty) || isNaN(toQty) || isNaN(discountPct)) {
-                showError("Please enter numeric values for quantities and discount percentage.");
-                isValid = false;
-                return false;
-            }
-            if (parseInt(fromQty) >= parseInt(toQty)) {
-                showError('The "From Quantity" must be less than "To Quantity".');
-                isValid = false;
-                return false;
-            }
-            if (parseFloat(discountPct) < 0 || parseFloat(discountPct) > 100) {
-                showError("Discount percentage must be between 0 and 100.");
-                isValid = false;
-                return false;
-            }
-            let dates = discountRange.match(/\d{4}-\d{2}-\d{2}/g); // Extract YYYY-MM-DD dates
-            if (!dates || dates.length !== 2) {
-                //showError("Invalid discount date range format. Use 'YYYY-MM-DD to YYYY-MM-DD'.");
-                isValid = false;
-                return false;
-            }
-            let startDate = dates[0];
-            let endDate = dates[1];
-
-            
-            if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
-                showError("Invalid date format in discount range.");
-                isValid = false;
-                return false;
-            }
-            if (Date.parse(startDate) >= Date.parse(endDate)) {
-                showError('Start date must be before end date in discount range.');
-                isValid = false;
-                return false;
-            }
-
-            if (fromQty && toQty && discountRange && discountPct) {
-
-                discountConfig.push({
-                    fromQty: parseInt(fromQty),
-                    toQty: parseInt(toQty),
-                    startDate: dates[0].trim() + "T00:00:00",
-                    endDate: dates[1].trim() + "T23:59:59",
-                    pct: parseFloat(discountPct)
                 });
-                return;
-
-            }
-            
         });
 
-        fetch("{{ route('seller.discount.config') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                job_id: sessionStorage.getItem('job_id') || generateJobId(), 
-                discount_config: discountConfig
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showSuccess("Discount configuration has been saved successfully!");
-                $("#smartbulk-6").hide();
-                $("#smartbulk-7").show();
 
-               
-            } else {
-                showError(data.message || 'Something went wrong, please try again.');               
-            }        
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            showError('There was a problem connecting to the server. Please check your internet connection and try again.');
-    });
+       
 
-    });
-    
-    document.querySelector('.sbu-s1-btn-start').addEventListener('click', function () {
-        let jobId = sessionStorage.getItem('job_id') || generateJobId(); 
-        let requestBody = {
-            vendor_user_id: 335,
-            job_id: jobId
-        };
-        Swal.fire({
-            title: 'Submitting job...',
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-
-        fetch("{{ route('seller.job.submit') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify(requestBody)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Job Submission API Response:", data);
-            if (data.success) {
-                showSuccess("Congratulations! Your Products Have Been Uploaded successfully");
-
-               
-            } else {
-                showError(data.message || 'Something went wrong, please try again.');               
-            }        
-
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            showError('There was a problem connecting to the server. Please check your internet connection and try again.');
-
-        });
-    });
-
-    
-    function generateJobId() {
-        let jobId = '81dc9bdb-52d0-4dc2-0036-dbd8313ed055'; 
-        sessionStorage.setItem('job_id', jobId);
-        return jobId;
-    }
-
-    flatpickr('.discount-range', {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "Y-m-d to Y-m-d", 
-        allowInput: true,
-        minDate: "today"
-    });
-
-
-    // added code for discount table
-    // Add new row to the discount configuration table
-
-    $(document).ready(function() {
-    $('body').on('click', '.btn-add-discount', function() {
-        var newRow = `
-            <tr>
-                <td>
-                    <input type="number" name="fromqte[]" class="form-control min-qty-discount" placeholder="From QTY">
-                </td>
-                <td>
-                    <input type="number" name="toqte[]" class="form-control max-qty-discount" placeholder="To QTY">
-                </td>
-                <td>
-                    <input type="number" name="unitprice[]" class="form-control unit-price-discount" placeholder="Unit Price">
-                </td>
-                <td>
-                    <input type="text" class="form-control discount-range" placeholder="Discount (Start/End)">
-                </td>
-                <td>
-                    <div class="input-disc-box d-flex align-items-center">
-                        <input type="number" name="discount[]" class="form-control discount-percentage" placeholder="Discount">
-                        <span class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">%</span>
-                    </div>
-                </td>
-                <td>
-                    <i class="las la-plus btn-add-discount" style="margin-left: 5px; margin-top: 17px;" title="Add another row"></i>
-                    <i class="las la-trash delete-discount-row" style="margin-left: 5px; margin-top: 17px;" title="Delete this row"></i>
-                </td>
-            </tr>
-        `;
-
-        $('#table_discount_configuration tbody').append(newRow);
         flatpickr('.discount-range', {
             mode: "range",
             dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "Y-m-d to Y-m-d",
             allowInput: true,
-            minDate: "today",
-          
+            minDate: "today"
         });
-        $('body').on('click', '.delete-discount-row', function() {
-                $(this).parent().parent().remove();
-            })
-    });
-});
+
+
+        // added code for discount table
+        // Add new row to the discount configuration table
+
+        $(document).ready(function() {
+                $('body').on('click', '.btn-add-discount', function() {
+                    var newRow = `
+                <tr>
+                    <td>
+                        <input type="number" name="fromqte[]" class="form-control min-qty-discount" placeholder="From QTY">
+                    </td>
+                    <td>
+                        <input type="number" name="toqte[]" class="form-control max-qty-discount" placeholder="To QTY">
+                    </td>
+                    <td>
+                        <input type="number" name="unitprice[]" class="form-control unit-price-discount" placeholder="Unit Price">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control discount-range" placeholder="Discount (Start/End)">
+                    </td>
+                    <td>
+                        <div class="input-disc-box d-flex align-items-center">
+                            <input type="number" name="discount[]" class="form-control discount-percentage" placeholder="Discount">
+                            <span class="input-disc-percent dark-c3 float-left fs-18 d-flex justify-content-center">%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <i class="las la-plus btn-add-discount" style="margin-left: 5px; margin-top: 17px;" title="Add another row"></i>
+                        <i class="las la-trash delete-discount-row" style="margin-left: 5px; margin-top: 17px;" title="Delete this row"></i>
+                    </td>
+                </tr>`;
+
+                    $('#table_discount_configuration tbody').append(newRow);
+                    flatpickr('.discount-range', {
+                        mode: "range",
+                        dateFormat: "Y-m-d",
+                        allowInput: true,
+                        minDate: "today",
+
+                    });
+                    $('body').on('click', '.delete-discount-row', function() {
+                        $(this).parent().parent().remove();
+                    })
+                });
+        });
     </script>
 @endsection
