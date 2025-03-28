@@ -6413,13 +6413,15 @@
             "image/jpeg", "image/png", "image/gif", "image/bmp",
             "image/tiff", "image/webp", "image/heif", "image/heic", "image/avif"
         ];
-
+        let filesProcessed = false;
         document.getElementById("folderInput").addEventListener("change", function(event) {
+            filesProcessed = false;
             const files = event.target.files;
             processFiles(files);
         });
 
         async function processFiles(files) {
+            filesProcessed = true; 
             clearErrorsTable();
             errors = [];
             updateReprocessButton();
@@ -6585,6 +6587,11 @@
         }
         // Next Step Handler
         document.getElementById('nextImageBtn').addEventListener('click', async function() {
+            if (!filesProcessed) {
+                showError("Please upload images folder first");
+                return;
+            }
+
             if (errors.length > 0) {
                 const result = await Swal.fire({
                     icon: 'warning',
@@ -6608,7 +6615,6 @@
                     });
 
                     if (confirmProceed.isConfirmed) {
-                        // Final loading indicator before transition
                         Swal.fire({
                             title: 'Transitioning...',
                             allowOutsideClick: false,
@@ -6623,28 +6629,12 @@
                     return;
                 }
                 return;
-            }
-
-            const confirm = await Swal.fire({
-                title: 'Finalize Uploads?',
-                text: 'You won\'t be able to modify these uploads after proceeding',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Continue'
-            });
-
-            if (confirm.isConfirmed) {
-                Swal.fire({
-                    title: 'Finalizing Uploads...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading(),
-                    willClose: () => {
-                        $("#smart-image").hide();
-                        $("#smart-doc").show();
-                    }
-                });
+            } else {
+                $("#smart-image").hide();
+                $("#smart-doc").show();
             }
         });
+
 
 
         // Utility Functions
@@ -6867,7 +6857,6 @@
         }
         let activeJobId = null;
 
-        // Document Next Step Handler
         document.getElementById('nextDocBtn').addEventListener('click', async function() {
             if (docErrors.length > 0) {
                 const result = await Swal.fire({
@@ -6906,28 +6895,12 @@
                     return;
                 }
                 return;
-            }
-
-            const confirm = await Swal.fire({
-                title: 'Finalize Document Uploads?',
-                text: 'You won\'t be able to modify these uploads after proceeding',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Continue'
-            });
-
-            if (confirm.isConfirmed) {
-                Swal.fire({
-                    title: 'Finalizing Uploads...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading(),
-                    willClose: () => {
-                        $("#smart-doc").hide();
-                        $("#smartbulk-5").show();
-                    }
-                });
+            } else {
+                $("#smart-doc").hide();
+                $("#smartbulk-5").show();
             }
         });
+
 
         document.addEventListener('DOMContentLoaded', () => {
             updateDocReprocessButton();
@@ -6939,7 +6912,7 @@
             const savedJobId = sessionStorage.getItem('activeJobId');
             if (savedJobId) {
                 try {
-                    const response = fetch("{{ route('seller.bulk.check-job') }}", {
+                    const response = fetch("{{ route('seller.job.check') }}", {
                         method: 'POST',
                         headers: {
                             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
@@ -7037,7 +7010,7 @@
             // Show spinner
             let next5Btn = document.getElementById('next5Btn');
             let spinner = document.createElement('span');
-            spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); // Bootstrap spinner
+            spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); 
             next5Btn.appendChild(spinner);
             next5Btn.disabled = true; // Disable button to prevent multiple clicks
 
