@@ -21,7 +21,7 @@ class MawadIndexController extends Controller
         $defaultPeriod = 7;
 
         $top10CategoriesEvolution = $this->getTopCategoriesEvolutionInLastDays($defaultPeriod, $filter);
-        $top10Categories = $this->getTop10CategoriesInLastDays($defaultPeriod);
+        $top10Categories = $this->getTop10CategoriesInLastDays($period);
 
         $defaultCurrency = get_system_default_currency();
         $categoryId = $request->query('category_id', $top10Categories[0]->id);
@@ -51,7 +51,18 @@ class MawadIndexController extends Controller
 
     public function getTop10CategoriesInLastDays($period = 7)
     {
-        $datesRanges = $this->getFormattedDateRanges($period);
+        $startDate = match ($period) {
+            7 => Carbon::now()->subDays(6),
+            '1w' => Carbon::now()->subDays(6),
+            '2w' => Carbon::now()->subDays(13),
+            '1m' => Carbon::now()->subMonth(),
+            '3m' => Carbon::now()->subMonths(2),
+            '6m' => Carbon::now()->subMonths(5),
+            '1y' => Carbon::now()->subMonths(11),
+            default => Carbon::now()->subDays(7)
+        };
+
+        $datesRanges = [$startDate, Carbon::now()];
 
         return DB::table('categories as c')
             ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
@@ -285,6 +296,8 @@ class MawadIndexController extends Controller
             default => Carbon::now()->subDays(7)
         };
 
+        $datesRange = [$startDate, Carbon::now()];
+
         // grouping method (by day or by month)
         $groupBy = in_array($period, ['1w', '2w', '1m'])
             ? 'DATE(revisions.created_at)'
@@ -294,7 +307,7 @@ class MawadIndexController extends Controller
             ->join('products', 'products.id', '=', 'revisions.revisionable_id')
             ->where('revisions.key', 'unit_price')
             ->where('products.category_id', $categoryId)
-            ->whereBetween('revisions.created_at', [$startDate, Carbon::now()])
+            ->whereBetween('revisions.created_at', $datesRange)
             ->select([
                 DB::raw("$groupBy as date"),
                 $filter === 'avg'
