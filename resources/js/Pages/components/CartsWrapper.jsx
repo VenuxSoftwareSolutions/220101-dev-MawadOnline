@@ -3,6 +3,8 @@ import { usePage } from "@inertiajs/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 
+import { calculateSlidePerView } from "../helper";
+
 import { Cart } from "./Cart";
 import { NoDataCart } from "./NoDataCart";
 
@@ -14,10 +16,9 @@ import "./slider.css";
 export function CartsWrapper() {
     const { selectedCategoriesEvolution } = usePage().props;
 
-    const slidesPerView =
-        selectedCategoriesEvolution.length > 2
-            ? selectedCategoriesEvolution.length / 2
-            : 1.5;
+    const slidesPerView = calculateSlidePerView(
+        selectedCategoriesEvolution.length
+    );
 
     return (
         <div className="container my-2">

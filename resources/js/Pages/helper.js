@@ -39,3 +39,7 @@ export function formatDate(dateString, locale) {
         year: "numeric",
     }).format(date);
 }
+
+export function calculateSlidePerView(dataLength) {
+    return dataLength > 2 ? Math.min(dataLength / 2 + 0.5, 2.5) : 1.5;
+}
