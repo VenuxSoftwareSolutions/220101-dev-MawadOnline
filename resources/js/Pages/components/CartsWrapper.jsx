@@ -12,17 +12,17 @@ import "swiper/css/navigation";
 import "./slider.css";
 
 export function CartsWrapper() {
-    const { top10CategoriesEvolution } = usePage().props;
+    const { selectedCategoriesEvolution } = usePage().props;
 
     const slidesPerView =
-        top10CategoriesEvolution.length > 2
-            ? top10CategoriesEvolution.length / 2
+        selectedCategoriesEvolution.length > 2
+            ? selectedCategoriesEvolution.length / 2
             : 1.5;
 
     return (
         <div className="container my-2">
             <div className="row chart-slider-container">
-                {top10CategoriesEvolution.length === 0 ? (
+                {selectedCategoriesEvolution.length === 0 ? (
                     <div className="col">
                         <NoDataCart />
                     </div>
@@ -36,7 +36,7 @@ export function CartsWrapper() {
                             prevEl: ".custom-prev",
                         }}
                     >
-                        {top10CategoriesEvolution.map(
+                        {selectedCategoriesEvolution.map(
                             (
                                 {
                                     category,
@@ -62,7 +62,7 @@ export function CartsWrapper() {
                         )}
                     </Swiper>
                 )}
-                {top10CategoriesEvolution.length > 0 ? (
+                {selectedCategoriesEvolution.length > 0 ? (
                     <Fragment>
                         <button className="custom-prev" />
                         <button className="custom-next" />
