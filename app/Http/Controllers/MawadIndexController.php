@@ -21,9 +21,11 @@ class MawadIndexController extends Controller
         $defaultPeriod = 7;
 
         $selectedCategoriesEvolution = $this->getSelectedCategoriesEvolutionInLastDays($defaultPeriod, $filter);
+
         $selectedCategories = $this->getTopSelectedCategoriesInLastDays($period);
 
         $defaultCurrency = get_system_default_currency();
+
         $categoryId = $request->query('category_id', $selectedCategories[0]->id);
 
         $categoryPrices = $this->getPriceEvolution($categoryId, $period, $filter);
