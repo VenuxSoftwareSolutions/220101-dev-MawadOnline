@@ -24,22 +24,35 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
                     <CustomLineChart data={evolution} />
                     <div className="d-flex flex-column align-items-center justify-content-center">
                         <div
-                            className={`px-5 py-3 badge border border-${
+                            className={`d-flex justify-content-center align-items-center p-1 border border-${
                                 priceChange.percentage <= 0
-                                    ? "success bg-success"
-                                    : "danger bg-danger"
+                                    ? "success alert alert-success"
+                                    : "danger alert alert-danger"
                             }`}
                         >
-                            <span className="text-white font-weight-bold">
+                            <span
+                                className={`text-${
+                                    priceChange.absolute <= 0
+                                        ? "success"
+                                        : "danger"
+                                } font-weight-bold`}
+                            >
                                 {priceChange.percentage}%
                             </span>
                             {priceChange.percentage !== 0 ? (
                                 <i
-                                    className={`ml-3 las la-arrow-${
+                                    className={`las la-arrow-${
                                         priceChange.percentage > 0
                                             ? "up"
                                             : "down"
                                     }`}
+                                    style={{
+                                        transform: `rotate(${
+                                            priceChange.percentage > 0
+                                                ? ""
+                                                : "-"
+                                        }45deg)`,
+                                    }}
                                 />
                             ) : null}
                         </div>
@@ -48,7 +61,11 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
                                 priceChange.absolute <= 0 ? "success" : "danger"
                             }`}
                         >
-                            {priceChange.absolute}
+                            {priceChange.absolute > 0
+                                ? `+${priceChange.absolute}`
+                                : priceChange.absolute === 0
+                                ? priceChange.absolute
+                                : `-${priceChange.absolute}`}
                         </div>
                     </div>
                 </div>
