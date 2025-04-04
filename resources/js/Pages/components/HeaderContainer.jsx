@@ -34,7 +34,11 @@ export function HeaderContainer() {
                 </div>
                 <div className="my-3 col-4 d-flex justify-content-end">
                     <button
-                        className="my-3 btn btn-primary btn-sm mr-2 text-white"
+                        className={`my-3 btn btn-primary btn-sm mr-2 ${
+                            localFilter !== undefined && localFilter === "avg"
+                                ? "text-white"
+                                : "text-secondary bg-transparent border-secondary"
+                        }`}
                         style={{
                             backgroundColor:
                                 localFilter !== undefined &&
@@ -47,7 +51,12 @@ export function HeaderContainer() {
                         Average Price
                     </button>
                     <button
-                        className="my-3 btn btn-primary btn-sm text-white"
+                        className={`my-3 btn btn-primary btn-sm mr-2 ${
+                            localFilter !== undefined &&
+                            localFilter === "lowest"
+                                ? "text-white"
+                                : "text-secondary bg-transparent border-secondary"
+                        }`}
                         style={{
                             backgroundColor:
                                 localFilter !== undefined &&
