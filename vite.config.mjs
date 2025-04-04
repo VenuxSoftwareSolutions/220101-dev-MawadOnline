@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import react from "@vitejs/plugin-react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 
 export default defineConfig({
     plugins: [
@@ -10,9 +11,10 @@ export default defineConfig({
         }),
         react(),
     ],
-    resolve: (name) => {
-        const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
-        return pages[`./Pages/${name}.jsx`];
-    },
+    resolve: (name) =>
+        resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob("./Pages/**/*.jsx")
+        ),
     loader: { ".js": "jsx" },
 });
