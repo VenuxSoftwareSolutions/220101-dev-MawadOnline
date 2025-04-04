@@ -74,6 +74,7 @@
     <link rel="stylesheet" href="{{ static_asset('assets/css/custom-style.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/bootstrap-select-country.min.css') }}">
     <link rel="stylesheet" href="{{ static_asset('assets/css/jquery-ui.min.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/placeholder-loading/dist/css/placeholder-loading.min.css">
 
      @yield('style')
 
@@ -243,6 +244,80 @@
         @include('frontend.inc.nav')
 
         @yield('content')
+
+        <div
+            class="px-5 pt-5 pb-2"
+            style="background-color:#e0e4eafc"
+            id="inertia-preloader"
+        >
+            <section class="px-5 pb-2">
+                <div class="container text-center">
+                    <div class="rounded-lg ph-item">
+                        <div class="ph-col-8">
+                            <div class="ph-row">
+                                <div class="ph-col-12"></div>
+                            </div>
+                        </div>
+                        <div class="ph-col-4">
+                            <div class="ph-row">
+                                <div class="ph-col-12"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rounded-lg ph-item">
+                        <div class="ph-col-4">
+                            <div class="ph-picture"></div>
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                        <div class="ph-col-4">
+                            <div class="ph-picture"></div>
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                        <div class="ph-col-4">
+                            <div class="ph-picture"></div>
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg ph-item">
+                        <div class="ph-col-12">
+                            <div class="ph-picture"></div>
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg ph-item">
+                        <div class="ph-col-12">
+                            <div class="ph-row">
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                                <div class="ph-col-12 big"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
         @inertia
 
         <!-- footer -->
