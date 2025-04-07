@@ -1,6 +1,10 @@
 import { CustomLineChart } from "./CustomLineChart";
 
+import { useFormatCurrency } from "../helper";
+
 export function Cart({ category, subCategory, evolution, priceChange }) {
+    const formatCurrency = useFormatCurrency();
+
     return (
         <div className="card">
             <div className="card-body">
@@ -57,15 +61,15 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
                             ) : null}
                         </div>
                         <div
-                            className={`font-weight-bold px-4 py-3 text-${
+                            className={`font-weight-bold text-nowrap text-${
                                 priceChange.absolute <= 0 ? "success" : "danger"
                             }`}
                         >
                             {priceChange.absolute > 0
-                                ? `+${priceChange.absolute}`
+                                ? `+${formatCurrency(priceChange.absolute)}`
                                 : priceChange.absolute === 0
                                 ? priceChange.absolute
-                                : `-${priceChange.absolute}`}
+                                : `${formatCurrency(priceChange.absolute)}`}
                         </div>
                     </div>
                 </div>
