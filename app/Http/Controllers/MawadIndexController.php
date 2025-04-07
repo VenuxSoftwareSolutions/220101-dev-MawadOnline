@@ -168,27 +168,26 @@ class MawadIndexController extends Controller
                     $lastKnownPrice = $categoryData['evolution'][$date];
                 }
 
-                if (! $firstPrice && $lastKnownPrice !== 0) {
-                    $firstPrice = $lastKnownPrice;
-                }
-
-                $lastPrice = $lastKnownPrice;
-
                 $filledEvolution[] = [
                     'date' => $date,
                     'price' => roundUpToTwoDigits($lastKnownPrice),
                 ];
             }
 
-            $absoluteChange = roundUpToTwoDigits($lastPrice - $firstPrice);
-            $percentageChange = $firstPrice ? roundUpToTwoDigits(($absoluteChange / $firstPrice) * 100) : 0;
-
             $categoryData['evolution'] = $filledEvolution;
+
+            $lastElementIndex = count($categoryData["evolution"]) - 1;
+            $lastPrice = $categoryData["evolution"][$lastElementIndex]["price"];
+            $penultimatePrice = $categoryData["evolution"][$lastElementIndex - 1]["price"];
+
+            $absoluteChange = roundUpToTwoDigits($lastPrice - $penultimatePrice);
+            $percentageChange = $penultimatePrice ? roundUpToTwoDigits(($absoluteChange / $penultimatePrice) * 100) : 0;
+
             $categoryData['priceChange'] = [
                 'absolute' => $absoluteChange,
                 'formattedAbsolute' => single_price($absoluteChange),
                 'percentage' => $percentageChange,
-                'firstPrice' => $firstPrice,
+                'firstPrice' => $penultimatePrice,
                 'lastPrice' => $lastPrice,
             ];
         }
