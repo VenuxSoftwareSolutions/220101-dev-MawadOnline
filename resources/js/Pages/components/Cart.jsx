@@ -1,9 +1,15 @@
 import { CustomLineChart } from "./CustomLineChart";
 
-import { useFormatCurrency } from "../helper";
+import { useFormatCurrency, slugify } from "../helper";
 
 export function Cart({ category, subCategory, evolution, priceChange }) {
     const formatCurrency = useFormatCurrency();
+
+    function handleBuyProductButtonClick(category) {
+        const slug = slugify(category);
+        const url = `/category/${slug}`;
+        window.open(url, "_blank");
+    }
 
     return (
         <div className="card">
@@ -16,7 +22,10 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
 
                         <h5 className="card-title">{category}</h5>
                     </div>
-                    <button className="my-3 btn btn-primary btn-xs">
+                    <button
+                        onClick={() => handleBuyProductButtonClick(category)}
+                        className="my-3 btn btn-primary btn-xs"
+                    >
                         Buy product
                     </button>
                 </div>

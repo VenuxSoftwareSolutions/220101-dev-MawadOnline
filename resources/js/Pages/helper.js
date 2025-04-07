@@ -48,3 +48,7 @@ export function capitalizeFirstLetter(string) {
     if (!string) return "";
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export function slugify(text) {
+    return text.toString().toLowerCase().trim().replace(/\s+/g, "-");
+}
