@@ -43,3 +43,8 @@ export function formatDate(dateString, locale) {
 export function calculateSlidePerView(dataLength) {
     return dataLength > 2 ? Math.min(dataLength / 2 + 0.5, 2.5) : 1.5;
 }
+
+export function capitalizeFirstLetter(string) {
+    if (!string) return "";
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

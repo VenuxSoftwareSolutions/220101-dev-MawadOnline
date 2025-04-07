@@ -6,8 +6,11 @@ import { usePage } from "@inertiajs/react";
 import { SparklineChart } from "./SparklineChart";
 import { SpinnerWrapper } from "./SpinnerWrapper";
 
+import { capitalizeFirstLetter } from "../helper";
+
 export function MaterialsTrendsContainer() {
-    const { props } = usePage();
+    const { filter, categories: rawCategories } = usePage().props;
+
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [search, setSearch] = useState("");
@@ -20,7 +23,7 @@ export function MaterialsTrendsContainer() {
         { field: "lowestPrice", headerName: "Lowest Price (AED)", flex: 1 },
         {
             field: "priceChange",
-            headerName: "Price Change (%)",
+            headerName: `${capitalizeFirstLetter(filter)} Price Change (%)`,
             flex: 1,
             renderCell: ({ value }) => (
                 <div
@@ -42,16 +45,16 @@ export function MaterialsTrendsContainer() {
         },
         {
             field: "trend",
-            headerName: "Last 90 Days",
+            headerName: `Last 2 weeks (${capitalizeFirstLetter(filter)} price)`,
             flex: 1,
             renderCell: ({ value }) => <SparklineChart data={value} />,
         },
     ];
 
     useEffect(() => {
-        if (props.categories) {
+        if (rawCategories) {
             setCategories(() => {
-                const rows = props.categories.map(
+                const rows = rawCategories.map(
                     (
                         {
                             subcategory,
@@ -63,7 +66,7 @@ export function MaterialsTrendsContainer() {
                         index
                     ) => {
                         return {
-                            id: index + 1, //category.id,
+                            id: index + 1,
                             subcategory: subcategory.trim(),
                             avgPrice: Math.round(avgPrice),
                             lowestPrice,
@@ -78,7 +81,7 @@ export function MaterialsTrendsContainer() {
 
             setLoading(false);
         }
-    }, [props.categories]);
+    }, [rawCategories]);
 
     const handleSearch = (event) => {
         const value = event.target.value.toLowerCase();

@@ -203,8 +203,8 @@ class MawadIndexController extends Controller
             ->join('revisions', function ($join) {
                 $join->on('revisions.revisionable_id', '=', 'products.id')
                     ->where('revisions.key', '=', 'unit_price')
-                     // the requirements is the last 90 days
-                    ->where('revisions.created_at', '>=', DB::raw('NOW() - INTERVAL 90 DAY'));
+                     // the requirements is the last 14 days (2 weeks)
+                    ->where('revisions.created_at', '>=', DB::raw('NOW() - INTERVAL 14 DAY'));
             })
             ->where('products.approved', 1)
             ->where('products.published', 1)
