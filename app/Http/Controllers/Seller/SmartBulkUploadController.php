@@ -107,13 +107,26 @@ class SmartBulkUploadController extends Controller
 
         $validator = Validator::make($request->all(), [
             'job_id' => 'required|string',
-            'shipping_details' => 'required|array',
-            'shipping_details.*.from_qty' => 'required|numeric',
-            'shipping_details.*.to_qty' => 'required|numeric',
-            'shipping_details.*.charge' => 'required|numeric',
-            'mwd3p_enabled' => 'required'
+            'delivers_to_customers' => 'required|boolean',
+            'mwd3p_enabled' => 'required|boolean'
         ]);
-
+        
+        $validator->sometimes('shipping_details', 'required|array', function ($input) {
+            return $input->delivers_to_customers === true;
+        });
+        
+        $validator->sometimes('shipping_details.*.from_qty', 'required|numeric|min:1|max:9998', function ($input) {
+            return $input->delivers_to_customers === true;
+        });
+        
+        $validator->sometimes('shipping_details.*.to_qty', 'required|numeric|min:2|max:9999', function ($input) {
+            return $input->delivers_to_customers === true;
+        });
+        
+        $validator->sometimes('shipping_details.*.charge', 'required|numeric|min:0', function ($input) {
+            return $input->delivers_to_customers === true;
+        });
+        
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,

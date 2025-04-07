@@ -774,17 +774,17 @@
                                                         <input type="number" class="form-control" min="1"
                                                             max="9998" name="from_qty[]"
                                                             placeholder="{{ translate('From QTY') }}"
-                                                            placeholder="{{ translate('From QTY') }}" required>
+                                                            placeholder="{{ translate('From QTY') }}" >
                                                     </td>
                                                     <td>
                                                         <input type="number" class="form-control" min="2"
                                                             max="9999" placeholder="{{ translate('To QTY') }}"
-                                                            name="to_qty[]" required>
+                                                            name="to_qty[]" >
                                                     </td>
                                                     <td>
                                                         <input type="number" class="form-control" step="0.01"
                                                             placeholder="{{ translate('Charge') }}" name="charge[]"
-                                                            required>
+                                                            >
                                                     </td>
 
                                                 </tr>
@@ -6910,7 +6910,7 @@
         });
         document.addEventListener('DOMContentLoaded', async () => {
             const savedJobId = sessionStorage.getItem('activeJobId');
-            if (savedJobId) {
+            /* if (savedJobId) {
                 try {
                     const response = fetch("{{ route('seller.job.check') }}", {
                         method: 'POST',
@@ -6936,7 +6936,7 @@
                     sessionStorage.removeItem('activeJobId');
                     showError('Failed to verify upload session');
                 }
-            }
+            } */
         });
         const VendorUserId = @json(auth()->id());
 
@@ -7007,88 +7007,83 @@
             let isValid = true;
             let previousTo = 0;
 
-            // Show spinner
-            let next5Btn = document.getElementById('next5Btn');
-            let spinner = document.createElement('span');
+            const next5Btn = document.getElementById('next5Btn');
+            const spinner = document.createElement('span');
             spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); 
             next5Btn.appendChild(spinner);
-            next5Btn.disabled = true; // Disable button to prevent multiple clicks
+            next5Btn.disabled = true;
 
-            // Get all shipping configuration rows
-            document.querySelectorAll('#shipping-config tbody tr').forEach((row, index) => {
-                const inputs = row.querySelectorAll('input');
-                const fromQty = inputs[0].value;
-                const toQty = inputs[1].value;
-                const charge = inputs[2].value;
-
-                // Validate required fields
-                if (!fromQty || !toQty || !charge) {
-                    showError("Please fill all fields in row " + (index + 1));
-                    isValid = false;
-                    return;
-                }
-
-                // Validate numeric values
-                if (isNaN(fromQty) || isNaN(toQty) || isNaN(charge)) {
-                    showError("Please enter numeric values in row " + (index + 1));
-                    isValid = false;
-                    return;
-                }
-
-                // Convert to numbers
-                const numFrom = parseInt(fromQty);
-                const numTo = parseInt(toQty);
-                const numCharge = parseFloat(charge);
-
-                // Validate quantity ranges
-                if (numFrom < 1 || numFrom > 9998) {
-                    showError(`From Quantity must be between 1-9998 in row ${index + 1}`);
-                    isValid = false;
-                }
-                if (numTo < 2 || numTo > 9999) {
-                    showError(`To Quantity must be between 2-9999 in row ${index + 1}`);
-                    isValid = false;
-                }
-                if (numFrom >= numTo) {
-                    showError(`From Quantity must be less than To Quantity in row ${index + 1}`);
-                    isValid = false;
-                }
-
-                // Check for quantity gaps/overlaps
-                if (index > 0 && numFrom !== previousTo + 1) {
-                    showError(
-                        `Quantity ranges must be continuous (row ${index + 1} should start at ${previousTo + 1})`
-                        );
-                    isValid = false;
-                }
-                previousTo = numTo;
-
-                // Store valid data
-                shippingData.push({
-                    from_qty: numFrom,
-                    to_qty: numTo,
-                    charge: numCharge
-                });
-            });
-
-            // Check coverage of 1-9999 range
-            if (shippingData.length > 0) {
-                const firstFrom = shippingData[0].from_qty;
-                const lastTo = shippingData[shippingData.length - 1].to_qty;
-
-                if (firstFrom !== 1 || lastTo !== 9999) {
-                    showError("Shipping configuration must cover all quantities from 1 to 9999");
-                    isValid = false;
-                }
+            const deliverRadio = document.querySelector('input[name="deliver"]:checked');
+            if (!deliverRadio) {
+                showError("Please select an option for Deliver to Customers");
+                isValid = false;
             }
+            const isDelivering = deliverRadio?.value === 'yes';
 
-            // Check 3rd party shipping selection
             const thirdPartyRadio = document.querySelector('input[name="third_party"]:checked');
             if (!thirdPartyRadio) {
                 showError("Please select an option for 3rd Party Shipping");
                 isValid = false;
             }
-            const mwd3pEnabled = thirdPartyRadio.value === 'yes';
+            const mwd3pEnabled = thirdPartyRadio?.value === 'yes';
+
+            if (isDelivering) {
+                document.querySelectorAll('#shipping-config tbody tr').forEach((row, index) => {
+                    const inputs = row.querySelectorAll('input');
+                    const fromQty = inputs[0].value;
+                    const toQty = inputs[1].value;
+                    const charge = inputs[2].value;
+
+                    if (!fromQty || !toQty || !charge) {
+                        showError(`Please fill all fields in row ${index + 1}`);
+                        isValid = false;
+                        return;
+                    }
+
+                    if (isNaN(fromQty) || isNaN(toQty) || isNaN(charge)) {
+                        showError(`Please enter numeric values in row ${index + 1}`);
+                        isValid = false;
+                        return;
+                    }
+
+                    const numFrom = parseInt(fromQty);
+                    const numTo = parseInt(toQty);
+                    const numCharge = parseFloat(charge);
+
+                    if (numFrom < 1 || numFrom > 9998) {
+                        showError(`From Quantity must be between 1-9998 in row ${index + 1}`);
+                        isValid = false;
+                    }
+                    if (numTo < 2 || numTo > 9999) {
+                        showError(`To Quantity must be between 2-9999 in row ${index + 1}`);
+                        isValid = false;
+                    }
+                    if (numFrom >= numTo) {
+                        showError(`From Quantity must be less than To Quantity in row ${index + 1}`);
+                        isValid = false;
+                    }
+
+                    if (index > 0 && numFrom !== previousTo + 1) {
+                        showError(`Quantity ranges must be continuous (row ${index + 1} should start at ${previousTo + 1})`);
+                        isValid = false;
+                    }
+                    previousTo = numTo;
+
+                    shippingData.push({ from_qty: numFrom, to_qty: numTo, charge: numCharge });
+                });
+
+                if (shippingData.length > 0) {
+                    const firstFrom = shippingData[0].from_qty;
+                    const lastTo = shippingData[shippingData.length - 1].to_qty;
+                    if (firstFrom !== 1 || lastTo !== 9999) {
+                        showError("Shipping configuration must cover all quantities from 1 to 9999");
+                        isValid = false;
+                    }
+                } else {
+                    showError("Please add at least one shipping range");
+                    isValid = false;
+                }
+            }
 
             if (!isValid) {
                 next5Btn.removeChild(spinner);
@@ -7096,41 +7091,39 @@
                 return;
             }
 
-            // Prepare request data
             const requestData = {
                 job_id: activeJobId,
-                shipping_details: shippingData,
-                mwd3p_enabled: mwd3pEnabled
+                shipping_details: isDelivering ? shippingData : [],
+                mwd3p_enabled: mwd3pEnabled,
+                delivers_to_customers: isDelivering
             };
 
-            // Submit data
             fetch("{{ route('seller.shipping.config') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(requestData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showSuccess("Shipping configuration saved successfully!");
-                        $("#smartbulk-5").hide();
-                        $("#smartbulk-6").show();
-                    } else {
-                        showError(data.message || 'Error saving configuration');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showError('Server connection error. Please try again.');
-                })
-                .finally(() => {
-                    // Hide spinner and enable button after response
-                    next5Btn.removeChild(spinner);
-                    next5Btn.disabled = false;
-                });
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess("Shipping configuration saved successfully!");
+                    $("#smartbulk-5").hide();
+                    $("#smartbulk-6").show();
+                } else {
+                    showError(data.message || 'Error saving configuration');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Server connection error. Please try again.');
+            })
+            .finally(() => {
+                next5Btn.removeChild(spinner);
+                next5Btn.disabled = false;
+            });
         });
 
 
@@ -7234,7 +7227,6 @@
         });
 
         document.querySelector('.sbu-s1-btn-start').addEventListener('click', function() {
-            let jobId = sessionStorage.getItem('job_id') || generateJobId();
             let requestBody = {
                 vendor_user_id: 335,
                 job_id: activeJobId
