@@ -307,6 +307,8 @@ class MawadIndexController extends Controller
             ->join('products', 'products.id', '=', 'revisions.revisionable_id')
             ->where('revisions.key', 'unit_price')
             ->where('products.category_id', $categoryId)
+            ->where("products.approved", 1)
+            ->where('products.published', 1)
             ->whereBetween('revisions.created_at', $datesRange)
             ->select([
                 DB::raw("$groupBy as date"),
