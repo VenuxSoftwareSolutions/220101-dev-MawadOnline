@@ -103,7 +103,7 @@ export function MaterialsTrendsContainer() {
                                 <div className="card-title d-flex justify-content-between">
                                     <h5>Materials Trends</h5>
                                     <TextField
-                                        label="Search for products..."
+                                        label="Search ..."
                                         variant="outlined"
                                         size="small"
                                         value={search}
