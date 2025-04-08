@@ -26,7 +26,7 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
                         onClick={() => handleBuyProductButtonClick(category)}
                         className="my-3 btn btn-primary btn-xs"
                     >
-                        Buy product
+                        Buy products
                     </button>
                 </div>
                 <hr />
