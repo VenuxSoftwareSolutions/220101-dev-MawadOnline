@@ -224,26 +224,6 @@ class MawadIndexController extends Controller
                         revisions.mwd_new_value ORDER BY revisions.created_at DESC SEPARATOR ","
                     ),
                 "]") AS trend'),
-                /* percentage change = 100.0 x (New Price - Old Price) / (Old Price) */
-                DB::raw('(
-                    ( (SELECT mwd_new_value FROM revisions
-                       WHERE revisions.revisionable_id = products.id
-                         AND revisions.key = "unit_price"
-                       ORDER BY revisions.created_at DESC
-                       LIMIT 1)
-                    -
-                    (SELECT mwd_old_value FROM revisions
-                     WHERE revisions.revisionable_id = products.id
-                       AND revisions.key = "unit_price"
-                     ORDER BY revisions.created_at DESC
-                     LIMIT 1)
-                    ) /
-                    (SELECT mwd_old_value FROM revisions
-                     WHERE revisions.revisionable_id = products.id
-                       AND revisions.key = "unit_price"
-                     ORDER BY revisions.created_at DESC
-                     LIMIT 1)
-                ) * 100 AS priceChange'),
             ])
             ->groupBy('categories.id', 'parent_categories.name', 'categories.name')
             ->get()
@@ -257,7 +237,16 @@ class MawadIndexController extends Controller
                     return $acc;
                 }, []);
 
-                $category->priceChange = roundUpToTwoDigits($category->priceChange);
+                /* percentage change = 100.0 x (New Price - Old Price) / (Old Price) */
+                $trendLength = count($category->trend) - 1;
+                $first = $category->trend[$trendLength - 1] ?? 0;
+
+                $lastTrend = $category->trend[$trendLength];
+                $last = $lastTrend ?? 0;
+
+                $category->priceChange = $first > 0
+                    ? roundUpToTwoDigits((($last - $first) / $first) * 100)
+                    : 0;
 
                 return $category;
             })->toArray();
