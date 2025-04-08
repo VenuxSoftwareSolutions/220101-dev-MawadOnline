@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+
 import { HeaderContainer } from "./components/HeaderContainer";
 import { MaterialsTrendsContainer } from "./components/MaterialsTrendsContainer";
 import { CartsWrapper } from "./components/CartsWrapper";

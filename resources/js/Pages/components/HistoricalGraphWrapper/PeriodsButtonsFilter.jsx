@@ -2,12 +2,12 @@ import { handleFilterChange } from "../../helper";
 
 export function PeriodsButtonsFilter() {
     const periods = [
-        { label: "1W", value: "1w", isShown: true },
-        { label: "2W", value: "2w", isShown: true },
-        { label: "1M", value: "1m", isShown: true },
-        { label: "3M", value: "3m", isShown: false },
-        { label: "6M", value: "6m", isShown: false },
-        { label: "1Y", value: "1y", isShown: false },
+        { label: __("1W"), value: "1w", isShown: true },
+        { label: __("2W"), value: "2w", isShown: true },
+        { label: __("1M"), value: "1m", isShown: true },
+        { label: __("3M"), value: "3m", isShown: false },
+        { label: __("6M"), value: "6m", isShown: false },
+        { label: __("1Y"), value: "1y", isShown: false },
     ];
 
     const { period } = Object.fromEntries(

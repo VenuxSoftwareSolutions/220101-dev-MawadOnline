@@ -4,8 +4,9 @@ import { usePage } from "@inertiajs/react";
 import { handleFilterChange as handleFilterChangeHelper } from "../helper.js";
 
 export function HeaderContainer() {
-    const textPlaceholder =
-        "Your go-to tool for monitoring daily, weekly, and long-term changes in material costs. Compare rates, view historical data, and identify market trends with clear graphs and insights.";
+    const textPlaceholder = __(
+        "Your go-to tool for monitoring daily, weekly, and long-term changes in material costs. Compare rates, view historical data, and identify market trends with clear graphs and insights."
+    );
 
     const { filter } = usePage().props;
 
@@ -48,7 +49,7 @@ export function HeaderContainer() {
                         }}
                         onClick={() => handleFilterChange("avg")}
                     >
-                        Average Price
+                        {__("Average Price")}
                     </button>
                     <button
                         className={`my-3 btn btn-primary btn-sm mr-2 ${
@@ -66,7 +67,7 @@ export function HeaderContainer() {
                         }}
                         onClick={() => handleFilterChange("lowest")}
                     >
-                        Lowest Price
+                        {__("Lowest Price")}
                     </button>
                 </div>
             </div>

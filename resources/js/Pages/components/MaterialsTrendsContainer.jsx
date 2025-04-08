@@ -9,7 +9,11 @@ import { SpinnerWrapper } from "./SpinnerWrapper";
 import { capitalizeFirstLetter } from "../helper";
 
 export function MaterialsTrendsContainer() {
-    const { filter, categories: rawCategories } = usePage().props;
+    const {
+        filter,
+        categories: rawCategories,
+        defaultCurrency,
+    } = usePage().props;
 
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
@@ -18,12 +22,20 @@ export function MaterialsTrendsContainer() {
 
     const columns = [
         { field: "id", headerName: "#", width: 50 },
-        { field: "subcategory", headerName: "Sub category", flex: 1 },
-        { field: "avgPrice", headerName: "Average Price (AED)", flex: 1 },
-        { field: "lowestPrice", headerName: "Lowest Price (AED)", flex: 1 },
+        { field: "subcategory", headerName: __("Sub category"), flex: 1 },
+        {
+            field: "avgPrice",
+            headerName: __(`Average Price (${defaultCurrency})`),
+            flex: 1,
+        },
+        {
+            field: "lowestPrice",
+            headerName: __(`Lowest Price (${defaultCurrency})`),
+            flex: 1,
+        },
         {
             field: "priceChange",
-            headerName: `${capitalizeFirstLetter(filter)} Price Change (%)`,
+            headerName: __(`${capitalizeFirstLetter(filter)} Price Change (%)`),
             flex: 1,
             renderCell: ({ value }) => (
                 <div
@@ -45,7 +57,9 @@ export function MaterialsTrendsContainer() {
         },
         {
             field: "trend",
-            headerName: `Last 2 weeks (${capitalizeFirstLetter(filter)} price)`,
+            headerName: __(
+                `Last 2 weeks (${capitalizeFirstLetter(filter)} price)`
+            ),
             flex: 1,
             renderCell: ({ value }) => <SparklineChart data={value} />,
         },
@@ -104,9 +118,9 @@ export function MaterialsTrendsContainer() {
                         ) : (
                             <div className="card-body">
                                 <div className="card-title d-flex justify-content-between">
-                                    <h5>Materials Trends</h5>
+                                    <h5>{__("Materials Trends")}</h5>
                                     <TextField
-                                        label="Search ..."
+                                        label={__(`Search ...`)}
                                         variant="outlined"
                                         size="small"
                                         value={search}

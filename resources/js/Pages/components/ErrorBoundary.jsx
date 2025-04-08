@@ -18,8 +18,8 @@ export class ErrorBoundary extends React.Component {
         if (this.state.hasError) {
             return (
                 <div className="d-flex justify-content-center align-items-center flex-column alert alert-danger">
-                    <h3>⚠️ Something went wrong.</h3>
-                    <p>Try refreshing the page or contact support.</p>
+                    <h3>⚠️ {__("Something went wrong.")}</h3>
+                    <p>{__("Try refreshing the page or contact support.")}</p>
                 </div>
             );
         }

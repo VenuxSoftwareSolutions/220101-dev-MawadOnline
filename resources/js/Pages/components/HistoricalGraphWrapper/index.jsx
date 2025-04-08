@@ -34,7 +34,7 @@ export function HistoricalGraphWrapper() {
                                     style={{ gap: "10px" }}
                                 >
                                     <h5 className="text-nowrap">
-                                        Historical Report
+                                        {__("Historical Report")}
                                     </h5>
                                     <CategoriesSelectFilter />
                                 </div>

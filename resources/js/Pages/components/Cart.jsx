@@ -32,7 +32,7 @@ export function Cart({
                         onClick={() => handleBuyProductButtonClick(category)}
                         className="my-3 btn btn-primary btn-xs"
                     >
-                        Buy products
+                        {__("Buy products")}
                     </button>
                 </div>
                 <hr />
