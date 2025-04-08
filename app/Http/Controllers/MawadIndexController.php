@@ -110,6 +110,7 @@ class MawadIndexController extends Controller
 
         $categories = DB::table('categories as c')
             ->leftJoin('categories as parent', 'c.parent_id', '=', 'parent.id')
+            ->leftJoin('categories as grandparent', 'parent.parent_id', '=', 'grandparent.id')
             ->join('product_categories', 'c.id', '=', 'product_categories.category_id')
             ->join('products', 'product_categories.product_id', '=', 'products.id')
             ->join('revisions', function ($join) use ($datesRanges) {
@@ -123,12 +124,13 @@ class MawadIndexController extends Controller
                 'revisions.revisionable_id as product_id',
                 'c.name AS category_name',
                 'parent.name AS parent_category_name',
+                 'grandparent.name AS main_category_name',
                 DB::raw('DATE(revisions.created_at) AS date'),
                 $filter === 'avg' ?
                     DB::raw('AVG(revisions.mwd_new_value) AS price')
                     : DB::raw('MIN(revisions.mwd_new_value) AS price'),
             ])
-            ->groupBy('c.id', 'c.name', 'parent.name', 'date')
+            ->groupBy('c.id', 'c.name', 'parent.name', 'grandparent.name', 'date')
             ->orderBy('c.id')
             ->orderBy('date')
             ->get()
@@ -149,6 +151,7 @@ class MawadIndexController extends Controller
                 $formattedData[$categoryId] = [
                     'category' => $data->category_name,
                     'parentCategory' => $data->parent_category_name,
+                    'mainCategory' => $data->main_category_name,
                     'evolution' => [],
                     'product_id' => $data->product_id,
                 ];

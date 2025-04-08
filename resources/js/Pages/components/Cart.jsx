@@ -2,7 +2,13 @@ import { CustomLineChart } from "./CustomLineChart";
 
 import { useFormatCurrency, slugify } from "../helper";
 
-export function Cart({ category, subCategory, evolution, priceChange }) {
+export function Cart({
+    category,
+    subCategory,
+    mainCategory,
+    evolution,
+    priceChange,
+}) {
     const formatCurrency = useFormatCurrency();
 
     function handleBuyProductButtonClick(category) {
@@ -17,7 +23,7 @@ export function Cart({ category, subCategory, evolution, priceChange }) {
                 <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column">
                         <small className="card-subtitle mb-2 text-muted">
-                            Main Category / {subCategory}
+                            {mainCategory} / {subCategory}
                         </small>
 
                         <h5 className="card-title">{category}</h5>

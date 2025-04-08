@@ -42,6 +42,7 @@ export function CartsWrapper() {
                                 {
                                     category,
                                     parentCategory,
+                                    mainCategory,
                                     evolution,
                                     priceChange,
                                 },
@@ -54,6 +55,7 @@ export function CartsWrapper() {
                                         <Cart
                                             category={category}
                                             subCategory={parentCategory}
+                                            mainCategory={mainCategory}
                                             evolution={evolution}
                                             priceChange={priceChange}
                                         />
