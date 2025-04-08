@@ -294,8 +294,9 @@ class MawadIndexController extends Controller
             ? 'DATE(revisions.created_at)'
             : 'DATE_FORMAT(revisions.created_at, "%Y-%m")';
 
-        $rawData = DB::table('revisions')
+        $rawData = DB::table("revisions")
             ->join('products', 'products.id', '=', 'revisions.revisionable_id')
+            ->join('product_categories', 'product_categories.product_id', '=', 'products.id')
             ->where('revisions.key', 'unit_price')
             ->where('products.category_id', $categoryId)
             ->where("products.approved", 1)
