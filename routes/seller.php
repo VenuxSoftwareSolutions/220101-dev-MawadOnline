@@ -11,6 +11,9 @@ use App\Http\Controllers\Seller\CatalogController;
 use App\Http\Controllers\Seller\DiscountController;
 use App\Http\Controllers\Seller\CouponController;
 use App\Http\Controllers\Seller\SmartBulkUploadController;
+use App\Http\Controllers\Seller\BulkJobController;
+
+
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
@@ -102,6 +105,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
      ->name('bulk.upload-doc');
      Route::post('/bulk/check-job', [SmartBulkUploadController::class, 'checkJobStatus'])->name('job.check');
      ;
+
+     //smart bu job tracking 
+     Route::prefix('bulk-jobs')->group(function () {
+        Route::get('/history', [BulkJobController::class, 'index'])
+             ->name('bulk.jobs.history');
+        Route::get('/{id}', [BulkJobController::class, 'show'])
+             ->name('bulk.jobs.show');
+    });
+    
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {

@@ -76,9 +76,9 @@
                                 </a>
                             </li> --}}
                             <li class="aiz-side-nav-item">
-                                <a href="" 
-                                   class="aiz-side-nav-link {{ areActiveRoutes(['seller.bulk.jobs.history', 'seller.bulk.jobs.show']) }}">
-                                    <span class="aiz-side-nav-text">{{ __('sidenav.bulk_jobs_history.index') }}</span>
+                                <a href="{{ route('seller.bulk.jobs.history') }}" 
+                                class="aiz-side-nav-link {{ areActiveRoutes(['seller.bulk.jobs.history', 'seller.bulk.jobs.show']) }}">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.bulk_jobs_history') }}</span>
                                 </a>
                             </li>
             
