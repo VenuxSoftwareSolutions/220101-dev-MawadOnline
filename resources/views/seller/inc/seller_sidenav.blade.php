@@ -76,6 +76,13 @@
                                 </a>
                             </li> --}}
                             <li class="aiz-side-nav-item">
+                                <a href="" 
+                                   class="aiz-side-nav-link {{ areActiveRoutes(['seller.bulk.jobs.history', 'seller.bulk.jobs.show']) }}">
+                                    <span class="aiz-side-nav-text">{{ __('sidenav.bulk_jobs_history.index') }}</span>
+                                </a>
+                            </li>
+            
+                            <li class="aiz-side-nav-item">
                                 <a href="{{ route('seller.product_bulk_upload.index') }}"
                                     class="aiz-side-nav-link {{ areActiveRoutes(['product_bulk_upload.index']) }}">
                                     <span class="aiz-side-nav-text">{{ translate('Product Bulk Upload') }}</span>
@@ -89,6 +96,7 @@
                                 </a>
                             </li>
                             @endcan --}}
+                        
                             @can('seller_view_product_reviews')
                                 <li id="reviews" class="aiz-side-nav-item">
                                     <a href="{{ route('seller.reviews') }}"
