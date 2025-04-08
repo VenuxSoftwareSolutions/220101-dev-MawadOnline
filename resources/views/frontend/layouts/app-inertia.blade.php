@@ -1137,6 +1137,7 @@
         </script> @endif
 
     @yield('script')
+    @translations
 
     {!! get_setting('footer_script') !!}
 </body>
