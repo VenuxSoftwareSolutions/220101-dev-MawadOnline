@@ -2,42 +2,40 @@
 
 @section('panel_content')
 
-<style>
-.pagination .active .page-link
-{
-    background-color: #8f97ab !important;
-}
+@section("style")
+    <style>
+        .pagination .active .page-link
+        {
+            background-color: #8f97ab !important;
+        }
 
-.pagination .page-link:hover{
-    background-color: #8f97ab !important;
-}
+        .pagination .page-link:hover{
+            background-color: #8f97ab !important;
+        }
 
-.pagination-showin{
-    Weight:400;
-    size: 16px;
-    line-height: 24px;
-    color: #808080;
-}
+        .pagination-showin{
+            Weight:400;
+            size: 16px;
+            line-height: 24px;
+            color: #808080;
+        }
 
-thead tr{
-    height: 53px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-/* thead th{
-    padding: 0 !important;
-    margin: 0 !important;
-} */
+        thead tr{
+            height: 53px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
 
-.aiz-table th {
-    padding: 0 !important;
-    vertical-align: middle !important;
-}
+        .aiz-table th {
+            padding: 0 !important;
+            vertical-align: middle !important;
+        }
 
-.remove-top-padding {
-    padding-top: 0 !important;
-}
-</style>
+        .remove-top-padding {
+            padding-top: 0 !important;
+        }
+    </style>
+@endsection
 
 <div class="aiz-titlebar mt-2 mb-4">
     <div class="row align-items-center">
