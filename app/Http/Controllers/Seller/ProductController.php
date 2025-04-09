@@ -85,6 +85,7 @@ class ProductController extends Controller
         seller_lease_creation($user = Auth::user());
 
         $search = null;
+
         $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
             $query->where('is_draft', '=', 1)
                 ->where('parent_id', 0)
@@ -107,6 +108,7 @@ class ProductController extends Controller
                     ->orWhere('short_description', 'like', '%'.$search.'%');
             });
         }
+
         $products = $products->paginate(10);
         $tour_steps = Tour::orderBy('step_number')->get();
 
