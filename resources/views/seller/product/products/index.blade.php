@@ -119,7 +119,7 @@
                 <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search"></i> <!-- Assuming you're using Font Awesome for icons -->
+                        <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
