@@ -699,7 +699,7 @@ button {
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
-                                                        <div class="form-group">
+                                                       {{--  <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
@@ -711,7 +711,7 @@ button {
                                                             @endif
                                                             <input type="file" class="form-control rounded-0"
                                                                 name="tax_waiver">
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
 
@@ -2424,8 +2424,8 @@ button {
                 // Set or remove the "required" attribute based on VAT registration status
                 $('#vatCertificate').prop('required', isVatRegistered);
                 $('#trn').prop('required', isVatRegistered);
-                $('#taxWaiver').prop('required', !isVatRegistered);
-            });
+                $('#taxWaiver').prop('required', false);
+           });
 
             isVatRegistered = $('input[name="vat_registered"]:checked').val();
 
@@ -2445,7 +2445,6 @@ button {
                 $('#taxWaiverGroup').show();
                 $('#vatCertificate').prop('required', false);
                 $('#trn').prop('required', false);
-                $('#taxWaiver').prop('required', true);
             }
 
 
