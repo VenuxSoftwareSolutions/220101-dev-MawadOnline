@@ -36,4 +36,9 @@ class BuJob extends Model
     {
         return $this->belongsToMany(Brand::class, 'brands_bujobs', 'bu_job_id', 'brand_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, "bu_job_id");
+    }
 }
