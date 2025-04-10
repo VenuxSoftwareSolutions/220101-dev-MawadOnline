@@ -758,9 +758,9 @@ button {
                                         data-next-tab="warehouses">
                                         @csrf
                                         <!-- ... Contact Person form fields ... -->
-                                        <div class="bg-white border mb-4">
 
-                                                <div class="fs-20 fw-600 p-3 orange-text">
+                                 
+                                        <div class="bg-white border mb-4">               <div class="fs-20 fw-600 p-3 orange-text">
                                                     {{ __('profile.personal_information') }}
                                                 </div>
 
@@ -2374,6 +2374,10 @@ button {
 
                 // Focus on the first input with 'is-invalid' class within the active tab
                 $('#' + tabId).find('.is-invalid').first().focus();
+                $('html, body').stop(true).animate({
+                    scrollTop:  $(window).height() * 0.3 
+                }, 0);
+
             }
 
             $('#emirateempire').change(function() {
