@@ -86,33 +86,51 @@ class ProductController extends Controller
 
         $search = null;
 
-        $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
-            $query->where('is_draft', '=', 1)
-                ->where('parent_id', 0)
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('parent_id', 0)
-                        ->where('is_parent', 0);
-                })
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('is_parent', 1);
-                });
-        })->orderBy('id', 'desc');
+        $products = Product::where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc');
+
+        $allMatchingProductIds = (clone $products)->pluck('id');
 
         if ($request->has('search')) {
             $search = $request->search;
             $products = $products->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('sku', 'like', '%'.$search.'%')
-                    ->orWhere('short_description', 'like', '%'.$search.'%');
+                    ->orWhere('short_description', 'like', '%'.$search.'%')
+                    ->orWhereHas('main_category', function ($category) use ($search) {
+                        $category->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
+        if ($request->filled('category_id')) {
+            $categoryId = $request->get('category_id');
+            $products = $products->whereHas('main_category', function ($q) use ($categoryId) {
+                $q->where('id', $categoryId);
+            });
+        }
+
+        $categories = Category::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("name")->get();
+
         $products = $products->paginate(10);
+
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.product.products.index', compact('products', 'search', 'tour_steps'));
+        return view('seller.product.products.index', compact('products', 'search', 'tour_steps', 'categories'));
     }
 
     public function delete_image(Request $request)
