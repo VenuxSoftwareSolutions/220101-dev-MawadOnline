@@ -161,6 +161,18 @@ button {
 .invalid-feedback{
     display: block
 }
+input.is-invalid {
+    padding-right: 2.5rem;
+}
+
+input.is-invalid + .invalid-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #dc3545;
+}
+
 </style>
 @endsection
 @section('content')
@@ -581,6 +593,7 @@ button {
                                                                 value="{{ $user->business_information->street ?? '' }}"
                                                                 placeholder="{{ translate('Street') }}" name="street"
                                                                 required>
+                                                                <small class="text-muted">{{ translate('Example: 123 Main Street') }}</small> 
 
                                                         </div>
                                                     </div>
@@ -592,6 +605,7 @@ button {
                                                                 value="{{ $user->business_information->building ?? '' }}"
                                                                 placeholder="{{ translate('Building') }}" name="building"
                                                                 required>
+                                                            <small class="text-muted">{{ translate('Example: Tower A or 15B') }}</small> 
 
                                                         </div>
                                                     </div>
@@ -1077,13 +1091,14 @@ button {
                                                             <input type="text" class="form-control"
                                                             placeholder="{{ translate('Street') }}"
                                                                 name="street_warehouse_add">
-                                                        </div>
+                                                                <small class="text-muted">{{ translate('Example: 123 Main Street') }}</small>
+                                                            </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="building"><b>{{ translate('Building') }}</b><span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control"
+                                    <input type="text" class="form-control" id="first_name" placeholder="{{ translate('First Name') }}" name="first_name" required>
                                                             placeholder="{{ translate('Building') }}"
                                                                 name="building_warehouse_add">
                                                         </div>
@@ -2301,7 +2316,7 @@ button {
                     var errorContainer = $('<div class="invalid-feedback"></div>');
 
                     $.each(messages, function(key, message) {
-                        errorContainer.append('<strong>' + message + '</strong><br>');
+                        errorContainer.append('<strong>' + message.replace(/^(The )?.*?( of .*?)? format is/, 'The format is') + '</strong><br>');
                     });
 
                     inputField.addClass('is-invalid');

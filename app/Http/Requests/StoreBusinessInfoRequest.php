@@ -49,7 +49,11 @@ class StoreBusinessInfoRequest extends FormRequest
             'license_expiry_date' => 'nullable|date|after_or_equal:today|after_or_equal:license_issue_date',
             'state' => 'nullable|exists:emirates,id',
             'area_id' => 'nullable|exists:areas,id',
-            'street' => 'nullable|string|max:128|regex:/\D/',
+/*             'street' => 'nullable|string|max:128|regex:/\D/',
+            'building' => 'nullable|string|max:64',
+            
+ */         
+            'street' => 'nullable|string|max:128',
             'building' => 'nullable|string|max:64',
             'unit' => 'nullable|string|max:64',
             'po_box' => 'nullable|string|max:32',
