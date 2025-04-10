@@ -278,14 +278,14 @@ class ShopController extends Controller
             }
 
             $trn = $request->input('trn');
-        } else {
+        } /* else {
             // If VAT is not registered, handle tax waiver
             if (isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver')) {
                 $taxWaiverPath = $request->tax_waiver_old;
             } elseif ($request->hasFile('tax_waiver')) {
                 $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
             }
-        }
+        } */
 
         $civil_defense_approval = null;
         if (isset($request->civil_defense_approval_old)) {
