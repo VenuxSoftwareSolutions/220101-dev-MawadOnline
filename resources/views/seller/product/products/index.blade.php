@@ -114,19 +114,26 @@
     <div class="card">
         <form class="" id="sort_products" action="" method="GET">
             <div class="card-header row gutters-5">
-                <div class="col-md-4">
-                <div id="step3" class="input-group input-group-sm">
-                <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
+                <div class="col-3">
+                    <div id="step3" class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
+                <div class="col mb-2">
+                    <select class="form-control aiz-selectpicker" id="productCategory" name="category_id" data-live-search="true">
+                        <option value="">{{ __("All categories") }}</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <div class="dropdown mb-2 mb-md-0">
+                <div class="col-2 dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
                     </button>
@@ -379,7 +386,23 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
+    <script>
+        $(document).ready(function() {
+            $("#productCategory").on("change", function() {
+                const categoryId = $(this).val();
+                const url = new URL(window.location.href);
+
+                if (categoryId) {
+                    url.searchParams.set('category_id', categoryId);
+
+                    url.searchParams.delete('page');
+                } else {
+                    url.searchParams.delete('category_id');
+                }
+
+                window.location.href = url.toString();
+            })
+        });
 
         $(document).on("change", ".check-all", function() {
             if(this.checked) {
@@ -535,9 +558,6 @@
             });
         }
 
-    </script>
-
-    <script>
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('startTourButton').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default anchor click behavior
