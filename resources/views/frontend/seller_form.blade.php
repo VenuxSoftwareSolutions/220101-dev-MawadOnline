@@ -412,7 +412,7 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
-                                                                        name="trade_license_doc" required>
+                                                                        name="trade_license_doc" required accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                     <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -678,7 +678,7 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
-                                                                        name="vat_certificate">
+                                                                        name="vat_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                     <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -731,7 +731,7 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="civil_defense_approval_input"
-                                                                        name="civil_defense_approval">
+                                                                        name="civil_defense_approval" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                     <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -936,7 +936,7 @@ button {
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input"
                                                                 placeholder="{{ translate('Emirates ID') }}" required
-                                                                name="emirates_id_file" id="emirates_id_file_input">
+                                                                name="emirates_id_file" id="emirates_id_file_input" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                 <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label> --}}
                                                                 </div>
                                                             </div>
@@ -1471,7 +1471,7 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="iban_certificate_input"
-                                                                    name="iban_certificate">
+                                                                    name="iban_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                     <label class="custom-file-label" for="iban_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
