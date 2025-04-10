@@ -172,7 +172,53 @@ input.is-invalid + .invalid-icon {
     transform: translateY(-50%);
     color: #dc3545;
 }
-
+.password-container {
+        position: relative;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+    }
+    
+    .progress-container {
+        height: 5px;
+        background: #eee;
+        margin-top: 5px;
+        border-radius: 3px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+    
+    .requirements-list {
+        margin-top: 10px;
+        padding: 0;
+        list-style: none;
+    }
+    
+    .requirement-item {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        color: #666;
+    }
+    
+    .requirement-item i {
+        margin-right: 8px;
+        font-size: 0.9em;
+    }
+    
+    .valid-check { color: #28a745; }
+    .invalid-x { color: #dc3545; }
 </style>
 @endsection
 @section('content')
@@ -298,23 +344,42 @@ input.is-invalid + .invalid-icon {
                                                             </div>
 
                                                         </div>
-                                                    <div class="form-group">
-                                                        <label><b>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
-                                                                class="text-primary">*</b></span></label>
-                                                        <input id="password" type="password" autocomplete="off" class="form-control rounded-0"
-                                                            value="{{ old('password') }}"
-                                                            placeholder="{{ translate('Password') }}" name="password"
-                                                            required>
-                                                        <div id="password-strength"></div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label><b>{{ translate('Repeat Password') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <input id="password_confirmation" type="password"
-                                                            class="form-control rounded-0"
-                                                            placeholder="{{ translate('Confirm Password') }}"
-                                                            name="password_confirmation" required>
-                                                    </div>
+                                                        
+                                                        <div class="form-group ">
+                                                            <label for="password">
+                                                                <b>{{ translate('Password') }} <span class="text-primary">*</span></b>
+                                                            </label>
+                                                            <div class="position-relative">
+                                                                <input type="password" id="password" name="password" class="form-control rounded-0"
+                                                                       autocomplete="off" required placeholder="{{ translate('Password') }}">
+                                                                <i class="password-toggle las la-2x la-eye"></i>
+                                                            </div>
+                                                                                                                    
+                                                            <div id="password-strength" class="mt-2">
+                                                                <div class="progress" style="height: 8px;">
+                                                                    <div id="strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0"
+                                                                         aria-valuemax="100"></div>
+                                                                </div>
+                                                                <ul class="mt-2 small" style="list-style: none; padding-left: 0;" id="password-criteria">
+                                                                    <li data-rule="length"><span class="text-danger">✘</span> {{ translate('Minimum 9 characters') }}</li>
+                                                                    <li data-rule="uppercase"><span class="text-danger">✘</span> {{ translate('At least one uppercase') }}</li>
+                                                                    <li data-rule="lowercase"><span class="text-danger">✘</span> {{ translate('At least one lowercase') }}</li>
+                                                                    <li data-rule="number"><span class="text-danger">✘</span> {{ translate('At least one number') }}</li>
+                                                                    <li data-rule="special"><span class="text-danger">✘</span> {{ translate('At least one special character') }}</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="password_confirmation"><b>{{ translate('Repeat Password') }}</b> <span class="text-primary">*</span></label>
+                                                            <div class="position-relative">
+                                                                <input type="password" id="password_confirmation" name="password_confirmation"
+                                                                       class="form-control rounded-0" required placeholder="{{ translate('Confirm Password') }}">
+                                                                <i class="password-toggle las la-2x la-eye" data-target="#password_confirmation"></i>
+                                                            </div>
+                                                        
+                                                        </div>
+                                                        
                                                 </div>
                                             </div>
                                             <div class="text-right">
@@ -2521,145 +2586,59 @@ input.is-invalid + .invalid-icon {
             closeButton: true,
             timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
         };
-        $('#password').on('input', function() {
-            $('#password-strength').css('border', '1px solid #ddd');
-            $('#password-strength').css('padding', '10px');
+        $(document).ready(function () {
+            const $password = $('#password');
+            const $bar = $('#strength-bar');
+            const $criteria = $('#password-criteria li');
 
-            var password = $(this).val();
-            var strengthMeter = $('#password-strength');
-
-            var patterns = [
-                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
-                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
-                'uvw', 'vwx', 'wxy', 'xyz'
-            ];
-
-            var patternRegex = new RegExp(patterns.join('|') + '|' + patterns.map(function(pattern) {
-                return pattern.split('').reverse().join('');
-            }).join('|'), 'i');
-
-            // Function to calculate the percentage of repeated characters in the password
-            function calculateRepeatedCharacterPercentage(password) {
-                var characterCount = {};
-                for (var i = 0; i < password.length; i++) {
-                    var char = password[i];
-                    characterCount[char] = (characterCount[char] || 0) + 1;
-                }
-
-                var repeatedCount = 0;
-                for (var char in characterCount) {
-                    if (characterCount[char] > 1) {
-                        repeatedCount += characterCount[char];
-                    }
-                }
-
-                return (repeatedCount / password.length) * 100;
-            }
-
-            var repeatedCharacterPercentage = calculateRepeatedCharacterPercentage(password);
-
-            // Password strength rules
-            var rules = {
-                "{{ translate('Minimum length of 9 characters') }}": password.length >= 9,
-                "{{ translate('At least one uppercase letter') }}": /[A-Z]/.test(password),
-                "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
-                // "At least one number": /\d/.test(password),
-                "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
-                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(
-                    password),
-                // maxConsecutiveChars: !/(.)\1\1/.test(password),
-                // maxPercentage: calculateMaxPercentage(password),
-                "{{ translate('No spaces allowed') }}": !/\s/.test(password),
-                "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
-                    /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
-                "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}":
-                    !
-                    checkSubstring(password),
-                "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
-                    !patternRegex.test(password),
-                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
-                    40,
-                "{{ translate('No substring of the password can be a common English dictionary word') }}": !containsDictionaryWord(password, dictionaryWords),
-
-
+            const rules = {
+                length: (val) => val.length >= 9,
+                uppercase: (val) => /[A-Z]/.test(val),
+                lowercase: (val) => /[a-z]/.test(val),
+                number: (val) => /\d/.test(val),
+                special: (val) => /[@#\-+/=$!%*?&]/.test(val),
             };
 
-            // Display password strength rules
-            var strengthText = '';
-            for (var rule in rules) {
-                if (rules.hasOwnProperty(rule)) {
-                    strengthText += '<p>' + rule + ': ' + (rules[rule] ? '✔' : '✘') + '</p>';
+            $password.on('input', function () {
+                const val = $(this).val();
+                let passed = 0;
+
+                // Evaluate each rule
+                $criteria.each(function () {
+                    const rule = $(this).data('rule');
+                    const valid = rules[rule](val);
+                    $(this).find('span')
+                        .text(valid ? '✔' : '✘')
+                        .toggleClass('text-danger', !valid)
+                        .toggleClass('text-success', valid);
+                    if (valid) passed++;
+            });
+
+        // Update progress bar
+                const strength = (passed / Object.keys(rules).length) * 100;
+                $bar.css('width', strength + '%');
+
+                if (strength <= 40) {
+                    $bar.removeClass().addClass('progress-bar bg-danger');
+                } else if (strength < 80) {
+                    $bar.removeClass().addClass('progress-bar bg-warning');
+                } else {
+                    $bar.removeClass().addClass('progress-bar bg-success');
                 }
-            }
-
-            // Update UI
-            strengthMeter.html(strengthText);
-
-            // Check if all rules are satisfied
-            var isPasswordValid = Object.values(rules).every(Boolean);
-
-            // Apply visual feedback
-            if (isPasswordValid) {
-                strengthMeter.addClass('valid');
-            } else {
-                strengthMeter.removeClass('valid');
-            }
         });
 
-        // No substring of the password can be a common English dictionary word
+    $('.password-toggle').on('click', function () {
+        const $icon = $(this);
+        const $input = $('#password');
+        const isPassword = $input.attr('type') === 'password';
 
-        let dictionaryWords=[] ;
+        $input.attr('type', isPassword ? 'text' : 'password');
+        $icon.toggleClass('la-eye la-eye-slash');
+   
+    });
 
-                $.ajax({
-            url: '{{route("get.words")}}', // Make sure this URL matches your Laravel route
-            method: 'GET',
-            success: function(data) {
-                dictionaryWords = data;
-            },
-            error: function(error) {
-                console.error("Error fetching dictionary words", error);
-            }
-        });
+});
 
-        function containsDictionaryWord(password,dictionaryWords) {
-            for(let word of dictionaryWords) {
-                if(password.toLowerCase().includes(word.toLowerCase())){
-                        return true ;
-                }
-            }
-            return false ;
-        }
-
-        function calculateMaxPercentage(password) {
-            // Calculate the percentage of lowercase, uppercase, numbers, and special characters
-            var lowercasePercentage = (password.replace(/[^a-z]/g, '').length / password.length) * 100;
-            var uppercasePercentage = (password.replace(/[^A-Z]/g, '').length / password.length) * 100;
-            var numberPercentage = (password.replace(/[^0-9]/g, '').length / password.length) * 100;
-            var specialCharPercentage = (password.replace(/[^@$!%*?&]/g, '').length / password.length) * 100;
-
-            // Return the maximum percentage
-            return Math.max(lowercasePercentage, uppercasePercentage, numberPercentage, specialCharPercentage);
-        }
-
-        function checkSubstring(password) {
-            // Check if the password contains a substring of the first name, last name, or email with a length of 3 or more characters
-            var firstName = $('#first_name').val().toLowerCase();
-            var lastName = $('#last_name').val().toLowerCase();
-            var email = $('#email').val().toLowerCase();
-
-            // Combine the first name, last name, and email into a single string
-            var combinedStrings = firstName + lastName + email;
-
-            // Check if any substring of length 3 or more exists in the password
-            for (var i = 0; i < combinedStrings.length - 2; i++) {
-                var substring = combinedStrings.substring(i, i + 3).toLowerCase();
-                if (password.toLowerCase().includes(substring)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     </script>
     {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
