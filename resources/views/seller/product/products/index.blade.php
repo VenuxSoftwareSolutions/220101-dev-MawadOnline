@@ -133,6 +133,15 @@
                     </select>
                 </div>
 
+                <div class="col mb-2">
+                    <select class="form-control aiz-selectpicker" id="productBuJob" name="bu_job_id" data-live-search="true">
+                        <option value="">{{ __("All BU jobs") }}</option>
+                        @foreach($bu_jobs as $bu_job)
+                            <option value="{{ $bu_job->id }}" {{ request('bu_job_id') == $bu_job->id ? 'selected' : '' }}>{{ formatBuJob($bu_job) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="col-2 dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
@@ -408,7 +417,23 @@
                 }
 
                 window.location.href = url.toString();
-            })
+            });
+
+            $("#productBuJob").on("change", function() {
+                const buJobId = $(this).val();
+                console.log({buJobId})
+                const url = new URL(window.location.href);
+
+                if (buJobId) {
+                    url.searchParams.set('bu_job_id', buJobId);
+
+                    url.searchParams.delete('page');
+                } else {
+                    url.searchParams.delete('bu_job_id');
+                }
+
+                window.location.href = url.toString();
+            });
         });
 
         $(document).on("change", ".check-all", function() {
