@@ -33,7 +33,7 @@ class VerificationCodeEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Verification Code Email',
+            subject: 'Activate Your MawadOnline Vendor Account - Your Verification Code Inside 🛠️',
         );
     }
 
