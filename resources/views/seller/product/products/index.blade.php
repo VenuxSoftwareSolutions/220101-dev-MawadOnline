@@ -160,6 +160,7 @@
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('Name')}}</th>
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('SKU')}}</th>
                             <th data-breakpoints="md">{{ translate('Category')}}</th>
+                            <th data-breakpoints="md">{{ translate('Bu job ID')}}</th>
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
                             <th class="text-nowrap">{{ translate('Unit of Sale Price') }}</th>
                             <th class="text-center" data-breakpoints="md">{{ translate('Status')}}</th>
@@ -191,6 +192,11 @@
                                 <td>
                                     @if ($product->main_category != null)
                                         {{ $product->main_category->getTranslation('name') }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($product->bu_job !== null)
+                                        {{ formatBuJob($product->bu_job, false) }}
                                     @endif
                                 </td>
                                 <td>
@@ -268,6 +274,7 @@
                                         <td>
                                             {{ $children->sku }}
                                         </td>
+                                        <td></td>
                                         <td></td>
                                         <td>
                                             {{$children->getTotalQuantity()}}
