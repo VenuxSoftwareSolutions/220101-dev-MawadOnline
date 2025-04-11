@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'PreviewProduct' => 'Preview Product',
     'Product Inquiry' => 'Product Inquiry',
     'Price' => 'Price',
@@ -30,6 +29,6 @@ return [
     'reviews' => 'Reviews',
     'View Policy' => 'View Policy',
     'out of 5.0' => 'out of 5.0',
-
+    'bu_job' => '[0,1]:filename (:productsNumber product) / :date|[2,*]:filename (:productsNumber products) / :date',
+    "bu_job_without_count" => ":filename / :date"
 ];
-
