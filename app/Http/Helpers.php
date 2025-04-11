@@ -3168,3 +3168,45 @@ if (function_exists('calculateMwdIndexPrice') === false) {
         }
     }
 }
+
+
+if (function_exists('formatBuJob') === false) {
+    function formatBuJob($bu_job, $is_products_number_shown = true)
+    {
+        try {
+            if ($is_products_number_shown === false) {
+                return trans("product.bu_job_without_count", [
+                    "filename" => $bu_job->vendor_products_file,
+                    "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+                ]);
+            }
+
+            $productsNumber = Product::whereHas('bu_job', function ($q) use ($bu_job) {
+                $q->where('id', $bu_job->id);
+            })->where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc')
+            ->count();
+
+            return trans_choice("product.bu_job", $productsNumber, [
+                "filename" => $bu_job->vendor_products_file,
+                "productsNumber" => $productsNumber,
+                "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+            ]);
+        } catch (Exception $e) {
+            Log::error("Error while formatting bu job #{$bu_job->id}, with error: {$e->getMessage()}");
+            return "";
+        }
+    }
+}
