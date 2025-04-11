@@ -4,14 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class BuJob extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     protected $table = 'bu_jobs';
 
     protected $primaryKey = 'id';
+    public $keyType = 'string';
+
+    public $incrementing = false;
 
     protected $fillable = [
         'vendor_user_id',
@@ -31,6 +37,11 @@ class BuJob extends Model
         'has_errors',
         'error_msg',
     ];
+
+    public function uniqueIds()
+    {
+        return ['id'];
+    }
 
     public function brands()
     {
