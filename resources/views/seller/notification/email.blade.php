@@ -143,7 +143,7 @@
         <!-- Footer -->
         <div style="background: var(--primary-blue); padding: 25px; text-align: center; color: white; font-size: 12px;">
             <p style="margin: 5px 0; line-height: 1.5;">
-                © {{ date('Y') }} MawadOnline - Building the Future of Construction Commerce<br>
+                © {{ date('Y') }} MawadOnline - Building the Future of Construction Materials<br>
                 Need help? <a href="mailto:vendor-support@mawadonline.com" 
                             style="color: var(--action-orange); text-decoration: none; font-weight: 500;">
                     Contact Vendor Support
