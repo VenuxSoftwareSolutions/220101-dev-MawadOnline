@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\File;
 use Log;
 use Exception;
 use App\Rules\NonOverlappingShippingQuantityPerShipper;
+use App\Models\BuJob;
 
 class ProductController extends Controller
 {
@@ -122,15 +123,32 @@ class ProductController extends Controller
             });
         }
 
+        if ($request->filled('bu_job_id')) {
+            $buJobId = $request->get('bu_job_id');
+            $products = $products->whereHas('bu_job', function ($q) use ($buJobId) {
+                $q->where('id', $buJobId);
+            });
+        }
+
         $categories = Category::whereHas('products', function ($query) use ($allMatchingProductIds) {
             $query->whereIn('products.id', $allMatchingProductIds);
         })->orderBy("name")->get();
+
+        $bu_jobs = BuJob::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("created_at")->get();
 
         $products = $products->paginate(10);
 
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.product.products.index', compact('products', 'search', 'tour_steps', 'categories'));
+        return view('seller.product.products.index', compact(
+            'products',
+            'search',
+            'tour_steps',
+            'categories',
+            'bu_jobs'
+        ));
     }
 
     public function delete_image(Request $request)
