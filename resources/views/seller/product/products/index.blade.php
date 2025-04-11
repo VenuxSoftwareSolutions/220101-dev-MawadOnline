@@ -2,7 +2,7 @@
 
 @section('panel_content')
 
-@section("style")
+@push('styles')
     <style>
         .pagination .active .page-link
         {
@@ -34,8 +34,20 @@
         .remove-top-padding {
             padding-top: 0 !important;
         }
+
+        .product-name__clz {
+            display: inline-block;
+            max-width: 30ch;
+            word-wrap: break-word;
+        }
+
+        .product-sku__clz {
+            display: inline-block;
+            max-width: 20ch;
+            word-wrap: break-word;
+        }
     </style>
-@endsection
+@endpush
 
 <div class="aiz-titlebar mt-2 mb-4">
     <div class="row align-items-center">
@@ -192,11 +204,15 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->name }}
+                                        <span class="product-name__clz">
+                                            {{ $product->name }}
+                                        </span>
                                     </a>
                                 </td>
                                 <td>
-                                    {{ $product->sku }}
+                                    <span class="product-sku__clz">
+                                        {{ $product->sku }}
+                                    </span>
                                 </td>
                                 <td>
                                     @if ($product->main_category != null)
@@ -277,11 +293,15 @@
                                         </td>
                                         <td >
                                             <a href="{{ route('product', $children->slug) }}" @if(app()->getLocale() == "ae") style="margin-right: 34px !important" @else style="margin-left: 34px !important" @endif target="_blank" class="text-reset">
-                                                {{ $children->name }}
+                                                <span class="product-name__clz">
+                                                    {{ $children->name }}
+                                                </span>
                                             </a>
                                         </td>
                                         <td>
-                                            {{ $children->sku }}
+                                            <span class="product-sku__clz">
+                                                {{ $children->sku }}
+                                            </span>
                                         </td>
                                         <td></td>
                                         <td></td>
