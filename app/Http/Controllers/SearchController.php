@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\App;
 use App\Services\ProductService;
 use Illuminate\Support\Facades\Cache;
 use Debugbar;
-
 use DB;
 
 class SearchController extends Controller
@@ -43,7 +42,7 @@ class SearchController extends Controller
         if ($cachedData) {
             return response()->json($cachedData);
         }
-    
+
         if ($request->category_id) {
             $category_id = $request->category_id;
         }
@@ -78,16 +77,13 @@ class SearchController extends Controller
         $brandQuery = clone $baseQuery;
 
         $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')
-        ->where('brands.approved', '=', 1)  
-        ->whereNull('products.deleted_at')  
+        ->where('brands.approved', '=', 1)
+        ->whereNull('products.deleted_at')
         ->select('brands.*')
         ->distinct()
         ->get();
-        
-    
+
         $brand_ids = $this->productService->filterProductsByBrand($request, $brand_id, $products);
-
-
 
         //filter by vendor
         $shopQuery = clone $baseQuery;
@@ -97,7 +93,6 @@ class SearchController extends Controller
         $shops = $shopQuery->join('users', 'users.id', '=', 'products.user_id')->join('shops', 'shops.user_id', '=', 'users.id')->where('users.banned', '!=', 1)->where('shops.verification_status', '!=', 0)->select('shops.*')->distinct()->get();
 
         $vender_user_ids = $this->productService->filterProductsByShop($request, $products);
-
 
         //filter by Rating
         $rating = $request->rating;
@@ -116,7 +111,7 @@ class SearchController extends Controller
         if ($query) {
             $products->whereRaw("MATCH(name) AGAINST(? IN BOOLEAN MODE)", ['+' . $query . '*']);
         }
-                
+
         //filter product by category
         if ($category_id != null) {
             $products->whereIn('category_id', $category_ids);
@@ -139,9 +134,9 @@ class SearchController extends Controller
         $products = $products->select([
             'id',
             'slug',
-            'name',             
+            'name',
             'auction_product',
-            'discount',          
+            'discount',
             'wholesale_product',
             'featured',
             'category_id',
@@ -150,6 +145,7 @@ class SearchController extends Controller
             'created_at'
         ])
         ->paginate(6);
+
         if ($request->ajax()) {
             $html = '';
             foreach ($products as $product) {
@@ -157,7 +153,7 @@ class SearchController extends Controller
                 $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
             }
             $pagination = str_replace('href', 'data-href', $products->appends($request->input())->links()->render());
-            
+
             $filter = view('frontend.product_listing_filter', [
                 'conditions' => $conditions,
                 'request_all' => $request_all,
@@ -260,7 +256,7 @@ class SearchController extends Controller
         return view('frontend.product_listing', compact('conditions', 'max_all_price', 'min_all_price', 'request_all', 'shops', 'vender_user_ids', 'max_price', 'min_price', 'brands', 'rating', 'brand_ids', 'products', 'query', 'category', 'category_parent', 'category_parent_parent', 'category_parents_ids', 'categories', 'category_id', 'brand_id', 'sort_by', 'min_price', 'max_price', 'attributes', 'selected_attribute_values', 'colors'));
     }
 
-   
+
     /**
      * Generate a unique cache key based on request parameters.
      */
@@ -281,9 +277,11 @@ class SearchController extends Controller
     public function listingByCategory(Request $request, $category_slug)
     {
         $category = Category::where('slug', $category_slug)->first();
+
         if ($category != null) {
             return $this->index($request, $category->id);
         }
+
         abort(404);
     }
 
@@ -338,18 +336,12 @@ class SearchController extends Controller
         $case1 = $query . '%';
         $case2 = '%' . $query . '%';
 
-        //vulnerable code
-        // $products_query->orderByRaw("CASE
-        //         WHEN name LIKE '$case1' THEN 1
-        //         WHEN name LIKE '$case2' THEN 2
-        //         ELSE 3
-        //         END");
         $products_query->orderByRaw(
             "CASE
-        WHEN name LIKE ? THEN 1
-        WHEN name LIKE ? THEN 2
-        ELSE 3
-        END",
+            WHEN name LIKE ? THEN 1
+            WHEN name LIKE ? THEN 2
+            ELSE 3
+            END",
             [$query . '%', '%' . $query . '%'],
         );
 
@@ -389,5 +381,5 @@ class SearchController extends Controller
         }
     }
 
-   
+
 }

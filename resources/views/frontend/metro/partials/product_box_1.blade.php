@@ -211,6 +211,9 @@
                     @php
                         $priceAfterDiscountVatIncl = \App\Utility\CartUtility::priceProduct($product->id, 1);
                         $priceAfterMwdCommission = calculatePriceWithDiscountAndMwdCommission($product, 1, false);
+
+                        if(isset($mwd_price) === false)
+                            $mwd_price = calculatePriceWithDiscountAndMwdCommission($product);
                     @endphp
                     <div class="discounted-price__clz" data-unit_price="{{ $product->unit_price }}" data-product_id="{{ $product->id }}" data-price_after_mwd_commission="{{ $priceAfterMwdCommission }}">
                         <span class="fw-700 text-dark mr-1">{{ single_price($mwd_price) }}</span>
