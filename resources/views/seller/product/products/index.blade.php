@@ -158,8 +158,8 @@
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item confirm-alert" href="javascript:void(0)"  data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
+                    <div class="d-none dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item confirm-alert" href="javascript:void(0)" data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
                     </div>
                 </div>
 
