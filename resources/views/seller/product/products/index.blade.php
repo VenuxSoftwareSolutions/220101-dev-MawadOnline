@@ -467,27 +467,27 @@
                     this.checked = false;
                 });
             }
-
         });
 
         $('body').on('change', '.publsihed_product', function(){
-            var current = $(this);
-            var id = $(this).val();
-            if($(this).is(':not(:checked)')){
-                var published = 0;
-                var message = "Do you want to unpublish ?";
-                var message_button = "Unpublish";
-                var message_success = "The product unpublished successfully";
-                var message_icon = "Unpublished"
-            }else{
-                var published = 1;
-                var message = "Do you want to publish ?";
-                var message_button = "Publish";
-                var message_success = "The product published successfully";
-                var message_icon = "Published"
+            let current = $(this);
+            let id = $(this).val();
+
+            let published = 1;
+            let message = "Do you want to publish ?";
+            let message_button = "Publish";
+            let message_success = "The product published successfully";
+            let message_icon = "Published";
+
+            if($(this).is(':not(:checked)')) {
+                published = 0;
+                message = "Do you want to unpublish ?";
+                message_button = "Unpublish";
+                message_success = "The product unpublished successfully";
+                message_icon = "Unpublished";
             }
 
-            if(id != undefined){
+            if(id != undefined) {
                 $("#title-modal").text('{{ translate("Publish Product") }}');
                 $("#text-modal").text(message);
                 $("#publish-link").text(message_button);
@@ -517,18 +517,17 @@
 
         $('body').on('click', '#publish-link', function(){
             $("#modal-info").modal('hide');
-            var id = $("#product_id").val();
-            var published = $("#status").val();
+            let id = $("#product_id").val();
+            let published = $("#status").val();
+            let message_success = "The product published successfully";
+            let message_icon = "Published"
 
-            if(published == 0){
-                var message_success = "The product unpublished successfully";
-                var message_icon = "Unpublished"
-            }else{
-                var message_success = "The product published successfully";
-                var message_icon = "Published"
+            if(published == 0) {
+                let message_success = "The product unpublished successfully";
+                let  message_icon = "Unpublished"
             }
 
-            if((id != '') && (id != undefined)){
+            if((id != '') && (id != undefined)) {
                 $.ajax({
                     url: "{{ route('seller.products.published') }}",
                     type: "GET",
