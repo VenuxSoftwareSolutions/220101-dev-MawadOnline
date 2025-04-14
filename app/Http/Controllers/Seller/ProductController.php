@@ -1161,11 +1161,13 @@ class ProductController extends Controller
                 foreach ($request->id as $product_id) {
                     $this->destroy($product_id);
                 }
+            } else {
+                throw new Exception("Product Id selection error");
             }
 
-            return 1;
-        } catch (\Exception $e) {
-            \Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
+            return response()->json(["error" => false, "message" => __("Bulk delete products ends successfully")]);
+        } catch (Exception $e) {
+            Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
 
             return response()->json(['error' => true, 'message' => __("There's an error")], 500);
         }
