@@ -591,7 +591,7 @@
         }
 
         function bulk_delete() {
-            var data = new FormData($('#sort_products')[0]);
+            let data = new FormData($('#sort_products')[0]);
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -603,8 +603,17 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    if(response == 1) {
-                        location.reload();
+                    $("#bulk-delete-modal").modal("hide")
+                    if(response.error == false) {
+                        $("#title-modal-success").text("Bulk Delete");
+                        $("#text-modal-success").text(response.message);
+
+                        $("#modal-success").modal('show')
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2500);
+                    } else {
+                        // @todo
                     }
                 }
             });
