@@ -111,13 +111,23 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <h2 style="color: var(--primary-blue);">Approval Complete!</h2>
-                <p style="color: var(--text-dark); line-height: 1.6;">
-                    Dear {{ $vendorName }},<br>
-                    Congratulations! Your vendor account has been approved and is now active.
-                </p>
-                <a href="{{ route('seller.login') }}" class="action-button">
-                    Access Vendor Dashboard
+                <div style="color: var(--text-dark); line-height: 1.6; text-align: left; margin: 0 15px;">
+                    <p>Hi {{ $vendorName }},</p>
+                    <p>We're delighted to welcome you to MawadOnline! Your application has been approved and you're now part of our vibrant vendor community. This is the perfect time to access your dashboard and start listing your products.</p>
+                    
+                    <p>Feeling a bit overwhelmed? Don't worry! We've got a library of step-by-step guides. Our comprehensive guides and resources are available to ensure you hit the ground running.</p>
+                    
+                    <p>Need help? A dedicated support team is ready to assist you at any time. Your success is our priority and we're here to help you achieve it.</p>
+                    
+                    <p>Jump into your dashboard today and start crafting your success story with us!</p>
+                </div>
+                <a href="{{ route('seller.login') }}" class="action-button" style="margin-top: 25px;">
+                    Access Your Vendor Dashboard Now
                 </a>
+                <p style="color: var(--text-dark); margin-top: 25px;">
+                    Best regards,<br>
+                    The MawadOnline Team
+                </p>
             </div>
 
             @elseif($newStatus == 'Rejected')
@@ -125,19 +135,34 @@
                 <svg class="status-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 style="color: var(--primary-blue); margin-top: 0;">Application Update</h3>
-                <div style="color: var(--text-dark); line-height: 1.6;">
+                <h3 style="color: var(--primary-blue); margin-top: 0;">Your MawadOnline Vendor Application Review Outcome</h3>
+                <div style="color: var(--text-dark); line-height: 1.6; white-space: normal;">
                     <p>Dear {{ $vendorName }},</p>
-                    <p>{!! $reason !!}</p>
-                    <a href="{{ route('seller.login') }}" class="action-button">
-                        Update Application
+                    <p>
+                        Thank you for your recent application to become a vendor on MawadOnline. After a thorough review, we regret to inform you that your application does not currently align with our vendor criteria. While this is not the outcome we had hoped for, we hope there are still valuable business opportunities within our platform that may suit your offerings more closely.
+                    </p>
+                    <p>
+                        To assist you further, we've provided specific feedback on the areas where your application did not meet our requirements:
+                    </p>
+                    <div style="background: #FFF9F7; padding: 15px; margin: 15px 0; border-radius: 4px;">
+                        {!! $reason !!}
+                    </div>
+                    <p>
+                        If you have any questions or need more detailed feedback, please don't hesitate to reach out to our vendor support team. We are here to help you explore tailored opportunities that match your business strengths.
+                    </p>
+                    <a href="mailto:vendor-support@mawadonline.com" class="action-button">
+                        Contact Support Team
                     </a>
                     <p style="color: #6c757d; margin-top: 15px;">
-                        Please resubmit within 30 days to avoid account deletion.
+                        We look forward to possibly working together in the future.
+                    </p>
+                    <p style="margin-top: 20px;">
+                        Best regards,<br>
+                        The MawadOnline Team
                     </p>
                 </div>
             </div>
-            @endif
+        @endif
         </div>
 
         <!-- Footer -->

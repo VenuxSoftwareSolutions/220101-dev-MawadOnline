@@ -81,15 +81,15 @@ class VendorStatusChangedNotification extends Notification implements ShouldQueu
             $subject = "Vendor Status Changed";
         }
         if ( $this->newStatus == 'Pending Approval') {
-            $subject = "Registration Complete: You Account Is Now Pending Approval";
+            $subject = "Update on Your MawadOnline Application";
 
         }
         if ( $this->newStatus == 'Enabled') {
-            $subject = "Welcome to MawadOnline  - Your Vendor Account Has Been Approved";
-
+            $subject = "Your Journey Begins! Access Your Vendor Dashboard Now";
         }
+
         if ( $this->newStatus == 'Rejected') {
-            $subject = "Vendor Registration Rejected";
+            $subject = "Your MawadOnline Vendor Application Review Outcome";
 
         }
         if ( $this->newStatus == 'Pending Closure') {
