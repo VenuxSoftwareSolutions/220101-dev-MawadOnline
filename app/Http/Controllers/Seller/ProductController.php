@@ -1154,6 +1154,81 @@ class ProductController extends Controller
         }
     }
 
+
+    public function bulk_publish(Request $request)
+    {
+        $action = "publish";
+
+        try {
+            $data = $request->all();
+            $productsIds = json_decode($data["products_ids"]);
+
+            if ($data["publish"] !== "1") {
+                $action = "unpublish";
+            }
+
+            $failed = [];
+            $successful = [];
+            $errorDetails = [];
+
+            if (count($productsIds) === 0) {
+                throw new Exception(__("No products selected"));
+            }
+
+            foreach ($productsIds as $productId) {
+                try {
+                    $product = Product::find($productId);
+
+                    if ($product === null) {
+                        throw new Exception(__("Product not found"));
+                    }
+
+                    $product->published = $data["publish"];
+
+                    if (!$product->save()) {
+                        throw new Exception($product->sku);
+                    }
+
+                    $successful[] = $productId;
+                } catch (Exception $e) {
+                    $failed[] = $productId;
+                    $errorDetails[$productId] = $e->getMessage();
+
+                    Log::warning("Error while bulk {$action} for product {$productId}, with message: {$e->getMessage()}");
+                }
+            }
+
+            $message = __("Bulk :action completed", ["action" => $action]);
+            $statusCode = 200;
+
+            if (!empty($failed)) {
+                if (empty($successful)) {
+                    $message = __("Bulk :action failed for all products", ["action" => $action]);
+                    $statusCode = 500;
+                } else {
+                    $message .= __(" with :count errors in products", ["count" => count($failed)]);
+                    $statusCode = 207;
+                }
+            }
+
+            return response()->json([
+                "error" => !empty($failed),
+                "message" => $message,
+                "failed" => $failed,
+                "successful" => $successful,
+                "error_details" => $errorDetails,
+                "action" => $action
+            ], $statusCode);
+        } catch (Exception $e) {
+            Log::error("Error while bulk {$action} products, with message: {$e->getMessage()}");
+
+            return response()->json([
+                'error' => true,
+                'message' => __("Something went wrong"),
+            ], 500);
+        }
+    }
+
     public function bulk_product_delete(Request $request)
     {
         try {
