@@ -2,19 +2,14 @@
 <html>
 
 <head>
-    <title>MawadOnline Vendor Verification</title>
+    <title>MawadOnline Account Verification</title>
     <style>
         :root {
             --primary-blue: #3D3D3B;
-            /* Trustworthy navy blue */
             --action-orange: #FF6B35;
-            /* Vibrant safety orange */
             --success-green: #2A9D8F;
-            /* Construction teal */
             --background-gray: #F8F9FA;
-            /* Light background */
             --text-dark: #2D3748;
-            /* Primary text color */
         }
 
         body {
@@ -37,24 +32,6 @@
             padding: 40px;
         }
 
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0;
-        }
-
-        .step {
-            width: 100px;
-            height: 4px;
-            background: #E2E8F0;
-            margin: 0 10px;
-            border-radius: 2px;
-        }
-
-        .step.active {
-            background: var(--action-orange);
-        }
-
         a:hover svg path {
             fill: var(--action-orange) !important;
         }
@@ -63,7 +40,6 @@
 
 <body>
     <div style="max-width: 600px; margin: 0 auto;">
-        <!-- Header with Branding -->
         <div class="header-bg">
             <center>
                 @php
@@ -77,18 +53,10 @@
                         class="mw-100 h-30px h-md-40px" height="40">
                 @endif
 
-                <h1 style="color: white; margin: 0; font-size: 24px;">Complete Your Vendor Registration</h1>
+                <h1 style="color: white; margin: 0; font-size: 24px;">Secure Account Verification</h1>
             </center>
         </div>
 
-        <!-- Registration Steps Visualization -->
-        <div class="step-indicator">
-            <div class="step active"></div>
-            <div class="step active"></div>
-            <div class="step"></div>
-        </div>
-
-        <!-- Verification Card -->
         <div class="verification-card">
             <h2 style="color: var(--primary-blue); margin-top: 0; font-size: 20px;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -97,26 +65,24 @@
                         d="M12 3l7.5 4.5v5.25a8.25 8.25 0 01-5.63 7.79l-.87.28a.75.75 0 01-.5 0l-.87-.28A8.25 8.25 0 014.5 12.75V7.5L12 3z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4" />
                 </svg>
-                Step 2: Email Verification
+                Email Verification Required
             </h2>
 
-            <p style="color: var(--text-dark); line-height: 1.6;">
-                Welcome to MawadOnline's global construction marketplace!<br>
-                To activate your vendor account and start reaching customers worldwide, please enter this verification
-                code:
+            <p style="color: var(--text-dark); line-height: 1.6; font-size: 16px;">
+                Hi {{ $userName }}!<br>
+                Welcome to MawadOnline family! We're thrilled to have you on board.<br>
+                To ensure your account remains secure, we use a One-Time Password (OTP).
             </p>
 
             <div style="text-align: center; margin: 40px 0;">
-                <div
-                    style="display: inline-block; padding: 20px 40px; background: var(--primary-blue); border-radius: 8px;">
+                <div style="display: inline-block; padding: 20px 40px; background: var(--primary-blue); border-radius: 8px;">
                     <span style="font-size: 36px; letter-spacing: 4px; color: white; font-weight: bold;">
                         {{ $verificationCode }}
                     </span>
                 </div>
             </div>
 
-            <div
-                style="background: #FFF9F7; padding: 20px; border-radius: 6px; border-left: 4px solid var(--action-orange); display: flex; align-items: flex-start;">
+            <div style="background: #FFF9F7; padding: 20px; border-radius: 6px; border-left: 4px solid var(--action-orange); display: flex; align-items: flex-start;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" width="24" height="24"
                     style="margin-right: 15px; flex-shrink: 0; color: var(--action-orange);">
@@ -124,23 +90,29 @@
                         d="M12 9v3m0 4h.01M10.29 3.86l-7.38 12.78A1.5 1.5 0 004.12 18h15.76a1.5 1.5 0 001.21-2.36L13.71 3.86a1.5 1.5 0 00-2.42 0z" />
                 </svg>
                 <p style="color: var(--text-dark); margin: 0; font-size: 14px;">
-                    <strong>Next Step:</strong> After verification, you'll complete your business profile to start
-                    showcasing your construction materials/services.
+                    <strong>Security Alert:</strong> This OTP expires in {{ $minutes }} minutes.<br>
+                    Please enter this OTP within the next {{ $minutes }} minutes to verify your email address.<br>
+                    Keep it confidential to safeguard your account.
                 </p>
             </div>
 
+            <p style="color: var(--text-dark); line-height: 1.6; font-size: 14px; margin-top: 25px;">
+                <strong>Your security is our top priority at MawadOnline.</strong><br>
+                We're dedicated to providing you with a safe and secure experience.<br><br>
+                If you have any questions, feel free to contact our support team at 
+                <a href="mailto:support@mawadonline.com" style="color: var(--action-orange); text-decoration: none;">
+                    support@mawadonline.com
+                </a>. We’re here to assist you.<br><br>
+                Thank you for choosing MawadOnline!
+            </p>
         </div>
 
-
-
-        <!-- Footer -->
-        <!-- Footer -->
         <div style="background: var(--primary-blue); padding: 25px; text-align: center; color: white; font-size: 12px;">
             <p style="margin: 5px 0; line-height: 1.5;">
-                © {{ date('Y') }} MawadOnline - Building the Future of Construction Materials<br>
-                Need help? <a href="mailto:vendor-support@mawadonline.com"
+                © {{ date('Y') }} MawadOnline - Trusted Construction Marketplace<br>
+                Verification questions? <a href="mailto:security@mawadonline.com"
                     style="color: var(--action-orange); text-decoration: none; font-weight: 500;">
-                    Contact Vendor Support Team
+                    Contact Security Team
                 </a>
             </p>
 
@@ -185,6 +157,7 @@
                     </tr>
                 </table>
             </div>
+
         </div>
     </div>
 </body>

@@ -203,8 +203,11 @@ class ShopController extends Controller
             $user->step_number = 1;
             $user->save();
 
-            // Send the verification code to the user's email
-            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail(
+                $verificationCode,
+                $request->first_name.' '.$request->last_name,
+                10 
+            ));
         }
 
         return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
