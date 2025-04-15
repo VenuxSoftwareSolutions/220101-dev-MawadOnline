@@ -11,8 +11,6 @@ use App\Http\Controllers\Seller\CatalogController;
 use App\Http\Controllers\Seller\DiscountController;
 use App\Http\Controllers\Seller\CouponController;
 
-
-
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
     Route::controller(CategoryController::class)->group(function () {
@@ -40,8 +38,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
     Route::controller(ProductController::class)->middleware('throttle:global')->group(function () {
         Route::post('/product/temp-store', 'tempStore')->name('product.tempStore');
         Route::get('/product/preview/{slug}', 'preview')->name('product.preview');
-        Route::post('/update-price-preview','updatePricePreview')->name('update-price-preview')->middleware(['admin']);
-        Route::post('/send-checked-attributes','ProductCheckedAttributes')->name('product.checked.attributes');
+        Route::post('/update-price-preview', 'updatePricePreview')->name('update-price-preview')->middleware(['admin']);
+        Route::post('/send-checked-attributes', 'ProductCheckedAttributes')->name('product.checked.attributes');
         Route::get('/products', 'index')->name('products');
         Route::get('/product/create', 'create')->name('products.create');
         Route::get('/product/delete_variant', 'delete_variant')->name('products.delete_variant');
@@ -86,7 +84,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/product-bulk-upload/getFiles', 'getFiles')->name('product_bulk_upload.getFiles');
 
         Route::post('/product-bulk-upload/store', 'bulk_upload')->name('bulk_product_upload');
-        Route::group(['prefix' => 'bulk-upload/download'], function() {
+        Route::group(['prefix' => 'bulk-upload/download'], function () {
             Route::get('/category', 'pdf_download_category')->name('pdf.download_category');
             Route::get('/brand', 'pdf_download_brand')->name('pdf.download_brand');
         });
@@ -105,19 +103,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/digitalproducts/download/{id}', 'download')->name('digitalproducts.download');
     });
 
-   /* //Coupon(old implementation)
-    Route::resource('coupon', CouponController::class);
-    Route::controller(CouponController::class)->group(function () {
-        Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
-        Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
-        Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
-    });*/
+    /* //Coupon(old implementation)
+     Route::resource('coupon', CouponController::class);
+     Route::controller(CouponController::class)->group(function () {
+         Route::post('/coupon/get_form', 'get_coupon_form')->name('coupon.get_coupon_form');
+         Route::post('/coupon/get_form_edit', 'get_coupon_form_edit')->name('coupon.get_coupon_form_edit');
+         Route::get('/coupon/destroy/{id}', 'destroy')->name('coupon.destroy');
+     });*/
 
     //discounts
     Route::resource('discounts', DiscountController::class)->except(['show']);
     Route::put('/{id}', [DiscountController::class, 'update'])->name('update'); // PUT route for updates
     Route::delete('/{id}', [DiscountController::class, 'destroy'])->name('destroy'); // DELETE route for deletion
-    Route::get('/get-products-by-category', [DiscountController::class, 'getProductsByCategory'])->name('discounts.getproductbycategory');;
+    Route::get('/get-products-by-category', [DiscountController::class, 'getProductsByCategory'])->name('discounts.getproductbycategory');
+    ;
     Route::get('/get-categories-for-product-scope', [DiscountController::class, 'getCategoriesForProductScope'])
     ->name('discounts.getCategoriesForProductScope');
 
@@ -239,7 +238,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/all-notification', 'index')->name('all-notification');
     });
 
-        Route::controller(SellerStaffController::class)->group(function () {
+    Route::controller(SellerStaffController::class)->group(function () {
         Route::resource('staffs', SellerStaffController::class);
         Route::get('/staffs/destroy/{id}', [SellerStaffController::class, 'destroy'])->name('staffs.destroy');
         Route::get('/check-role', [SellerStaffController::class, 'checkRole'])->name('check.role');
