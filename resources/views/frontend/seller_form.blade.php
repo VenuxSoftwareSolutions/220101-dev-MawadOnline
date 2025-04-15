@@ -489,7 +489,8 @@ input.is-invalid + .invalid-icon {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
-                                                                        name="trade_license_doc" required accept=".pdf,.jpeg,.jpg,.png,.webp">
+                                                                        name="trade_license_doc" required  accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -757,7 +758,8 @@ input.is-invalid + .invalid-icon {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
-                                                                        name="vat_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp">
+                                                                        name="vat_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -810,7 +812,8 @@ input.is-invalid + .invalid-icon {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="civil_defense_approval_input"
-                                                                        name="civil_defense_approval" accept=".pdf,.jpeg,.jpg,.png,.webp">
+                                                                        name="civil_defense_approval" accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>

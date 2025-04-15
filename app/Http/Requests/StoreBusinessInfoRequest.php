@@ -59,11 +59,12 @@ class StoreBusinessInfoRequest extends FormRequest
             'po_box' => 'nullable|string|max:32',
             'landline' => 'nullable|string|max:16',
             'vat_registered' => 'nullable|boolean',
-            'trade_license_doc' => 'nullable|file|mimes:pdf,jpeg,jpg,png,webp|max:5120',
+            'trade_license_doc' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic',
             'trn' => $this->vat_registered == 1 ? 'nullable|string|max:20' : '',
             'vat_certificate' => $this->vat_registered == 1 /* && !isset($this->vat_certificate_old) */ ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-            'tax_waiver' => 'nullable|file|max:5120|mimes:pdf,jpeg,jpg,png,webp',
-            'civil_defense_approval' => 'nullable|file|max:5120|mimes:pdf,jpeg,jpg,png,webp',
+            'tax_waiver' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic',
+            'civil_defense_approval' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic',
+
         ];
     }
 }
