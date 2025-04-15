@@ -185,7 +185,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col mb-2">
+                <div class="col">
                     <select class="form-control aiz-selectpicker" id="productCategory" name="category_id" data-live-search="true">
                         <option value="">{{ __("All categories") }}</option>
                         @foreach($categories as $category)
@@ -194,7 +194,7 @@
                     </select>
                 </div>
 
-                <div class="col mb-2">
+                <div class="col">
                     <select class="form-control aiz-selectpicker" id="productBuJob" name="bu_job_id" data-live-search="true">
                         <option value="">{{ __("All BU jobs") }}</option>
                         @foreach($bu_jobs as $bu_job)
@@ -203,7 +203,7 @@
                     </select>
                 </div>
 
-                <div class="col-2 dropdown mb-2 mb-md-0">
+                <div class="col-2 dropdown mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Actions')}}
                     </button>
