@@ -63,6 +63,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::get('/products/delete_image', 'delete_image')->name('products.delete_image');
         Route::get('/products/delete_pricing', 'delete_pricing')->name('products.delete_pricing');
         Route::post('/products/bulk-delete', 'bulk_product_delete')->name('products.bulk-delete');
+        Route::post('/products/bulk-publish', 'bulk_publish')->name('products.bulk-publish');
     });
     // Stocks
     Route::controller(StockController::class)->middleware('throttle:global')->group(function () {
