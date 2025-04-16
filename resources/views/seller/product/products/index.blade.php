@@ -46,8 +46,57 @@
             max-width: 20ch;
             word-wrap: break-word;
         }
+
+        #block-ui-overlay__id {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .block-ui-spinner__clz {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+        }
+
+        .scrollable-error-container__clz {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
+
+        .scrollable-error-container__clz::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 @endpush
+
+<div id="block-ui-overlay__id" style="display:none;">
+    <div class="block-ui-spinner__clz">
+        <div class="spinner-border text-light" role="status"></div>
+        <span class="ms-2 text-light">{{ __("Processing") }}...</span>
+    </div>
+</div>
 
 <div class="aiz-titlebar mt-2 mb-4">
     <div class="row align-items-center">
@@ -156,10 +205,12 @@
 
                 <div class="col-2 dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
-                        {{translate('Bulk Action')}}
+                        {{translate('Bulk Actions')}}
                     </button>
-                    <div class="d-none dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item confirm-alert" href="javascript:void(0)" data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="d-none dropdown-item confirm-alert" href="javascript:void(0)" data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
+                        <a class="bulk-publish__clz dropdown-item confirm-alert" data-title="{{ __("Publish selection") }}" data-message="{{ translate('Are you sure to publish this selection?') }}" href="javascript:void(0)"> {{translate('Publish selection')}}</a>
+                        <a class="bulk-unpublish__clz dropdown-item confirm-alert" data-title="{{ __("Unpublish selection") }}" href="javascript:void(0)" data-message="{{ translate('Are you sure to unpublish this selection?') }}"> {{translate('Unpulish selection')}}</a>
                     </div>
                 </div>
 
@@ -376,6 +427,14 @@
             </div>
         </form>
     </div>
+@endsection
+
+@section('modal')
+    <!-- Delete modal -->
+    @include('modals.delete_modal')
+    <!-- Bulk Delete modal -->
+    @include('modals.bulk_delete_modal')
+    @include('modals.bulk_publish_modal')
 
     <div id="modal-info" class="modal fade">
         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -406,24 +465,20 @@
                 <input type="hidden" id="product_id">
                 <div class="modal-body text-center">
                     <p class="mt-1 fs-14" id="text-modal-success">{{translate('Are you sure to delete this?')}}</p>
-                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2 btn-ok" data-dismiss="modal">{{translate('OK')}}</button>
                 </div>
             </div>
         </div>
     </div>
-
-@endsection
-
-@section('modal')
-    <!-- Delete modal -->
-    @include('modals.delete_modal')
-    <!-- Bulk Delete modal -->
-    @include('modals.bulk_delete_modal')
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
+            $("#modal-success").on("click", ".btn-ok", function () {
+                location.reload();
+            });
+
             $("#productCategory").on("change", function() {
                 const categoryId = $(this).val();
                 const url = new URL(window.location.href);
@@ -453,6 +508,33 @@
                 }
 
                 window.location.href = url.toString();
+            });
+
+            $(".bulk-publish__clz,.bulk-unpublish__clz").click(function(event) {
+                let title = $(event.target).data("title");
+                let isProductsSelected = $('.check-one:checkbox:checked').length > 0;
+                let message = isProductsSelected ?
+                    $(event.target).data("message")
+                    : "{{ __('Please select at least one product.') }}";
+
+                let modal = $("#bulk-publish-modal");
+
+                modal.find(".modal-title").text(title);
+                modal.find(".modal-message").text(message);
+
+                if(isProductsSelected === true) {
+                    modal.find(".action-btn").each(function() {
+                        if(title.includes("{{ __("Publish ") }}")) {
+                            $(modal.find(".action-btn")[0]).removeClass("d-none");
+                            $(modal.find(".action-btn")[1]).addClass("d-none");
+                        } else {
+                            $(modal.find(".action-btn")[1]).removeClass("d-none");
+                            $(modal.find(".action-btn")[0]).addClass("d-none");
+                        }
+                    });
+                }
+
+                modal.modal("show");
             });
         });
 
@@ -603,14 +685,12 @@
                 processData: false,
                 success: function (response) {
                     $("#bulk-delete-modal").modal("hide")
+
                     if(response.error == false) {
                         $("#title-modal-success").text("Bulk Delete");
                         $("#text-modal-success").text(response.message);
 
                         $("#modal-success").modal('show')
-                        setTimeout(() => {
-                            location.reload();
-                        }, 2500);
                     } else {
                         // @todo
                     }
@@ -618,6 +698,82 @@
             });
         }
 
+        function bulk_publish(publish = true) {
+            let data = new FormData();
+
+            let productsIds = [];
+
+            $('.check-one:checkbox:checked').each(function() {
+                productsIds.push($(this).val());
+            });
+
+            if (productsIds.length === 0) {
+                alert('Please select at least one product.');
+                return;
+            }
+
+            data.append('products_ids', JSON.stringify(productsIds));
+            data.append('publish', publish ? 1 : 0);
+
+            $("#block-ui-overlay__id").show();
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('seller.products.bulk-publish')}}",
+                type: 'POST',
+                data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#bulk-publish-modal").modal("hide");
+                    $("#block-ui-overlay__id").hide();
+
+                    if(response.error === true) {
+                        let errorCount = Object.keys(response.error_details || {}).length;
+                        let needsScroll = errorCount > 10;
+
+                        let errorsText = `
+                            <p>${response.message}:</p>
+                            <div class="${needsScroll ? 'scrollable-error-container__clz' : ''}">
+                                <ul class="list-unstyled ${needsScroll ? 'mb-0' : ''}">
+                        `;
+
+                        Object.entries(response.error_details || {}).forEach(([_, message]) => {
+                            errorsText += `<li class="py-1">{{ __("Product sku") }}: ${message}</li>`;
+                        });
+
+                        errorsText += `
+                                </ul>
+                            </div>
+                            ${needsScroll ? `<small class="text-muted">Scroll to see all ${errorCount} errors</small>` : ''}
+                        `;
+
+                        $("#title-modal-success").text(`Bulk ${response.action}`);
+                        $("#text-modal-success").html(errorsText);
+
+                        $("#text-modal-success").addClass("text-left")
+                        $("#modal-success").modal('show');
+                    } else {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500)
+                    }
+                },
+                error: function(xhr) {
+                    $("#block-ui-overlay__id").hide();
+                    let response = xhr.responseJSON;
+                    let errorMessage = response?.message || 'An error occurred.';
+
+                    $("#bulk-publish-modal").find(".modal-message").html(
+                        `<span class="d-flex alert alert-danger">${errorMessage}</span>`
+                    );
+                    $("#bulk-publish-modal").find(".action-btn").addClass("d-none");
+                }
+            });
+        }
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('startTourButton').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default anchor click behavior
