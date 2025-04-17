@@ -761,6 +761,8 @@
                         $("#text-modal-success").html(errorsText);
 
                         $("#text-modal-success").addClass("text-left")
+
+                        $("#modal-success").find(".modal-dialog").removeClass('modal-sm');
                         $("#modal-success").modal('show');
                     } else {
                         setTimeout(() => {
