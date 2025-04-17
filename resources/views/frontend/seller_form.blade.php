@@ -357,17 +357,50 @@ input.is-invalid + .invalid-icon {
                                                                                                                     
                                                             <div id="password-strength" class="mt-2">
                                                                 <div class="progress" style="height: 8px;">
-                                                                    <div id="strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuemin="0"
-                                                                         aria-valuemax="100"></div>
+                                                                  <div id="strength-bar" class="progress-bar" role="progressbar"
+                                                                       style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
                                                                 </div>
-                                                                <ul class="mt-2 small" style="list-style: none; padding-left: 0;" id="password-criteria">
-                                                                    <li data-rule="length"><span class="text-danger">✘</span> {{ translate('Minimum 9 characters') }}</li>
-                                                                    <li data-rule="uppercase"><span class="text-danger">✘</span> {{ translate('At least one uppercase') }}</li>
-                                                                    <li data-rule="lowercase"><span class="text-danger">✘</span> {{ translate('At least one lowercase') }}</li>
-                                                                    <li data-rule="number"><span class="text-danger">✘</span> {{ translate('At least one number') }}</li>
-                                                                    <li data-rule="special"><span class="text-danger">✘</span> {{ translate('At least one special character') }}</li>
+                                                          
+                                                                <div id="dict-loader" class="small text-muted mt-1">
+                                                                  <i class="las la-spinner la-pulse"></i> Loading dictionary…
+                                                                </div>
+                                                          
+                                                                <ul id="password-criteria"
+                                                                    class="row list-unstyled mt-2" style="padding-left: 0">
+                                                                  <li class="col-6 mb-1" data-rule="length">
+                                                                    <span class="text-danger">✘</span> Minimum 8 characters
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="uppercase">
+                                                                    <span class="text-danger">✘</span> At least one uppercase
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="lowercase">
+                                                                    <span class="text-danger">✘</span> At least one lowercase
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="number">
+                                                                    <span class="text-danger">✘</span> At least one number
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="special">
+                                                                    <span class="text-danger">✘</span> At least one special
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="noSeqNum">
+                                                                    <span class="text-danger">✘</span> No 3 consecutive numbers
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="noSeqChar">
+                                                                    <span class="text-danger">✘</span> No 3 consecutive letters
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="maxCategory">
+                                                                    <span class="text-danger">✘</span>No lowercase character, uppercase character, number or sign can appear more than three times
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="noNameEmail">
+                                                                    <span class="text-danger">✘</span> No substring of your name/email
+                                                                  </li>
+                                                                  <li class="col-6 mb-1" data-rule="noDict">
+                                                                    <span class="text-danger">✘</span> No common English word
+                                                                  </li>
                                                                 </ul>
+                                                              </div>
                                                             </div>
+                                                          
                                                         </div>
                                                         
                                                         <div class="form-group">
@@ -2593,13 +2626,73 @@ input.is-invalid + .invalid-icon {
             const $password = $('#password');
             const $bar = $('#strength-bar');
             const $criteria = $('#password-criteria li');
+            let dictionary = [];
+            $.getJSON("{{ route('get.words') }}")
+                .done(words => {
+                dictionary = words.filter(w => w.length >= 3);
+                })
+                .always(() => {
+                $('#dict-loader').hide();
+            });
+
 
             const rules = {
-                length: (val) => val.length >= 9,
+                length: (val) => val.length >= 8,
                 uppercase: (val) => /[A-Z]/.test(val),
                 lowercase: (val) => /[a-z]/.test(val),
                 number: (val) => /\d/.test(val),
                 special: (val) => /[@#\-+/=$!%*?&]/.test(val),
+                noSeqNum: val => {
+                    for (let i = 0; i+2 < val.length; i++) {
+                    const a=+val[i], b=+val[i+1], c=+val[i+2];
+                    if (!isNaN(a)&&!isNaN(b)&&!isNaN(c)) {
+                        if ((b-a===1 && c-b===1) || (a-b===1 && b-c===1)) return false;
+                    }
+                    }
+                    return true;
+                },
+                noSeqChar: val => {
+                    for (let i=0; i+2<val.length; i++) {
+                    const a=val.charCodeAt(i), b=val.charCodeAt(i+1), c=val.charCodeAt(i+2);
+                    const sa=val[i], sb=val[i+1], sc=val[i+2];
+                    const sameCase = (sa===sa.toLowerCase() && sb===sb.toLowerCase() && sc===sc.toLowerCase())
+                                    || (sa===sa.toUpperCase() && sb===sb.toUpperCase() && sc===sc.toUpperCase());
+                    if (sameCase && ((b-a===1 && c-b===1) || (a-b===1 && b-c===1))) {
+                        return false;
+                    }
+                    }
+                    return true;
+                },
+                maxCategory: v => {
+                    const cnt = re => (v.match(re)||[]).length;
+                    return [/[a-z]/g,/[A-Z]/g,/\d/g,/[^A-Za-z0-9]/g]
+                        .every(rx => cnt(rx) <= 3);
+                },
+                noNameEmail: val => {
+                    const target = val.toLowerCase();
+                    const sources = [
+                    $('#first_name').val().toLowerCase(),
+                    $('#last_name').val().toLowerCase(),
+                    $('#email').val().toLowerCase()
+                    ];
+                    return sources.every(str => {
+                    for (let L=3; L<=str.length; L++) {
+                        for (let i=0; i+L<=str.length; i++) {
+                        if (target.includes(str.substr(i,L))) {
+                            return false;
+                        }
+                        }
+                    }
+                    return true;
+                    });
+                },
+
+                noDict: v => {
+                    const lowerV = v.toLowerCase();
+                    return !dictionary.some(w => lowerV.includes(w));
+                }
+
+
             };
 
             $password.on('input', function () {
