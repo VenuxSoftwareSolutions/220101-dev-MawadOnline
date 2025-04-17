@@ -416,10 +416,16 @@
                 </table>
                 <div class="row">
                     <div class="col-6" style="padding-top: 11px; !important">
-                        <p class="pagination-showin">Showing {{ $products->firstItem() }} - {{ $products->lastItem() }} of {{ $products->total() }}</p>
+                        <p class="pagination-showin">
+                            {{ __("product.showing_items_pagination", [
+                                    "first" =>$products->firstItem(),
+                                    "last" => $products->lastItem(),
+                                    "total" => $products->total()
+                                ]) }}
+                        </p>
                     </div>
                     <div class="col-6">
-                        <div class="pagination-container text-right"  style="float: right;">
+                        <div class="pagination-container float-right">
                             {{ $products->links('custom-pagination') }}
                         </div>
                     </div>
