@@ -343,76 +343,78 @@ input.is-invalid + .invalid-icon {
                                                                 Email cannot be changed after the account is created
                                                             </div>
 
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <label for="password">
+                                                            <b>{{ translate('Password') }} <span class="text-primary">*</span></b>
+                                                        </label>
+                                                        <div class="position-relative">
+                                                            <input type="password" id="password" name="password" class="form-control rounded-0"
+                                                                   autocomplete="off" required placeholder="{{ translate('Password') }}">
+                                                            <i class="password-toggle las la-2x la-eye"></i>
                                                         </div>
-                                                        
-                                                        <div class="form-group ">
-                                                            <label for="password">
-                                                                <b>{{ translate('Password') }} <span class="text-primary">*</span></b>
-                                                            </label>
-                                                            <div class="position-relative">
-                                                                <input type="password" id="password" name="password" class="form-control rounded-0"
-                                                                       autocomplete="off" required placeholder="{{ translate('Password') }}">
-                                                                <i class="password-toggle las la-2x la-eye"></i>
+                                                                                                                
+                                                        <div id="password-strength" class="mt-2">
+                                                            <div class="progress" style="height: 8px;">
+                                                              <div id="strength-bar" class="progress-bar" role="progressbar"
+                                                                   style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
                                                             </div>
-                                                                                                                    
-                                                            <div id="password-strength" class="mt-2">
-                                                                <div class="progress" style="height: 8px;">
-                                                                  <div id="strength-bar" class="progress-bar" role="progressbar"
-                                                                       style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                          
-                                                                <div id="dict-loader" class="small text-muted mt-1">
-                                                                  <i class="las la-spinner la-pulse"></i> Loading dictionary…
-                                                                </div>
-                                                          
-                                                                <ul id="password-criteria"
-                                                                    class="row list-unstyled mt-2" style="padding-left: 0">
-                                                                  <li class="col-6 mb-1" data-rule="length">
-                                                                    <span class="text-danger">✘</span> Minimum 8 characters
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="uppercase">
-                                                                    <span class="text-danger">✘</span> At least one uppercase
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="lowercase">
-                                                                    <span class="text-danger">✘</span> At least one lowercase
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="number">
-                                                                    <span class="text-danger">✘</span> At least one number
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="special">
-                                                                    <span class="text-danger">✘</span> At least one special
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="noSeqNum">
-                                                                    <span class="text-danger">✘</span> No 3 consecutive numbers
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="noSeqChar">
-                                                                    <span class="text-danger">✘</span> No 3 consecutive letters
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="maxCategory">
-                                                                    <span class="text-danger">✘</span> No letter, number, or symbol may appear more than three times.
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="noNameEmail">
-                                                                    <span class="text-danger">✘</span> No part of name, email or personal information.
-                                                                  </li>
-                                                                  <li class="col-6 mb-1" data-rule="noDict">
-                                                                    <span class="text-danger">✘</span> No vocabularies.
-                                                                  </li>
-                                                                </ul>
-                                                              </div>
+                                                      
+                                                            <div id="dict-loader" class="small text-muted mt-1">
+                                                              <i class="las la-spinner la-pulse"></i> Loading dictionary…
                                                             </div>
-                                                          
+                                                      
+                                                            <ul id="password-criteria"
+                                                                class="row list-unstyled mt-2" style="padding-left: 0">
+                                                              <li class="col-6 mb-1" data-rule="length">
+                                                                <span class="text-danger">✘</span> Minimum 8 characters
+                                                              </li>
+                                                             {{--  <li class="col-6 mb-1" data-rule="uppercase">
+                                                                <span class="text-danger">✘</span> At least one uppercase
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="lowercase">
+                                                                <span class="text-danger">✘</span> At least one lowercase
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="number">
+                                                                <span class="text-danger">✘</span> At least one number
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="special">
+                                                                <span class="text-danger">✘</span> At least one special
+                                                              </li> --}}
+                                                              <li class="col-6 mb-1" data-rule="allowedChars">
+                                                                <span class="text-danger">✘</span> Only letters, numbers, signs
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="maxNumbers">
+                                                                <span class="text-danger">✘</span> No more than 3 numbers
+                                                              </li>
+                                                      
+                                                              <li class="col-6 mb-1" data-rule="noSeqNum">
+                                                                <span class="text-danger">✘</span> No 3 consecutive numbers
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noSeqChar">
+                                                                <span class="text-danger">✘</span> No 3 consecutive letters
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="maxCategory">
+                                                                <span class="text-danger">✘</span> No letter, number, or symbol may appear more than three times.
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noNameEmail">
+                                                                <span class="text-danger">✘</span> No part of name, email or personal information.
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noDict">
+                                                                <span class="text-danger">✘</span> No vocabularies.
+                                                              </li>
+                                                            </ul>
                                                         </div>
-                                                        
-                                                        <div class="form-group">
-                                                            <label for="password_confirmation"><b>{{ translate('Repeat Password') }}</b> <span class="text-primary">*</span></label>
-                                                            <div class="position-relative">
-                                                                <input type="password" id="password_confirmation" name="password_confirmation"
-                                                                       class="form-control rounded-0" required placeholder="{{ translate('Confirm Password') }}">
-                                                                <i class="password-toggle las la-2x la-eye" data-target="#password_confirmation"></i>
-                                                            </div>
-                                                        
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="password_confirmation"><b>{{ translate('Repeat Password') }}</b> <span class="text-primary">*</span></label>
+                                                        <div class="position-relative">
+                                                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                                                   class="form-control rounded-0" required placeholder="{{ translate('Confirm Password') }}">
+                                                            <i class="password-toggle las la-2x la-eye" data-target="#password_confirmation"></i>
                                                         </div>
-                                                        
+                                                    
+                                                    </div>     
                                                 </div>
                                             </div>
                                             <div class="text-right">
@@ -2638,10 +2640,13 @@ input.is-invalid + .invalid-icon {
 
             const rules = {
                 length: (val) => val.length >= 8,
-                uppercase: (val) => /[A-Z]/.test(val),
+/*                 uppercase: (val) => /[A-Z]/.test(val),
                 lowercase: (val) => /[a-z]/.test(val),
                 number: (val) => /\d/.test(val),
                 special: (val) => /[@#\-+/=$!%*?&]/.test(val),
+ */             
+                allowedChars: v => /^[A-Za-z0-9@#\-+\/=$!%*?&]+$/.test(v),
+                maxNumbers: v => (v.match(/\d/g) || []).length <= 3,
                 noSeqNum: val => {
                     for (let i = 0; i+2 < val.length; i++) {
                     const a=+val[i], b=+val[i+1], c=+val[i+2];
@@ -2664,10 +2669,14 @@ input.is-invalid + .invalid-icon {
                     return true;
                 },
                 maxCategory: v => {
-                    const cnt = re => (v.match(re)||[]).length;
-                    return [/[a-z]/g,/[A-Z]/g,/\d/g,/[^A-Za-z0-9]/g]
-                        .every(rx => cnt(rx) <= 3);
+                    const counts = {};
+                    for (let ch of v) {
+                        counts[ch] = (counts[ch] || 0) + 1;
+                        if (counts[ch] > 3) return false;
+                    }
+                    return true;
                 },
+
                 noNameEmail: val => {
                     const target = val.toLowerCase();
                     const sources = [
