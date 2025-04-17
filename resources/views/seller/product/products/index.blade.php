@@ -88,6 +88,26 @@
         .scrollable-error-container__clz::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        .checkbox-loader__clz {
+            display: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 5px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .aiz-checkbox.loading .checkbox-loader__clz {
+            display: inline-block;
+        }
+        .aiz-checkbox.loading .aiz-square-check {
+            opacity: 0.5;
+        }
     </style>
 @endpush
 
@@ -223,8 +243,9 @@
                                 <div class="form-group">
                                     <div class="aiz-checkbox-inline">
                                         <label class="aiz-checkbox">
-                                            <input type="checkbox" class="check-all">
-                                            <span class="aiz-square-check"></span>
+                                            <input type="checkbox" class="check-all" data-toggle="tooltip" data-placement="top" title="{{ __("product.select_all_products", ["count" => $products->total()])}}">
+                                            <span class="aiz-square-check" data-toggle="tooltip" data-placement="top" title="{{ __("product.select_all_products", ["count" => $products->total()])}}"></span>
+                                            <span class="mt-1 checkbox-loader__clz"></span>
                                         </label>
                                     </div>
                                 </div>
@@ -313,7 +334,7 @@
                                 <td>
                                     @if(count($product->getChildrenProducts()) == 0)
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1 && $product->approved == 1) echo "checked";?> >
+                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" @if($product->published == 1 && $product->approved == 1) checked @endif>
                                             <span class=""> </span>
                                         </label>
                                     @endif
@@ -481,9 +502,13 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            let allSelectedIds = [];
+
             $("#modal-success").on("click", ".btn-ok", function () {
                 location.reload();
             });
+
+            $('[data-toggle="tooltip"]').tooltip();
 
             $("#productCategory").on("change", function() {
                 const categoryId = $(this).val();
@@ -544,15 +569,33 @@
             });
         });
 
-        $(document).on("change", ".check-all", function() {
-            if(this.checked) {
-                $('.check-one:checkbox').each(function() {
-                    this.checked = true;
-                });
-            } else {
-                $('.check-one:checkbox').each(function() {
-                    this.checked = false;
-                });
+        $(document).on("change", ".check-all", async function() {
+            let checkbox = $(this);
+            let label = checkbox.closest('.aiz-checkbox');
+
+            label.addClass('loading');
+
+            try {
+                if (this.checked) {
+                    let queryString = location.search;
+                    const response = await fetch(`{{ route("seller.products") }}${queryString === "" ? '?selectAll' : `${queryString}&selectAll`}`);
+                    let { ids } = await response.json();
+
+                    allSelectedIds = ids;
+
+                    $('.check-one:checkbox').each(function() {
+                        const id = parseInt($(this).val());
+                        this.checked = allSelectedIds.includes(id);
+                    });
+                } else {
+                    allSelectedIds = [];
+                    $('.check-one:checkbox').prop('checked', false);
+                }
+            } catch(error) {
+                // @todo
+                console.log(error)
+            } finally {
+                label.removeClass('loading');
             }
         });
 
@@ -708,9 +751,13 @@
 
             let productsIds = [];
 
-            $('.check-one:checkbox:checked').each(function() {
-                productsIds.push($(this).val());
-            });
+            if(allSelectedIds.length === 0) {
+                $('.check-one:checkbox:checked').each(function() {
+                    productsIds.push($(this).val());
+                });
+            } else {
+                productsIds = allSelectedIds;
+            }
 
             if (productsIds.length === 0) {
                 alert('Please select at least one product.');

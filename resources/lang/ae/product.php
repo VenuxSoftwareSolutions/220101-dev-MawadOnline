@@ -31,5 +31,6 @@ return [
     'out of 5.0' => 'من 5.0',
     'bu_job' => '[0,1]:filename (:productsNumber product) / :date|[2,*]:filename (:productsNumber products) / :date',
     "bu_job_without_count" => ":filename / :date",
-    "showing_items_pagination" => "Showing :first - :last of :total"
+    "showing_items_pagination" => "Showing :first - :last of :total",
+    "select_all_products" => "Select all :count products and their variants"
 ];

@@ -138,6 +138,23 @@ class ProductController extends Controller
             $query->whereIn('products.id', $allMatchingProductIds);
         })->orderBy("created_at")->get();
 
+        if ($request->has("selectAll")) {
+            $productsIds = (clone $products)->pluck("id")->toArray();
+
+            (clone $products)->each(function ($product) use (&$productsIds) {
+                if ($product->getChildrenProducts()->count() > 0) {
+                    array_push(
+                        $productsIds,
+                        $product->getChildrenProducts()->pluck("id")->toArray()
+                    );
+                }
+            });
+
+            return response()->json([
+                "ids" => collect($productsIds)->flatten()->toArray()
+            ]);
+        }
+
         $products = $products->paginate(10);
 
         $tour_steps = Tour::orderBy('step_number')->get();
