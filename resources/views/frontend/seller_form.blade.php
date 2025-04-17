@@ -389,13 +389,13 @@ input.is-invalid + .invalid-icon {
                                                                     <span class="text-danger">✘</span> No 3 consecutive letters
                                                                   </li>
                                                                   <li class="col-6 mb-1" data-rule="maxCategory">
-                                                                    <span class="text-danger">✘</span>No lowercase character, uppercase character, number or sign can appear more than three times
+                                                                    <span class="text-danger">✘</span> No letter, number, or symbol may appear more than three times.
                                                                   </li>
                                                                   <li class="col-6 mb-1" data-rule="noNameEmail">
-                                                                    <span class="text-danger">✘</span> No substring of your name/email
+                                                                    <span class="text-danger">✘</span> No part of name, email or personal information.
                                                                   </li>
                                                                   <li class="col-6 mb-1" data-rule="noDict">
-                                                                    <span class="text-danger">✘</span> No common English word
+                                                                    <span class="text-danger">✘</span> No vocabularies.
                                                                   </li>
                                                                 </ul>
                                                               </div>
