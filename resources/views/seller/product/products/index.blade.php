@@ -546,7 +546,6 @@
 
         $(document).on("change", ".check-all", function() {
             if(this.checked) {
-                // Iterate each checkbox
                 $('.check-one:checkbox').each(function() {
                     this.checked = true;
                 });
