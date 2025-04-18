@@ -136,7 +136,6 @@
                         <a href="{{ route('seller.products.create')}}" class="btn btn-primary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
-
                 </div>
                 @endcan
             </div>
@@ -189,11 +188,10 @@
             </a>
         </div>
         @endif --}}
-
     </div>
 
     <div class="card">
-        <form class="" id="sort_products" action="" method="GET">
+        <form id="sort_products" method="GET">
             <div class="card-header row gutters-5">
                 <div class="col-3">
                     <div id="step3" class="input-group input-group-sm">
@@ -233,7 +231,6 @@
                         <a class="bulk-unpublish__clz dropdown-item confirm-alert" data-title="{{ __("Unpublish selection") }}" href="javascript:void(0)" data-message="{{ translate('Are you sure to unpublish this selection?') }}"> {{translate('Unpulish selection')}}</a>
                     </div>
                 </div>
-
             </div>
             <div class="card-body">
                 <table id="step2" class="table aiz-table mb-0">
@@ -457,9 +454,7 @@
 @endsection
 
 @section('modal')
-    <!-- Delete modal -->
     @include('modals.delete_modal')
-    <!-- Bulk Delete modal -->
     @include('modals.bulk_delete_modal')
     @include('modals.bulk_publish_modal')
 
@@ -511,8 +506,8 @@
             $('[data-toggle="tooltip"]').tooltip();
 
             $("#productCategory").on("change", function() {
-                const categoryId = $(this).val();
-                const url = new URL(window.location.href);
+                let categoryId = $(this).val();
+                let url = new URL(window.location.href);
 
                 if (categoryId) {
                     url.searchParams.set('category_id', categoryId);
@@ -526,9 +521,8 @@
             });
 
             $("#productBuJob").on("change", function() {
-                const buJobId = $(this).val();
-                console.log({buJobId})
-                const url = new URL(window.location.href);
+                let buJobId = $(this).val();
+                let url = new URL(window.location.href);
 
                 if (buJobId) {
                     url.searchParams.set('bu_job_id', buJobId);
@@ -839,7 +833,7 @@
             return;
         }
     }
-        var tour_steps = [
+        let tour_steps = [
             @foreach($tour_steps as $key => $step)
             {
                 element: document.querySelector('#{{$step->element_id}}'),
