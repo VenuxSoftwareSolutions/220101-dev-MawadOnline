@@ -8,6 +8,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Hash;
+use App\Security\Sha3Hasher;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +27,14 @@ class AppServiceProvider extends ServiceProvider
     RateLimiter::for('global', function ($request) {
       return Limit::perMinute(100)->by($request->ip()); // 100 requests per minute per IP
     });
+    Hash::extend('sha3', function () {
+      $config = config('hashing.drivers.sha3');
+      return new Sha3Hasher(
+          $config['rounds'],
+          $config['secret']
+      );
+    });
+
   }
 
   /**
