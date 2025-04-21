@@ -48,11 +48,12 @@ return [
         'time' => 2,
     ],
     
-    'sha3' => [
-        'rounds'    => env('SHA3_ROUNDS', 196_608),
-        'secret'    => env('SHA3_SECRET'), 
+    'drivers' => [
+        'sha3' => [
+            'rounds' => env('SHA3_ROUNDS', 8192),
+            'secret' => env('SHA3_SECRET',"r5dpnDUl13m+oEfP/UMtxMKeFjlyDPbbibZpq7Rg1Eg="),
+        ],
     ],
-
 
 
 ];
