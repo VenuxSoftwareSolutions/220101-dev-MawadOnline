@@ -34,6 +34,11 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Cache;
+
+
+
 use Log;
 use Mail;
 use Storage;
@@ -865,11 +870,13 @@ class ShopController extends Controller
     public function getWords()
     {
 
-        $dictionaryPath = public_path('dictionary/dictionary.txt');
+        $dictionaryPath = storage_path('app/dictionary/dictionary.txt');
         $words = File::lines($dictionaryPath);
-
+    
         return response()->json($words);
     }
+
+   
 
     /**
      * Show the form for editing the specified resource.
