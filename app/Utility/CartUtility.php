@@ -164,7 +164,7 @@ class CartUtility
         return $unitPrice;
     }
 
-    public static function priceProduct($id, $qty)
+    public static function priceProduct($id, $qty, $unit_price = null)
     {
         try {
             $discount = Discount::getDiscountPercentage($id);
@@ -174,12 +174,13 @@ class CartUtility
         }
 
         $product = get_single_product($id);
-        $unitPrice = $product->unit_price;
+
+        $unitPrice = $unit_price !== null ? $unit_price : $product->unit_price;
 
         if (is_array($discount)) {
             $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
 
-            if ($percentage > $discount["max_discount_amount"]) {
+            if (is_null($discount["max_discount_amount"]) !== true && $percentage > $discount["max_discount_amount"]) {
                 $unitPrice -= $discount["max_discount_amount"];
             } else {
                 $unitPrice -= $percentage;
