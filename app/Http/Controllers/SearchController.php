@@ -39,6 +39,7 @@ class SearchController extends Controller
         $categories = [];
         $cacheKey = $this->generateCacheKey($request);
         $cachedData = Cache::get($cacheKey);
+
         if ($cachedData) {
             return response()->json($cachedData);
         }
@@ -46,16 +47,17 @@ class SearchController extends Controller
         if ($request->category_id) {
             $category_id = $request->category_id;
         }
+
         if ($request->category_id === 0 || $request->category_id === '0') {
             $category_id = null;
         }
 
         $products = Product::IsApprovedPublished()->nonAuction()->with('pricingConfiguration');
-        Debugbar::info($products);
 
         $attributes = Cache::remember('attributes', 3600, function () {
             return Attribute::select('id', 'name', 'type_value')->get();
         });
+
         $id_products = [];
 
         //retrieve minimum and maximum price
@@ -152,6 +154,7 @@ class SearchController extends Controller
                 $html_product = view('frontend.' . get_setting('homepage_select') . '.partials.product_box_1', ['product' => $product])->render();
                 $html .= '<div class="col border-right border-bottom has-transition hov-shadow-out z-1">' . $html_product . '</div>';
             }
+
             $pagination = str_replace('href', 'data-href', $products->appends($request->input())->links()->render());
 
             $filter = view('frontend.product_listing_filter', [
@@ -213,6 +216,7 @@ class SearchController extends Controller
             } else {
                 $title_category = null;
             }
+
             $selected_values = [
                 'numeric_attributes' => [],
                 'boolean_attributes' => [],
@@ -239,6 +243,7 @@ class SearchController extends Controller
                     }
                 }
             }
+
             $responseData = [
                 'request_all' => request()->input(),
                 'html' => $html,
@@ -248,6 +253,7 @@ class SearchController extends Controller
                 'title_category' => $title_category,
                 'selected_values' => $selected_values,
             ];
+
             Cache::put($cacheKey, $responseData, now()->addMinutes(10));
 
             return response()->json($responseData);

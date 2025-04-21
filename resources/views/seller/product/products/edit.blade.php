@@ -1257,7 +1257,7 @@
                                 @if ($categorie != null) value="{{ $categorie->name }}" @else value="" @endif
                                 id="search_input" class="form-control" placeholder="Search">
                             <small
-                                style="color: red">{{ translate('To select a different category, please clear the search field, However, you must choose other attributes to modify your variants') }}</small>
+                                style="color: red">{{ translate('To select a different category, please clear the search field. However, you must choose other attributes to modify your variants') }}</small>
                             <div class="h-300px overflow-auto c-scrollbar-light">
 
                                 <div id="jstree"></div>

@@ -766,4 +766,9 @@ class Product extends Model
             return [];
         }
     }
+
+    public function bu_job()
+    {
+        return $this->belongsTo(BuJob::class, "bu_job_id");
+    }
 }
