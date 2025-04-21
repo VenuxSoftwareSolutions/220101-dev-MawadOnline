@@ -12,6 +12,9 @@ use Illuminate\Queue\SerializesModels;
 class VerificationCodeEmail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $userName;
+    public $minutes;
+
     public $verificationCode;
 
     /**
@@ -19,10 +22,11 @@ class VerificationCodeEmail extends Mailable
      *
      * @return void
      */
-    public function __construct($verificationCode)
+    public function __construct($verificationCode, $userName, $minutes = 10)
     {
         $this->verificationCode = $verificationCode;
-
+        $this->userName = $userName;
+        $this->minutes = $minutes;
     }
 
     /**
@@ -33,7 +37,7 @@ class VerificationCodeEmail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Verification Code Email',
+            subject: 'Your MawadOnline OTP',
         );
     }
 
@@ -46,6 +50,12 @@ class VerificationCodeEmail extends Mailable
     {
         return new Content(
             view: 'emails.verification_code',
+            with: [
+                'userName' => $this->userName,
+                'verificationCode' => $this->verificationCode,
+                'minutes' => $this->minutes
+            ]
+    
         );
     }
 

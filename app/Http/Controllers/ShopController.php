@@ -183,7 +183,10 @@ class ShopController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'user_type' => 'seller', // Set the user_type explicitly
-                'password' => Hash::make($request->password),
+                // 'password' => Hash::make($request->password),
+                'password' => Hash::driver('sha3')->make($request->password),
+
+                
             ]
         );
 
@@ -203,8 +206,11 @@ class ShopController extends Controller
             $user->step_number = 1;
             $user->save();
 
-            // Send the verification code to the user's email
-            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail(
+                $verificationCode,
+                $request->first_name.' '.$request->last_name,
+                10 
+            ));
         }
 
         return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
@@ -278,14 +284,14 @@ class ShopController extends Controller
             }
 
             $trn = $request->input('trn');
-        } else {
+        } /* else {
             // If VAT is not registered, handle tax waiver
             if (isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver')) {
                 $taxWaiverPath = $request->tax_waiver_old;
             } elseif ($request->hasFile('tax_waiver')) {
                 $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
             }
-        }
+        } */
 
         $civil_defense_approval = null;
         if (isset($request->civil_defense_approval_old)) {

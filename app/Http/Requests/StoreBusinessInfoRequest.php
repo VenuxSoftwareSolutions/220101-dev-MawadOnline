@@ -49,18 +49,22 @@ class StoreBusinessInfoRequest extends FormRequest
             'license_expiry_date' => 'nullable|date|after_or_equal:today|after_or_equal:license_issue_date',
             'state' => 'nullable|exists:emirates,id',
             'area_id' => 'nullable|exists:areas,id',
-            'street' => 'nullable|string|max:128|regex:/\D/',
+/*             'street' => 'nullable|string|max:128|regex:/\D/',
+            'building' => 'nullable|string|max:64',
+            
+ */         
+            'street' => 'nullable|string|max:128',
             'building' => 'nullable|string|max:64',
             'unit' => 'nullable|string|max:64',
             'po_box' => 'nullable|string|max:32',
             'landline' => 'nullable|string|max:16',
             'vat_registered' => 'nullable|boolean',
-
-            'trade_license_doc' => /* !isset($this->trade_license_doc_old) ? */ 'nullable|file|mimes:pdf,jpeg,png|max:5120' /* : '' */,
+            'trade_license_doc' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic|clamav',
             'trn' => $this->vat_registered == 1 ? 'nullable|string|max:20' : '',
-            'vat_certificate' => $this->vat_registered == 1 /* && !isset($this->vat_certificate_old) */ ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-            'tax_waiver' => $this->vat_registered == 0 /* && !isset($this->tax_waiver_old) */  ? 'nullable|file|mimes:pdf,jpeg,png|max:5120' : '',
-            'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
+            'vat_certificate' => $this->vat_registered == 1 /* && !isset($this->vat_certificate_old) */ ? 'nullable|file|mimes:pdf,jpeg,png|max:5120|clamav' : '',
+            'tax_waiver' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic|clamav',
+            'civil_defense_approval' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic|clamav',
+
         ];
     }
 }

@@ -161,6 +161,64 @@ button {
 .invalid-feedback{
     display: block
 }
+input.is-invalid {
+    padding-right: 2.5rem;
+}
+
+input.is-invalid + .invalid-icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #dc3545;
+}
+.password-container {
+        position: relative;
+    }
+    
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+    }
+    
+    .progress-container {
+        height: 5px;
+        background: #eee;
+        margin-top: 5px;
+        border-radius: 3px;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        width: 0;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+    
+    .requirements-list {
+        margin-top: 10px;
+        padding: 0;
+        list-style: none;
+    }
+    
+    .requirement-item {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+        color: #666;
+    }
+    
+    .requirement-item i {
+        margin-right: 8px;
+        font-size: 0.9em;
+    }
+    
+    .valid-check { color: #28a745; }
+    .invalid-x { color: #dc3545; }
 </style>
 @endsection
 @section('content')
@@ -285,24 +343,78 @@ button {
                                                                 Email cannot be changed after the account is created
                                                             </div>
 
+                                                    </div>
+                                                    <div class="form-group ">
+                                                        <label for="password">
+                                                            <b>{{ translate('Password') }} <span class="text-primary">*</span></b>
+                                                        </label>
+                                                        <div class="position-relative">
+                                                            <input type="password" id="password" name="password" class="form-control rounded-0"
+                                                                   autocomplete="off" required placeholder="{{ translate('Password') }}">
+                                                            <i class="password-toggle las la-2x la-eye"></i>
                                                         </div>
-                                                    <div class="form-group">
-                                                        <label><b>{{!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)) ? translate('Your Password')  : translate('Your New Password') }} <span
-                                                                class="text-primary">*</b></span></label>
-                                                        <input id="password" type="password" autocomplete="off" class="form-control rounded-0"
-                                                            value="{{ old('password') }}"
-                                                            placeholder="{{ translate('Password') }}" name="password"
-                                                            required>
-                                                        <div id="password-strength"></div>
+                                                                                                                
+                                                        <div id="password-strength" class="mt-2">
+                                                            <div class="progress" style="height: 8px;">
+                                                              <div id="strength-bar" class="progress-bar" role="progressbar"
+                                                                   style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                      
+                                                            <div id="dict-loader" class="small text-muted mt-1">
+                                                              <i class="las la-spinner la-pulse"></i> Loading dictionary…
+                                                            </div>
+                                                      
+                                                            <ul id="password-criteria"
+                                                                class="row list-unstyled mt-2" style="padding-left: 0">
+                                                              <li class="col-6 mb-1" data-rule="length">
+                                                                <span class="text-danger">✘</span> Minimum 8 characters
+                                                              </li>
+                                                             {{--  <li class="col-6 mb-1" data-rule="uppercase">
+                                                                <span class="text-danger">✘</span> At least one uppercase
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="lowercase">
+                                                                <span class="text-danger">✘</span> At least one lowercase
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="number">
+                                                                <span class="text-danger">✘</span> At least one number
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="special">
+                                                                <span class="text-danger">✘</span> At least one special
+                                                              </li> --}}
+                                                              <li class="col-6 mb-1" data-rule="allowedChars">
+                                                                <span class="text-danger">✘</span> Only letters, numbers, signs
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="maxNumbers">
+                                                                <span class="text-danger">✘</span> No more than 3 numbers
+                                                              </li>
+                                                      
+                                                              <li class="col-6 mb-1" data-rule="noSeqNum">
+                                                                <span class="text-danger">✘</span> No 3 consecutive numbers
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noSeqChar">
+                                                                <span class="text-danger">✘</span> No 3 consecutive letters
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="maxCategory">
+                                                                <span class="text-danger">✘</span> No letter, number, or symbol may appear more than three times.
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noNameEmail">
+                                                                <span class="text-danger">✘</span> No part of name, email or personal information.
+                                                              </li>
+                                                              <li class="col-6 mb-1" data-rule="noDict">
+                                                                <span class="text-danger">✘</span> No vocabularies.
+                                                              </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label><b>{{ translate('Repeat Password') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <input id="password_confirmation" type="password"
-                                                            class="form-control rounded-0"
-                                                            placeholder="{{ translate('Confirm Password') }}"
-                                                            name="password_confirmation" required>
-                                                    </div>
+                                                        <label for="password_confirmation"><b>{{ translate('Repeat Password') }}</b> <span class="text-primary">*</span></label>
+                                                        <div class="position-relative">
+                                                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                                                   class="form-control rounded-0" required placeholder="{{ translate('Confirm Password') }}">
+                                                            <i class="password-toggle las la-2x la-eye" data-target="#password_confirmation"></i>
+                                                        </div>
+                                                    
+                                                    </div>     
                                                 </div>
                                             </div>
                                             <div class="text-right">
@@ -412,7 +524,8 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="trade_license_doc_input"
-                                                                        name="trade_license_doc" required>
+                                                                        name="trade_license_doc" required  accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="trade_license_doc_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -581,6 +694,7 @@ button {
                                                                 value="{{ $user->business_information->street ?? '' }}"
                                                                 placeholder="{{ translate('Street') }}" name="street"
                                                                 required>
+                                                                <small class="text-muted">{{ translate('Example: 123 Main Street') }}</small> 
 
                                                         </div>
                                                     </div>
@@ -592,6 +706,7 @@ button {
                                                                 value="{{ $user->business_information->building ?? '' }}"
                                                                 placeholder="{{ translate('Building') }}" name="building"
                                                                 required>
+                                                            <small class="text-muted">{{ translate('Example: Tower A or 15B') }}</small> 
 
                                                         </div>
                                                     </div>
@@ -678,7 +793,8 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="vat_certificate_input"
-                                                                        name="vat_certificate">
+                                                                        name="vat_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="vat_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -699,7 +815,7 @@ button {
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6" id="taxWaiverGroup" {{-- style="display: none;" --}}>
-                                                        <div class="form-group">
+                                                       {{--  <div class="form-group">
                                                             <label>{{ translate('Tax Waiver Certificate') }} <span
                                                                     class="text-primary">*</span><small>{{ translate('max_file_size_is_5mb_and_accepted_file_types_are_pdf_and_image_formats') }}</small></label>
                                                             @if (isset($user) && isset($user->business_information) && $user->business_information->tax_waiver)
@@ -711,7 +827,7 @@ button {
                                                             @endif
                                                             <input type="file" class="form-control rounded-0"
                                                                 name="tax_waiver">
-                                                        </div>
+                                                        </div> --}}
                                                     </div>
                                                     <div class="fs-20 fw-600 p-3 orange-text">
 
@@ -731,7 +847,8 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="civil_defense_approval_input"
-                                                                        name="civil_defense_approval">
+                                                                        name="civil_defense_approval" accept=".pdf,.jpeg,.jpg,.png,.webp,.gif,.avif,.bmp,.tiff,.heic">
+
                                                                     <label class="custom-file-label" for="civil_defense_approval_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -758,9 +875,9 @@ button {
                                         data-next-tab="warehouses">
                                         @csrf
                                         <!-- ... Contact Person form fields ... -->
-                                        <div class="bg-white border mb-4">
 
-                                                <div class="fs-20 fw-600 p-3 orange-text">
+                                 
+                                        <div class="bg-white border mb-4">               <div class="fs-20 fw-600 p-3 orange-text">
                                                     {{ __('profile.personal_information') }}
                                                 </div>
 
@@ -936,7 +1053,7 @@ button {
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input"
                                                                 placeholder="{{ translate('Emirates ID') }}" required
-                                                                name="emirates_id_file" id="emirates_id_file_input">
+                                                                name="emirates_id_file" id="emirates_id_file_input" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                 <label class="custom-file-label" for="emirates_id_file_input">{{ translate('Choose a file') }}</label> --}}
                                                                 </div>
                                                             </div>
@@ -1077,13 +1194,14 @@ button {
                                                             <input type="text" class="form-control"
                                                             placeholder="{{ translate('Street') }}"
                                                                 name="street_warehouse_add">
-                                                        </div>
+                                                                <small class="text-muted">{{ translate('Example: 123 Main Street') }}</small>
+                                                            </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="building"><b>{{ translate('Building') }}</b><span
                                                                     class="text-primary">*</span></label>
-                                                            <input type="text" class="form-control"
+                                    <input type="text" class="form-control" id="first_name" placeholder="{{ translate('First Name') }}" name="first_name" required>
                                                             placeholder="{{ translate('Building') }}"
                                                                 name="building_warehouse_add">
                                                         </div>
@@ -1471,7 +1589,7 @@ button {
                                                             <div class="input-group">
                                                                 <div class="custom-file">
                                                                     <input type="file" class="form-control custom-file-input" id="iban_certificate_input"
-                                                                    name="iban_certificate">
+                                                                    name="iban_certificate" accept=".pdf,.jpeg,.jpg,.png,.webp">
                                                                     <label class="custom-file-label" for="iban_certificate_input">{{ translate('Choose a file') }}</label>
                                                                 </div>
                                                             </div>
@@ -2301,7 +2419,7 @@ button {
                     var errorContainer = $('<div class="invalid-feedback"></div>');
 
                     $.each(messages, function(key, message) {
-                        errorContainer.append('<strong>' + message + '</strong><br>');
+                        errorContainer.append('<strong>' + message.replace(/^(The )?.*?( of .*?)? format is/, 'The format is') + '</strong><br>');
                     });
 
                     inputField.addClass('is-invalid');
@@ -2374,6 +2492,10 @@ button {
 
                 // Focus on the first input with 'is-invalid' class within the active tab
                 $('#' + tabId).find('.is-invalid').first().focus();
+                $('html, body').stop(true).animate({
+                    scrollTop:  $(window).height() * 0.3 
+                }, 0);
+
             }
 
             $('#emirateempire').change(function() {
@@ -2424,8 +2546,8 @@ button {
                 // Set or remove the "required" attribute based on VAT registration status
                 $('#vatCertificate').prop('required', isVatRegistered);
                 $('#trn').prop('required', isVatRegistered);
-                $('#taxWaiver').prop('required', !isVatRegistered);
-            });
+                $('#taxWaiver').prop('required', false);
+           });
 
             isVatRegistered = $('input[name="vat_registered"]:checked').val();
 
@@ -2445,7 +2567,6 @@ button {
                 $('#taxWaiverGroup').show();
                 $('#vatCertificate').prop('required', false);
                 $('#trn').prop('required', false);
-                $('#taxWaiver').prop('required', true);
             }
 
 
@@ -2503,145 +2624,126 @@ button {
             closeButton: true,
             timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
         };
-        $('#password').on('input', function() {
-            $('#password-strength').css('border', '1px solid #ddd');
-            $('#password-strength').css('padding', '10px');
+        $(document).ready(function () {
+            const $password = $('#password');
+            const $bar = $('#strength-bar');
+            const $criteria = $('#password-criteria li');
+            let dictionary = [];
+            $.getJSON("{{ route('get.words') }}")
+                .done(words => {
+                dictionary = words.filter(w => w.length >= 3);
+                })
+                .always(() => {
+                $('#dict-loader').hide();
+            });
 
-            var password = $(this).val();
-            var strengthMeter = $('#password-strength');
 
-            var patterns = [
-                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
-                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
-                'uvw', 'vwx', 'wxy', 'xyz'
-            ];
-
-            var patternRegex = new RegExp(patterns.join('|') + '|' + patterns.map(function(pattern) {
-                return pattern.split('').reverse().join('');
-            }).join('|'), 'i');
-
-            // Function to calculate the percentage of repeated characters in the password
-            function calculateRepeatedCharacterPercentage(password) {
-                var characterCount = {};
-                for (var i = 0; i < password.length; i++) {
-                    var char = password[i];
-                    characterCount[char] = (characterCount[char] || 0) + 1;
-                }
-
-                var repeatedCount = 0;
-                for (var char in characterCount) {
-                    if (characterCount[char] > 1) {
-                        repeatedCount += characterCount[char];
+            const rules = {
+                length: (val) => val.length >= 8,
+/*                 uppercase: (val) => /[A-Z]/.test(val),
+                lowercase: (val) => /[a-z]/.test(val),
+                number: (val) => /\d/.test(val),
+                special: (val) => /[@#\-+/=$!%*?&]/.test(val),
+ */             
+                allowedChars: v => /^[A-Za-z0-9@#\-+\/=$!%*?&]+$/.test(v),
+                maxNumbers: v => (v.match(/\d/g) || []).length <= 3,
+                noSeqNum: val => {
+                    for (let i = 0; i+2 < val.length; i++) {
+                    const a=+val[i], b=+val[i+1], c=+val[i+2];
+                    if (!isNaN(a)&&!isNaN(b)&&!isNaN(c)) {
+                        if ((b-a===1 && c-b===1) || (a-b===1 && b-c===1)) return false;
                     }
+                    }
+                    return true;
+                },
+                noSeqChar: val => {
+                    for (let i=0; i+2<val.length; i++) {
+                    const a=val.charCodeAt(i), b=val.charCodeAt(i+1), c=val.charCodeAt(i+2);
+                    const sa=val[i], sb=val[i+1], sc=val[i+2];
+                    const sameCase = (sa===sa.toLowerCase() && sb===sb.toLowerCase() && sc===sc.toLowerCase())
+                                    || (sa===sa.toUpperCase() && sb===sb.toUpperCase() && sc===sc.toUpperCase());
+                    if (sameCase && ((b-a===1 && c-b===1) || (a-b===1 && b-c===1))) {
+                        return false;
+                    }
+                    }
+                    return true;
+                },
+                maxCategory: v => {
+                    const counts = {};
+                    for (let ch of v) {
+                        counts[ch] = (counts[ch] || 0) + 1;
+                        if (counts[ch] > 3) return false;
+                    }
+                    return true;
+                },
+
+                noNameEmail: val => {
+                    const target = val.toLowerCase();
+                    const sources = [
+                    $('#first_name').val().toLowerCase(),
+                    $('#last_name').val().toLowerCase(),
+                    $('#email').val().toLowerCase()
+                    ];
+                    return sources.every(str => {
+                    for (let L=3; L<=str.length; L++) {
+                        for (let i=0; i+L<=str.length; i++) {
+                        if (target.includes(str.substr(i,L))) {
+                            return false;
+                        }
+                        }
+                    }
+                    return true;
+                    });
+                },
+
+                noDict: v => {
+                    const lowerV = v.toLowerCase();
+                    return !dictionary.some(w => lowerV.includes(w));
                 }
-
-                return (repeatedCount / password.length) * 100;
-            }
-
-            var repeatedCharacterPercentage = calculateRepeatedCharacterPercentage(password);
-
-            // Password strength rules
-            var rules = {
-                "{{ translate('Minimum length of 9 characters') }}": password.length >= 9,
-                "{{ translate('At least one uppercase letter') }}": /[A-Z]/.test(password),
-                "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
-                // "At least one number": /\d/.test(password),
-                "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
-                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(
-                    password),
-                // maxConsecutiveChars: !/(.)\1\1/.test(password),
-                // maxPercentage: calculateMaxPercentage(password),
-                "{{ translate('No spaces allowed') }}": !/\s/.test(password),
-                "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
-                    /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
-                "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}":
-                    !
-                    checkSubstring(password),
-                "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
-                    !patternRegex.test(password),
-                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
-                    40,
-                "{{ translate('No substring of the password can be a common English dictionary word') }}": !containsDictionaryWord(password, dictionaryWords),
 
 
             };
 
-            // Display password strength rules
-            var strengthText = '';
-            for (var rule in rules) {
-                if (rules.hasOwnProperty(rule)) {
-                    strengthText += '<p>' + rule + ': ' + (rules[rule] ? '✔' : '✘') + '</p>';
+            $password.on('input', function () {
+                const val = $(this).val();
+                let passed = 0;
+
+                // Evaluate each rule
+                $criteria.each(function () {
+                    const rule = $(this).data('rule');
+                    const valid = rules[rule](val);
+                    $(this).find('span')
+                        .text(valid ? '✔' : '✘')
+                        .toggleClass('text-danger', !valid)
+                        .toggleClass('text-success', valid);
+                    if (valid) passed++;
+            });
+
+        // Update progress bar
+                const strength = (passed / Object.keys(rules).length) * 100;
+                $bar.css('width', strength + '%');
+
+                if (strength <= 40) {
+                    $bar.removeClass().addClass('progress-bar bg-danger');
+                } else if (strength < 80) {
+                    $bar.removeClass().addClass('progress-bar bg-warning');
+                } else {
+                    $bar.removeClass().addClass('progress-bar bg-success');
                 }
-            }
-
-            // Update UI
-            strengthMeter.html(strengthText);
-
-            // Check if all rules are satisfied
-            var isPasswordValid = Object.values(rules).every(Boolean);
-
-            // Apply visual feedback
-            if (isPasswordValid) {
-                strengthMeter.addClass('valid');
-            } else {
-                strengthMeter.removeClass('valid');
-            }
         });
 
-        // No substring of the password can be a common English dictionary word
+    $('.password-toggle').on('click', function () {
+        const $icon = $(this);
+        const $input = $('#password');
+        const isPassword = $input.attr('type') === 'password';
 
-        let dictionaryWords=[] ;
+        $input.attr('type', isPassword ? 'text' : 'password');
+        $icon.toggleClass('la-eye la-eye-slash');
+   
+    });
 
-                $.ajax({
-            url: '{{route("get.words")}}', // Make sure this URL matches your Laravel route
-            method: 'GET',
-            success: function(data) {
-                dictionaryWords = data;
-            },
-            error: function(error) {
-                console.error("Error fetching dictionary words", error);
-            }
-        });
+});
 
-        function containsDictionaryWord(password,dictionaryWords) {
-            for(let word of dictionaryWords) {
-                if(password.toLowerCase().includes(word.toLowerCase())){
-                        return true ;
-                }
-            }
-            return false ;
-        }
-
-        function calculateMaxPercentage(password) {
-            // Calculate the percentage of lowercase, uppercase, numbers, and special characters
-            var lowercasePercentage = (password.replace(/[^a-z]/g, '').length / password.length) * 100;
-            var uppercasePercentage = (password.replace(/[^A-Z]/g, '').length / password.length) * 100;
-            var numberPercentage = (password.replace(/[^0-9]/g, '').length / password.length) * 100;
-            var specialCharPercentage = (password.replace(/[^@$!%*?&]/g, '').length / password.length) * 100;
-
-            // Return the maximum percentage
-            return Math.max(lowercasePercentage, uppercasePercentage, numberPercentage, specialCharPercentage);
-        }
-
-        function checkSubstring(password) {
-            // Check if the password contains a substring of the first name, last name, or email with a length of 3 or more characters
-            var firstName = $('#first_name').val().toLowerCase();
-            var lastName = $('#last_name').val().toLowerCase();
-            var email = $('#email').val().toLowerCase();
-
-            // Combine the first name, last name, and email into a single string
-            var combinedStrings = firstName + lastName + email;
-
-            // Check if any substring of length 3 or more exists in the password
-            for (var i = 0; i < combinedStrings.length - 2; i++) {
-                var substring = combinedStrings.substring(i, i + 3).toLowerCase();
-                if (password.toLowerCase().includes(substring)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     </script>
     {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
