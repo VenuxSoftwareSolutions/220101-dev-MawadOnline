@@ -2734,7 +2734,8 @@ input.is-invalid + .invalid-icon {
 
     $('.password-toggle').on('click', function () {
         const $icon = $(this);
-        const $input = $('#password');
+        const targetSelector = $icon.data('target') || '#password'; 
+        const $input = $(targetSelector);
         const isPassword = $input.attr('type') === 'password';
 
         $input.attr('type', isPassword ? 'text' : 'password');
