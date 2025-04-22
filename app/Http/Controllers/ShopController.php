@@ -189,8 +189,7 @@ class ShopController extends Controller
                 'last_name' => $request->last_name,
                 'user_type' => 'seller', // Set the user_type explicitly
                 // 'password' => Hash::make($request->password),
-                'password' => Hash::driver('sha3')->make($request->password),
-
+                'password' => $request->password,
                 
             ]
         );
