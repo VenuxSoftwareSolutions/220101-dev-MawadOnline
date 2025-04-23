@@ -6547,7 +6547,7 @@ class ProductService
                             $data[$product_history->key] = $product_history->old_value;
                         }
 
-                        DB::table('products')->where('id', $product->id)->update($data);
+                        Product::where('id', $product->id)->update($data);
                     }
                 }
 
