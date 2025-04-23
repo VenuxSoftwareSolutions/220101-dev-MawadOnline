@@ -35,15 +35,12 @@
                         <label for="product_variant">{{ __('stock.Product Variant') }} <span class="text-primary">*</span> </label>
                         <!-- Add your searchable dropdown for choosing a product’s variant here -->
                         <select required class="form-control select2" id="product_variant" name="product_variant">
-                            <option value="">{{__('stock.Please Choose !!')}}</option>
-                            <!-- Populate options dynamically based on your data -->
+                            <option value="">{{__('stock.select_product_variant')}}</option>
                             @foreach ($products as $product  )
-
-                            <option @if (request('productVariant') == $product->id )
-                                selected
-                            @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
+                                <option @if (request('productVariant') == $product->id )
+                                    selected
+                                @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
                              @endforeach
-
                         </select>
                     </div>
                 </div>
@@ -53,7 +50,7 @@
                         <label for="warehouse">{{ __('stock.Warehouse') }}<span class="text-primary">*</span></label>
                         <!-- Add your dropdown for choosing the warehouse by name here -->
                         <select required class="form-control select2" id="warehouse" name="warehouse">
-                            <option value="">{{__('stock.Please Choose !!')}}</option>
+                            <option value="">{{__('stock.select_warehouse')}}</option>
                             @foreach ($warehouses as $warehouse  )
                                 <option @if (request('warehouse') == $warehouse->id )
                                     selected
