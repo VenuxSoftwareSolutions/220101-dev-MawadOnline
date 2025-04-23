@@ -1787,6 +1787,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+
     <script type="text/javascript">
         $(document).ready(function () {
             // Your existing logic here
@@ -2005,6 +2007,15 @@
                     salt_url = salt_url.replace(':email', email);
 
                     if ($(this).attr('data-action') == 'register') {
+                        const form = $('#shop');
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Processing Account Creation',
+                            allowOutsideClick: false,
+                            didOpen: () => { Swal.showLoading() }
+                        }); 
+
+
                         $.ajax({
                             url: salt_url, // Replace this with your Laravel backend route
                             method: 'GET', // or 'GET', depending on your backend setup
@@ -2013,6 +2024,7 @@
                                 'mobile-version': '{{ Config('api.mobile_version') }}',
                             },
                             success: function (response) {
+
                                 var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
                                 formData.append('password', hashedPassword);
                                 formData.append('password_confirmation', hashedPassword);
@@ -2025,6 +2037,7 @@
                                     contentType: false, // Required for sending FormData
                                     processData: false, // Required for sending FormData
                                     success: function (response) {
+                                        Swal.close(); 
                                         if (form.attr('id') == 'shop') {
                                             var email = $('#email').val();
                                             $('#emailAccount').val(email);
@@ -2059,7 +2072,6 @@
 
                                         // Switch to the next tab if the save operation is successful
                                         if (response.success) {
-
                                             if (response.infoMsg) {
                                                 toastr.info(response
                                                     .message); // Display success message using Toastr
@@ -2084,6 +2096,7 @@
                                         }
                                     },
                                     error: function (xhr) {
+                                        Swal.close();
                                         if (xhr.status === 429) {
                                             // Too Many Attempts
                                             toastr.error(
@@ -2134,12 +2147,22 @@
                                 });
                             },
                             error: function (xhr, status, error) {
+                                Swal.close();
+
                                 toastr.error(
                                     "{{ translate('Something Wrong.') }}"
                                 );
                             }
                         });
                     } else {
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Processing your Account Creation',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
                         $.ajax({
                             url: form.attr('action'),
                             type: 'POST',
@@ -2148,6 +2171,8 @@
                             contentType: false, // Required for sending FormData
                             processData: false, // Required for sending FormData
                             success: function (response) {
+                                Swal.close();
+
                                 if (form.attr('id') == 'shop') {
                                     var email = $('#email').val();
                                     $('#emailAccount').val(email);
@@ -2182,6 +2207,7 @@
 
                                 // Switch to the next tab if the save operation is successful
                                 if (response.success) {
+                                    Swal.close();
 
                                     if (response.infoMsg) {
                                         toastr.info(response
@@ -2207,6 +2233,8 @@
                                 }
                             },
                             error: function (xhr) {
+                                Swal.close();
+
                                 if (xhr.status === 429) {
                                     // Too Many Attempts
                                     toastr.error(
