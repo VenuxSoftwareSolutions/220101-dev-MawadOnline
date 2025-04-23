@@ -6233,6 +6233,11 @@ class ProductService
     {
         try {
             $data = $request->session()->get('productPreviewData', null);
+
+            if (is_null($data) === null) {
+                throw new Exception("Product preview data from session is null");
+            }
+
             $variations = $data['detailedProduct']['variations'];
 
             $qty = $request->quantity;
@@ -6379,8 +6384,8 @@ class ProductService
 
             return response()->json([
                 'error' => true,
-                'message' => __("There's an error"),
-            ]);
+                'message' => __("Something went wrong"),
+            ], 500);
         }
     }
 
