@@ -42,17 +42,19 @@ class StockController extends Controller
             ->exists();
 
         if ($warehouse_id && !$is_vendor_warehouse_exists) {
-            return back()->withErrors(['error' => 'Invalid warehouse.']);
+            return back()->withErrors(['error' => __('Invalid warehouse.')]);
         }
 
         if ($productVariant && $warehouse_id) {
             $inventoryData = StockSummary::where('variant_id', $productVariant)
                 ->where('warehouse_id', $warehouse_id)
                 ->where('seller_id', $seller->id)
+                ->where("current_total_quantity", ">", 0)
                 ->orderBy('updated_at', 'desc')
                 ->get();
         } else {
             $inventoryData = StockSummary::where('seller_id', $seller->id)
+                ->where("current_total_quantity", ">", 0)
                 ->orderBy('updated_at', 'desc')
                 ->get();
         }
@@ -65,7 +67,7 @@ class StockController extends Controller
 
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products','tour_steps'));
+        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products', 'tour_steps'));
     }
 
     /**

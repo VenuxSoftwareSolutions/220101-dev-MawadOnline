@@ -218,19 +218,14 @@
                     @foreach ($inventoryData as $item)
                         @if ($item->productVariant)
                             <tr>
-
-
-
                                 <td>{{$item->productVariant ? $item->productVariant->name :""}}</td>
                                 <td>{{$item->productVariant ? $item->productVariant->sku : ""}}</td>
                                 <td>{{ $item->warehouse->warehouse_name ?? "" }}</td>
-                                <td>{{ $item->current_total_quantity }}</td>
+                                <td>{{ $item->productVariant->getTotalQuantity() }}</td>
                                 <td>{{ $item->updated_at }}</td>
                                 <td>
-                                    <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
+                                    <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->productVariant->getTotalQuantity() }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
                                 </td>
-
-                                <!-- Add other fields accordingly -->
                             </tr>
                         @endif
                     @endforeach
@@ -483,50 +478,37 @@
 
 <script>
     function openUpdateDialog(itemId, currentQuantity,warehouseId) {
-        // Populate the modal with the current quantity
         $('#currentStock').val(currentQuantity);
         $('#currentProduct_variant').val(itemId);
         $('#currentWarehouse').val(warehouseId);
 
-        // Set the new stock field based on the operation (add/remove)
         $('input[name="addRemove"]').change(function () {
             var quantity = parseFloat($('#quantityAddRemove').val());
-            // Check if quantity is a valid number
             if (!isNaN(quantity) && quantity > 0) {
                 updateNewStock();
+            } else {
+                $("#newStock").val('');
             }
-            else {
-            $("#newStock").val('') ;
-             }
         });
 
-        // Show the modal
         $('#updateQuantityModal').modal('show');
     }
 
     function updateNewStock() {
-        // Implement logic to update the new stock based on add/remove operation
-        var currentStock = parseFloat($('#currentStock').val());
-        var quantity = parseFloat($('#quantityAddRemove').val());
-        var addRemove = $('input[name="addRemove"]:checked').val();
+        let currentStock = parseFloat($('#currentStock').val());
+        let quantity = parseFloat($('#quantityAddRemove').val());
+        let addRemove = $('input[name="addRemove"]:checked').val();
+
         if (addRemove === 'remove' && quantity > currentStock) {
-        // User is trying to remove more than the current stock
-        // alert("{{__('stock.Error: Cannot remove more than the current stock.')}}");
-        // Swal.fire({
-        //     icon: 'error',
-        //     title: "{{__('stock.Error: Cannot remove more than the current stock.')}}",
-        //     confirmButtonText: 'OK'
-        // });
-        toastr.error("{{__('stock.Error: Cannot remove more than the current stock.')}}", 'Error');
+            toastr.error("{{__('stock.Error: Cannot remove more than the current stock.')}}", 'Error');
 
-        // Reset the quantity field
-        $('#quantityAddRemove').val("") ;
-        $("#newStock").val('') ;
+            $('#quantityAddRemove').val("") ;
+            $("#newStock").val('') ;
 
-        return;
-    }
-        var newStock = addRemove === 'add' ? currentStock + quantity : currentStock - quantity;
-        $('#newStock').val(newStock);
+            return;
+        }
+
+        $('#newStock').val(addRemove === 'add' ? currentStock + quantity : currentStock - quantity);
     }
 
     function updateQuantity() {
