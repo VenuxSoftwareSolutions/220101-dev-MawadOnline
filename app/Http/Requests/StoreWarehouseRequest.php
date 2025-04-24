@@ -42,9 +42,9 @@ class StoreWarehouseRequest extends FormRequest
             'area_warehouse.*' => 'nullable|max:128',
 /*             'street_warehouse.*' => 'nullable|max:128|regex:/\D/',
  */            
-            'street_warehouse.*' => 'nullable|max:128',
+            'street_warehouse.*' => '|max:128|regex:/\D/',
 
-            'building_warehouse.*' => 'nullable|max:64',
+            'building_warehouse.*' => 'nullable|max:64|regex:/\D/',
             'unit_warehouse.*' => 'nullable|max:64',
         ];
     }
