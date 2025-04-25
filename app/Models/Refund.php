@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Refund extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'fee_details' => 'array'
+    ];
     public function orderDetail()
     {
         return $this->belongsTo(OrderDetail::class);
