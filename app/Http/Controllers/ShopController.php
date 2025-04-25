@@ -149,36 +149,16 @@ class ShopController extends Controller
      */
     public function store(SellerRegistrationRequest $request)
     {
-
-        // $validator = Validator::make($request->all(), [
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => [
-        //         'required', 'email',
-        //         Rule::unique('users', 'email')->where(function ($query) {
-        //             $query->whereNotNull('email_verified_at');
-        //         }),
-        //     ],
-        //     // 'password' => ['required', 'confirmed', new CustomPasswordRule],
-        //     'password' => ['required', 'confirmed', new CustomPasswordRule($request->input('first_name'), $request->input('last_name'), $request->input('email'))],
-
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-
-        // $user = new User;
-        // $user->name = $request->first_name . " " . $request->last_name;
-        // $user->email = $request->email;
-        // $user->user_type = "seller";
-        // $user->password = Hash::make($request->password);
-        // $user->save();
         $user = User::where('email', $request->email)->first();
+      
         if ($user && $user->id != $user->owner_id && $user->owner_id != null) {
-
-            if (Hash::check($request->password, $user->password) == true) {
-                return response()->json(['message' => 'You can\'t use the same password'], 403);
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'message' => 'Password validation failed',
+                    'errors' => [
+                        'password' => ["You can't use the same password"]
+                    ]
+                ], 422);  
             }
         }
         $user = User::updateOrCreate(

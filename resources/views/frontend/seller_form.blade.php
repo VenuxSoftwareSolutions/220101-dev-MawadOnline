@@ -1295,10 +1295,8 @@
                                                     <div class="form-group">
                                                         <label for="building"><b>{{ translate('Building') }}</b><span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control" id="first_name"
-                                                            placeholder="{{ translate('First Name') }}"
-                                                            name="first_name" placeholder="{{ translate('Building') }}"
-                                                            name="building_warehouse_add">
+                                                        <input type="text" class="form-control" id="building_warehouse_add" placeholder="{{ translate('Building') }}" name="building_warehouse_add">
+                                                            
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -1787,6 +1785,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+
     <script type="text/javascript">
         $(document).ready(function () {
             // Your existing logic here
@@ -1819,61 +1819,7 @@
                     switchTab('business-info'); // Default to the first tab if stepNumber is not recognized
                     break;
             }
-            //             var errors = {
-            //     "area_warehouse.0": ["The area_warehouse.0 field is required."],
-            //     // ... other errors
-            // };
-
-            // // Extract the field name with the first error
-            // var firstErrorField = Object.keys(errors)[0];
-
-            // // Highlight the first input field in red
-            // $('[name="warehouse_name[]"]:nb(3)').css('border-color', 'red');
-
-            // // Add Row
-            // $('#addRow').on('click', function() {
-            //     var newRow = $('#warehouseTable tbody tr:first').clone();
-            //     newRow.find('input, select').val('');
-            //     newRow.find('.removeRow').show();
-            //     $('#warehouseTable tbody').append(newRow);
-            // });
-
-            // // Remove Row
-            // $('#warehouseTable').on('click', '.removeRow', function() {
-            //     // Check if there is at least one <tr> element
-            //     if ($('#warehouseTable tbody tr').length > 1) {
-            //         // Remove the closest <tr> element
-            //         $(this).closest('tr').remove();
-            //     } else {
-            //         // Display a message or take appropriate action when there's only one row left
-            //         alert('Cannot remove the last row.');
-            //     }
-            // });
-            // Add Warehouse Row
-            // Add Warehouse button click event
-            // $('#addRow').on('click', function() {
-            //     // Clone the entire warehouseRows section
-            //     var newWarehouseRows = $('#warehouseRows').clone();
-
-            //     // Show the "Remove Warehouse" button in the new row
-            //     newWarehouseRows.find('.removeRow').show();
-            //     newWarehouseRows.find('input,select').val('');
-            //     newWarehouseRows.find('input, select').removeClass('is-invalid is-valid');
-            //     // Append the new row to the warehouseRowsContainer
-            //     $('#warehouseRowsContainer').append(newWarehouseRows);
-            // });
-
-            // // Remove Warehouse button click event
-            // $('#warehouseRowsContainer').on('click', '.removeRow', function() {
-            //     // Check if there is at least one warehouse row
-            //     if ($('#warehouseRowsContainer .row').length > 1) {
-            //         // Remove the closest warehouse row
-            //         $(this).closest('.row').remove();
-            //     } else {
-            //         // Display a message or take appropriate action when there's only one row left
-            //         toastr.error('Cannot remove the last warehouse.');
-            //     }
-            // });
+            
 
             $('.prv-tab').on('click', function () {
                 switchTab($(this).data('prv'));
@@ -1891,13 +1837,22 @@
                 var street = $('input[name="street_warehouse_add"]').val();
                 var building = $('input[name="building_warehouse_add"]').val();
                 var unit = $('input[name="unit_add"]').val();
+                const errors = [];
 
                 // Check if any input is empty
                 if (!warehouseName || !state || !area || !street || !building) {
-                    var errorMsg = 'Please fill in all required fields:';
                     if (!warehouseName) {
-                        errorMsg += '\n- Warehouse Name';
+                            errors.push('- Warehouse Name is required');
+                        } else {
+                            if (warehouseName.length > 128) {
+                                errors.push('- Warehouse Name must be less than 128 characters');
+                            }
+                            if (/^\d+$/.test(warehouseName)) {
+                                errors.push('- Warehouse Name must contain letters');
+                            }
                     }
+
+
                     if (!state) {
                         errorMsg += '\n- State';
                     }
@@ -1905,13 +1860,35 @@
                         errorMsg += '\n- Area';
                     }
                     if (!street) {
-                        errorMsg += '\n- Street';
+                            errors.push('- Street is required');
+                        } else {
+                            if (street.length > 128) {
+                                errors.push('- Street must be less than 128 characters');
+                            }
+                            if (/^\d+$/.test(street)) {
+                                errors.push('- Street must contain letters');
+                            }
                     }
-                    if (!building) {
-                        errorMsg += '\n- Building';
+                    if (building) {
+                        if (building.length > 64) {
+                            errors.push('- Building must be less than 64 characters');
+                        }
+                        if (/^\d+$/.test(building)) {
+                            errors.push('- Building must contain letters');
+                        }
                     }
-                    toastr.error(errorMsg);
-                    return; // Stop execution if any input is empty
+                    if (unit && unit.length > 64) {
+                        errors.push('- Unit must be less than 64 characters');
+                    }
+
+                    if (!state) errors.push('- State is required');
+                    if (!area) errors.push('- Area is required');
+                    if (!building) errors.push('- Building is required');
+
+                    if (errors.length > 0) {
+                        toastr.error('Please fix these errors:\n' + errors.join('\n'));
+                        return;
+                    }
                 }
                 const newRow = $('<tr>');
 
@@ -2005,6 +1982,15 @@
                     salt_url = salt_url.replace(':email', email);
 
                     if ($(this).attr('data-action') == 'register') {
+                        const form = $('#shop');
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Processing Account Creation',
+                            allowOutsideClick: false,
+                            didOpen: () => { Swal.showLoading() }
+                        }); 
+
+
                         $.ajax({
                             url: salt_url, // Replace this with your Laravel backend route
                             method: 'GET', // or 'GET', depending on your backend setup
@@ -2013,6 +1999,7 @@
                                 'mobile-version': '{{ Config('api.mobile_version') }}',
                             },
                             success: function (response) {
+
                                 var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
                                 formData.append('password', hashedPassword);
                                 formData.append('password_confirmation', hashedPassword);
@@ -2025,6 +2012,7 @@
                                     contentType: false, // Required for sending FormData
                                     processData: false, // Required for sending FormData
                                     success: function (response) {
+                                        Swal.close(); 
                                         if (form.attr('id') == 'shop') {
                                             var email = $('#email').val();
                                             $('#emailAccount').val(email);
@@ -2059,7 +2047,6 @@
 
                                         // Switch to the next tab if the save operation is successful
                                         if (response.success) {
-
                                             if (response.infoMsg) {
                                                 toastr.info(response
                                                     .message); // Display success message using Toastr
@@ -2084,18 +2071,14 @@
                                         }
                                     },
                                     error: function (xhr) {
+                                        Swal.close();
                                         if (xhr.status === 429) {
                                             // Too Many Attempts
                                             toastr.error(
                                                 "{{ translate('Too many attempts. Please try again later.') }}"
                                             );
                                         } else {
-                                            // if (xhr.responseJSON.hasOwnProperty('loginFailed')) {
-                                            //     // Display login failure message using JavaScript
-                                            //     toastr.error(xhr.responseJSON.loginFailed);
-                                            //     shouldContinue = false;
-
-                                            // }
+                                           
                                             if (xhr.status === 403) {
                                                 // Authorization failed
                                                 toastr.error(xhr.responseJSON
@@ -2103,6 +2086,20 @@
                                                 shouldContinue = false;
 
                                             }
+                                            else if (xhr.status === 422) {  // Add this block for validation errors
+                                                var errors = xhr.responseJSON.errors;
+                                                if (errors) {
+                                                    displayValidationErrors(errors, form);
+                                                    $(form).find('.is-invalid').first().focus();
+                                                }
+                                                shouldContinue = false;  // Prevent generic message
+                                            }
+                                            else {
+                                                // Handle other errors
+                                                toastr.error(xhr.responseJSON.message || "{{ translate('An unexpected error occurred.') }}");
+                                                shouldContinue = false;
+                                            }
+
                                             // Handle errors, e.g., show validation errors
                                             var errors = xhr.responseJSON.errors;
 
@@ -2117,37 +2114,38 @@
                                                 );
                                             }
 
-                                            // if ((form).attr('id') == 'warehousesForm' && shouldContinue !=
-                                            //     false) {
-                                            //             // toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
-
-                                            //             displayValidationWhErrors(errors);
-                                            //         }
-
-                                            // if (form.attr('id') == 'warehousesForm') {
-                                            //     toastr.error('Please fill up the rest of the table for warehousesForm. Ensure that no field exceeds 128 characters.');
-
-                                            // }
+                                        
                                         }
 
                                     }
                                 });
                             },
                             error: function (xhr, status, error) {
+                                Swal.close();
+
                                 toastr.error(
                                     "{{ translate('Something Wrong.') }}"
                                 );
                             }
                         });
                     } else {
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Processing your Account Creation',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        });
                         $.ajax({
                             url: form.attr('action'),
                             type: 'POST',
-                            // data: form.serialize(),
                             data: formData,
-                            contentType: false, // Required for sending FormData
-                            processData: false, // Required for sending FormData
+                            contentType: false,
+                            processData: false, 
                             success: function (response) {
+                                Swal.close();
+
                                 if (form.attr('id') == 'shop') {
                                     var email = $('#email').val();
                                     $('#emailAccount').val(email);
@@ -2182,6 +2180,7 @@
 
                                 // Switch to the next tab if the save operation is successful
                                 if (response.success) {
+                                    Swal.close();
 
                                     if (response.infoMsg) {
                                         toastr.info(response
@@ -2207,6 +2206,8 @@
                                 }
                             },
                             error: function (xhr) {
+                                Swal.close();
+
                                 if (xhr.status === 429) {
                                     // Too Many Attempts
                                     toastr.error(
@@ -2226,6 +2227,19 @@
                                         shouldContinue = false;
 
                                     }
+                                    else if (xhr.status === 422) { 
+                                        var errors = xhr.responseJSON.errors;
+                                        if (errors) {
+                                            displayValidationErrors(errors, form);
+                                            $(form).find('.is-invalid').first().focus();
+                                        }
+                                        shouldContinue = false;  
+                                    }
+                                    else {
+                                        toastr.error(xhr.responseJSON.message || "{{ translate('An unexpected error occurred.') }}");
+                                        shouldContinue = false;
+                                    }
+
                                     // Handle errors, e.g., show validation errors
                                     var errors = xhr.responseJSON.errors;
 
