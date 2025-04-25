@@ -8,9 +8,16 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Exception;
+use Log;
 
 class MawadIndexController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['permission:manage_index'])->only('adminIndex');
+    }
+
     public function index(Request $request)
     {
         $filter = $request->query('filter', 'avg');
@@ -348,5 +355,53 @@ class MawadIndexController extends Controller
         }
 
         return $filledData;
+    }
+
+    public function adminIndex()
+    {
+        $search = request()->query("search", null);
+
+        $query = DB::table('categories as level3')
+            ->leftJoin('categories as level2', 'level3.parent_id', '=', 'level2.id')
+            ->leftJoin('categories as level1', 'level2.parent_id', '=', 'level1.id')
+            ->select([
+                "level3.id",
+                "level3.selected",
+                DB::raw("CONCAT_WS(' / ', level1.name, level2.name, level3.name) as path_name")
+            ])
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('categories as child')
+                    ->whereColumn('child.parent_id', 'level3.id');
+            })
+            ->groupBy("level3.id", "level3.name", "level3.selected", "level2.name", "level1.name")
+            ->orderBy("path_name");
+
+        if (is_null($search) === false) {
+            $query = $query->having("path_name", "LIKE", "%{$search}%");
+        }
+
+        $categories = $query->paginate(ITEMS_PER_PAGE);
+
+        return view("backend.mwd_index.index", compact("search", "categories"));
+    }
+
+    public function selectCategory()
+    {
+        try {
+            $data = request()->all();
+            $categoryId = $data["category_id"];
+            $selected = $data["selected"];
+
+            $category = Category::find($categoryId);
+            $category->selected = $selected;
+            $category->save();
+
+            return response()->json(["error" => false, "message" => __("Category updated with success")]);
+        } catch (Exception $e) {
+            Log::error("Error while updating category selected field, with message: {$e->getMessage()}");
+
+            return response()->json(["error" => true, "message" => __("Something went wrong")], 500);
+        }
     }
 }

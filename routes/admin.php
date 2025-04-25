@@ -51,6 +51,7 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\MawadIndexController;
 
 /*
   |--------------------------------------------------------------------------
@@ -585,4 +586,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::get('/clear-cache', [AdminController::class, 'clearCache'])->name('cache.clear');
 
     Route::get('/admin-permissions', [RoleController::class, 'create_admin_permissions']);
+
+    Route::get("/mawad/index", [MawadIndexController::class, "adminIndex"])->name("admin.mawad.index");
+
+    Route::post(
+        "/mawad/index/select/catgory",
+        [MawadIndexController::class, "selectCategory"]
+    )->name("admin.mawad.index.select.category");
 });
