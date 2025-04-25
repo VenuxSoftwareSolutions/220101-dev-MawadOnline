@@ -60,4 +60,12 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'seller_id', 'id');
     }
+
+    /**
+     * Get the order associated with the fees.
+     */
+    public function orderFees()
+    {
+        return $this->hasOne(OrderFees::class);
+    }
 }
