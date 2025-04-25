@@ -692,12 +692,12 @@
         }
 
         function update_published(el){
-            if(el.checked){
-                var status = 1;
+            let status = 0;
+
+            if(el.checked) {
+                status = 1;
             }
-            else{
-                var status = 0;
-            }
+
             $.post('{{ route('seller.products.published') }}', {_token:'{{ csrf_token() }}', id:el.value, status:status}, function(data){
                 if(data == 1){
                     AIZ.plugins.notify('success', '{{ translate('Published products updated successfully') }}');
