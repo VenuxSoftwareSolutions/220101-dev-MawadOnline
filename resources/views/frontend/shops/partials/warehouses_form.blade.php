@@ -1,5 +1,5 @@
 <form id="warehousesForm" class="" action="{{ route('shops.warehouses') }}"
-data-next-tab="payout-info" method="POST">
+data-next-tab="payout_info" method="POST">
 @csrf
 <!-- ... Warehouses form fields ... -->
 <div class="bg-white border mb-4">

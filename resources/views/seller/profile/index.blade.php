@@ -360,7 +360,7 @@
         <div class="card-body">
             <ul class="nav nav-tabs shop" id="registerTabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
+                    <a class="nav-link active" id="personal_info-tab" data-toggle="tab"
                         href="#personal-info">{{ translate('Personal Info') }}</a>
                 </li>
                 @if ($user->id == $user->owner_id)

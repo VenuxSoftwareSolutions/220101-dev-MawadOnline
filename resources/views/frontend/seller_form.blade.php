@@ -1,7 +1,5 @@
 @extends('frontend.layouts.app')
-@php
-    use Carbon\Carbon;
-@endphp
+
 
 @section('style')
     <style>
@@ -351,27 +349,27 @@
             // Check the stepNumber variable and switch tabs accordingly
             switch (stepNumber) {
                 case 0:
-                    switchTab('personal-info');
+                    switchTab('personal_info');
                     break;
                 case 1:
-                    switchTab('code-verification');
+                    switchTab('code_verification');
                     break;
                 case 2:
-                    switchTab('business-info');
+                    switchTab('business_info');
                     break;
                 case 3:
-                    switchTab('contact-person');
+                    switchTab('contact_person');
                     break;
                 case 4:
                     switchTab('warehouses');
                     break;
                 case 5:
-                    switchTab('payout-info');
+                    switchTab('payout_info');
                     break;
 
                 default:
 
-                    switchTab('business-info'); // Default to the first tab if stepNumber is not recognized
+                    switchTab('personal_info');
                     break;
             }
             
@@ -590,9 +588,9 @@
                                         }
                                         if (response.hasOwnProperty('verif_login') && response.verif_login ===
                                             true) {
-                                            $('#personal-info-tab, #code-verification-tab').addClass(
+                                            $('#personal_info-tab, #code_verification-tab').addClass(
                                                 'disabled');
-                                            $('#personal-info, #code-verification').addClass('disabled');
+                                            $('#personal_info, #code_verification').addClass('disabled');
 
                                             $('#registerTabs a[data-toggle="tab"]').on('click', function (e) {
                                                 e.preventDefault();
@@ -723,9 +721,9 @@
                                 }
                                 if (response.hasOwnProperty('verif_login') && response.verif_login ===
                                     true) {
-                                    $('#personal-info-tab, #code-verification-tab').addClass(
+                                    $('#personal_info-tab, #code_verification-tab').addClass(
                                         'disabled');
-                                    $('#personal-info, #code-verification').addClass('disabled');
+                                    $('#personal_info, #code_verification').addClass('disabled');
 
                                     $('#registerTabs a[data-toggle="tab"]').on('click', function (e) {
                                         e.preventDefault();
@@ -1004,8 +1002,7 @@
                 }
                 // Clear global validation error messages
                 $('#validation-errors').empty().hide();
-                // $("#registerTabs a").removeClass('has-errors');
-                //  $("#business-info-tab").removeClass('has-errors');
+               
 
                 // Display new error messages
 

@@ -1,5 +1,5 @@
 <form id="codeVerificationForm" class="" action="{{ route('verify.code') }}" method="POST"
-    data-next-tab="business-info">
+    data-next-tab="business_info">
     @csrf
     <div class="bg-white border mb-4">
         <div class="fs-15 fw-600 p-3">

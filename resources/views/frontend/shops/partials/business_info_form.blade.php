@@ -1,4 +1,8 @@
-<form id="businessInfoForm" class="" action="{{ route('shops.business_info') }}" method="POST" enctype="multipart/form-data" data-next-tab="contact-person">
+@php
+    use Carbon\Carbon;
+@endphp
+
+<form id="businessInfoForm" class="" action="{{ route('shops.business_info') }}" method="POST" enctype="multipart/form-data" data-next-tab="contact_person">
     @csrf                               
     <div class="bg-white border mb-4">
     

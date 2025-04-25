@@ -1,5 +1,5 @@
 <form id="shop" class="" action="{{ route('shops.store') }}" method="POST" enctype="multipart/form-data"
-    data-next-tab="code-verification">
+    data-next-tab="code_verification">
     @csrf
     <div class="bg-white border mb-4">
         <div class="fs-20 fw-600 p-3 orange-text">
