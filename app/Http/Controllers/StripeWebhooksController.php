@@ -31,23 +31,29 @@ class StripeWebhooksController extends Controller
      * handle charge refund updated from stripe
      */
     public function chargeRefundUpdated($result){
-            $refund_id = $result['id'];
-            $charge_id = $result['charge'];
-            $refund = Refund::where(['payment_refund_id' => $result['id'],'payment_charge_id' => $result['charge']])->first();
-            if($refund){
-                $refund->refund_status = $result['status'];
-                $newRefund = new RefundHistories();
-                $newRefund->refund_status = $result['status'];
-                $newRefund->description_error = $result['failure_reason'];
-                $newRefund->payment_refund_id = $result['id'];
-                $newRefund->payment_charge_id = $result['charge'];
-                $newRefund->amount = number_format($result['amount']/100,2);
-                $newRefund->refund_id = $refund->id;
-                $refund->save();
-                $newRefund->save();
-            }
-            Log::channel('webhooks')
-                ->info('webhook event received object  charge.refund.updated',$result);
+        $stripe = new StripeClient(env('STRIPE_SECRET'));
+        $refund_id = $result['id'];
+        $charge_id = $result['charge'];
+        $refund = Refund::where(['payment_refund_id' => $result['id'],'payment_charge_id' => $result['charge']])->first();
+        if($refund){
+            $charge = $stripe->charges->retrieve( $result['charge']);
+            $balance = $stripe->balanceTransactions->retrieve($charge->balance_transaction, []);
+            $refund->refund_status = $result['status'];
+            $newRefund = new RefundHistories();
+            $newRefund->refund_status = $result['status'];
+            $newRefund->description_error = $result['failure_reason'] ? $result['failure_reason'] : " ";
+            $newRefund->payment_refund_id = $result['id'];
+            $newRefund->payment_charge_id = $result['charge'];
+            $newRefund->amount = number_format($result['amount']/100,2);
+            $newRefund->refund_id = $refund->id;
+            $newRefund->fee_amount = $balance->fee;
+            $newRefund->fee_details = $balance->fee_details;
+            $newRefund->payment_balance_id = $charge->balance_transaction;
+            $refund->save();
+            $newRefund->save();
+        }
+        Log::channel('webhooks')
+            ->info('webhook event received object  charge.refund.updated',$result);
     }
 
     /**
