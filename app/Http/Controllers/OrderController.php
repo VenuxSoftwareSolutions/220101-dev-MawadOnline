@@ -830,12 +830,17 @@ class OrderController extends Controller
     public function executeRefund($order){
         try {
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
-            $result = $stripe->refunds->create(['payment_intent' => $order->order->payment_intent_id,"amount" => $order->price * 100]);
+            $result = $stripe->refunds->create(['payment_intent' => $order->order->payment_intent_id,"amount" => ($order->price + $order->shipping_cost) * 100]);
+            $charge = $stripe->charges->retrieve($result->charge);
+            $balance = $stripe->balanceTransactions->retrieve($charge->balance_transaction, []);
             $refund = new Refund();
             $refundHistories = new RefundHistories();
             $refund->buyer_id = $order->order->user_id;
             $refund->seller_id = $order->order->seller_id;
             $refund->order_detail_id = $order->id;
+            $refund->fee_amount = $refundHistories->fee_amount = $balance->fee;
+            $refund->fee_details = $refundHistories->fee_details = $balance->fee_details;
+            $refund->payment_balance_id = $refundHistories->payment_balance_id = $charge->balance_transaction;
             $refundHistories->refund_status = $refund->refund_status = $result->status;
             $refundHistories->description_error = $refund->description_error = $result->failure_reason;
             $refundHistories->payment_refund_id = $refund->payment_refund_id = $result->id;
