@@ -261,78 +261,84 @@
                 </h1>
                 <div class="row">
                     <div class="col-12">
+                        {{-- Tab Navigation Container --}}
                         <ul class="nav nav-tabs shop" id="registerTabs">
+                            {{-- Authentication Related Tabs --}}
                             @if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at))
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
-                                        href="#personal-info">
-                                        <span class="number-icon">1</span> {{ translate('Personal Info') }}
+                                @php
+                                    $authTabs = [
+                                        [
+                                            'number' => 1,
+                                            'id' => 'personal-info',
+                                            'label' => 'Personal Info'
+                                        ],
+                                        [
+                                            'number' => 2,
+                                            'id' => 'code-verification',
+                                            'label' => 'Code Verification Email'
+                                        ]
+                                    ];
+                                @endphp
 
-                                    </a>
-                                </li>
-                                <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
-                                        stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="code-verification-tab" data-toggle="tab"
-                                        href="#code-verification">
-                                        <span class="number-icon">2</span> {{ translate('Code Verification Email') }}
-                                    </a>
-                                </li>
-                                <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
-                                        stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
+                                @foreach ($authTabs as $index => $tab)
+                                    <li class="nav-item">
+                                        <a class="nav-link {{ $index === 0 ? 'active' : '' }}" 
+                                        id="{{ $tab['id'] }}-tab" 
+                                        data-toggle="tab" 
+                                        href="#{{ $tab['id'] }}">
+                                            <span class="number-icon">{{ $tab['number'] }}</span>
+                                            {{ translate($tab['label']) }}
+                                        </a>
+                                    </li>
+                                    
+                                    @if(!$loop->last)
+                                        <x-icons.arrow-divider />
+                                    @endif
+                                @endforeach
                             @endif
+
+                            {{-- Business Related Tabs --}}
                             @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)))
-                                <li class="nav-item">
-                                    <a class="nav-link" id="business-info-tab" data-toggle="tab" href="#business-info">
-                                        <span class="number-icon">3</span> {{ translate('Business Information') }}
-                                    </a>
-                                </li>
-                                <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
-                                        stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="contact-person-tab" data-toggle="tab" href="#contact-person">
-                                        <span class="number-icon">4</span> {{ translate('Contact Person') }}
-                                    </a>
-                                </li>
-                                <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
-                                        stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="warehouses-tab" data-toggle="tab" href="#warehouses">
-                                        <span class="number-icon">5</span> {{ translate('Warehouses') }}
-                                    </a>
-                                </li>
-                                <svg width="18" height="18" class="shop-menu-arrow" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.91016 19.92L15.4302 13.4C16.2002 12.63 16.2002 11.37 15.4302 10.6L8.91016 4.08002"
-                                        stroke="#a09e9e" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">
-                                        <span class="number-icon">6</span> {{ translate('Payout Information') }}
-                                    </a>
-                                </li>
+                                @php
+                                    $businessTabs = [
+                                        [
+                                            'number' => 3,
+                                            'id' => 'business-info',
+                                            'label' => 'Business Information'
+                                        ],
+                                        [
+                                            'number' => 4,
+                                            'id' => 'contact-person',
+                                            'label' => 'Contact Person'
+                                        ],
+                                        [
+                                            'number' => 5,
+                                            'id' => 'warehouses',
+                                            'label' => 'Warehouses'
+                                        ],
+                                        [
+                                            'number' => 6,
+                                            'id' => 'payout-info',
+                                            'label' => 'Payout Information'
+                                        ]
+                                    ];
+                                @endphp
+
+                                @foreach ($businessTabs as $index => $tab)
+                                    <li class="nav-item">
+                                        <a class="nav-link" 
+                                        id="{{ $tab['id'] }}-tab" 
+                                        data-toggle="tab" 
+                                        href="#{{ $tab['id'] }}">
+                                            <span class="number-icon">{{ $tab['number'] }}</span>
+                                            {{ translate($tab['label']) }}
+                                        </a>
+                                    </li>
+                                    
+                                    @if(!$loop->last)
+                                        <x-icons.arrow-divider />
+                                    @endif
+                                @endforeach
                             @endif
                         </ul>
                         <div class="tab-content" id="registerTabsContent">
