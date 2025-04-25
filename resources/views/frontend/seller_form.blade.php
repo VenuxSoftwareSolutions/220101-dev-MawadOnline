@@ -236,95 +236,75 @@
     </style>
 @endsection
 @section('content')
+    <section class="pt-4 mb-4">
+        <div class="container">
+            <div class="row">
+                <div class="mx-auto col-11">
+                    <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
+                        @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
+                            {{ translate('Register Your Shop') }}
+                            <h2 class="fs-16 text-muted text-center mt-2"> {{-- Changed to h2 for better hierarchy --}}
+                                {{ __('profile.It is the first step to reaching customers globally and growing your brand.') }}<br>
+                                {{ __('profile.Let get started') }}
+                            </h2>
+                        @else
+                            {{ translate('Account verification') }}
+                        @endif
+                    </h1>
 
-<section class="pt-4 mb-4">
-    <div class="container">
-        <div class="row">
-            <div class="mx-auto col-11">
-                <h1 class="fw-700 fs-20 fs-md-24 text-dark text-center mb-3">
-                    @if (!Auth::user() || (Auth::user() && Auth::user()->owner_id == null))
-                        {{ translate('Register Your Shop') }}
-                        <h1 class="smaller-gray-text text-center">
-                            {{ __('profile.It is the first step to reaching customers globally and growing your brand.') }}
-                            <br>
-                            {{ __('profile.Let get started') }}
-                        </h1>
-
-
-
-                    @else
-                        {{ translate('Account verification') }}
-
-                    @endif
-                </h1>
-                <div class="row">
-                    <div class="col-12">
-                        {{-- Tab Navigation Container --}}
-                        <ul class="nav nav-tabs shop" id="registerTabs">
-                            {{-- Authentication Related Tabs --}}
-                            @if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at))
-                                @php
-                                    $authTabs = [
+                    <div class="row">
+                        <div class="col-12">
+                            @php
+                                $allTabs = [];
+                                
+                                // Authentication Tabs
+                                if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at)) {
+                                    $allTabs = array_merge($allTabs, [
                                         [
                                             'number' => 1,
-                                            'id' => 'personal-info',
-                                            'label' => 'Personal Info'
+                                            'id' => 'personal_info',
+                                            'label' => 'Personal Info',
+                                            'active' => true
                                         ],
                                         [
                                             'number' => 2,
-                                            'id' => 'code-verification',
+                                            'id' => 'code_verification',
                                             'label' => 'Code Verification Email'
                                         ]
-                                    ];
-                                @endphp
+                                    ]);
+                                }
 
-                                @foreach ($authTabs as $index => $tab)
-                                    <li class="nav-item">
-                                        <a class="nav-link {{ $index === 0 ? 'active' : '' }}" 
-                                        id="{{ $tab['id'] }}-tab" 
-                                        data-toggle="tab" 
-                                        href="#{{ $tab['id'] }}">
-                                            <span class="number-icon">{{ $tab['number'] }}</span>
-                                            {{ translate($tab['label']) }}
-                                        </a>
-                                    </li>
-                                    
-                                    @if(!$loop->last)
-                                        <x-icons.arrow-divider />
-                                    @endif
-                                @endforeach
-                            @endif
-
-                            {{-- Business Related Tabs --}}
-                            @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)))
-                                @php
-                                    $businessTabs = [
+                                // Business Tabs
+                                if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id))) {
+                                    $allTabs = array_merge($allTabs, [
                                         [
-                                            'number' => 3,
-                                            'id' => 'business-info',
+                                            'number' => count($allTabs) + 1,
+                                            'id' => 'business_info',
                                             'label' => 'Business Information'
                                         ],
                                         [
-                                            'number' => 4,
-                                            'id' => 'contact-person',
+                                            'number' => count($allTabs) + 2,
+                                            'id' => 'contact_person',
                                             'label' => 'Contact Person'
                                         ],
                                         [
-                                            'number' => 5,
+                                            'number' => count($allTabs) + 3,
                                             'id' => 'warehouses',
                                             'label' => 'Warehouses'
                                         ],
                                         [
-                                            'number' => 6,
-                                            'id' => 'payout-info',
+                                            'number' => count($allTabs) + 4,
+                                            'id' => 'payout_info',
                                             'label' => 'Payout Information'
                                         ]
-                                    ];
-                                @endphp
+                                    ]);
+                                }
+                            @endphp
 
-                                @foreach ($businessTabs as $index => $tab)
+                            <ul class="nav nav-tabs shop" id="registerTabs">
+                                @foreach ($allTabs as $index => $tab)
                                     <li class="nav-item">
-                                        <a class="nav-link" 
+                                        <a class="nav-link {{ $tab['active'] ?? false ? 'active' : '' }}" 
                                         id="{{ $tab['id'] }}-tab" 
                                         data-toggle="tab" 
                                         href="#{{ $tab['id'] }}">
@@ -332,188 +312,29 @@
                                             {{ translate($tab['label']) }}
                                         </a>
                                     </li>
-                                    
                                     @if(!$loop->last)
                                         <x-icons.arrow-divider />
                                     @endif
                                 @endforeach
-                            @endif
-                        </ul>
-                        
-                        
-                            {{-- Authentication Tabs --}}
+                            </ul>
 
-                        <div class="tab-content" id="registerTabsContent">
-                            @if (!Auth::check() || (Auth::check() && !Auth::user()->email_verified_at))
-                                
-                                {{-- Personal Info Tab --}}
-                                <div class="tab-pane fade show active" id="personal-info">
-                                    @include('frontend.shops.partials.personal_info_form')
-                                </div>
-
-
-                                {{-- Code Verification Tab --}}
-                                <div class="tab-pane fade" id="code-verification">
-                                    @include('frontend.shops.partials.code_verification_form')
-                                </div>
-
-
-                            @endif
-                            {{-- Business Information Tabs --}}
-                                {{-- Business Info Tab --}}
-                            <div class="tab-pane fade" id="business-info">
-                                @include('frontend.shops.partials.business_info_form')
-                            </div>
-
-                           
-
-                            <div class="tab-pane fade" id="contact-person">
-                                @include('frontend.shops.partials.contact_person_form')
-                            </div>
-
-                            <div class="tab-pane fade" id="warehouses">
-                                <form id="warehousesForm" class="" action="{{ route('shops.warehouses') }}"
-                                    data-next-tab="payout-info" method="POST">
-                                    @csrf
-                                    <!-- ... Warehouses form fields ... -->
-                                    <div class="bg-white border mb-4">
-
-                                        <div class="fs-20 fw-600 p-3 orange-text">
-                                            {{ __('profile.location_information') }}
-                                        </div>
-
-                                        <div class="p-3">
-
-                                            <div class="row warehouseRow" id="warehouseRows">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label
-                                                            for="warehouse_name"><b>{{ translate('Warehouse Name') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="{{ translate('Warehouse Name') }}"
-                                                            name="warehouse_name_add">
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="state"><b>{{ translate('State/Emirate') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <select name="state_warehouse_add"
-                                                            class="form-control rounded-0 emirateSelect"
-                                                            id="emirateempire">
-                                                            <option value="" selected>{{ translate('please_choose') }}
-                                                            </option>
-                                                            @foreach ($emirates as $emirate)
-                                                                <option value="{{ $emirate->id }}">{{ $emirate->name }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="area"><b>{{ translate('Area') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <select name="area_warehouse_add"
-                                                            class="form-control areaSelect">
-                                                            <option value="" selected>
-                                                                {{ translate('please_choose') }}
-                                                            </option>
-                                                            <!-- Options for area -->
-                                                        </select>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="street"><b>{{ translate('Street') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="{{ translate('Street') }}"
-                                                            name="street_warehouse_add">
-                                                        <small
-                                                            class="text-muted">{{ translate('Example: 123 Main Street') }}</small>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="building"><b>{{ translate('Building') }}</b><span
-                                                                class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control" id="building_warehouse_add" placeholder="{{ translate('Building') }}" name="building_warehouse_add">
-                                                            
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="unit"><b>{{ translate('Unit/Office No.') }}</b><span
-                                                                class="text-primary"></span></label>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="{{ translate('Unit/Office No.') }}"
-                                                            name="unit_add">
-                                                    </div>
-                                                </div>
-
-
-                                                <div class="col-auto ml-auto">
-                                                    <button type="button" class="btn btn-primary"
-                                                        id="addRow">{{ translate('Add Warehouse') }}</button>
-
-                                                </div>
-                                            </div>
-                                            <table class="table mt-3" id="warehouseTable">
-                                                <thead class="thead-dark">
-                                                    <tr>
-                                                        <th>{{ translate('Warehouse Name') }}</th>
-                                                        <th>{{ translate('State/Emirate') }}</th>
-                                                        <th>{{ translate('Area') }}</th>
-                                                        <th>{{ translate('Street') }}</th>
-                                                        <th>{{ translate('Building') }}</th>
-                                                        <th>{{ translate('Unit/Office No.') }}</th>
-                                                        <th>{{ translate('Action') }}</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (isset($user))
-                                                        @foreach ($user->warehouses as $warehouse)
-                                                            <tr class="warehouseRow"> </tr>
-                                                        @endforeach
-                                                    @endif
-                                                </tbody>
-                                            </table>
-                                        </div>
+                            <div class="tab-content" id="registerTabsContent">
+                                @foreach ($allTabs as $tab)
+                                    <div class="tab-pane fade {{ $tab['active'] ?? false ? 'show active' : '' }}" 
+                                        id="{{ $tab['id'] }}">
+                                        @includeWhen(view()->exists("frontend.shops.partials.{$tab['id']}_form"), 
+                                            "frontend.shops.partials.{$tab['id']}_form")
                                     </div>
-                                    <div class="text-right">
-                                        <!-- Previous Button -->
-                                        <button type="button" data-prv='contact-person'
-                                            class="btn btn-info fw-600 rounded-0 prv-tab">
-                                            {{ translate('Previous') }}
-                                        </button>
-
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
-                                            data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
-
-                                        <button type="button" class="btn btn-primary fw-600 rounded-0" {{--
-                                            onclick="switchTab('payout-info')"
-                                            --}}>{{ translate('Save and Continue') }}</button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <div class="tab-pane fade" id="payout-info">
-                                @include('frontend.shops.partials.payout_info_form')
+                                @endforeach
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-    </div>
-</section>
+    </section>
 @endsection
+
 
 @section('script')
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -524,7 +345,6 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            // Your existing logic here
 
             var stepNumber = {{ $step_number ?? 0 }}; // Get the step number from the server
 
@@ -719,8 +539,8 @@
                     if ($(this).attr('data-action') == 'register') {
                         const form = $('#shop');
                         Swal.fire({
-                            title: 'Loading...',
-                            html: 'Processing Account Creation',
+                            title: 'Hang tight. This’ll take just a sec.',
+                            html: 'Now’s a good time to stretch.',
                             allowOutsideClick: false,
                             didOpen: () => { Swal.showLoading() }
                         }); 
@@ -865,8 +685,8 @@
                         });
                     } else {
                         Swal.fire({
-                            title: 'Loading...',
-                            html: 'Processing your Account Creation',
+                            title: 'Hang tight. This’ll take just a sec.',
+                            html: 'Now’s a good time to stretch.',
                             allowOutsideClick: false,
                             didOpen: () => {
                                 Swal.showLoading()
