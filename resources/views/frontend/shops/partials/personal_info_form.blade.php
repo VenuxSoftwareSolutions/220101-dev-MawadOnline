@@ -1,15 +1,12 @@
 <form id="shop" class="" action="{{ route('shops.store') }}" method="POST" enctype="multipart/form-data"
     data-next-tab="code-verification">
     @csrf
-    <!-- ... Personal Info form fields ... -->
     <div class="bg-white border mb-4">
         <div class="fs-20 fw-600 p-3 orange-text">
             {{ translate('Personal Info') }}
         </div>
 
-        {{-- <div id="validation-errors" class="alert alert-danger" style="display: none;">
-        </div> --}}
-
+       
         <div class="p-3">
             <div class="form-group">
                 <label><b>{{ translate('First Name') }} </b><span class="text-primary">*</span></label>

@@ -236,9 +236,7 @@
     </style>
 @endsection
 @section('content')
-<section class="pt-4 mb-4">
-    <!-- ... Existing HTML code ... -->
-</section>
+
 <section class="pt-4 mb-4">
     <div class="container">
         <div class="row">
