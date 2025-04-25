@@ -241,7 +241,7 @@ method="POST" data-next-tab="warehouses">
 </div>
 
 <div class="text-right">
-    <button type="button" data-prv='business-info'class="btn btn-info fw-600 rounded-0 prv-tab"> {{ translate('Previous') }}</button>
+    <button type="button" data-prv='business_info'class="btn btn-info fw-600 rounded-0 prv-tab"> {{ translate('Previous') }}</button>
     <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft" data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
     <button type="button" class="btn btn-primary fw-600 rounded-0">{{ translate('Save and Continue') }}</button>
 </div>

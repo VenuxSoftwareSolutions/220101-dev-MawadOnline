@@ -113,7 +113,7 @@ data-next-tab="payout_info" method="POST">
 </div>
 <div class="text-right">
     <!-- Previous Button -->
-    <button type="button" data-prv='contact-person'
+    <button type="button" data-prv='contact_person'
         class="btn btn-info fw-600 rounded-0 prv-tab">
         {{ translate('Previous') }}
     </button>
