@@ -55,7 +55,7 @@ class StoreContactPersonRequest extends FormRequest
             'date_of_birth' => 'nullable|date|before:-18 years',
             'emirates_id_number' => ['nullable', 'string', 'max:15', 'regex:/^[0-9]{15}$/'],
             'emirates_id_expiry_date' => 'nullable|date|after_or_equal:today',
-            'emirates_id_file' => /* !isset($this->emirates_id_file_old) ? */  'nullable|file|mimes:pdf,jpeg,png|max:5120' /* : '' */,
+            'emirates_id_file' => /* !isset($this->emirates_id_file_old) ? */  'nullable|file|mimes:pdf,jpeg,png|max:5120|clamav' /* : '' */,
             'business_owner' => 'nullable|boolean',
             'designation' => 'nullable|string|max:64|regex:/\D/',
         ];
