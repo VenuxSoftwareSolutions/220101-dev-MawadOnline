@@ -109,7 +109,7 @@
 
             @if (isset($previewData['detailedProduct']['sampleDetails']) &&
                     count($previewData['detailedProduct']['sampleDetails']) > 0 &&
-                    $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
+                    isset($previewData['detailedProduct']['sampleDetails']['sample_price']) && $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
                 <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
                     <span
                         class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ __('Available') }}</span>
@@ -224,6 +224,7 @@
                             count($previewData['detailedProduct']['sampleDetails']) > 0
                         )
                             @if(
+                                isset($previewData['detailedProduct']['sampleDetails']['sample_price']) &&
                                 isset($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) &&
                                 $previewData['detailedProduct']['sampleDetails']['sample_price'] !== $previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']
                             )
