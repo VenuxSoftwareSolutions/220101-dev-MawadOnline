@@ -230,7 +230,7 @@
                             )
                                 {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) }}
                             @else
-                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}
+                                {{ single_price(isset($previewData['detailedProduct']['sampleDetails']['sample_price']) === true ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}
                             @endif
                         @else
                             {{ single_price(0) }}
@@ -682,7 +682,7 @@
                 <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
                     onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
                     <span
-                        id="sample_chosen_price">{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span></span>
+                        id="sample_chosen_price">{{ single_price(isset($previewData['detailedProduct']['sampleDetails']['sample_price']) ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span></span>
             @else
                 <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
                     onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }}
