@@ -6233,6 +6233,11 @@ class ProductService
     {
         try {
             $data = $request->session()->get('productPreviewData', null);
+
+            if (is_null($data) === null) {
+                throw new Exception("Product preview data from session is null");
+            }
+
             $variations = $data['detailedProduct']['variations'];
 
             $qty = $request->quantity;
@@ -6379,8 +6384,8 @@ class ProductService
 
             return response()->json([
                 'error' => true,
-                'message' => __("There's an error"),
-            ]);
+                'message' => __("Something went wrong"),
+            ], 500);
         }
     }
 
@@ -6547,7 +6552,7 @@ class ProductService
                             $data[$product_history->key] = $product_history->old_value;
                         }
 
-                        DB::table('products')->where('id', $product->id)->update($data);
+                        Product::where('id', $product->id)->update($data);
                     }
                 }
 
@@ -6724,8 +6729,10 @@ class ProductService
         $existingProduct = Product::find($id);
 
         $product_catalog_exist = ProductCatalog::where('product_id', $id)->first();
+
         if ($product_catalog_exist != null) {
             $childrens_catalog = ProductCatalog::where('parent_id', $product_catalog_exist->id)->pluck('id')->toArray();
+
             if (count($childrens_catalog) > 0) {
                 ProductAttributeValueCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
                 UploadProductCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
@@ -6747,12 +6754,12 @@ class ProductService
 
         if (! $existingProduct) {
             // Handle the case where the product with the specific ID doesn't exist
-            return redirect()->back()->with('error', 'Product not found');
+            return redirect()->back()->with('error', __('Product not found'));
         }
 
         $data = $existingProduct->attributesToArray();
         // Make necessary updates to the attributes (if any)
-        unset($data['id']);
+        unset($data['id'], $data["bu_job_id"]);
         $data['product_id'] = $id;
         $newProduct = ProductCatalog::insertGetId($data);
 

@@ -36,9 +36,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Cache;
-
-
-
 use Log;
 use Mail;
 use Storage;
@@ -170,7 +167,6 @@ class ShopController extends Controller
                 'user_type' => 'seller', // Set the user_type explicitly
                 // 'password' => Hash::make($request->password),
                 'password' => $request->password,
-                
             ]
         );
 
@@ -193,7 +189,7 @@ class ShopController extends Controller
             Mail::to($request->email)->send(new VerificationCodeEmail(
                 $verificationCode,
                 $request->first_name.' '.$request->last_name,
-                10 
+                10
             ));
         }
 
@@ -254,19 +250,16 @@ class ShopController extends Controller
 
     public function storeBusinessInfo(StoreBusinessInfoRequest $request)
     {
-
         $action = $request->input('action');
         // it indicates the "save as draft" action.
 
         if ($request->input('vat_registered') == 1) {
-
             // If VAT is registered, handle VAT certificate and TRN
             if (isset($request->vat_certificate_old) && ! $request->hasFile('vat_certificate')) {
                 $vatCertificatePath = $request->vat_certificate_old;
             } elseif ($request->hasFile('vat_certificate')) {
                 $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
             }
-
             $trn = $request->input('trn');
         } /* else {
             // If VAT is not registered, handle tax waiver
@@ -312,26 +305,22 @@ class ShopController extends Controller
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
                 'civil_defense_approval' => $request->hasFile('civil_defense_approval') ? $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
                 'saveasdraft' => isset($action) ? true : false,
-
             ]
         );
-        if (! $action) {
 
+        if (! $action) {
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
 
             return response()->json(['success' => true, 'message' => translate('Business info stored successfully')]);
-
         } else {
             $user = Auth::user();
             $user->step_number = 2;
             $user->save();
 
             return response()->json(['success' => true, 'message' => translate('Draft Business info saved successfully'), 'save_as_draft' => true]);
-
         }
-        // Return a response
     }
 
     public function storeContactPerson(StoreContactPersonRequest $request)
@@ -816,7 +805,7 @@ class ShopController extends Controller
 
         $role = Role::where('name', 'pro')->first();
         $user->assignRole($role);
-        $staff = new Staff;
+        $staff = new Staff();
         $staff->user_id = $user->id;
         $staff->role_id = $role->id;
         $staff->save();
@@ -851,11 +840,11 @@ class ShopController extends Controller
 
         $dictionaryPath = storage_path('app/dictionary/dictionary.txt');
         $words = File::lines($dictionaryPath);
-    
+
         return response()->json($words);
     }
 
-   
+
 
     /**
      * Show the form for editing the specified resource.

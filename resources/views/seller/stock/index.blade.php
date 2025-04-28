@@ -35,15 +35,12 @@
                         <label for="product_variant">{{ __('stock.Product Variant') }} <span class="text-primary">*</span> </label>
                         <!-- Add your searchable dropdown for choosing a product’s variant here -->
                         <select required class="form-control select2" id="product_variant" name="product_variant">
-                            <option value="">{{__('stock.Please Choose !!')}}</option>
-                            <!-- Populate options dynamically based on your data -->
+                            <option value="">{{__('stock.select_product_variant')}}</option>
                             @foreach ($products as $product  )
-
-                            <option @if (request('productVariant') == $product->id )
-                                selected
-                            @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
+                                <option @if (request('productVariant') == $product->id )
+                                    selected
+                                @endif value="{{$product->id}}">{{$product->name.' '.$product->sku .$product->productVariantDetails()}}</option>
                              @endforeach
-
                         </select>
                     </div>
                 </div>
@@ -53,7 +50,7 @@
                         <label for="warehouse">{{ __('stock.Warehouse') }}<span class="text-primary">*</span></label>
                         <!-- Add your dropdown for choosing the warehouse by name here -->
                         <select required class="form-control select2" id="warehouse" name="warehouse">
-                            <option value="">{{__('stock.Please Choose !!')}}</option>
+                            <option value="">{{__('stock.select_warehouse')}}</option>
                             @foreach ($warehouses as $warehouse  )
                                 <option @if (request('warehouse') == $warehouse->id )
                                     selected
@@ -221,19 +218,14 @@
                     @foreach ($inventoryData as $item)
                         @if ($item->productVariant)
                             <tr>
-
-
-
                                 <td>{{$item->productVariant ? $item->productVariant->name :""}}</td>
                                 <td>{{$item->productVariant ? $item->productVariant->sku : ""}}</td>
                                 <td>{{ $item->warehouse->warehouse_name ?? "" }}</td>
-                                <td>{{ $item->current_total_quantity }}</td>
+                                <td>{{ $item->productVariant->getTotalQuantity() }}</td>
                                 <td>{{ $item->updated_at }}</td>
                                 <td>
-                                    <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->current_total_quantity }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
+                                    <button type="button" onclick="openUpdateDialog('{{ $item->variant_id  }}', '{{ $item->productVariant->getTotalQuantity() }}',{{$item->warehouse->id ?? ''}})" class="btn btn-primary customer-btn-color">{{ __('stock.Add/Remove Stock') }}</button>
                                 </td>
-
-                                <!-- Add other fields accordingly -->
                             </tr>
                         @endif
                     @endforeach
@@ -486,50 +478,37 @@
 
 <script>
     function openUpdateDialog(itemId, currentQuantity,warehouseId) {
-        // Populate the modal with the current quantity
         $('#currentStock').val(currentQuantity);
         $('#currentProduct_variant').val(itemId);
         $('#currentWarehouse').val(warehouseId);
 
-        // Set the new stock field based on the operation (add/remove)
         $('input[name="addRemove"]').change(function () {
             var quantity = parseFloat($('#quantityAddRemove').val());
-            // Check if quantity is a valid number
             if (!isNaN(quantity) && quantity > 0) {
                 updateNewStock();
+            } else {
+                $("#newStock").val('');
             }
-            else {
-            $("#newStock").val('') ;
-             }
         });
 
-        // Show the modal
         $('#updateQuantityModal').modal('show');
     }
 
     function updateNewStock() {
-        // Implement logic to update the new stock based on add/remove operation
-        var currentStock = parseFloat($('#currentStock').val());
-        var quantity = parseFloat($('#quantityAddRemove').val());
-        var addRemove = $('input[name="addRemove"]:checked').val();
+        let currentStock = parseFloat($('#currentStock').val());
+        let quantity = parseFloat($('#quantityAddRemove').val());
+        let addRemove = $('input[name="addRemove"]:checked').val();
+
         if (addRemove === 'remove' && quantity > currentStock) {
-        // User is trying to remove more than the current stock
-        // alert("{{__('stock.Error: Cannot remove more than the current stock.')}}");
-        // Swal.fire({
-        //     icon: 'error',
-        //     title: "{{__('stock.Error: Cannot remove more than the current stock.')}}",
-        //     confirmButtonText: 'OK'
-        // });
-        toastr.error("{{__('stock.Error: Cannot remove more than the current stock.')}}", 'Error');
+            toastr.error("{{__('stock.Error: Cannot remove more than the current stock.')}}", 'Error');
 
-        // Reset the quantity field
-        $('#quantityAddRemove').val("") ;
-        $("#newStock").val('') ;
+            $('#quantityAddRemove').val("") ;
+            $("#newStock").val('') ;
 
-        return;
-    }
-        var newStock = addRemove === 'add' ? currentStock + quantity : currentStock - quantity;
-        $('#newStock').val(newStock);
+            return;
+        }
+
+        $('#newStock').val(addRemove === 'add' ? currentStock + quantity : currentStock - quantity);
     }
 
     function updateQuantity() {
