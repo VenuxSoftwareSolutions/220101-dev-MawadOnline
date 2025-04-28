@@ -138,7 +138,7 @@
             </p>
 
             <p id="product-sample-description" class="d-none">
-                @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0)
+                @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0 && isset($previewData['detailedProduct']['sampleDetails']['sample_description']))
                     {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
                 @endif
             </p>
