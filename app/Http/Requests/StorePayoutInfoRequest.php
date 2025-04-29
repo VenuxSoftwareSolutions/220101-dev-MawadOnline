@@ -42,7 +42,7 @@ class StorePayoutInfoRequest extends FormRequest
             'account_number' => 'nullable|string|max:30',
             'iban' => 'nullable|string|max:34',
             'swift_code' => 'nullable|string|max:16',
-            'iban_certificate' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
+            'iban_certificate' => 'nullable|file|mimes:pdf,jpeg,png|max:5120|clamav',
         ];
     }
 }
