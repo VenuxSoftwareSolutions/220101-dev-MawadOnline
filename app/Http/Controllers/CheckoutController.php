@@ -243,6 +243,7 @@ class CheckoutController extends Controller
 
             $shippers = [];
             $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id], $cart->is_sample);
+            $duration = [];
 
             foreach ($shippingOptions as $key => $option) {
                 $shippers[$key] = $option->shipper;
