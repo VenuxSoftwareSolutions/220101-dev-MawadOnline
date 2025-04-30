@@ -63,7 +63,9 @@ class CartController extends Controller
             $stockAlert = '';
             $outOfStockItems = [];
 
-            $vendor_name = User::find($product->user_id)->shop->name;
+            $vendor = User::find($product->user_id);
+
+            $vendor_name = is_null($vendor) ? "" : $vendor->shop->name;
 
             if ($cart['variation'] != null) {
                 $product_name_with_choice = sprintf(

@@ -6246,7 +6246,7 @@ class ProductService
             // Iterate through the ranges
             $unitPrice = null;
 
-            if (count($variations) > 0) {
+            if (count($variations) > 0 && isset($variations[$request->variationId])) {
                 foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
                     $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
 
@@ -6340,7 +6340,7 @@ class ProductService
             $maximum = 1;
             $minimum = 1;
 
-            if (count($variations) > 0) {
+            if (count($variations) > 0 && isset($variations[$request->variationId])) {
                 // Convert array values to integers
                 $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
                 $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);

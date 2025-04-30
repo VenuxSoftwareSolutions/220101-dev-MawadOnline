@@ -843,7 +843,7 @@
 <div class="col-lg-6 col-md-12 float-left">
     <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
         <div class="col-md-12 product-rightbox-seller-info float-left">
-            @if (isset($detailedProduct))
+            @if (isset($detailedProduct) && is_null($detailedProduct->user->shop) === false)
                 <div class="product-rightbox-seller-details float-left col-md-12">
                     <div class="float-left col-md-12 p-0">
                         <a href="{{ $detailedProduct->user !== null ? route('shop.visit', $detailedProduct->user->shop->slug) : "#" }}"
