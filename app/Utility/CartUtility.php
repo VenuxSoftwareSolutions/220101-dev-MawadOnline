@@ -180,7 +180,11 @@ class CartUtility
         if (is_array($discount)) {
             $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
 
-            if (is_null($discount["max_discount_amount"]) !== true && $percentage > $discount["max_discount_amount"]) {
+            if (
+                isset($discount["max_discount_amount"]) &&
+                is_null($discount["max_discount_amount"]) !== true &&
+                $percentage > $discount["max_discount_amount"]
+            ) {
                 $unitPrice -= $discount["max_discount_amount"];
             } else {
                 $unitPrice -= $percentage;
