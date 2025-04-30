@@ -1121,7 +1121,7 @@ function getShippingCost($carts, $index, $carrier = '', $shipper = null)
             ->filter(fn ($option) => $option->shipper === $shipper)
             ->first();
 
-        if ($shippingOptions->shipper === 'vendor') {
+        if (is_null($shippingOptions) === false && $shippingOptions->shipper === 'vendor') {
             if ($shippingOptions->charge_per_unit_shipping != null) {
                 return $shippingOptions->charge_per_unit_shipping * $cartItem['quantity'];
             } else {
