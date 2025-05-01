@@ -253,9 +253,18 @@
                                             
 
                                             <!-- Password Confirmation-->
-
                                             <div class="form-group">
-                                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{ translate('Reset Password') }}" required>
+                                                <label
+                                                    for="password_confirmation"><b>{{ translate('Repeat Password') }}</b>
+                                                    <span class="text-primary">*</span></label>
+                                                <div class="position-relative">
+                                                    <input type="password" id="password-confirm" 
+                                                        name="password_confirmation" class="form-control rounded-0"
+                                                        required placeholder="{{ translate('Reset Password') }}" required>
+                                                    <i class="password-toggle las la-2x la-eye"
+                                                        data-target="#password_confirmation"></i>
+                                                </div>
+
                                             </div>
 
                                             <!-- Submit Button -->
