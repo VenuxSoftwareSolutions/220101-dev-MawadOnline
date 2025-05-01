@@ -189,7 +189,8 @@ class Discount extends Model
         $result = ['discount_percentage' => $highestDiscount->discount_percentage];
     
         if (!in_array($highestDiscount->scope, ['product', 'category'])) {
-            $result['max_discount_amount'] = $highestDiscount->max_discount;
+            $result['discount_percentage'] = 0;
+            $result['max_discount_amount'] = 0;
         }
     
         return $result;
