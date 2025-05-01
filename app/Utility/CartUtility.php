@@ -175,12 +175,22 @@ class CartUtility
 
         $product = get_single_product($id);
 
+        $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
+            ->whereNot(function ($query) {
+                $query->where("scope", "product")
+                ->orWhere("scope", "category");
+            })->exists();
+
         $unitPrice = $unit_price !== null ? $unit_price : $product->unit_price;
 
-        if (is_array($discount)) {
+        if (is_array($discount) && $isOrdersDiscountExists === false) {
             $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
 
-            if (is_null($discount["max_discount_amount"]) !== true && $percentage > $discount["max_discount_amount"]) {
+            if (
+                isset($discount["max_discount_amount"]) &&
+                is_null($discount["max_discount_amount"]) !== true &&
+                $percentage > $discount["max_discount_amount"]
+            ) {
                 $unitPrice -= $discount["max_discount_amount"];
             } else {
                 $unitPrice -= $percentage;

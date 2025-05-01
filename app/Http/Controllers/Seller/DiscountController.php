@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Seller;
+
 use Auth;
 use App\Models\Tour;
 use App\Models\Discount;
@@ -14,38 +15,44 @@ use Illuminate\Support\Facades\Cache;
 
 class DiscountController extends Controller
 {
-
     public function index(Request $request)
     {
         $scope = $request->query('scope', 'product');
         $isCoupon = $request->route()->uri === 'vendor/coupons';
-        $discounts = Discount::where('scope', $scope)->paginate(6);
+
+        $discounts = Discount::where("user_id", auth()->user()->id)
+            ->where('scope', $scope)
+            ->paginate(6);
+
         $columnHeader = '';
         $columnValue = '';
+
         switch ($scope) {
             case 'product':
-                $columnHeader = 'Product Name';
-                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
+                $columnHeader = __('Product Name');
+                $columnValue = fn ($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
             case 'category':
-                $columnHeader = 'Category';
-                $columnValue = fn($discount) => $discount->category ? $discount->category->name : 'N/A';
+                $columnHeader = __('Category');
+                $columnValue = fn ($discount) => $discount->category ? $discount->category->name : 'N/A';
                 break;
             case 'ordersOverAmount':
-                $columnHeader = 'Minimum Amount';
-                $columnValue = fn($discount) => $discount->min_order_amount ?? 'N/A';
+                $columnHeader = __('Minimum Amount');
+                $columnValue = fn ($discount) => $discount->min_order_amount ?? 'N/A';
                 break;
             case 'allOrders':
-                $columnHeader = 'All Orders';
-                $columnValue = fn($discount) => '-';
+                $columnHeader = __('All Orders');
+                $columnValue = fn ($discount) => '-';
                 break;
             default:
-                $columnHeader = 'Product Name';
-                $columnValue = fn($discount) => $discount->product ? $discount->product->name : 'N/A';
+                $columnHeader = __('Product Name');
+                $columnValue = fn ($discount) => $discount->product ? $discount->product->name : 'N/A';
                 break;
         }
+
         return view('seller.promotions.index', compact('discounts', 'scope', 'columnHeader', 'columnValue', 'isCoupon'));
     }
+
     public function create()
     {
 
@@ -61,16 +68,16 @@ class DiscountController extends Controller
             })
             ->get();
 
-            $nestedCategories = Cache::remember(
-                'nested_categories_level_0',
-                now()->addHours(1),
-                fn() => $this->fetchNestedCategories(0)
-            );
-        
-            
-            return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
+        $nestedCategories = Cache::remember(
+            'nested_categories_level_0',
+            now()->addHours(1),
+            fn () => $this->fetchNestedCategories(0)
+        );
+
+
+        return view('seller.promotions.create', compact('categories', 'products', 'nestedCategories'));
     }
-    
+
 
     public function store(DiscountStoreRequest $request)
     {
@@ -109,7 +116,7 @@ class DiscountController extends Controller
                 } else {
                     $validatedData['status'] = false;
                 }
-            
+
                 return response()->json([
                     'status' => 'overlap',
                     'overlappingDiscounts' => $overlappingDiscounts,
@@ -117,7 +124,7 @@ class DiscountController extends Controller
             }
         }
 
-    
+
         Discount::create($validatedData);
         $scope = $validatedData['scope'];
 
@@ -153,13 +160,13 @@ class DiscountController extends Controller
             $newPath = $path ? "$path/{$category->name}" : $category->name;
             $category->path = $newPath;
             $category->isLeaf = $category->children->isEmpty();
-    
+
             $category->children = $this->buildTree($category->children, $category->id, $newPath);
-    
+
             return $category;
         });
     }
-    
+
     public function getProductsByCategory(Request $request)
     {
         $categoryId = $request->query('category_id');
@@ -202,7 +209,7 @@ class DiscountController extends Controller
         }
 
         return response()->json(['success' => false], 404);
-    }   
+    }
     private function fetchNestedCategories($parentId = 0)
     {
         return Category::with(['children' => function ($query) {
@@ -211,7 +218,7 @@ class DiscountController extends Controller
         ->select('id', 'name', 'parent_id')
         ->where('parent_id', $parentId)
         ->get()
-        ->map(fn($category) => $this->transformCategory($category));
+        ->map(fn ($category) => $this->transformCategory($category));
     }
 
     private function transformCategory($category, $path = "")
@@ -221,13 +228,13 @@ class DiscountController extends Controller
         $category->path = $newPath;
         $category->isLeaf = $category->children->isEmpty();
 
-        $category->children = $category->children->map(fn($child) => $this->transformCategory($child, $newPath));
+        $category->children = $category->children->map(fn ($child) => $this->transformCategory($child, $newPath));
 
         return $category;
     }
     public function testHighestDiscount()
     {
-        $productId = 339; 
+        $productId = 339;
 
         $highestDiscount = Discount::getHighestPriorityDiscountByProduct($productId);
         if ($highestDiscount) {
@@ -241,4 +248,3 @@ class DiscountController extends Controller
 
 
 }
-

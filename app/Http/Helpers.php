@@ -1121,7 +1121,7 @@ function getShippingCost($carts, $index, $carrier = '', $shipper = null)
             ->filter(fn ($option) => $option->shipper === $shipper)
             ->first();
 
-        if ($shippingOptions->shipper === 'vendor') {
+        if (is_null($shippingOptions) === false && $shippingOptions->shipper === 'vendor') {
             if ($shippingOptions->charge_per_unit_shipping != null) {
                 return $shippingOptions->charge_per_unit_shipping * $cartItem['quantity'];
             } else {
@@ -3111,9 +3111,17 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
             $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
             $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
 
+            $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
+            ->whereNot(function ($query) {
+                $query->where("scope", "product")
+                ->orWhere("scope", "category");
+            })->exists();
+
             $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
 
-            $priceAfterDiscountVatIncl = $withDiscount === true ? CartUtility::priceProduct($product->id, $qty) : $priceVatIncl;
+            $priceAfterDiscountVatIncl = $withDiscount === true && $isOrdersDiscountExists === false ?
+                 CartUtility::priceProduct($product->id, $qty)
+                : $priceVatIncl;
 
             $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
 
