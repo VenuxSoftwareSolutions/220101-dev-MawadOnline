@@ -3218,3 +3218,38 @@ if (function_exists('formatBuJob') === false) {
         }
     }
 }
+
+if (function_exists("getOrdersDiscount") === false) {
+    function getOrdersDiscount($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return 0;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return 0;
+            }
+
+            $discount = $discount->toArray();
+            $percentage = ($subTotal * $discount["discount_percentage"]) / 100;
+
+            if (
+                $percentage > $discount["max_discount"]
+            ) {
+                return $discount["max_discount"];
+            } else {
+                return $percentage;
+            }
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return 0;
+        }
+    }
+}
