@@ -119,7 +119,7 @@ class Discount extends Model
 
         $ignoreMaxForExisting = in_array($existingDiscount->scope, ['product', 'category']);
         $ignoreMaxForNew = in_array($newDiscountData['scope'], ['product', 'category']);
-    
+
         if (!$ignoreMaxForExisting && !$ignoreMaxForNew) {
             if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
                 return true;
@@ -127,7 +127,7 @@ class Discount extends Model
                 return false;
             }
         }
-        
+
         return Carbon::now()->greaterThan($existingDiscount->created_at);
     }
 
@@ -153,7 +153,7 @@ class Discount extends Model
         $highestPriorityDiscount = $discounts->sort(function ($a, $b) {
             $aMax = in_array($a->scope, ['product', 'category']) ? PHP_INT_MAX : $a->max_discount;
             $bMax = in_array($b->scope, ['product', 'category']) ? PHP_INT_MAX : $b->max_discount;
-    
+
             return [
                 $b->discount_percentage,
                 $bMax,
@@ -164,9 +164,35 @@ class Discount extends Model
                 $a->created_at,
             ];
         })->first();
-    
-    
+
+
         return $highestPriorityDiscount;
+    }
+
+    public static function getHighestPriorityOrderDiscount($vendor_id)
+    {
+        $discounts = self::whereIn('scope', ['allOrders'])
+            ->where("user_id", $vendor_id)
+            ->withinDateRange()->active()->get();
+
+        if ($discounts->isEmpty()) {
+            return null;
+        }
+
+        return $discounts->sort(function ($a, $b) {
+            $aMax = $a->max_discount;
+            $bMax = $b->max_discount;
+
+            return [
+                $b->discount_percentage,
+                $bMax,
+                $b->created_at,
+            ] <=> [
+                $a->discount_percentage,
+                $aMax,
+                $a->created_at,
+            ];
+        })->first();
     }
 
     public static function getDiscountPercentage($productId)
@@ -187,12 +213,12 @@ class Discount extends Model
         }
 
         $result = ['discount_percentage' => $highestDiscount->discount_percentage];
-    
+
         if (!in_array($highestDiscount->scope, ['product', 'category'])) {
             $result['discount_percentage'] = 0;
             $result['max_discount_amount'] = 0;
         }
-    
+
         return $result;
     }
 
