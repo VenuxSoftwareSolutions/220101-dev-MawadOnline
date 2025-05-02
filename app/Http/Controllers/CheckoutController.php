@@ -65,6 +65,7 @@ class CheckoutController extends Controller
                 return (new $decorator())->pay($request);
             } else {
                 $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
+
                 $manual_payment_data = [
                     'name' => $request->payment_option,
                     'amount' => $combined_order->grand_total,
@@ -296,6 +297,7 @@ class CheckoutController extends Controller
 
         $total = 0;
         $tax = 0;
+        $ordersDiscounts = [];
         $shipping = 0;
         $subtotal = 0;
 
@@ -304,7 +306,10 @@ class CheckoutController extends Controller
                 $product = Product::find($cart['product_id']);
                 $shipper = $request["shipping_method_{$product->id}"];
                 $tax += cart_product_tax($cart, $product, false) * $cart['quantity'];
-                $subtotal += cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                $localSubTotal = cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                $subtotal += $localSubTotal;
 
                 if (
                     get_setting('shipping_type') != 'carrier_wise_shipping' ||
@@ -332,7 +337,13 @@ class CheckoutController extends Controller
                 $cart->save();
             }
 
-            $total = $subtotal + $tax + $shipping;
+            $ordersDiscounts = $this->getOrdersDiscountsFromCarts($carts);
+
+            $total = $subtotal + $tax + $shipping - array_sum($ordersDiscounts);
+
+            if (array_sum($ordersDiscounts) !== 0) {
+                $request->session()->put("orderTotal", $total);
+            }
 
             $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
                 ->count() > 0;
@@ -343,7 +354,8 @@ class CheckoutController extends Controller
                     'carts',
                     'shipping_info',
                     'total',
-                    'isCheckoutSessionTimeoutExpires'
+                    'isCheckoutSessionTimeoutExpires',
+                    'ordersDiscounts'
                 )
             );
         } else {
@@ -495,5 +507,41 @@ class CheckoutController extends Controller
     public function cancelCheckout($combined_order_id)
     {
         return (new OrderController())->deleteOrderIfPaymentFail($combined_order_id);
+    }
+
+    public function getOrdersDiscountsFromCarts($carts)
+    {
+        $ordersDiscounts = [];
+        $localCarts = $carts;
+        $subtotal = 0;
+
+        try {
+            if ($localCarts && count($localCarts) > 0) {
+                $ordersDiscounts = $localCarts->pluck("owner_id")->unique()->mapWithKeys(fn ($ownerId) => [$ownerId => 0])->toArray();
+                $subTotalByVendor = $localCarts->pluck("owner_id")->unique()->mapWithKeys(fn ($ownerId) => [$ownerId => 0])->toArray();
+
+                foreach ($localCarts as $key => $cart) {
+                    $product = Product::find($cart['product_id']);
+
+                    $localSubTotal = cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                    $subtotal += $localSubTotal;
+                    $subTotalByVendor[$cart->owner_id] += $localSubTotal;
+                }
+
+                foreach ($subTotalByVendor as $key => $subTotal) {
+                    if (
+                        array_key_exists($key, $ordersDiscounts) === true
+                    ) {
+                        $ordersDiscounts[$key] = getOrdersDiscount($subTotal, $key);
+                    }
+                }
+            }
+
+            return $ordersDiscounts;
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discounts from carts, with message: {$e->getMessage()}");
+            return $ordersDiscounts;
+        }
     }
 }
