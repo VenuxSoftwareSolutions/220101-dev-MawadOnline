@@ -2,103 +2,34 @@
 
 <style>
     #password-strength {
-     margin-top: 10px;
-    /* padding: 10px; */
-    /* border: 1px solid #ddd; */
-     border-radius: 5px;
+        margin-top: 10px;
+        /* padding: 10px; */
+        /* border: 1px solid #ddd; */
+        border-radius: 5px;
     }
 
-#password-strength p {
-    margin: 5px 0;
-}
+    #password-strength p {
+        margin: 5px 0;
+    }
 
-#password-strength.valid {
-    border-color: #4caf50;
-    background-color: #dff0d8;
-}
+    #password-strength.valid {
+        border-color: #4caf50;
+        background-color: #dff0d8;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #999;
+    }
 </style>
 
 
 @section('content')
-<script src="https://www.google.com/recaptcha/api.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
 
-<script>
-    var $passwordCheckedCondition=false ;
-    function onSubmit(token) {
-
-        $('.login_btn').hide();
-        $('.loading_btn').show();
-
-        // Get email and password values
-        var email = $('#login_form input[name="email"]').val();
-        var password = $('#login_form input[name="password"]').val();
-        var passwordConfirmation = $('#login_form input[name="password_confirmation"]').val();
-        var code = $('#login_form input[name="code"]').val();
-
-        // Validate email and password
-         // Validate email and password
-         if (!email || !code || !password || !passwordConfirmation) {
-            // If email or password is empty, display an error message
-            $('#error_message').text('Email, code, password, and password confirmation are required.').show();
-            $('.login_btn').show();
-            $('.loading_btn').hide();
-            return; // Stop further execution
-        } else if (password !== passwordConfirmation) {
-            // If password and password confirmation do not match, display an error message
-            $('#error_message').text('Password and password confirmation do not match.').show();
-            $('.login_btn').show();
-            $('.loading_btn').hide();
-            return; // Stop further execution
-        } else if (!passwordCheckedCondition) {
-        // If passwordCheckedCondition is false, display an error message
-        $('#error_message').text('Please check all conditions.').show();
-        $('.login_btn').show();
-        $('.loading_btn').hide();
-        return; // Stop further execution
-        }
-    else {
-            // If all fields are filled and passwords match, hide the error message
-            $('#error_message').hide();
-        }
-        // Construct the URL dynamically
-        var url = '{{ route("generateSalt", ["email" => ":email"]) }}';
-        url = url.replace(':email', email);
-        // Perform AJAX request
-        $.ajax({
-            type: 'GET',
-            url: url,
-            headers: {
-                'Platform-key': '{{ Config('app.system_key') }}',
-                'mobile-version': '{{ Config('api.mobile_version') }}',
-            },
-            success: function(response) {
-                var hashedPassword = hashPass(email, $('#password').val(), response.salt, response.num_hashing_rounds);
-                $('#password').val(hashedPassword);
-                $('#password-confirm').val(hashedPassword);
-
-                document.getElementById("login_form").submit();
-
-            },
-            error: function(xhr, status, error) {
-                // Handle errors
-                console.error('Error submitting form:', error);
-                // Optionally, you can show an error message to the user
-            }
-        });
-    }
-
-    function hashPass(username, password, salt, rounds) {
-        let hash = username;
-        for (var i = 0; i < rounds; i++) {
-            hash = password + salt + hash;
-            hash = sha3_512(hash);
-        }
-        return hash;
-    }
-
-
-</script>
     <!-- aiz-main-wrapper -->
     <div class="aiz-main-wrapper d-flex flex-column justify-content-md-center bg-white">
         <section class="bg-white overflow-hidden">
@@ -108,25 +39,30 @@
                         <div class="row no-gutters">
                             <!-- Left Side Image-->
                             <div class="col-lg-6">
-                                <img src="{{ uploaded_asset(get_setting('password_reset_page_image')) }}" alt="{{ translate('Password Reset Page Image') }}" class="img-fit h-100">
+                                <img src="{{ uploaded_asset(get_setting('password_reset_page_image')) }}"
+                                    alt="{{ translate('Password Reset Page Image') }}" class="img-fit h-100">
                             </div>
 
-                            <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center border right-content" style="height: auto;">
+                            <div class="col-lg-6 p-4 p-lg-5 d-flex flex-column justify-content-center border right-content"
+                                style="height: auto;">
                                 <!-- Site Icon -->
                                 <div class="size-48px mb-3 mx-auto mx-lg-0">
-                                    <img src="{{ uploaded_asset(get_setting('site_icon')) }}" alt="{{ translate('Site Icon')}}" class="img-fit h-100">
+                                    <img src="{{ uploaded_asset(get_setting('site_icon')) }}"
+                                        alt="{{ translate('Site Icon')}}" class="img-fit h-100">
                                 </div>
 
                                 <!-- Titles -->
                                 <div class="text-center text-lg-left">
-                                    <h1 class="fs-20 fs-md-20 fw-700 text-primary" style="text-transform: uppercase;">{{ translate('Reset Password') }}</h1>
+                                    <h1 class="fs-20 fs-md-20 fw-700 text-primary" style="text-transform: uppercase;">
+                                        {{ translate('Reset Password') }}
+                                    </h1>
                                     <h5 class="fs-14 fw-400 text-dark">
                                         {{ translate('Enter your email address and new password and confirm password.') }}
                                     </h5>
                                 </div>
                                 <div id="error_message" class="text-danger mb-3" style="display: none;"></div>
                                 @if(session('success'))
-                                <div class="alert alert-success">
+                                    <div class="alert alert-success">
                                         {{ session('success') }}
                                     </div>
                                 @endif
@@ -156,12 +92,18 @@
                                 <!-- Reset password form -->
                                 <div class="pt-3">
                                     <div class="">
-                                        <form class="form-default" id="login_form" role="form" action="{{ route('password.update') }}" method="POST">
+                                        <form class="form-default" id="login_form" role="form"
+                                            action="{{ route('password.update') }}" method="POST">
                                             @csrf
 
                                             <!-- Email -->
                                             <div class="form-group">
-                                                <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ $email ?? old('email') }}" placeholder="{{ translate('Email') }}" required autofocus>
+                                                <label for="email"
+                                                    class="fs-12 fw-700 text-soft-dark">{{ translate('Email') }}</label>
+                                                <input id="email" type="email" class="form-control" name="email_display"
+                                                    value="{{ $email ?? old('email') }}" disabled>
+
+                                                <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
 
                                                 @if ($errors->has('email'))
                                                     <span class="invalid-feedback" role="alert">
@@ -170,9 +112,14 @@
                                                 @endif
                                             </div>
 
+
                                             <!-- Code -->
                                             <div class="form-group">
-                                                <input id="code" type="text" class="form-control{{ $errors->has('code') ? ' is-invalid' : '' }}" name="code" value="{{ $email ?? old('code') }}" placeholder="{{translate('Code')}}" required autofocus>
+                                                <input id="code" type="text"
+                                                    class="form-control{{ $errors->has('code') ? ' is-invalid' : '' }}"
+                                                    name="code" value="{{  old('code') }}"
+                                                    placeholder="{{translate('Code ( Sent to Your email ) ')}}" required
+                                                    autofocus>
 
                                                 @if ($errors->has('code'))
                                                     <span class="invalid-feedback" role="alert">
@@ -180,32 +127,102 @@
                                                     </span>
                                                 @endif
                                             </div>
+                                            <div class="form-group ">
+                                                <label for="password">
+                                                    <b>{{ translate('New Password') }} <span
+                                                            class="text-primary">*</span></b>
+                                                </label>
+                                                <div class="position-relative">
 
-                                            <!-- Password -->
-                                            <div class="form-group">
-                                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" placeholder="{{ translate('New Password') }}" required>
-                                                <div id="password-strength"></div>
+                                                    <input type="password" id="password" name="password"
+                                                        class="form-control rounded-0" autocomplete="off" required
+                                                        placeholder="{{ translate('New Password') }}">
 
-                                                @if ($errors->has('password'))
-                                                    <span class="invalid-feedback" role="alert">
-                                                        <strong>{{ $errors->first('password') }}</strong>
-                                                    </span>
-                                                @endif
+                                                    <i class="password-toggle las la-2x la-eye"></i>
+                                                </div>
+
+                                                <div id="password-strength" class="mt-2">
+                                                    <div class="progress" style="height: 8px;">
+                                                        <div id="strength-bar" class="progress-bar" role="progressbar"
+                                                            style="width: 0%;" aria-valuemin="0" aria-valuemax="100">
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="dict-loader" class="small text-muted mt-1">
+                                                        <i class="las la-spinner la-pulse"></i> Loading dictionary…
+                                                    </div>
+
+                                                    <ul id="password-criteria" class="row list-unstyled mt-2"
+                                                        style="padding-left: 0">
+                                                        <li class="col-6 mb-1" data-rule="length">
+                                                            <span class="text-danger">✘</span> Minimum 8 characters
+                                                        </li>
+                                                        {{-- <li class="col-6 mb-1" data-rule="uppercase">
+                                                            <span class="text-danger">✘</span> At least one uppercase
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="lowercase">
+                                                            <span class="text-danger">✘</span> At least one lowercase
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="number">
+                                                            <span class="text-danger">✘</span> At least one number
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="special">
+                                                            <span class="text-danger">✘</span> At least one special
+                                                        </li> --}}
+                                                        <li class="col-6 mb-1" data-rule="allowedChars">
+                                                            <span class="text-danger">✘</span> Only letters, numbers,
+                                                            signs
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="maxNumbers">
+                                                            <span class="text-danger">✘</span> No more than 3 numbers
+                                                        </li>
+
+                                                        <li class="col-6 mb-1" data-rule="noSeqNum">
+                                                            <span class="text-danger">✘</span> No 3 consecutive numbers
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="noSeqChar">
+                                                            <span class="text-danger">✘</span> No 3 consecutive letters
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="maxCategory">
+                                                            <span class="text-danger">✘</span> No letter, number, or
+                                                            symbol may appear more than three times.
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="noNameEmail">
+                                                            <span class="text-danger">✘</span> No part of name, email or
+                                                            personal information.
+                                                        </li>
+                                                        <li class="col-6 mb-1" data-rule="noDict">
+                                                            <span class="text-danger">✘</span> No vocabularies.
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
 
-                                            <!-- Password Confirmation-->
 
+                                            <!-- Password Confirmation-->
                                             <div class="form-group">
-                                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="{{ translate('Reset Password') }}" required>
+                                                <label for="password_confirmation"><b>{{ translate('Repeat Password') }}</b>
+                                                    <span class="text-primary">*</span></label>
+                                                <div class="position-relative">
+                                                    <input type="password" id="password-confirm"
+                                                        name="password_confirmation" class="form-control rounded-0" required
+                                                        placeholder="{{ translate('Repeat Password') }}" required>
+                                                    <i class="password-toggle las la-2x la-eye"
+                                                        data-target="#password-confirm"></i>
+                                                </div>
+
                                             </div>
 
                                             <!-- Submit Button -->
                                             <div class="mb-4 mt-4">
 
-                                                <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}" data-callback="onSubmit" data-action="submitLoginForm" class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">
+                                                <button data-sitekey="{{ config('services.recaptcha_v3.siteKey') }}"
+                                                    data-callback="onSubmit" data-action="submitLoginForm"
+                                                    class="g-recaptcha btn btn-primary btn-block fw-700 fs-14 rounded-0">
                                                     <span class="login_btn">{{ translate('Reset Password') }}</span>
                                                     <div class="loading_btn" style="display: none;">
-                                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                        <span class="spinner-border spinner-border-sm" role="status"
+                                                            aria-hidden="true"></span>
                                                         <span class="visually-hidden">Loading...</span>
                                                     </div>
                                                 </button>
@@ -217,7 +234,9 @@
                         </div>
                         <!-- Go Back -->
                         <div class="mt-3 mr-4 mr-md-0">
-                            <a href="{{ url()->previous() }}" class="ml-auto fs-14 fw-700 d-flex align-items-center text-primary" style="max-width: fit-content;">
+                            <a href="{{ url()->previous() }}"
+                                class="ml-auto fs-14 fw-700 d-flex align-items-center text-primary"
+                                style="max-width: fit-content;">
                                 <i class="las la-arrow-left fs-20 mr-1"></i>
                                 {{ translate('Back to Previous Page')}}
                             </a>
@@ -229,153 +248,214 @@
     </div>
 @endsection
 @section('script')
-<script type="text/javascript">
-    $(document).ready(function() {
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
+    <script>
+        function onSubmit(token) {
 
-        $('#password').on('input', function() {
+            $('.login_btn').hide();
+            $('.loading_btn').show();
 
-            $('#password-strength').css('border', '1px solid #ddd');
-            $('#password-strength').css('padding', '10px');
+            // Get email and password values
 
-            var password = $(this).val();
-            var strengthMeter = $('#password-strength');
+            var $passwordCheckedCondition = false;
+            var email = $('#login_form input[name="email"]').val();
+            var password = $('#login_form input[name="password"]').val();
+            var passwordConfirmation = $('#login_form input[name="password_confirmation"]').val();
+            var code = $('#login_form input[name="code"]').val();
 
-            var patterns = [
-                'abc', 'bcd', 'cde', 'def', 'efg', 'fgh', 'ghi', 'hij', 'ijk', 'jkl',
-                'klm', 'lmn', 'mno', 'nop', 'opq', 'pqr', 'qrs', 'rst', 'stu', 'tuv',
-                'uvw', 'vwx', 'wxy', 'xyz'
-            ];
-
-            var patternRegex = new RegExp(patterns.join('|') + '|' + patterns.map(function(pattern) {
-                return pattern.split('').reverse().join('');
-            }).join('|'), 'i');
-
-            // Function to calculate the percentage of repeated characters in the password
-            function calculateRepeatedCharacterPercentage(password) {
-                var characterCount = {};
-                for (var i = 0; i < password.length; i++) {
-                    var char = password[i];
-                    characterCount[char] = (characterCount[char] || 0) + 1;
-                }
-
-                var repeatedCount = 0;
-                for (var char in characterCount) {
-                    if (characterCount[char] > 1) {
-                        repeatedCount += characterCount[char];
-                    }
-                }
-
-                return (repeatedCount / password.length) * 100;
+            // Validate email and password
+            if (!email || !code || !password || !passwordConfirmation) {
+                // If email or password is empty, display an error message
+                $('#error_message').text('Email, code, password, and password confirmation are required.').show();
+                $('.login_btn').show();
+                $('.loading_btn').hide();
+                return; // Stop further execution
+            } else if (password !== passwordConfirmation) {
+                // If password and password confirmation do not match, display an error message
+                $('#error_message').text('Password and password confirmation do not match.').show();
+                $('.login_btn').show();
+                $('.loading_btn').hide();
+                return; // Stop further execution
+            }
+            if (!validatePasswordStrength(password)) {
+                $('#error_message').text('Password does not meet the required strength criteria.').show();
+                $('.login_btn').show();
+                $('.loading_btn').hide();
+                return;
             }
 
-            var repeatedCharacterPercentage = calculateRepeatedCharacterPercentage(password);
+            // If all fields are filled and passwords match, hide the error message
+            $('#error_message').hide();
 
-            // Password strength rules
-            var rules = {
-                "{{ translate('Minimum length of 9 characters') }}": password.length >= 9,
-                "{{ translate('At least one uppercase letter') }}": /[A-Z]/.test(password),
-                "{{ translate('At least one lowercase letter') }}": /[a-z]/.test(password),
-                // "At least one number": /\d/.test(password),
-                "{{ translate('At least one special character') }}": /[@#-+/=$!%*?&]/.test(password),
-                "{{ translate('At least one number and Max Four Numbers') }}": /^\D*(\d\D*){1,4}$/.test(
-                    password),
-                // maxConsecutiveChars: !/(.)\1\1/.test(password),
-                // maxPercentage: calculateMaxPercentage(password),
-                "{{ translate('No spaces allowed') }}": !/\s/.test(password),
-                "{{ translate('No three consecutive numbers, Example 678,543,789,987') }}": !
-                    /(012|123|234|345|456|567|678|789|987|876|765|654|543|432|321|210)/.test(password),
-                // "{{ translate('No three characters or more can be a substring of first name, last name, or email') }}":
-                //     !
-                //     checkSubstring(password),
-                "{{ translate('No three consecutive characters or their reverses in the same case are allowed, Example efg,ZYX,LMN,cba') }}":
-                    !patternRegex.test(password),
-                "{{ translate('No more than 40% of repeated characters') }}": repeatedCharacterPercentage <=
-                    40,
-                "{{ translate('No substring of the password can be a common English dictionary word') }}": !containsDictionaryWord(password, dictionaryWords),
+            // Construct the URL dynamically
+            var url = '{{ route("generateSalt", ["email" => ":email"]) }}';
+            url = url.replace(':email', email);
+            const fallbackTimeout = setTimeout(() => {
+                $('.login_btn').show();
+                $('.loading_btn').hide();
+                $('#error_message').text('Request timed out. Please try again.').show();
+            }, 10000);
+
+
+            // Perform AJAX request
+            $.ajax({
+                type: 'GET',
+                url: url,
+                headers: {
+                    'Platform-key': '{{ Config('app.system_key') }}',
+                    'mobile-version': '{{ Config('api.mobile_version') }}',
+                },
+                success: function (response) {
+                    clearTimeout(fallbackTimeout);
+                    try {
+                        const hashedPassword = hashPass(email, password, response.salt, response.num_hashing_rounds);
+
+                        $('#password').val(hashedPassword);
+                        $('#password-confirm').val(hashedPassword);
+
+                        document.getElementById("login_form").submit();
+                    } catch (e) {
+                        console.error('Form submission error:', e);
+                        $('#error_message').text('Something went wrong during form submission.').show();
+                        $('.login_btn').show();
+                        $('.loading_btn').hide();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    clearTimeout(fallbackTimeout); // cancel fallback
+                    console.error('Error submitting form:', error);
+                    $('#error_message').text('Server error while verifying credentials. Please try again.').show();
+                    $('.login_btn').show();
+                    $('.loading_btn').hide();
+                }
+            });
+        }
+
+        function hashPass(username, password, salt, rounds) {
+            let hash = username;
+            for (var i = 0; i < rounds; i++) {
+                hash = password + salt + hash;
+                hash = sha3_512(hash);
+            }
+            return hash;
+        }
+
+        $(document).ready(function () {
+
+            const $password = $('#password');
+            const $bar = $('#strength-bar');
+            const $criteria = $('#password-criteria li');
+            let dictionary = [];
+            $.getJSON("{{ route('get.words') }}")
+                .done(words => {
+                    dictionary = words.filter(w => w.length >= 3);
+                })
+                .always(() => {
+                    $('#dict-loader').hide();
+                });
+
+
+            const rules = {
+
+                length: (val) => val.length >= 8,
+
+                /*                 uppercase: (val) => /[A-Z]/.test(val),
+                                lowercase: (val) => /[a-z]/.test(val),
+                                number: (val) => /\d/.test(val),
+                                special: (val) => /[@#\-+/=$!%*?&]/.test(val),
+                 */
+                allowedChars: v => /^[A-Za-z0-9@#\-+\/=$!%*?&]+$/.test(v),
+                maxNumbers: v => (v.match(/\d/g) || []).length <= 3,
+                noSeqNum: val => {
+                    for (let i = 0; i + 2 < val.length; i++) {
+                        const a = +val[i], b = +val[i + 1], c = +val[i + 2];
+                        if (!isNaN(a) && !isNaN(b) && !isNaN(c)) {
+                            if ((b - a === 1 && c - b === 1) || (a - b === 1 && b - c === 1)) return false;
+                        }
+                    }
+                    return true;
+                },
+                noSeqChar: val => {
+                    for (let i = 0; i + 2 < val.length; i++) {
+                        const a = val.charCodeAt(i), b = val.charCodeAt(i + 1), c = val.charCodeAt(i + 2);
+                        const sa = val[i], sb = val[i + 1], sc = val[i + 2];
+                        const sameCase = (sa === sa.toLowerCase() && sb === sb.toLowerCase() && sc === sc.toLowerCase())
+                            || (sa === sa.toUpperCase() && sb === sb.toUpperCase() && sc === sc.toUpperCase());
+                        if (sameCase && ((b - a === 1 && c - b === 1) || (a - b === 1 && b - c === 1))) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                maxCategory: v => {
+                    const counts = {};
+                    for (let ch of v) {
+                        counts[ch] = (counts[ch] || 0) + 1;
+                        if (counts[ch] > 3) return false;
+                    }
+                    return true;
+                },
+
+                noNameEmail: val => {
+                    const target = val.toLowerCase();
+                    const emailField = $('#email');
+                    const emailVal = emailField.length ? emailField.val().toLowerCase() : '';
+                    const sources = [emailVal];
+
+                    return sources.every(str => {
+                        for (let L = 3; L <= str.length; L++) {
+                            for (let i = 0; i + L <= str.length; i++) {
+                                if (target.includes(str.substr(i, L))) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    });
+                },
+
+                noDict: v => {
+                    const lowerV = v.toLowerCase();
+                    return !dictionary.some(w => lowerV.includes(w));
+                }
 
 
             };
+            window.validatePasswordStrength = function (password) {
+                return Object.values(rules).every(rule => rule(password));
+            };
 
-            // Display password strength rules
-            var strengthText = '';
-            for (var rule in rules) {
-                if (rules.hasOwnProperty(rule)) {
-                    strengthText += '<p>' + rule + ': ' + (rules[rule] ? '✔' : '✘') + '</p>';
+            $password.on('input', function () {
+                const val = $(this).val();
+                let passed = 0;
+
+                // Evaluate each rule
+                $criteria.each(function () {
+                    const rule = $(this).data('rule');
+                    const valid = rules[rule](val);
+                    $(this).find('span')
+                        .text(valid ? '✔' : '✘')
+                        .toggleClass('text-danger', !valid)
+                        .toggleClass('text-success', valid);
+                    if (valid) passed++;
+                });
+
+                // Update progress bar
+                const strength = (passed / Object.keys(rules).length) * 100;
+                $bar.css('width', strength + '%');
+
+                if (strength <= 40) {
+                    $bar.removeClass().addClass('progress-bar bg-danger');
+                } else if (strength < 80) {
+                    $bar.removeClass().addClass('progress-bar bg-warning');
+                } else {
+                    $bar.removeClass().addClass('progress-bar bg-success');
                 }
-            }
+            });
 
-            // Update UI
-            strengthMeter.html(strengthText);
-
-            // Check if all rules are satisfied
-            var isPasswordValid = Object.values(rules).every(Boolean);
-
-            // Apply visual feedback
-            if (isPasswordValid) {
-                strengthMeter.addClass('valid');
-                passwordCheckedCondition = true ;
-            } else {
-                strengthMeter.removeClass('valid');
-                passwordCheckedCondition = false ;
-            }
 
         });
 
-        // No substring of the password can be a common English dictionary word
-
-        let dictionaryWords=[] ;
-
-                $.ajax({
-            url: '{{route("get.words")}}', // Make sure this URL matches your Laravel route
-            method: 'GET',
-            success: function(data) {
-                dictionaryWords = data;
-            },
-            error: function(error) {
-                console.error("Error fetching dictionary words", error);
-            }
-        });
-
-        function containsDictionaryWord(password,dictionaryWords) {
-            for(let word of dictionaryWords) {
-                if(password.toLowerCase().includes(word.toLowerCase())){
-                        return true ;
-                }
-            }
-            return false ;
-        }
-
-        function calculateMaxPercentage(password) {
-            // Calculate the percentage of lowercase, uppercase, numbers, and special characters
-            var lowercasePercentage = (password.replace(/[^a-z]/g, '').length / password.length) * 100;
-            var uppercasePercentage = (password.replace(/[^A-Z]/g, '').length / password.length) * 100;
-            var numberPercentage = (password.replace(/[^0-9]/g, '').length / password.length) * 100;
-            var specialCharPercentage = (password.replace(/[^@$!%*?&]/g, '').length / password.length) * 100;
-
-            // Return the maximum percentage
-            return Math.max(lowercasePercentage, uppercasePercentage, numberPercentage, specialCharPercentage);
-        }
-
-        // function checkSubstring(password) {
-        //     // Check if the password contains a substring of the first name, last name, or email with a length of 3 or more characters
-        //     var firstName = $('#first_name').val().toLowerCase();
-        //     var lastName = $('#last_name').val().toLowerCase();
-        //     var email = $('#email').val().toLowerCase();
-
-        //     // Combine the first name, last name, and email into a single string
-        //     var combinedStrings = firstName + lastName + email;
-
-        //     // Check if any substring of length 3 or more exists in the password
-        //     for (var i = 0; i < combinedStrings.length - 2; i++) {
-        //         var substring = combinedStrings.substring(i, i + 3).toLowerCase();
-        //         if (password.toLowerCase().includes(substring)) {
-        //             return true;
-        //         }
-        //     }
-
-        //     return false;
-        // }
-
-    })
-</script>
+    </script>
 @endsection
