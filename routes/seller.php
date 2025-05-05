@@ -114,6 +114,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         ->name('bulk.jobs.download_product_file');
    Route::get('/{id}/download-error-file',   [BulkJobController::class, 'downloadErrorFile'])
         ->name('bulk.jobs.download_error_file');
+        Route::get('/{id}/progress', [BulkJobController::class, 'getProgress'])
+        ->name('bulk.jobs.progress');
+
 
     });
     

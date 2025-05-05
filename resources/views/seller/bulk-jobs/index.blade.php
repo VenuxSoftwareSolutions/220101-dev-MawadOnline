@@ -127,23 +127,30 @@
                                         @endswitch
                                     </span>
                                 </td>
-                    
                                 <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar 
-                                            @if($job->progress == 100) bg-success
-                                            @elseif($job->progress > 75) bg-info
-                                            @elseif($job->progress > 50) bg-primary
-                                            @else bg-warning @endif" 
-                                            role="progressbar" 
-                                            style="width: {{ $job->progress }}%; min-width: 2em;"
-                                            aria-valuenow="{{ $job->progress }}" 
-                                            aria-valuemin="0" 
-                                            aria-valuemax="100">
-                                            {{ $job->progress }}%
-                                        </div>
+                                    <div class="progress w-100" style="height: 20px;">
+                                      <div
+                                        id="progress-bar-{{ $job->id }}"
+                                        class="progress-bar {{ $job->progress == 100
+                                             ? 'bg-success'
+                                             : ($job->progress > 75
+                                                ? 'bg-info'
+                                                : ($job->progress > 50
+                                                   ? 'bg-primary'
+                                                   : 'bg-warning')) }}"
+                                        role="progressbar"
+                                        style="width: {{ $job->progress }}%; min-width: 2em;"
+                                        aria-valuenow="{{ $job->progress }}"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        data-progress-url="{{ route('seller.bulk.jobs.progress', $job->id) }}"
+                                      >
+                                        {{ $job->progress }}%
+                                      </div>
                                     </div>
-                                </td>
+                                  </td>
+                                  
+                            
                     
                                 <td>
                                     @if($job->error_msg)
@@ -210,4 +217,46 @@
             </div>
         </div>
 
+@endsection
+@section('script')
+    <script type="text/javascript">
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = Array.from(
+                document.querySelectorAll('[id^="progress-bar-"]')
+            );
+
+            function refreshBar(el) {
+                const url = el.dataset.progressUrl;
+                if (!url) return;
+
+                fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => {
+                    if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+                    return res.json();
+                })
+                .then(json => {
+                    const p = parseInt(json.progress, 10);
+                    if (isNaN(p)) return;
+
+                    el.style.setProperty('width', p + '%', 'important');
+
+                    el.textContent = p + '%';
+
+                    el.setAttribute('aria-valuenow', p);
+
+                    el.classList.remove('bg-success','bg-info','bg-primary','bg-warning');
+                    if      (p === 100) el.classList.add('bg-success');
+                    else if (p > 75)    el.classList.add('bg-info');
+                    else if (p > 50)    el.classList.add('bg-primary');
+                    else                el.classList.add('bg-warning');
+                })
+                .catch(err => console.error('refreshBar error for', url, err));
+            }
+
+            bars.forEach(refreshBar);
+            setInterval(() => bars.forEach(refreshBar), 60_000);
+        });
+
+    </script>
 @endsection

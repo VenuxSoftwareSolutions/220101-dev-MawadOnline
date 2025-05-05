@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\BuJob; // You'll need to create this model
+use App\Models\BuJob; 
+use Illuminate\Http\JsonResponse;
 
 class BulkJobController extends Controller
 {
@@ -100,5 +101,18 @@ class BulkJobController extends Controller
 
         return Storage::disk('mwd_storage')->download($path);
     }
+        /**
+     * Return just the progress % for a single job.
+     */
+    public function getProgress($id): JsonResponse
+    {
+        $job = BuJob::where('vendor_user_id', 337)
+                    ->findOrFail($id);
+
+        return response()->json([
+            'progress' => (int) $job->progress,
+        ]);
+    }
+
 
 }
