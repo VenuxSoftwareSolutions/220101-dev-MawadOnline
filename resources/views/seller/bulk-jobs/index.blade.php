@@ -92,15 +92,19 @@
                                 <td class="text-monospace">{{ \Illuminate\Support\Str::substr($job->id, 0, 8) }}...{{\Illuminate\Support\Str::substr($job->id, -4) }}</td>
                     
                                 <td>
-                                    @if($job->vendor_products_file)  
-                                        <a 
-                                           class="text-reset" download>
-                                            {{ basename($job->vendor_products_file) }}  
-                                        </a>
+                                    @if($job->vendor_products_file)
+                                      <a href="{{ route('seller.bulk.jobs.download_product_file', $job->id) }}"
+                                         class="text-reset"
+                                         download>
+                                        {{ basename($job->vendor_products_file) }}
+                                      </a>
                                     @else
-                                        -
+                                      -
                                     @endif
-                                </td>
+                                  </td>
+                                  
+                           
+                                  
                                 <td>{{ $job->total_rows }}</td>  
                                 <td>{{ $job->created_at->format('d M Y H:i') }}</td>  
                                 <td>
@@ -150,14 +154,15 @@
                                 </td>
                                 <td>
                                     @if($job->error_file)
-                                        <a  
-                                           class="text-reset" download>
-                                            {{ translate('Download Error File') }}
-                                        </a>
+                                      <a href="{{ route('seller.bulk.jobs.download_error_file', $job->id) }}"
+                                         class="text-reset"
+                                         download>
+                                        {{ translate('Download Error File') }}
+                                      </a>
                                     @else
-                                        -
+                                      -
                                     @endif
-                                </td>
+                                  </td>
                                 <td class="text-right remove-top-padding">
                                     <a href="#" class="btn btn-sm confirm-delete" 
                                        {{-- data-href="{{ route('bulk.jobs.destroy', $job->id) }}"   --}}

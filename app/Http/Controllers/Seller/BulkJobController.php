@@ -76,23 +76,29 @@ class BulkJobController extends Controller
 
     public function downloadProductFile($id)
     {
-        $job = BuJob::where('vendor_user_id', 336)->findOrFail($id);
-        
-        if (!$job->vendor_products_file || !Storage::exists($job->vendor_products_file)) {
-            abort(404);
+        $job = BuJob::where('vendor_user_id', auth()->id())
+                    ->findOrFail($id);
+
+        $path = $job->vendor_products_file;
+        if (! $path || ! Storage::disk('mwd_storage')->exists($path)) {
+            abort(404, 'File not found.');
         }
 
-        return Storage::download($job->vendor_products_file);
+        return Storage::disk('mwd_storage')->download($path);
     }
+
 
     public function downloadErrorFile($id)
     {
-        $job = BuJob::where('vendor_user_id', 336)->findOrFail($id);
-        
-        if (!$job->error_file || !Storage::exists($job->error_file)) {
-            abort(404);
+        $job = BuJob::where('vendor_user_id', auth()->id())
+                    ->findOrFail($id);
+
+        $path = $job->error_file;
+        if (! $path || ! Storage::disk('mwd_storage')->exists($path)) {
+            abort(404, 'File not found.');
         }
 
-        return Storage::download($job->error_file);
+        return Storage::disk('mwd_storage')->download($path);
     }
+
 }
