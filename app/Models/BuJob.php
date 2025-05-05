@@ -10,13 +10,16 @@ class BuJob extends Model
     use HasFactory;
 
     protected $table = 'bu_jobs';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'vendor_user_id',
-        'vendor_org_file',
+        'vendor_products_file',
         'preprocessed_file',
+        'ai_processed_file',
         'total_rows',
         'images_base_folder',
         'images_base_folder_final_url',
@@ -26,11 +29,20 @@ class BuJob extends Model
         'docs_base_folder_host',
         'vendor_product_shipping',
         'mwd3p_product_shipping',
+        'product_discount',
         'stage',
         'progress',
         'has_errors',
         'error_msg',
+        'error_file'
     ];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'has_errors' => 'boolean',
+    ];
+
+
 
     public function brands()
     {

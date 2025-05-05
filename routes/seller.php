@@ -108,10 +108,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
 
      //smart bu job tracking 
      Route::prefix('bulk-jobs')->group(function () {
-        Route::get('/history', [BulkJobController::class, 'index'])
-             ->name('bulk.jobs.history');
-        Route::get('/{id}', [BulkJobController::class, 'show'])
-             ->name('bulk.jobs.show');
+        Route::get('/history', [BulkJobController::class, 'index'])->name('bulk.jobs.history');
+        Route::get('/{id}', [BulkJobController::class, 'show'])->name('bulk.jobs.show');
+        Route::delete('/{id}', [BulkJobController::class, 'destroy'])->name('bulk.jobs.destroy'); 
     });
     
 
