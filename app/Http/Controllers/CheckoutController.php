@@ -480,7 +480,7 @@ class CheckoutController extends Controller
         } else {
             Log::info(
                 sprintf(
-                    "User % hasn't an email ! We can't send you an order confirmation email !",
+                    "User % hasn't an email ! We can't send him an order confirmation email !",
                     auth()->user()->name
                 )
             );
