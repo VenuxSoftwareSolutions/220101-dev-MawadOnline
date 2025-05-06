@@ -314,6 +314,12 @@ class OrderController extends Controller
                 $order->save();
             }
 
+            $orderTotal = request()->session()->get("orderTotal", null);
+
+            if (is_null($orderTotal) === false) {
+                $combined_order->grand_total = $orderTotal;
+            }
+
             $combined_order->save();
 
             $request->session()->put('combined_order_id', $combined_order->id);
