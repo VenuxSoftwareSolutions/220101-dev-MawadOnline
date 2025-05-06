@@ -3253,3 +3253,13 @@ if (function_exists("getOrdersDiscount") === false) {
         }
     }
 }
+
+if (function_exists("itemDiscountShare") === false) {
+    function itemDiscountShare($itemPrice, $vendorSubTotal = 0, $vendorDiscount = 0)
+    {
+        return roundUpToTwoDigits(
+            $vendorSubTotal > 0
+                ? ($itemPrice / $vendorSubTotal) * $vendorDiscount : 0
+        );
+    }
+}
