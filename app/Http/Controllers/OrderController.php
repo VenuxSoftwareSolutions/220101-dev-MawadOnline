@@ -173,14 +173,25 @@ class OrderController extends Controller
 
             $seller_products = [];
 
+            $subTotalByVendor = $carts->pluck("owner_id")
+                ->unique()
+                ->mapWithKeys(fn ($ownerId) => [$ownerId => 0])
+                ->toArray();
+
             foreach ($carts as $cartItem) {
                 $product_ids = [];
                 $product = Product::find($cartItem['product_id']);
+
                 if (isset($seller_products[$product->user_id])) {
                     $product_ids = $seller_products[$product->user_id];
                 }
+
                 array_push($product_ids, $cartItem);
                 $seller_products[$product->user_id] = $product_ids;
+
+                if (array_key_exists($product->user_id, $subTotalByVendor)) {
+                    $subTotalByVendor[$product->user_id] += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                }
             }
 
             foreach ($seller_products as $seller_product) {
@@ -223,7 +234,17 @@ class OrderController extends Controller
                     $order_detail->seller_id = $product->user_id;
                     $order_detail->product_id = $product->id;
                     $order_detail->variation = $product_variation;
-                    $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+
+                    $price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $discount_share = array_key_exists($product->user_id, $subTotalByVendor) === true ?
+                        itemDiscountShare(
+                            $price,
+                            $subTotalByVendor[$cartItem->owner_id],
+                            getOrdersDiscount($subTotalByVendor[$cartItem->owner_id], $cartItem->owner_id)
+                        ) : 0;
+                    $order_detail->price = $price;
+                    $order_detail->discount_share = $discount_share;
+
                     $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                     $order_detail->shipping_type = $cartItem['shipping_type'];
                     $order_detail->product_referral_code = $cartItem['product_referral_code'];
@@ -296,7 +317,7 @@ class OrderController extends Controller
             $combined_order->save();
 
             $request->session()->put('combined_order_id', $combined_order->id);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
             flash(translate("Something went wrong!"))->error();
             return redirect()->route("home");
