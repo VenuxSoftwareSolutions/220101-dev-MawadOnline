@@ -233,6 +233,34 @@
                                                                 class="fw-600">{{ single_price($order->orderDetails->sum('price')) }}</span>
                                                         </td>
                                                     </tr>
+                                                    @if(count($ordersDiscounts) > 0 && array_key_exists($order->seller_id, $ordersDiscounts))
+                                                        @php
+                                                            $localOrdersDiscounts = collect($ordersDiscounts)->filter(function($discount, $key) use($order) {
+                                                                return $key === $order->seller_id;
+                                                            })->toArray();
+                                                        @endphp
+                                                        <tr class="orders-discounts__clz">
+                                                            <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                                                                <a class="toggle-discounts mr-1" data-target=".ordersDiscountsDetails" href="#" data-toggle="collapse" aria-expanded="false" aria-controls="ordersDiscountsDetails">+</a>
+                                                                <span>{{ translate('Order discount') }}</span>
+                                                            </th>
+                                                            <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-dark border-top-0">
+                                                                <span class="fw-600">-{{ single_price(array_sum($localOrdersDiscounts)) }}</span>
+                                                            </td>
+                                                        </tr>
+                                                        @foreach($localOrdersDiscounts as $vendor_id => $discount)
+                                                            <tr class="collapse ordersDiscountsDetails">
+                                                                <th class="pl-3 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                                                                    <span>{{ get_shop_by_user_id($vendor_id)->name }}</span>
+                                                                </th>
+                                                                <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-dark border-top-0">
+                                                                  <div class="p-1">
+                                                                      -{{ single_price($discount) }}
+                                                                  </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
                                                     <!-- Shipping -->
                                                     <tr>
                                                         <th class="border-top-0 py-2">{{ translate('Shipping') }}</th>

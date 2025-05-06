@@ -343,6 +343,8 @@ class CheckoutController extends Controller
 
             if (array_sum($ordersDiscounts) !== 0) {
                 $request->session()->put("orderTotal", $total);
+
+                $request->session()->put("ordersDiscounts", $ordersDiscounts);
             }
 
             $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
@@ -495,13 +497,24 @@ class CheckoutController extends Controller
             )->warning();
         }
 
-        Cart::where('user_id', $combined_order->user_id)
-            ->delete();
+        $carts = Cart::where('user_id', $combined_order->user_id);
+
+        $ordersDiscounts = request()->session()->get("ordersDiscounts", []);
+
+        if (count($ordersDiscounts) === 0) {
+            $ordersDiscounts = $this->getOrdersDiscountsFromCarts($carts);
+        }
+
+        $carts->delete();
 
         $first_order = $combined_order->orders->first()->toArray();
         $first_order["shipping_address"] = json_decode($first_order["shipping_address"], true);
 
-        return view('frontend.order_confirmed', compact('combined_order', 'first_order'));
+        return view('frontend.order_confirmed', compact(
+            'combined_order',
+            'first_order',
+            'ordersDiscounts'
+        ));
     }
 
     public function cancelCheckout($combined_order_id)
