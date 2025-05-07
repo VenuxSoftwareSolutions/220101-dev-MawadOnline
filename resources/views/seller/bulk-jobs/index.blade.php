@@ -285,9 +285,7 @@ thead tr{
                     <p>{{translate('Do you really want to delete selected jobs?')}}</p>
                 </div>
                 <div class="modal-footer">
-                    <p class="text-sm text-muted">
-                        Bulk-delete will DELETE to: <code>{{ route('seller.bulk.jobs.bulkDestroy') }}</code>
-                    </p>
+                   
                 
                     <button type="button" class="btn btn-light" data-dismiss="modal">{{translate('Cancel')}}</button>
                     <form id="bulk-delete-form" method="POST" action="{{ route('seller.bulk.jobs.bulkDestroy') }}"

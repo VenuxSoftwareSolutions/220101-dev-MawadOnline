@@ -20,7 +20,7 @@ class BulkJobController extends Controller
 
     public function index(Request $request)
     {
-        $jobs = BuJob::where('vendor_user_id', 336)
+        $jobs = BuJob::where('vendor_user_id', auth()->id())
             ->when($request->search, function($query) use ($request) {
                 $query->where(function($q) use ($request) {
                     $q->where('id', 'like', '%'.$request->search.'%')
@@ -42,7 +42,7 @@ class BulkJobController extends Controller
     public function destroy($id)
     {
 
-        $job = BuJob::where('vendor_user_id', 336)->findOrFail($id);
+        $job = BuJob::where('vendor_user_id', auth()->id())->findOrFail($id);
     
         foreach (['vendor_products_file', 'preprocessed_file', 'ai_processed_file', 'error_file'] as $field) {
             if ($job->$field && Storage::disk('mwd_storage')->exists($job->$field)) {
@@ -109,7 +109,7 @@ class BulkJobController extends Controller
      */
     public function getProgress($id): JsonResponse
     {
-        $job = BuJob::where('vendor_user_id', 337)
+        $job = BuJob::where('vendor_user_id', auth()->id())
                     ->findOrFail($id);
 
         return response()->json([
