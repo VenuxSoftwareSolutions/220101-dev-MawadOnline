@@ -56,10 +56,10 @@ class BulkJobController extends Controller
     }
     
 
-    public function bulkDestroy(Request $request)
+    public function bulkDelete(Request $request)
     {
-        dd($request);
-
+       
+       
         $jobs = BuJob::where('vendor_user_id', 336)
                  ->whereIn('id', $request->job_ids)
                  ->get();
@@ -73,7 +73,8 @@ class BulkJobController extends Controller
             $job->delete();
         }
 
-    return redirect()->route('seller.bulk.jobs.history')->with('success', 'Selected jobs deleted successfully!');
+        return redirect()->route('seller.bulk.jobs.history')->with('success', 'Selected jobs deleted successfully!');
+    
     }
 
 

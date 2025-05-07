@@ -71,12 +71,11 @@ thead tr{
                         {{translate('Bulk Action')}}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
-                    <button type="button"  id="delete-selected-btn" data-toggle="modal" data-target="#confirm-bulk-delete-modal">
-
-                        <a class="dropdown-item confirm-alert" href="javascript:void(0)" 
-                          >{{translate('Delete selection')}}</a>
-
-                    </button>
+                        <button type="button" id="delete-selected-btn" data-toggle="modal" data-target="#confirm-bulk-delete-modal" class="dropdown-item">
+                          {{ translate('Delete selection') }}
+                        </button>
+                      </div>
+              
                     </div>
                 </div>
             </div>
@@ -265,8 +264,13 @@ thead tr{
                     <p>{{translate('Do you really want to delete selected jobs?')}}</p>
                 </div>
                 <div class="modal-footer">
+                    <p class="text-sm text-muted">
+                        Bulk-delete will DELETE to: <code>{{ route('seller.bulk.jobs.bulkDestroy') }}</code>
+                    </p>
+                
                     <button type="button" class="btn btn-light" data-dismiss="modal">{{translate('Cancel')}}</button>
-                    <form id="bulk-delete-form" method="POST" action="{{ route('seller.bulk.jobs.bulkDestroy') }}">
+                    <form id="bulk-delete-form" method="POST" action="{{ route('seller.bulk.jobs.bulkDestroy') }}"
+                    >
                         @csrf
                         @method('DELETE')
                     </form>                    
@@ -321,55 +325,68 @@ thead tr{
             bars.forEach(refreshBar);
             setInterval(() => bars.forEach(refreshBar), 60_000);
         });
-    let deleteUrl = null;
+        let deleteUrl = null;
 
-    $(document).on('click', '.confirm-delete', function (e) {
-        e.preventDefault();
-        deleteUrl = $(this).data('href');
-        console.log('Set delete URL:', deleteUrl);
-    });
+        $(document).on('click', '.confirm-delete', function (e) {
+            e.preventDefault();
+            deleteUrl = $(this).data('href');
+            console.log('Set delete URL:', deleteUrl);
+        });
 
-    $('#confirmation').on('click', function () {
-        console.log('Deleting from:', deleteUrl);
-        if (deleteUrl) {
-            const form = $('#delete-form');
-            form.attr('action', deleteUrl);
-            form.submit();
-        }
-    });
-    
-    $(document).ready(function () {
-    $('#delete-selected-btn').on('click', function () {
+        $('#confirmation').on('click', function () {
+            console.log('Deleting from:', deleteUrl);
+            if (deleteUrl) {
+                const form = $('#delete-form');
+                form.attr('action', deleteUrl);
+                form.submit();
+            }
+        });
         
-        const selectedIds = $('.job-checkbox:checked').map(function () {
-            return $(this).val();
-        }).get();
+        $(document).ready(function () {
+            
+            $(document).on('change', '.check-all', function() {
+                const checked = $(this).prop('checked');
+                $('.job-checkbox')
+                    .prop('checked', checked)
+                    .trigger('change');
+            });
 
-        if (selectedIds.length === 0) {
+            $('.job-checkbox').on('change', function(){
+                $('#delete-selected-btn').prop('disabled',
+                    $('.job-checkbox:checked').length === 0
+                );
+            }).trigger('change');
+            $('#delete-selected-btn').on('click', function(){
+                const selectedIds = $('.job-checkbox:checked').map(function(){
+                return $(this).val();
+            }).get();
+
+            if (selectedIds.length === 0) {
+            // SweetAlert warning
             Swal.fire({
                 icon: 'warning',
                 title: 'No Jobs Selected',
                 text: 'Please select at least one job to delete.',
-                confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
             });
-
             $('#confirm-bulk-delete-modal').modal('hide');
             return;
-        }
+            }
+
+            $('#bulk-delete-form').find('input[name="job_ids[]"]').remove();
+                selectedIds.forEach(id => {
+                $('#bulk-delete-form').append(
+                    `<input type="hidden" name="job_ids[]" value="${id}">`
+                );
+            });
+            });
+
+            $('#confirm-bulk-delete').on('click', function(){
+                $('#bulk-delete-form').submit();
+            });
 
 
-        $('#bulk-job-ids').remove(); 
-        const hiddenInputs = selectedIds.map(id => `<input type="hidden" name="job_ids[]" value="${id}">`);
-        $('#bulk-delete-form').append(hiddenInputs.join(''));
-    });
-
-    $('#confirm-bulk-delete').on('click', function () {
-        $('#bulk-delete-form').attr('action', "{{ route('seller.bulk.jobs.bulkDestroy') }}").submit();
-    });
-});
-
-
+        });
     </script>
     
 @endsection
