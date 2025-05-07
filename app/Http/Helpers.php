@@ -3254,6 +3254,32 @@ if (function_exists("getOrdersDiscount") === false) {
     }
 }
 
+if (function_exists("getOrdersDiscountId") === false) {
+    function getOrdersDiscountId($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return null;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return null;
+            }
+
+            return $discount->id;
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount id for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return null;
+        }
+    }
+}
+
 if (function_exists("itemDiscountShare") === false) {
     function itemDiscountShare($itemPrice, $vendorSubTotal = 0, $vendorDiscount = 0)
     {
