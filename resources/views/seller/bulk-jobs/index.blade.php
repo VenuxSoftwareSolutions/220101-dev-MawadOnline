@@ -32,6 +32,14 @@ thead tr{
 .remove-top-padding {
     padding-top: 0 !important;
 }
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.refresh-spin {
+    animation: spin 1s linear infinite;
+}
 
 </style>
 
@@ -65,7 +73,15 @@ thead tr{
                         </div>
                     </div>
                 </div>
-
+                <div class="col-md-6">
+                    <button type="button" id="refresh-jobs" class="btn btn-outline-secondary" title="{{ translate('Refresh') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                    </button>
+                </div>
+            
                 <div class="dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
@@ -157,28 +173,33 @@ thead tr{
                                         @endswitch
                                     </span>
                                 </td>
-                                <td>
-                                    <div class="progress w-100" style="height: 20px;">
-                                      <div
-                                        id="progress-bar-{{ $job->id }}"
-                                        class="progress-bar {{ $job->progress == 100
-                                             ? 'bg-success'
-                                             : ($job->progress > 75
-                                                ? 'bg-info'
-                                                : ($job->progress > 50
-                                                   ? 'bg-primary'
-                                                   : 'bg-warning')) }}"
-                                        role="progressbar"
-                                        style="width: {{ $job->progress }}%; min-width: 2em;"
-                                        aria-valuenow="{{ $job->progress }}"
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"
-                                        data-progress-url="{{ route('seller.bulk.jobs.progress', $job->id) }}"
-                                      >
-                                        {{ $job->progress }}%
-                                      </div>
-                                    </div>
-                                  </td>
+                                @if(! is_null($job->progress))
+                                    <td>
+                                        <div class="progress w-100" style="height: 20px;">
+                                            <div
+                                                id="progress-bar-{{ $job->id }}"
+                                                class="progress-bar {{ $job->progress == 100
+                                                    ? 'bg-success'
+                                                    : ($job->progress > 75
+                                                        ? 'bg-info'
+                                                        : ($job->progress > 50
+                                                        ? 'bg-primary'
+                                                        : 'bg-warning')) }}"
+                                                role="progressbar"
+                                                style="width: {{ $job->progress }}%; min-width: 2em;"
+                                                aria-valuenow="{{ $job->progress }}"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                data-progress-url="{{ route('seller.bulk.jobs.progress', $job->id) }}"
+                                            >
+                                                {{ $job->progress }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                @else
+                                    <td>-</td>
+                                @endif
+                    
                                   
                             
                     
@@ -385,6 +406,9 @@ thead tr{
                 $('#bulk-delete-form').submit();
             });
 
+            $('#refresh-jobs').on('click', function() {
+            location.reload(true);
+        });
 
         });
     </script>
