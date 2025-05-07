@@ -244,6 +244,12 @@ class OrderController extends Controller
                         ) : 0;
                     $order_detail->price = $price;
                     $order_detail->discount_share = $discount_share;
+                    $applied_discount_id = getOrdersDiscountId(
+                        $subTotalByVendor[$cartItem->owner_id],
+                        $cartItem->owner_id
+                    );
+
+                    $order_detail->applied_discount_id = $applied_discount_id;
 
                     $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                     $order_detail->shipping_type = $cartItem['shipping_type'];
