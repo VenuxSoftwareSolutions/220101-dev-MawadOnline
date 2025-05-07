@@ -3,25 +3,52 @@
 @section('panel_content')
 
 <style>
-/* Keep existing styles the same */
 .pagination .active .page-link {
     background-color: #8f97ab !important;
 }
+.pagination .page-link:hover{
+    background-color: #8f97ab !important;
+}
 
-/* ... rest of the existing styles ... */
+.pagination-showin{
+    Weight:400;
+    size: 16px;
+    line-height: 24px;
+    color: #808080;
+}
+
+thead tr{
+    height: 53px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+.aiz-table th {
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
+
+.remove-top-padding {
+    padding-top: 0 !important;
+}
+
 </style>
 
 <div class="aiz-titlebar mt-2 mb-4">
     <div class="row align-items-center">
         <div class="col-md-12">
-            <h2 class="h3">{{ translate('Jobs History') }}</h2>
+            <h2 class="h3">{{ translate('Smart Bulk Upload History') }}</h2>
             <div class="row">
                 <div class="col-md-8">
-                    <p style="font-size: 16px;">{{ translate('Track and manage your background jobs. Monitor progress, review errors, and manage job executions efficiently.') }}</p>
+                    <p style="font-size: 16px;">
+                        {{ translate('Track and manage your Smart Bulk Upload jobs. Monitor the status of your product uploads, review any errors, and ensure efficient bulk product management.') }}
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+    
 
     <div class="card">
         <form class="" id="sort_jobs" action="" method="GET">
@@ -44,8 +71,12 @@
                         {{translate('Bulk Action')}}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
+                    <button type="button"  id="delete-selected-btn" data-toggle="modal" data-target="#confirm-bulk-delete-modal">
+
                         <a class="dropdown-item confirm-alert" href="javascript:void(0)" 
-                           data-target="#bulk-delete-modal">{{translate('Delete selection')}}</a>
+                          >{{translate('Delete selection')}}</a>
+
+                    </button>
                     </div>
                 </div>
             </div>
@@ -58,7 +89,7 @@
                                 <div class="form-group">
                                     <div class="aiz-checkbox-inline">
                                         <label class="aiz-checkbox">
-                                            <input type="checkbox" class="check-all">
+                                            <input type="checkbox" class="check-all" >
                                             <span class="aiz-square-check"></span>
                                         </label>
                                     </div>
@@ -82,8 +113,8 @@
                                 <td>
                                     <div class="form-group d-inline-block">
                                         <label class="aiz-checkbox">
-                                            <input type="checkbox" class="check-one" 
-                                                   name="id[]" value="{{ $job->id }}">
+                                            <input type="checkbox" class="job-checkbox" value="{{ $job->id }}">
+
                                             <span class="aiz-square-check"></span>
                                         </label>
                                     </div>
@@ -101,7 +132,7 @@
                                     @else
                                       -
                                     @endif
-                                  </td>
+                                </td>
                                   
                            
                                   
@@ -170,13 +201,17 @@
                                       -
                                     @endif
                                   </td>
-                                <td class="text-right remove-top-padding">
-                                    <a href="#" class="btn btn-sm confirm-delete" 
-                                       {{-- data-href="{{ route('bulk.jobs.destroy', $job->id) }}"   --}}
-                                       title="{{ translate('Delete') }}">
+                                  <td>
+                                    <a href="#" class="btn btn-sm confirm-delete"
+                                        data-href="{{ route('seller.bulk.jobs.destroy', $job->id) }}"
+                                        data-toggle="modal"
+                                        data-target="#confirm-delete-modal"
+                                        title="{{ translate('Delete') }}">
                                         <img src="{{ asset('public/trash.svg') }}">
                                     </a>
                                 </td>
+                                
+                                
                             </tr>
                         @endforeach
                     </tbody>
@@ -198,30 +233,56 @@
         </form>
     </div>
 
-    <!-- Keep the existing modals, just update text if needed -->
-    <div id="modal-info" class="modal fade">
-        <!-- ... existing modal structure ... -->
-        <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal fade" id="confirm-delete-modal">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title h6" id="title-modal">{{translate('Delete Confirmation')}}</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h5 class="modal-title h6">{{translate('Confirmation')}}</h5>
+                    <button type="button" class="close" data-dismiss="modal"></button>
                 </div>
-               
-
-                <div class="modal-body text-center">
-                    <p class="mt-1 fs-14" id="text-modal">{{translate('Are you sure to delete this job?')}}</p>
-                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal" id="cancel_published">{{translate('Cancel')}}</button>
-                    <button type="button" id="publish-link" class="btn btn-primary rounded-0 mt-2"></button>
+                <div class="modal-body">
+                    <p>{{translate('Do you really want to delete this job?')}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{translate('Cancel')}}</button>
+                    <form id="delete-form" method="POST">
+                        @csrf
+                        @method('DELETE')
+                    </form>                    
+                    <button type="button" id="confirmation" class="btn btn-primary">{{translate('Proceed!')}}</button>
                 </div>
             </div>
         </div>
-
+    </div>
+    <div class="modal fade" id="confirm-bulk-delete-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h6">{{translate('Confirmation')}}</h5>
+                    <button type="button" class="close" data-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{translate('Do you really want to delete selected jobs?')}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-dismiss="modal">{{translate('Cancel')}}</button>
+                    <form id="bulk-delete-form" method="POST" action="{{ route('seller.bulk.jobs.bulkDestroy') }}">
+                        @csrf
+                        @method('DELETE')
+                    </form>                    
+                    <button type="button" id="confirm-bulk-delete" class="btn btn-primary">{{translate('Proceed!')}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+     
 @endsection
 @section('script')
+
     <script type="text/javascript">
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded',function() {
             const bars = Array.from(
                 document.querySelectorAll('[id^="progress-bar-"]')
             );
@@ -253,10 +314,62 @@
                 })
                 .catch(err => console.error('refreshBar error for', url, err));
             }
+            
+            
+
 
             bars.forEach(refreshBar);
             setInterval(() => bars.forEach(refreshBar), 60_000);
         });
+    let deleteUrl = null;
+
+    $(document).on('click', '.confirm-delete', function (e) {
+        e.preventDefault();
+        deleteUrl = $(this).data('href');
+        console.log('Set delete URL:', deleteUrl);
+    });
+
+    $('#confirmation').on('click', function () {
+        console.log('Deleting from:', deleteUrl);
+        if (deleteUrl) {
+            const form = $('#delete-form');
+            form.attr('action', deleteUrl);
+            form.submit();
+        }
+    });
+    
+    $(document).ready(function () {
+    $('#delete-selected-btn').on('click', function () {
+        
+        const selectedIds = $('.job-checkbox:checked').map(function () {
+            return $(this).val();
+        }).get();
+
+        if (selectedIds.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Jobs Selected',
+                text: 'Please select at least one job to delete.',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+
+            $('#confirm-bulk-delete-modal').modal('hide');
+            return;
+        }
+
+
+        $('#bulk-job-ids').remove(); 
+        const hiddenInputs = selectedIds.map(id => `<input type="hidden" name="job_ids[]" value="${id}">`);
+        $('#bulk-delete-form').append(hiddenInputs.join(''));
+    });
+
+    $('#confirm-bulk-delete').on('click', function () {
+        $('#bulk-delete-form').attr('action', "{{ route('seller.bulk.jobs.bulkDestroy') }}").submit();
+    });
+});
+
 
     </script>
+    
 @endsection

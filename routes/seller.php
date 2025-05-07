@@ -110,6 +110,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
      Route::prefix('bulk-jobs')->group(function () {
         Route::get('/history', [BulkJobController::class, 'index'])->name('bulk.jobs.history');
         Route::delete('/{id}', [BulkJobController::class, 'destroy'])->name('bulk.jobs.destroy'); 
+        Route::delete('/bulk-delete', [BulkJobController::class, 'bulkDestroy'])->name('bulk.jobs.bulkDestroy');
+
         Route::get('/{id}/download-product-file', [BulkJobController::class, 'downloadProductFile'])
         ->name('bulk.jobs.download_product_file');
    Route::get('/{id}/download-error-file',   [BulkJobController::class, 'downloadErrorFile'])

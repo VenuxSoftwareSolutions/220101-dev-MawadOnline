@@ -20,7 +20,7 @@ class BulkJobController extends Controller
 
     public function index(Request $request)
     {
-        $jobs = BuJob::where('vendor_user_id', 337)
+        $jobs = BuJob::where('vendor_user_id', 336)
             ->when($request->search, function($query) use ($request) {
                 $query->where(function($q) use ($request) {
                     $q->where('id', 'like', '%'.$request->search.'%')
@@ -41,39 +41,41 @@ class BulkJobController extends Controller
 
     public function destroy($id)
     {
+
         $job = BuJob::where('vendor_user_id', 336)->findOrFail($id);
-        
-        // Delete associated files
+    
         foreach (['vendor_products_file', 'preprocessed_file', 'ai_processed_file', 'error_file'] as $field) {
-            if ($job->$field && Storage::exists($job->$field)) {
-                Storage::delete($job->$field);
+            if ($job->$field && Storage::disk('mwd_storage')->exists($job->$field)) {
+                Storage::disk('mwd_storage')->delete($job->$field);
             }
         }
-        
+    
         $job->delete();
-        
-        return redirect()->back()->with('success', 'Job deleted successfully');
+    
+        return redirect()->route('seller.bulk.jobs.history')->with('success', 'Job deleted successfully!');
     }
+    
 
     public function bulkDestroy(Request $request)
     {
-        $ids = $request->input('id', []);
-        
+        dd($request);
+
         $jobs = BuJob::where('vendor_user_id', 336)
-            ->whereIn('id', $ids)
-            ->get();
+                 ->whereIn('id', $request->job_ids)
+                 ->get();
 
         foreach ($jobs as $job) {
             foreach (['vendor_products_file', 'preprocessed_file', 'ai_processed_file', 'error_file'] as $field) {
-                if ($job->$field && Storage::exists($job->$field)) {
-                    Storage::delete($job->$field);
+                if ($job->$field && Storage::disk('mwd_storage')->exists($job->$field)) {
+                    Storage::disk('mwd_storage')->delete($job->$field);
                 }
             }
             $job->delete();
         }
 
-        return redirect()->back()->with('success', 'Selected jobs deleted successfully');
+    return redirect()->route('seller.bulk.jobs.history')->with('success', 'Selected jobs deleted successfully!');
     }
+
 
     public function downloadProductFile($id)
     {
