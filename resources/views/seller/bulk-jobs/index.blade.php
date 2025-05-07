@@ -154,14 +154,7 @@ thead tr{
                                 <td>{{ $job->total_rows }}</td>  
                                 <td>{{ $job->created_at->format('d M Y H:i') }}</td>  
                                 <td>
-                                    <span class="badge 
-                                        @if($job->stage == 'COMP') badge-success
-                                        @elseif($job->stage == 'VENT') badge-warning
-                                        @elseif($job->stage == 'VSUB') badge-info
-                                        @elseif($job->stage == 'AIPROC') badge-primary
-                                        @elseif($job->stage == 'AIDONE') badge-secondary
-                                        @else badge-light @endif
-                                        px-3 py-2 rounded-pill text-dark font-weight-semibold">
+                                    
 
                                         @switch($job->stage)
                                             @case('VENT') Pending @break
