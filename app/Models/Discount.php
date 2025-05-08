@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Exception;
 
 class Discount extends Model
 {
@@ -200,16 +201,15 @@ class Discount extends Model
         $highestDiscount = self::getHighestPriorityDiscountByProduct($productId);
 
         if (! $highestDiscount) {
-            throw new \Exception('Discount not found or not applicable.');
+            throw new Exception('Discount not found or not applicable.');
         }
 
-
         if ($highestDiscount->scope === 'product' && $highestDiscount->product_id != $productId) {
-            throw new \Exception('Discount does not apply to this product.');
+            throw new Exception('Discount does not apply to this product.');
         }
 
         if ($highestDiscount->scope === 'category' && ! self::isProductInCategory($productId, $highestDiscount->category_id)) {
-            throw new \Exception('Discount does not apply to this product category.');
+            throw new Exception('Discount does not apply to this product category.');
         }
 
         $result = ['discount_percentage' => $highestDiscount->discount_percentage];
