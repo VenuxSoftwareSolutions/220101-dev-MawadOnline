@@ -670,7 +670,7 @@
             const toggleLink = document.querySelector('.toggle-discounts');
             const rows = document.querySelectorAll('.ordersDiscountsDetails');
 
-            toggleLink.addEventListener('click', function (e) {
+            toggleLink?.addEventListener('click', function (e) {
                 e.preventDefault();
 
                 rows.forEach(row => {
