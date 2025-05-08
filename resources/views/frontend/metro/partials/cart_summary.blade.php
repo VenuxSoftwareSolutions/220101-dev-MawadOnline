@@ -141,7 +141,7 @@
 
         <table class="table" style="margin-top: 2rem!important;">
             <tfoot>
-                @if(count($ordersDiscounts) > 0)
+                @if(count($ordersDiscounts) > 0 && array_sum($ordersDiscounts) !== 0)
                     <tr class="orders-discounts__clz">
                         <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
                             <a class="toggle-discounts mr-1" data-target=".ordersDiscountsDetails" href="#" data-toggle="collapse" aria-expanded="false" aria-controls="ordersDiscountsDetails">+</a>
