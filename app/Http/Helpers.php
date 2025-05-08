@@ -3113,9 +3113,8 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
 
             $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
             ->whereNot(function ($query) {
-                $query->where("scope", "product")
-                ->orWhere("scope", "category");
-            })->exists();
+                $query->whereIn("scope", ["product", "category"]);
+            })->withinDateRange()->active()->exists();
 
             $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
 
