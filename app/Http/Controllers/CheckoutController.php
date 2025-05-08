@@ -501,10 +501,6 @@ class CheckoutController extends Controller
 
         $ordersDiscounts = request()->session()->get("ordersDiscounts", []);
 
-        if (count($ordersDiscounts) === 0) {
-            $ordersDiscounts = $this->getOrdersDiscountsFromCarts($carts);
-        }
-
         $carts->delete();
 
         $first_order = $combined_order->orders->first()->toArray();
