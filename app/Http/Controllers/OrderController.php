@@ -236,18 +236,35 @@ class OrderController extends Controller
                     $order_detail->variation = $product_variation;
 
                     $price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $order_detail->price = $price;
+
                     $discount_share = array_key_exists($product->user_id, $subTotalByVendor) === true ?
                         itemDiscountShare(
                             $price,
                             $subTotalByVendor[$cartItem->owner_id],
                             getOrdersDiscount($subTotalByVendor[$cartItem->owner_id], $cartItem->owner_id)
                         ) : 0;
-                    $order_detail->price = $price;
+
                     $order_detail->discount_share = $discount_share;
+
                     $applied_discount_id = getOrdersDiscountId(
                         $subTotalByVendor[$cartItem->owner_id],
                         $cartItem->owner_id
                     );
+
+                    // in `category/product discount` case, save those info
+                    if (is_null($applied_discount_id) === true) {
+                        $highestDiscount = Discount::getHighestPriorityDiscountByProduct($product->id);
+                        $order_detail->price_before_discount = $product->unit_price;
+                        $order_detail->price_after_discount = cart_product_price(
+                            $cartItem,
+                            $product,
+                            false,
+                            false
+                        );
+                        $order_detail->discount_percentage = $highestDiscount->discount_percentage;
+                        $applied_discount_id = $highestDiscount->id;
+                    }
 
                     $order_detail->applied_discount_id = $applied_discount_id;
 
