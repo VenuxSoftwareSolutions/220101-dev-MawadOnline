@@ -3116,7 +3116,12 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
                 $query->whereIn("scope", ["product", "category"]);
             })->withinDateRange()->active()->exists();
 
-            $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            if (isset($product->unit_price) && is_null($product->unit_price) === false) {
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            } else {
+                $product = Product::findOrFail($product->id);
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            }
 
             $priceAfterDiscountVatIncl = $withDiscount === true && $isOrdersDiscountExists === false ?
                  CartUtility::priceProduct($product->id, $qty)
