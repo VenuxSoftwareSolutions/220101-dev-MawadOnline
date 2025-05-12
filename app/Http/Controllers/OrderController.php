@@ -255,8 +255,8 @@ class OrderController extends Controller
                     // in `category/product discount` case, save those info
                     if (is_null($applied_discount_id) === true) {
                         $highestDiscount = Discount::getHighestPriorityDiscountByProduct($product->id);
-                        $order_detail->price_before_discount = $product->unit_price;
-                        $order_detail->price_after_discount = cart_product_price(
+                        $order_detail->product_price_before_discount = $product->unit_price;
+                        $order_detail->product_price_after_discount = cart_product_price(
                             $cartItem,
                             $product,
                             false,
