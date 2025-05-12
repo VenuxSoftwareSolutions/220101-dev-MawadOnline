@@ -137,6 +137,7 @@ class SearchController extends Controller
             'id',
             'slug',
             'name',
+            'unit_price',
             'auction_product',
             'discount',
             'wholesale_product',
