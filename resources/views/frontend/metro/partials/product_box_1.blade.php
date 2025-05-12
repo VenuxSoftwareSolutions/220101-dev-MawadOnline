@@ -214,12 +214,13 @@
 
                         if(isset($mwd_price) === false)
                             $mwd_price = calculatePriceWithDiscountAndMwdCommission($product);
+
                     @endphp
                     <div class="discounted-price__clz" data-unit_price="{{ $product->unit_price }}" data-product_id="{{ $product->id }}" data-price_after_mwd_commission="{{ $priceAfterMwdCommission }}">
                         <span class="fw-700 text-dark mr-1">{{ single_price($mwd_price) }}</span>
                     </div>
 
-                    @if($priceAfterDiscountVatIncl !== $product->unit_price)
+                    @if(is_null($product->unit_price) === false && $priceAfterDiscountVatIncl !== $product->unit_price)
                         <div class="main-price__clz">
                             <del class="fw-400 text-secondary">{{ single_price($priceAfterMwdCommission) }}</del>
                         </div>
