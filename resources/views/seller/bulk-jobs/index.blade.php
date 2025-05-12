@@ -73,7 +73,7 @@ thead tr{
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <button type="button" id="refresh-jobs" class="btn btn-outline-secondary" title="{{ translate('Refresh') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
@@ -82,7 +82,7 @@ thead tr{
                     </button>
                 </div>
             
-                <div class="dropdown mb-2 mb-md-0">
+                {{-- <div class="dropdown mb-2 mb-md-0">
                     <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
                         {{translate('Bulk Action')}}
                     </button>
@@ -93,7 +93,7 @@ thead tr{
                       </div>
               
                     </div>
-                </div>
+                </div> --}}
             </div>
             
             <div class="card-body">
@@ -118,7 +118,7 @@ thead tr{
                             <th>{{ translate('Progress') }}</th>
                             <th>{{ translate('Execution Error') }}</th>
                             <th>{{ translate('Error File') }}</th>
-                            <th class="text-center">{{ translate('Actions') }}</th>
+                            {{-- <th class="text-center">{{ translate('Actions') }}</th> --}}
                         </tr>
                     </thead>
 
@@ -140,14 +140,15 @@ thead tr{
                                 <td>
                                     @if($job->vendor_products_file)
                                       <a href="{{ route('seller.bulk.jobs.download_product_file', $job->id) }}"
-                                         class="text-reset"
+                                        style="color: #0d6efd; text-decoration: underline;" 
                                          download>
                                         {{ basename($job->vendor_products_file) }}
                                       </a>
                                     @else
-                                      -
+                                      &ndash;
                                     @endif
                                 </td>
+                                  
                                   
                            
                                   
@@ -206,7 +207,7 @@ thead tr{
                                 <td>
                                     @if($job->error_file)
                                       <a href="{{ route('seller.bulk.jobs.download_error_file', $job->id) }}"
-                                         class="text-reset"
+                                        style="color: #0d6efd; text-decoration: underline;" 
                                          download>
                                         {{ translate('Download Error File') }}
                                       </a>
@@ -214,7 +215,7 @@ thead tr{
                                       -
                                     @endif
                                   </td>
-                                  <td>
+                               {{--    <td>
                                     <a href="#" class="btn btn-sm confirm-delete"
                                         data-href="{{ route('seller.bulk.jobs.destroy', $job->id) }}"
                                         data-toggle="modal"
@@ -222,7 +223,7 @@ thead tr{
                                         title="{{ translate('Delete') }}">
                                         <img src="{{ asset('public/trash.svg') }}">
                                     </a>
-                                </td>
+                                </td> --}}
                                 
                                 
                             </tr>

@@ -17,24 +17,31 @@ class BulkJobController extends Controller
         'AIDONE' => 'AI Completed',
         'COMP' => 'Completed'
     ];
+    protected const DOWNLOAD_DISK = 'mwd_storage';
 
     public function index(Request $request)
     {
+        if ($request->has('search') && trim($request->search) === '') {
+            return redirect()->route('seller.bulk.jobs.history');
+        }
+
         $jobs = BuJob::where('vendor_user_id', auth()->id())
-            ->when($request->search, function($query) use ($request) {
-                $query->where(function($q) use ($request) {
-                    $q->where('id', 'like', '%'.$request->search.'%')
-                      ->orWhere('vendor_products_file', 'like', '%'.$request->search.'%')
-                      ->orWhere('stage', 'like', '%'.$request->search.'%')
-                      ->orWhere('error_msg', 'like', '%'.$request->search.'%');
+            ->when($request->filled('search'), function($q) use ($request) {
+                $keyword = '%'.trim($request->search).'%';
+                $q->where(function($q2) use ($keyword) {
+                    $q2->where('vendor_products_file',                'like', $keyword)
+                    ->orWhere('stage',             'like', $keyword)
+                    ->orWhere('error_msg',         'like', $keyword)
+                    ->orWhere('total_rows',        'like', $keyword);
                 });
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->appends($request->only('search'));
 
         return view('seller.bulk-jobs.index', [
-            'jobs' => $jobs,
-            'stageMap' => self::STAGE_MAP
+            'jobs'     => $jobs,
+            'stageMap' => self::STAGE_MAP,
         ]);
     }
 
@@ -58,8 +65,7 @@ class BulkJobController extends Controller
 
     public function bulkDelete(Request $request)
     {
-       
-       
+
         $jobs = BuJob::where('vendor_user_id', 336)
                  ->whereIn('id', $request->job_ids)
                  ->get();
@@ -81,28 +87,38 @@ class BulkJobController extends Controller
     public function downloadProductFile($id)
     {
         $job = BuJob::where('vendor_user_id', auth()->id())
-                    ->findOrFail($id);
+                ->findOrFail($id);
 
-        $path = $job->vendor_products_file;
-        if (! $path || ! Storage::disk('mwd_storage')->exists($path)) {
+        $identifier = 'u' . $job->vendor_user_id . '-j' . $job->id;
+        $diskFilename = "vendor-file-{$identifier}.csv";
+        $path = "{$identifier}/{$diskFilename}";
+        if (! Storage::disk(self::DOWNLOAD_DISK)->exists($path)) {
             abort(404, 'File not found.');
         }
+        return Storage::disk(self::DOWNLOAD_DISK)
+        ->download($path, 'vendor-file.csv');
 
-        return Storage::disk('mwd_storage')->download($path);
+
     }
 
 
     public function downloadErrorFile($id)
     {
         $job = BuJob::where('vendor_user_id', auth()->id())
-                    ->findOrFail($id);
+        ->findOrFail($id);
 
-        $path = $job->error_file;
-        if (! $path || ! Storage::disk('mwd_storage')->exists($path)) {
+        $identifier = 'u' . $job->vendor_user_id . '-j' . $job->id;
+
+        $diskFilename = "error-file-{$identifier}.csv";
+        $path = "{$identifier}/{$diskFilename}";
+
+        if (! Storage::disk(self::DOWNLOAD_DISK)->exists($path)) {
             abort(404, 'File not found.');
         }
 
-        return Storage::disk('mwd_storage')->download($path);
+        return Storage::disk(self::DOWNLOAD_DISK)
+                ->download($path, 'error-file.csv');
+
     }
         /**
      * Return just the progress % for a single job.
