@@ -166,13 +166,12 @@ class Discount extends Model
             ];
         })->first();
 
-
         return $highestPriorityDiscount;
     }
 
     public static function getHighestPriorityOrderDiscount($vendor_id)
     {
-        $discounts = self::whereIn('scope', ['allOrders'])
+        $discounts = self::whereIn('scope', ['ordersOverAmount', 'allOrders'])
             ->where("user_id", $vendor_id)
             ->withinDateRange()->active()->get();
 
