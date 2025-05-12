@@ -665,7 +665,7 @@
     @endif
 
     <div class="container mb-5 mt-5">
-        <img class="mb-5"
+        <img class="mb-5 border-radius-12"
     src="{{ $slider ? my_asset('public/uploads/all/bannerads.png') : static_asset('assets/img/placeholder.jpg') }}">
         <!-- 24/7 Virtual Showroom -->
         <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 pb-3 float-left">

@@ -167,7 +167,7 @@
                                         <div class="row align-items-center justify-content-center">
                                             @if ($orderDetail->delivery_status != 'delivered' && $orderDetail->delivery_status != 'cancelled')
                                                 @php
-                                                    $shippers = explode(',', $orderDetail->product->shippingOptions($orderDetail->quantity)->shipper);
+                                                    $shippers = $orderDetail->product->shippingOptions($orderDetail->quantity)->map(fn($option) => $option->shipper)->toArray();
                                                 @endphp
                                                 <select
                                                     onchange="handleDeliveryStatusChanged(this,@if (in_array('third_party', $shippers)) true @else false @endif)"

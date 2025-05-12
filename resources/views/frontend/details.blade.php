@@ -197,7 +197,13 @@
                     @if (isset($previewData['detailedProduct']['discountedPrice']))
                         <span>{{ single_price($previewData['detailedProduct']['discountedPrice']) }}</span>
                     @else
-                        <span>{{ single_price($previewData['detailedProduct']['price']) }}</span> /
+                        <span>
+                            {{ single_price($previewData['detailedProduct']['price']) }}
+                            @if($previewData['detailedProduct']['priceAfterMwdCommission'] !== $previewData['detailedProduct']['price'])
+                                <small><del class="fw-400 text-secondary">{{ single_price($previewData['detailedProduct']['priceAfterMwdCommission']) }}</del></small>
+                            @endif
+                        </span>
+ /
                         {{ @$previewData['detailedProduct']['unit_of_sale'] }}
                     @endif
                 </strong>
@@ -212,7 +218,23 @@
 
             <div id="product-sample-price" class="d-none align-items-center">
                 <strong class="fs-24 fw-700 text-dark font-prompt-sb">
-                    <span>{{ single_price(isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0 ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span>
+                    <span>
+                        @if(
+                            isset($previewData['detailedProduct']['sampleDetails']) &&
+                            count($previewData['detailedProduct']['sampleDetails']) > 0
+                        )
+                            @if(
+                                isset($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) &&
+                                $previewData['detailedProduct']['sampleDetails']['sample_price'] !== $previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']
+                            )
+                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) }}
+                            @else
+                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}
+                            @endif
+                        @else
+                            {{ single_price(0) }}
+                        @endif
+                    </span>
                     /
                     {{ __('Sample') }}
                 </strong>
@@ -249,7 +271,7 @@
     <!-- Category -->
     <div class="col-md-12 p-0 pb-2">
         <div class="product-desc-each">
-            <span class="fs-16 font-prompt-md">Tags:</span>
+            <span class="fs-16 font-prompt-md">{{ __("Tags") }}:</span>
             <span class="fs-16 font-prompt">
                 @if (is_array($previewData['detailedProduct']['tags']))
                     @foreach ($previewData['detailedProduct']['tags'] as $tag)
@@ -333,7 +355,7 @@
             $niveau++;
             $attribue = App\Models\Attribute::find($attributeId);
         @endphp
-        @if ($attribue['name'] == 'Manufacturer')
+        @if (is_null($attribue) === false && $attribue['name'] == 'Manufacturer')
             <div class="col-4 col-sm-4 mb-2">
                 <div class="fs-16 font-prompt-md attrib-name">
                     {{ $attribue ? $attribue->getTranslation('name') : '' }}:
@@ -346,7 +368,7 @@
                 </div>
             </div>
         @endif
-        @if ($attribue['name'] == 'Manufacturer')
+        @if (is_null($attribue) === false && $attribue['name'] == 'Manufacturer')
             <div class="col-8 col-sm-8">
             @else
                 <div class="col-10 col-sm-10">
@@ -823,7 +845,7 @@
             @if (isset($detailedProduct))
                 <div class="product-rightbox-seller-details float-left col-md-12">
                     <div class="float-left col-md-12 p-0">
-                        <a href="{{ route('shop.visit', $detailedProduct->user->shop->slug) }}"
+                        <a href="{{ $detailedProduct->user !== null ? route('shop.visit', $detailedProduct->user->shop->slug) : "#" }}"
                             class="link-style-none">
                             <span class="fs-16 font-prompt-md float-left product-rightbox-seller-name">
                                 {{ $detailedProduct->user->shop->name }}

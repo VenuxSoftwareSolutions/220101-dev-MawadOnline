@@ -149,8 +149,13 @@
                     </td>
                 </tr>
                 <!-- Tax -->
+<<<<<<< HEAD
                 <tr class="cart-tax">
                     <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Tax') }}</th>
+=======
+                <tr class="d-none cart-tax">
+                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Tax') }}</th>
+>>>>>>> 006ddc7f8f49066beb87496942a2d5f5b59eac47
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
                         <span class="font-prompt">{{ single_price($tax) }}</span>
                     </td>

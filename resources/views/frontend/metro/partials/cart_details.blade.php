@@ -5,6 +5,7 @@
                 <div class="border bg-white px-3 pt-0 pb-3 px-lg-4 pb-lg-4 pt-lg-3 text-left border-radius-16">
                     <div class="mb-0 mb-md-4">
                         <!-- Headers -->
+<<<<<<< HEAD
                         <div class="row gutters-5 d-none d-lg-flex border-bottom mb-0 pb-3 dark-c3 fs-12">
                             <div class="col-md-3  fs-15 font-prompt p-0">{{ translate('Product') }}</div>
                             <div class="col-md-2 fs-15 col-md-1 font-prompt p-0">{{ translate('Qty') }}</div>
@@ -13,6 +14,16 @@
                             <div class="col-md-1 fs-15 font-prompt p-0">{{ translate('Tax') }}</div>
                             <div class="col-md-2 fs-15 font-prompt p-0">{{ translate('Subtotal') }}</div>
                             <div class="col-md-1 fs-15 font-prompt p-0"><!--{{ translate('Remove') }}--></div>
+=======
+                        <div class="row gutters-5 d-none d-lg-flex border-bottom mb-3 pb-3 text-secondary fs-12">
+                            <div class="col col-md-1 fw-600">{{ translate('Qty') }}</div>
+                            <div class="col-md-5 fw-600">{{ translate('Product') }}</div>
+                            <div class="col fw-600">{{ translate('Stock Status') }}</div>
+                            <div class="col fw-600">{{ translate('Price') }}</div>
+                            <div class="col fw-600 d-none">{{ translate('Tax') }}</div>
+                            <div class="col fw-600">{{ translate('Subtotal') }}</div>
+                            <div class="col-auto fw-600">{{ translate('Remove') }}</div>
+>>>>>>> 006ddc7f8f49066beb87496942a2d5f5b59eac47
                         </div>
                         <!-- Cart Items -->
                         <ul class="list-group list-group-flush">
@@ -96,6 +107,7 @@
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none font-prompt">{{ translate('Price') }}</span>
                                             <span
+<<<<<<< HEAD
                                                 class="fw-700 fs-16 dark-c3 font-prompt">AED{{ cart_product_price($cartItem, $data[$key]["product"], true, false) }}</span>
                                         </div>
                                          <!-- Stock Status -->
@@ -106,10 +118,19 @@
                                                 class="fs-16 font-prompt-md {{ $data[$key]["is_sample"] === false && $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ $data[$key]["is_sample"] === true ? __("Sample available") : $data[$key]["stockStatus"] }}</span>
                                             @if ($data[$key]["is_sample"] === false && $data[$key]["stockAlert"])
                                                 <span class="badge badge-warning font-prompt">{{ $data[$key]["stockAlert"] }}</span>
+=======
+                                                class="fw-700 fs-14 {{ isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && $data[$key]["stockStatus"] == 'Out of Stock' ? 'text-danger' : 'text-success' }}">{{ isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === true ? __("Sample available") : $data[$key]["stockStatus"] }}</span>
+                                            @if (isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && $data[$key]["stockAlert"])
+                                                <span class="badge badge-warning">{{ $data[$key]["stockAlert"] }}</span>
+>>>>>>> 006ddc7f8f49066beb87496942a2d5f5b59eac47
                                             @endif
                                         </div>
                                         <!-- Tax -->
+<<<<<<< HEAD
                                         <div class="col-6 col-md-1 order-3 order-md-0 my-3 my-md-0 p-0">
+=======
+                                        <div class="d-none col-md col-4 order-3 order-md-0 my-3 my-md-0">
+>>>>>>> 006ddc7f8f49066beb87496942a2d5f5b59eac47
                                             <span
                                                 class="opacity-60 fs-12 d-block d-md-none font-prompt">{{ translate('Tax') }}</span>
                                             <span class="fw-700 fs-14 font-prompt">0</span>
@@ -154,7 +175,7 @@
                                 </li>
                             @endforeach
                         </ul>
-                        @if ($data[$key]["is_sample"] === false && count($data[$key]["outOfStockItems"]) > 0)
+                        @if (isset($data[$key]["is_sample"]) && $data[$key]["is_sample"] === false && count($data[$key]["outOfStockItems"]) > 0)
                             <div class="alert alert-warning mt-3">
                                 {{ translate('Some products were out of stock and have been moved to your Wishlist.') }}
                             </div>
