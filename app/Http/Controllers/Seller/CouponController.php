@@ -17,34 +17,38 @@ class CouponController extends Controller
     {
         $scope = $request->query('scope', 'product');
         $isCoupon = $request->route()->uri === 'vendor/coupons';
-        $coupons = Coupon::where('scope', $scope)->paginate(6);
+
+        $coupons = Coupon::where("user_id", auth()->user()->id)
+            ->where('scope', $scope)
+            ->paginate(6);
+
         $columnHeader = '';
         $columnValue = '';
 
         switch ($scope) {
             case 'product':
-                $columnHeader = 'Product Name';
-                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                $columnHeader = __('Product Name');
+                $columnValue = fn ($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
                 break;
             case 'category':
-                $columnHeader = 'Category';
-                $columnValue = fn($coupon) => $coupon->category ? $coupon->category->name : 'N/A';
+                $columnHeader = __('Category');
+                $columnValue = fn ($coupon) => $coupon->category ? $coupon->category->name : 'N/A';
                 break;
             case 'ordersOverAmount':
-                $columnHeader = 'Minimum Amount';
-                $columnValue = fn($coupon) => $coupon->min_order_amount ?? 'N/A';
+                $columnHeader = __('Minimum Amount');
+                $columnValue = fn ($coupon) => $coupon->min_order_amount ?? 'N/A';
                 break;
             case 'allOrders':
-                $columnHeader = 'All Orders';
-                $columnValue = fn($coupon) => '-';
+                $columnHeader = __('All Orders');
+                $columnValue = fn ($coupon) => '-';
                 break;
             default:
-                $columnHeader = 'Product Name';
-                $columnValue = fn($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
+                $columnHeader = __('Product Name');
+                $columnValue = fn ($coupon) => $coupon->product ? $coupon->product->name : 'N/A';
                 break;
         }
 
-        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue','isCoupon'));
+        return view('seller.promotions.index', compact('coupons', 'scope', 'columnHeader', 'columnValue', 'isCoupon'));
     }
 
     public function create()

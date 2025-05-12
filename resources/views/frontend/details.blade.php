@@ -109,7 +109,7 @@
 
             @if (isset($previewData['detailedProduct']['sampleDetails']) &&
                     count($previewData['detailedProduct']['sampleDetails']) > 0 &&
-                    $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
+                    isset($previewData['detailedProduct']['sampleDetails']['sample_price']) && $previewData['detailedProduct']['sampleDetails']['sample_price'] !== 0)
                 <div id="product-sample-stock-status" class="col-3 d-none justify-content-end mt-2">
                     <span
                         class="badge badge-md badge-inline badge-pill badge-success-light fs-14 font-prompt-md border-radius-8px in-stock-style">{{ __('Available') }}</span>
@@ -138,7 +138,7 @@
             </p>
 
             <p id="product-sample-description" class="d-none">
-                @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0)
+                @if (isset($previewData['detailedProduct']['sampleDetails']) && count($previewData['detailedProduct']['sampleDetails']) > 0 && isset($previewData['detailedProduct']['sampleDetails']['sample_description']))
                     {!! ucfirst($previewData['detailedProduct']['sampleDetails']['sample_description']) !!}
                 @endif
             </p>
@@ -224,12 +224,13 @@
                             count($previewData['detailedProduct']['sampleDetails']) > 0
                         )
                             @if(
+                                isset($previewData['detailedProduct']['sampleDetails']['sample_price']) &&
                                 isset($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) &&
                                 $previewData['detailedProduct']['sampleDetails']['sample_price'] !== $previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']
                             )
                                 {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price_after_mwd_commission']) }}
                             @else
-                                {{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}
+                                {{ single_price(isset($previewData['detailedProduct']['sampleDetails']['sample_price']) === true ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}
                             @endif
                         @else
                             {{ single_price(0) }}
@@ -681,7 +682,7 @@
                 <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
                     onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }} -
                     <span
-                        id="sample_chosen_price">{{ single_price($previewData['detailedProduct']['sampleDetails']['sample_price']) }}</span></span>
+                        id="sample_chosen_price">{{ single_price(isset($previewData['detailedProduct']['sampleDetails']['sample_price']) ? $previewData['detailedProduct']['sampleDetails']['sample_price'] : 0) }}</span></span>
             @else
                 <span id="product-sample-add-to-cart-span" class="add-to-cart-style-txt"
                     onclick="samplePriceSpanClicked=true;">{{ __('Add to cart') }}
@@ -842,7 +843,7 @@
 <div class="col-lg-6 col-md-12 float-left">
     <div class="col-md-12 product-rightbox-seller border-radius-8px float-left">
         <div class="col-md-12 product-rightbox-seller-info float-left">
-            @if (isset($detailedProduct))
+            @if (isset($detailedProduct) && is_null($detailedProduct->user->shop) === false)
                 <div class="product-rightbox-seller-details float-left col-md-12">
                     <div class="float-left col-md-12 p-0">
                         <a href="{{ $detailedProduct->user !== null ? route('shop.visit', $detailedProduct->user->shop->slug) : "#" }}"

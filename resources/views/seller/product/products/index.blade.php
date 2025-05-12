@@ -2,42 +2,121 @@
 
 @section('panel_content')
 
-<style>
-.pagination .active .page-link
-{
-    background-color: #8f97ab !important;
-}
+@push('styles')
+    <style>
+        .pagination .active .page-link
+        {
+            background-color: #8f97ab !important;
+        }
 
-.pagination .page-link:hover{
-    background-color: #8f97ab !important;
-}
+        .pagination .page-link:hover{
+            background-color: #8f97ab !important;
+        }
 
-.pagination-showin{
-    Weight:400;
-    size: 16px;
-    line-height: 24px;
-    color: #808080;
-}
+        .pagination-showin{
+            Weight:400;
+            size: 16px;
+            line-height: 24px;
+            color: #808080;
+        }
 
-thead tr{
-    height: 53px !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-/* thead th{
-    padding: 0 !important;
-    margin: 0 !important;
-} */
+        thead tr{
+            height: 53px !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
 
-.aiz-table th {
-    padding: 0 !important;
-    vertical-align: middle !important;
-}
+        .aiz-table th {
+            padding: 0 !important;
+            vertical-align: middle !important;
+        }
 
-.remove-top-padding {
-    padding-top: 0 !important;
-}
-</style>
+        .remove-top-padding {
+            padding-top: 0 !important;
+        }
+
+        .product-name__clz {
+            display: inline-block;
+            max-width: 30ch;
+            word-wrap: break-word;
+        }
+
+        .product-sku__clz {
+            display: inline-block;
+            max-width: 20ch;
+            word-wrap: break-word;
+        }
+
+        #block-ui-overlay__id {
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .block-ui-spinner__clz {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+        }
+
+        .scrollable-error-container__clz {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
+        }
+
+        .scrollable-error-container__clz::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .scrollable-error-container__clz::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .checkbox-loader__clz {
+            display: none;
+            width: 15px;
+            height: 15px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 5px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .aiz-checkbox.loading .checkbox-loader__clz {
+            display: inline-block;
+        }
+        .aiz-checkbox.loading .aiz-square-check {
+            opacity: 0.5;
+        }
+    </style>
+@endpush
+
+<div id="block-ui-overlay__id" style="display:none;">
+    <div class="block-ui-spinner__clz">
+        <div class="spinner-border text-light" role="status"></div>
+        <span class="ms-2 text-light">{{ __("Processing") }}...</span>
+    </div>
+</div>
 
 <div class="aiz-titlebar mt-2 mb-4">
     <div class="row align-items-center">
@@ -57,7 +136,6 @@ thead tr{
                         <a href="{{ route('seller.products.create')}}" class="btn btn-primary btn-lg">
                         <i class="las la-plus la-1x text-white"></i> {{ translate('Add New Product') }}</a>
                     </div>
-
                 </div>
                 @endcan
             </div>
@@ -110,33 +188,49 @@ thead tr{
             </a>
         </div>
         @endif --}}
-
     </div>
 
     <div class="card">
-        <form class="" id="sort_products" action="" method="GET">
+        <form id="sort_products" method="GET">
             <div class="card-header row gutters-5">
-                <div class="col-md-4">
-                <div id="step3" class="input-group input-group-sm">
-                <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">
-                        <i class="fas fa-search"></i> <!-- Assuming you're using Font Awesome for icons -->
-                    </button>
-                </div>
-            </div>
-
-                </div>
-
-                <div class="dropdown mb-2 mb-md-0">
-                    <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
-                        {{translate('Bulk Action')}}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item confirm-alert" href="javascript:void(0)"  data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
+                <div class="col-3">
+                    <div id="step3" class="input-group input-group-sm">
+                        <input type="text" class="form-control" id="search" name="search" @isset($search) value="{{ $search }}" @endisset placeholder="{{ translate('Search product') }}" />
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <div class="col">
+                    <select class="form-control aiz-selectpicker" id="productCategory" name="category_id" data-live-search="true">
+                        <option value="">{{ __("All categories") }}</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
+                <div class="col">
+                    <select class="form-control aiz-selectpicker" id="productBuJob" name="bu_job_id" data-live-search="true">
+                        <option value="">{{ __("All BU jobs") }}</option>
+                        @foreach($bu_jobs as $bu_job)
+                            <option value="{{ $bu_job->id }}" {{ request('bu_job_id') == $bu_job->id ? 'selected' : '' }}>{{ formatBuJob($bu_job) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-2 dropdown mb-md-0">
+                    <button class="btn border dropdown-toggle" type="button" data-toggle="dropdown">
+                        {{translate('Bulk Actions')}}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="d-none dropdown-item confirm-alert" href="javascript:void(0)" data-target="#bulk-delete-modal"> {{translate('Delete selection')}}</a>
+                        <a class="bulk-publish__clz dropdown-item confirm-alert" data-title="{{ __("Publish selection") }}" data-message="{{ translate('Are you sure to publish this selection?') }}" href="javascript:void(0)"> {{translate('Publish selection')}}</a>
+                        <a class="bulk-unpublish__clz dropdown-item confirm-alert" data-title="{{ __("Unpublish selection") }}" href="javascript:void(0)" data-message="{{ translate('Are you sure to unpublish this selection?') }}"> {{translate('Unpulish selection')}}</a>
+                    </div>
+                </div>
             </div>
             <div class="card-body">
                 <table id="step2" class="table aiz-table mb-0">
@@ -146,16 +240,17 @@ thead tr{
                                 <div class="form-group">
                                     <div class="aiz-checkbox-inline">
                                         <label class="aiz-checkbox">
-                                            <input type="checkbox" class="check-all">
-                                            <span class="aiz-square-check"></span>
+                                            <input type="checkbox" class="check-all" data-toggle="tooltip" data-placement="top" title="{{ __("product.select_all_products", ["count" => $products->total()])}}">
+                                            <span class="aiz-square-check" data-toggle="tooltip" data-placement="top" title="{{ __("product.select_all_products", ["count" => $products->total()])}}"></span>
+                                            <span class="mt-1 checkbox-loader__clz"></span>
                                         </label>
                                     </div>
                                 </div>
                             </th>
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('Name')}}</th>
                             <th width="30%" style="padding-left: 12px !important;">{{ translate('SKU')}}</th>
-
-                            {{-- <th data-breakpoints="md">{{ translate('Category')}}</th> --}}
+                            <th data-breakpoints="md">{{ translate('Category')}}</th>
+                            <th data-breakpoints="md">{{ translate('Bu job ID')}}</th>
                             <th data-breakpoints="md">{{ translate('QTY')}}</th>
                             <th class="text-nowrap">{{ translate('Unit of Sale Price') }}</th>
                             <th class="text-center" data-breakpoints="md">{{ translate('Status')}}</th>
@@ -178,17 +273,26 @@ thead tr{
                                 </td>
                                 <td>
                                     <a href="{{ route('product', $product->slug) }}" target="_blank" class="text-reset">
-                                        {{ $product->name }}
+                                        <span class="product-name__clz">
+                                            {{ $product->name }}
+                                        </span>
                                     </a>
                                 </td>
                                 <td>
-                                    {{ $product->sku }}
+                                    <span class="product-sku__clz">
+                                        {{ $product->sku }}
+                                    </span>
                                 </td>
-                                {{-- <td>
+                                <td>
                                     @if ($product->main_category != null)
                                         {{ $product->main_category->getTranslation('name') }}
                                     @endif
-                                </td> --}}
+                                </td>
+                                <td>
+                                    @if($product->bu_job !== null)
+                                        {{ formatBuJob($product->bu_job, false) }}
+                                    @endif
+                                </td>
                                 <td>
                                     {{$product->getTotalQuantity()}}
                                 </td>
@@ -227,7 +331,7 @@ thead tr{
                                 <td>
                                     @if(count($product->getChildrenProducts()) == 0)
                                         <label class="aiz-switch aiz-switch-success mb-0">
-                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" <?php if($product->published == 1 && $product->approved == 1) echo "checked";?> >
+                                            <input value="{{ $product->id }}" class="publsihed_product" @if($product->approved != 1) disabled @endif type="checkbox" @if($product->published == 1 && $product->approved == 1) checked @endif>
                                             <span class=""> </span>
                                         </label>
                                     @endif
@@ -258,14 +362,20 @@ thead tr{
                                         </td>
                                         <td >
                                             <a href="{{ route('product', $children->slug) }}" @if(app()->getLocale() == "ae") style="margin-right: 34px !important" @else style="margin-left: 34px !important" @endif target="_blank" class="text-reset">
-                                                {{ $children->name }}
+                                                <span class="product-name__clz">
+                                                    {{ $children->name }}
+                                                </span>
                                             </a>
                                         </td>
                                         <td>
-                                            {{ $children->sku }}
+                                            <span class="product-sku__clz">
+                                                {{ $children->sku }}
+                                            </span>
                                         </td>
+                                        <td></td>
+                                        <td></td>
                                         <td>
-                                        {{$children->getTotalQuantity()}}
+                                            {{$children->getTotalQuantity()}}
                                         </td>
                                         <td>{{ $children->getPriceRange() }}</td>
                                         <td>
@@ -324,10 +434,16 @@ thead tr{
                 </table>
                 <div class="row">
                     <div class="col-6" style="padding-top: 11px; !important">
-                        <p class="pagination-showin">Showing {{ $products->firstItem() }} - {{ $products->lastItem() }} of {{ $products->total() }}</p>
+                        <p class="pagination-showin">
+                            {{ __("product.showing_items_pagination", [
+                                    "first" =>$products->firstItem(),
+                                    "last" => $products->lastItem(),
+                                    "total" => $products->total()
+                                ]) }}
+                        </p>
                     </div>
                     <div class="col-6">
-                        <div class="pagination-container text-right"  style="float: right;">
+                        <div class="pagination-container float-right">
                             {{ $products->links('custom-pagination') }}
                         </div>
                     </div>
@@ -335,6 +451,12 @@ thead tr{
             </div>
         </form>
     </div>
+@endsection
+
+@section('modal')
+    @include('modals.delete_modal')
+    @include('modals.bulk_delete_modal')
+    @include('modals.bulk_publish_modal')
 
     <div id="modal-info" class="modal fade">
         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -365,56 +487,131 @@ thead tr{
                 <input type="hidden" id="product_id">
                 <div class="modal-body text-center">
                     <p class="mt-1 fs-14" id="text-modal-success">{{translate('Are you sure to delete this?')}}</p>
-                    <button type="button" class="btn btn-secondary rounded-0 mt-2" data-dismiss="modal">{{translate('OK')}}</button>
+                    <button type="button" class="btn btn-secondary rounded-0 mt-2 btn-ok" data-dismiss="modal">{{translate('OK')}}</button>
                 </div>
             </div>
         </div>
     </div>
-
-@endsection
-
-@section('modal')
-    <!-- Delete modal -->
-    @include('modals.delete_modal')
-    <!-- Bulk Delete modal -->
-    @include('modals.bulk_delete_modal')
 @endsection
 
 @section('script')
-    <script type="text/javascript">
+    <script>
+        $(document).ready(function() {
+            let allSelectedIds = [];
 
-        $(document).on("change", ".check-all", function() {
-            if(this.checked) {
-                // Iterate each checkbox
-                $('.check-one:checkbox').each(function() {
-                    this.checked = true;
-                });
-            } else {
-                $('.check-one:checkbox').each(function() {
-                    this.checked = false;
-                });
+            $("#modal-success").on("click", ".btn-ok", function () {
+                location.reload();
+            });
+
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#productCategory").on("change", function() {
+                let categoryId = $(this).val();
+                let url = new URL(window.location.href);
+
+                if (categoryId) {
+                    url.searchParams.set('category_id', categoryId);
+
+                    url.searchParams.delete('page');
+                } else {
+                    url.searchParams.delete('category_id');
+                }
+
+                window.location.href = url.toString();
+            });
+
+            $("#productBuJob").on("change", function() {
+                let buJobId = $(this).val();
+                let url = new URL(window.location.href);
+
+                if (buJobId) {
+                    url.searchParams.set('bu_job_id', buJobId);
+
+                    url.searchParams.delete('page');
+                } else {
+                    url.searchParams.delete('bu_job_id');
+                }
+
+                window.location.href = url.toString();
+            });
+
+            $(".bulk-publish__clz,.bulk-unpublish__clz").click(function(event) {
+                let title = $(event.target).data("title");
+                let isProductsSelected = $('.check-one:checkbox:checked').length > 0;
+                let message = isProductsSelected ?
+                    $(event.target).data("message")
+                    : "{{ __('Please select at least one product.') }}";
+
+                let modal = $("#bulk-publish-modal");
+
+                modal.find(".modal-title").text(title);
+                modal.find(".modal-message").text(message);
+
+                if(isProductsSelected === true) {
+                    modal.find(".action-btn").each(function() {
+                        if(title.includes("{{ __("Publish ") }}")) {
+                            $(modal.find(".action-btn")[0]).removeClass("d-none");
+                            $(modal.find(".action-btn")[1]).addClass("d-none");
+                        } else {
+                            $(modal.find(".action-btn")[1]).removeClass("d-none");
+                            $(modal.find(".action-btn")[0]).addClass("d-none");
+                        }
+                    });
+                }
+
+                modal.modal("show");
+            });
+        });
+
+        $(document).on("change", ".check-all", async function() {
+            let checkbox = $(this);
+            let label = checkbox.closest('.aiz-checkbox');
+
+            label.addClass('loading');
+
+            try {
+                if (this.checked) {
+                    let queryString = location.search;
+                    const response = await fetch(`{{ route("seller.products") }}${queryString === "" ? '?selectAll' : `${queryString}&selectAll`}`);
+                    let { ids } = await response.json();
+
+                    allSelectedIds = ids;
+
+                    $('.check-one:checkbox').each(function() {
+                        const id = parseInt($(this).val());
+                        this.checked = allSelectedIds.includes(id);
+                    });
+                } else {
+                    allSelectedIds = [];
+                    $('.check-one:checkbox').prop('checked', false);
+                }
+            } catch(error) {
+                // @todo
+                console.log(error)
+            } finally {
+                label.removeClass('loading');
             }
-
         });
 
         $('body').on('change', '.publsihed_product', function(){
-            var current = $(this);
-            var id = $(this).val();
-            if($(this).is(':not(:checked)')){
-                var published = 0;
-                var message = "Do you want to unpublish ?";
-                var message_button = "Unpublish";
-                var message_success = "The product unpublished successfully";
-                var message_icon = "Unpublished"
-            }else{
-                var published = 1;
-                var message = "Do you want to publish ?";
-                var message_button = "Publish";
-                var message_success = "The product published successfully";
-                var message_icon = "Published"
+            let current = $(this);
+            let id = $(this).val();
+
+            let published = 1;
+            let message = "Do you want to publish ?";
+            let message_button = "Publish";
+            let message_success = "The product published successfully";
+            let message_icon = "Published";
+
+            if($(this).is(':not(:checked)')) {
+                published = 0;
+                message = "Do you want to unpublish ?";
+                message_button = "Unpublish";
+                message_success = "The product unpublished successfully";
+                message_icon = "Unpublished";
             }
 
-            if(id != undefined){
+            if(id != undefined) {
                 $("#title-modal").text('{{ translate("Publish Product") }}');
                 $("#text-modal").text(message);
                 $("#publish-link").text(message_button);
@@ -444,18 +641,17 @@ thead tr{
 
         $('body').on('click', '#publish-link', function(){
             $("#modal-info").modal('hide');
-            var id = $("#product_id").val();
-            var published = $("#status").val();
+            let id = $("#product_id").val();
+            let published = $("#status").val();
+            let message_success = "The product published successfully";
+            let message_icon = "Published"
 
-            if(published == 0){
-                var message_success = "The product unpublished successfully";
-                var message_icon = "Unpublished"
-            }else{
-                var message_success = "The product published successfully";
-                var message_icon = "Published"
+            if(published == 0) {
+                let message_success = "The product unpublished successfully";
+                let  message_icon = "Unpublished"
             }
 
-            if((id != '') && (id != undefined)){
+            if((id != '') && (id != undefined)) {
                 $.ajax({
                     url: "{{ route('seller.products.published') }}",
                     type: "GET",
@@ -496,12 +692,12 @@ thead tr{
         }
 
         function update_published(el){
-            if(el.checked){
-                var status = 1;
+            let status = 0;
+
+            if(el.checked) {
+                status = 1;
             }
-            else{
-                var status = 0;
-            }
+
             $.post('{{ route('seller.products.published') }}', {_token:'{{ csrf_token() }}', id:el.value, status:status}, function(data){
                 if(data == 1){
                     AIZ.plugins.notify('success', '{{ translate('Published products updated successfully') }}');
@@ -518,7 +714,7 @@ thead tr{
         }
 
         function bulk_delete() {
-            var data = new FormData($('#sort_products')[0]);
+            let data = new FormData($('#sort_products')[0]);
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -530,16 +726,102 @@ thead tr{
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    if(response == 1) {
-                        location.reload();
+                    $("#bulk-delete-modal").modal("hide")
+
+                    if(response.error == false) {
+                        $("#title-modal-success").text("Bulk Delete");
+                        $("#text-modal-success").text(response.message);
+
+                        $("#modal-success").modal('show')
+                    } else {
+                        // @todo
                     }
                 }
             });
         }
 
-    </script>
+        function bulk_publish(publish = true) {
+            let data = new FormData();
 
-    <script>
+            let productsIds = [];
+
+            if(allSelectedIds.length === 0) {
+                $('.check-one:checkbox:checked').each(function() {
+                    productsIds.push($(this).val());
+                });
+            } else {
+                productsIds = allSelectedIds;
+            }
+
+            if (productsIds.length === 0) {
+                alert('Please select at least one product.');
+                return;
+            }
+
+            data.append('products_ids', JSON.stringify(productsIds));
+            data.append('publish', publish ? 1 : 0);
+
+            $("#block-ui-overlay__id").show();
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{route('seller.products.bulk-publish')}}",
+                type: 'POST',
+                data,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $("#bulk-publish-modal").modal("hide");
+                    $("#block-ui-overlay__id").hide();
+
+                    if(response.error === true) {
+                        let errorCount = Object.keys(response.error_details || {}).length;
+                        let needsScroll = errorCount > 10;
+
+                        let errorsText = `
+                            <p>${response.message}:</p>
+                            <div class="${needsScroll ? 'scrollable-error-container__clz' : ''}">
+                                <ul class="list-unstyled ${needsScroll ? 'mb-0' : ''}">
+                        `;
+
+                        Object.entries(response.error_details || {}).forEach(([_, message]) => {
+                            errorsText += `<li class="py-1">{{ __("Product sku") }}: ${message}</li>`;
+                        });
+
+                        errorsText += `
+                                </ul>
+                            </div>
+                            ${needsScroll ? `<small class="text-muted">Scroll to see all ${errorCount} errors</small>` : ''}
+                        `;
+
+                        $("#title-modal-success").text(`Bulk ${response.action}`);
+                        $("#text-modal-success").html(errorsText);
+
+                        $("#text-modal-success").addClass("text-left")
+
+                        $("#modal-success").find(".modal-dialog").removeClass('modal-sm');
+                        $("#modal-success").modal('show');
+                    } else {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500)
+                    }
+                },
+                error: function(xhr) {
+                    $("#block-ui-overlay__id").hide();
+                    let response = xhr.responseJSON;
+                    let errorMessage = response?.message || 'An error occurred.';
+
+                    $("#bulk-publish-modal").find(".modal-message").html(
+                        `<span class="d-flex alert alert-danger">${errorMessage}</span>`
+                    );
+                    $("#bulk-publish-modal").find(".action-btn").addClass("d-none");
+                }
+            });
+        }
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById('startTourButton').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default anchor click behavior
@@ -551,7 +833,7 @@ thead tr{
             return;
         }
     }
-        var tour_steps = [
+        let tour_steps = [
             @foreach($tour_steps as $key => $step)
             {
                 element: document.querySelector('#{{$step->element_id}}'),

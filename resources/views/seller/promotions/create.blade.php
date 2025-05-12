@@ -52,7 +52,7 @@
         }
         #copyButton {
             position: relative;
-        }   
+        }
 
         .tooltip-text {
             visibility: hidden;
@@ -63,7 +63,7 @@
             border-radius: 5px;
             padding: 5px;
             position: absolute;
-            bottom: 125%; 
+            bottom: 125%;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
@@ -307,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-    
+
 
                     <div class="row">
                         <div class="col-md-6">
@@ -321,7 +321,7 @@
                     </div>
 
                     <div class="row">
-                        
+
                         <div class="col-md-6 mb-3 tree-multiselect" id="multiTreeContainer" style="display:none;">
                             <label for="multiTreeCategory" class="form-label">Category</label>
                             <select id="multiTreeCategory" name="category_id" multiple="multiple">
@@ -338,8 +338,8 @@
                             <select class="form-control aiz-selectpicker" id="productCategory" name="category_id">
                                 @foreach($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
+                                @endforeach
+                            </select>
                         </div>
 
 
@@ -348,7 +348,7 @@
                             <label for="product_id" class="form-label">Product</label>
                             <select class="form-control aiz-selectpicker" id="product_id" name="product_id">
                                 <option value="" selected>Select product</option>
-                              
+
                             </select>
                         </div>
 
@@ -392,7 +392,7 @@
                             <div class="form-label"></div>
                             <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                 <span id="generatedCode" style="  text-align: center;"></span>
-                                
+
                                 <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                     <i class="fas fa-copy" aria-hidden="true"></i>
                                     <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
@@ -400,22 +400,22 @@
                             </div>
                         </div>
                         <input type="hidden" name="code" id="code">
-                    
+
                         <div class="col-md-12 text-center">
                             <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
                             <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                         </div>
                     </div>
-                    
-    
+
+
                     <div id="DiscountContainer" class="text-center">
                         <button type="submit" class="btn btn-dark-custom">Add Discount</button>
                     </div>
                 </form> --}}
                 <div id="formContainer">
-                    
+
                 </div>
-                
+
                 <template id="productScopeTemplate">
                     <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
                         @csrf
@@ -444,7 +444,7 @@
                                 <input type="date" class="form-control" name="end_date" required>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="productCategory" class="form-label">Category</label>
@@ -461,7 +461,7 @@
                                 </select>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="percent" class="form-label">Percent</label>
@@ -474,7 +474,7 @@
                             </div>
 
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="max_qty" class="form-label">Maximum Quantity</label>
@@ -486,7 +486,7 @@
                                 <div class="form-label"></div>
                                 <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                     <span id="generatedCode" style="  text-align: center;"></span>
-                                    
+
                                     <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                         <i class="fas fa-copy" aria-hidden="true"></i>
                                         <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
@@ -494,20 +494,20 @@
                                 </div>
                             </div>
                             <input type="hidden" name="code" id="code">
-                        
+
                             <div class="col-md-12 text-center">
                                 <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
                                 <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                             </div>
                         </div>
-                        
-        
+
+
                         <div id="DiscountContainer" class="text-center">
                             <button type="submit" class="btn btn-dark-custom">Add Discount</button>
-                        </div>        
+                        </div>
                     </form>
                 </template>
-                
+
                 <template id="categoryScopeTemplate">
                     <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
                         @csrf
@@ -526,7 +526,7 @@
                                 </div>
                             </div>
                         </div>
-                      
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="startDate" class="form-label">Start Date</label>
@@ -537,7 +537,7 @@
                                 <input type="date" class="form-control" name="end_date" required>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="multiTreeCategory" class="form-label">Category</label>
@@ -559,7 +559,7 @@
                                 <div class="form-label"></div>
                                 <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                     <span id="generatedCode" style="  text-align: center;"></span>
-                                    
+
                                     <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                         <i class="fas fa-copy" aria-hidden="true"></i>
                                         <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
@@ -567,20 +567,20 @@
                                 </div>
                             </div>
                             <input type="hidden" name="code" id="code">
-                        
+
                             <div class="col-md-12 text-center">
                                 <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
                                 <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                             </div>
                         </div>
-                        
-        
+
+
                         <div id="DiscountContainer" class="text-center">
                             <button type="submit" class="btn btn-dark-custom">Add Discount</button>
-                        </div>                    
+                        </div>
                     </form>
                 </template>
-                
+
                 <template id="ordersOverAmountScopeTemplate">
                     <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
                         @csrf
@@ -609,7 +609,7 @@
                                 <input type="date" class="form-control" name="end_date" required>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="order_amount" class="form-label">Minimum Order Amount</label>
@@ -620,7 +620,7 @@
                                 <input type="number" class="form-control" id="percent" name="discount_percentage" min="0" max="100" placeholder="0%" required>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3">
                                 <label for="maxDiscount" class="form-label">Maximum discount amount</label>
@@ -628,13 +628,13 @@
                                     placeholder="Maximum discount amount">
                             </div>
                         </div>
-                
+
                         <div class="row" id="couponCodeContainer" style="display: none;">
                             <div class="col-md-12 mb-3">
                                 <div class="form-label"></div>
                                 <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                     <span id="generatedCode" style="  text-align: center;"></span>
-                                    
+
                                     <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                         <i class="fas fa-copy" aria-hidden="true"></i>
                                         <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
@@ -642,20 +642,20 @@
                                 </div>
                             </div>
                             <input type="hidden" name="code" id="code">
-                        
+
                             <div class="col-md-12 text-center">
                                 <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
                                 <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                             </div>
                         </div>
-                        
-        
+
+
                         <div id="DiscountContainer" class="text-center">
                             <button type="submit" class="btn btn-dark-custom">Add Discount</button>
-                        </div>      
+                        </div>
                     </form>
                 </template>
-                
+
                 <template id="allOrdersScopeTemplate">
                     <form id="discountForm" action="{{ route('seller.discounts.store') }}" method="POST">
                         @csrf
@@ -674,7 +674,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="startDate" class="form-label">Start Date</label>
@@ -685,7 +685,7 @@
                                 <input type="date" class="form-control" name="end_date" required>
                             </div>
                         </div>
-                
+
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="percent" class="form-label">Percent</label>
@@ -697,13 +697,13 @@
                                     placeholder="Maximum discount amount">
                             </div>
                         </div>
-                
+
                         <div class="row" id="couponCodeContainer" style="display: none;">
                             <div class="col-md-12 mb-3">
                                 <div class="form-label"></div>
                                 <div style="display: flex; align-items: center; justify-content: center; width: 250px; margin: 0 auto; border: 1px dashed #ccc; padding: 10px; text-align: center;">
                                     <span id="generatedCode" style="  text-align: center;"></span>
-                                    
+
                                     <button id="copyButton" type="button"  onclick="copyToClipboard()" style="background: none; border: none; cursor: pointer; display: none; margin-left: 10px; position: relative;">
                                         <i class="fas fa-copy" aria-hidden="true"></i>
                                         <span class="tooltip-text" id="tooltipText">Copy coupon code</span>
@@ -711,25 +711,25 @@
                                 </div>
                             </div>
                             <input type="hidden" name="code" id="code">
-                        
+
                             <div class="col-md-12 text-center">
                                 <button type="button" id="generateButton" class="btn btn-dark-custom" onclick="generateCouponCode()">Generate Coupon</button>
                                 <button type="button" id="activateButton" class="btn btn-dark-custom" style="display: none;">Activate Coupon</button>
                             </div>
                         </div>
-                        
-        
+
+
                         <div id="DiscountContainer" class="text-center">
                             <button type="submit" class="btn btn-dark-custom">Add Discount</button>
-                        </div>      
+                        </div>
                     </form>
                 </template>
-                
+
             </div>
         </div>
     </div>
 
-    
+
 
 <div id="modal-discount-overlap" class="modal fade">
     <div class="modal-dialog modal-md modal-dialog-centered">
@@ -741,7 +741,7 @@
             <div class="modal-body text-center">
                 <p class="mt-1 fs-14">{{ translate('Please note that this range overlaps with the existing offers listed below.') }}</p>
                 <p class="fs-14">{{ translate('If you proceed, the greater offer will be applied.') }}</p>
-                
+
                 <ul  id="overlappingDiscountList" class="list-group mb-3" >
                     <li class="list-group-item">
                     </li>
@@ -756,7 +756,7 @@
     </div>
 </div>
 
-             
+
 @endsection
 
 @section('script')
@@ -771,7 +771,7 @@
                 code += characters.charAt(Math.floor(Math.random() * characters.length));
             }
             document.getElementById('generatedCode').textContent = code;
-            document.getElementById('code').value = code; 
+            document.getElementById('code').value = code;
             document.getElementById('copyButton').style.display = 'inline-block';
             document.getElementById('activateButton').style.display = 'inline-block';
             document.getElementById('generateButton').style.display = 'none';
@@ -783,7 +783,7 @@
             textarea.value = code;
             document.body.appendChild(textarea);
             textarea.select();
-            document.execCommand('copy');   
+            document.execCommand('copy');
             document.body.removeChild(textarea);
 
             const copyButtonIcon = document.querySelector("#copyButton i");
@@ -803,7 +803,7 @@
                 const offerType = document.querySelector('input[name="offerType"]:checked').value;
                 const baseUrl = offerType === 'coupon' ? '/vendor/coupons/create' : '/vendor/discounts/create';
                 const scope = selectedScope || new URLSearchParams(window.location.search).get('scope');
-                
+
                 const url = new URL(window.location.origin + baseUrl);
                 if (scope) {
                     url.searchParams.set('scope', scope);
@@ -815,13 +815,13 @@
         }
         function submitForm(ignoreOverlap, type) {
             const formData = new FormData($('#discountForm')[0]);
-            
+
             if (ignoreOverlap) {
                 formData.append('ignore_overlap', true);
             }
 
-            const url = type === 'coupon' 
-                ? "{{ route('seller.coupons.store') }}" 
+            const url = type === 'coupon'
+                ? "{{ route('seller.coupons.store') }}"
                 : "{{ route('seller.discounts.store') }}";
 
             $.ajax({
@@ -859,7 +859,7 @@
                 const endDate = new Date(item.end_date).toISOString().slice(0, 10);
                 ul.append(`
                     <li class="list-group-item">
-                        <strong>Scope:</strong> ${item.scope} 
+                        <strong>Scope:</strong> ${item.scope}
                         <br>
                         <strong>From:</strong> ${startDate} <strong>to</strong> ${endDate}
                     </li>
@@ -922,7 +922,7 @@
                         const selectedCategoryId = this.value;
                         if (selectedCategoryId) {
                             $.ajax({
-                                url: getProductByCategoryUrl, 
+                                url: getProductByCategoryUrl,
                                 type: 'GET',
                                 data: { category_id: selectedCategoryId },
                                 success: function (response) {
@@ -941,7 +941,7 @@
                     });
                 }
 
-  
+
 
                 if (scope === 'category') {
                     $("select#multiTreeCategory").treeMultiselect({
@@ -973,7 +973,7 @@
                     }
                 }
                 toggleCouponFields();
-           
+
             }
 
                 document.querySelectorAll('.tab-card').forEach(card => {
@@ -1009,7 +1009,7 @@
             function validateForm(form) {
                 const startDate = form.querySelector("input[name='start_date']").value;
                 const endDate = form.querySelector("input[name='end_date']").value;
-                const scope = form.querySelector("input[name='scope']").value;                
+                const scope = form.querySelector("input[name='scope']").value;
                 const percent = form.querySelector("input[name='discount_percentage']").value;
                 const maxDiscount = form.querySelector("input[name='max_discount']")?.value ?? null;
                 const productId = form.querySelector("select[name='product_id']")?.value ?? null;
@@ -1052,7 +1052,7 @@
             document.addEventListener('submit', function(e) {
     if (e.target.matches('#discountForm')) {
         e.preventDefault();
-        if (validateForm(e.target)) { 
+        if (validateForm(e.target)) {
             submitDiscountForm(false);
         }
     }
@@ -1075,12 +1075,12 @@ document.addEventListener('click', function(e) {
                 }
             });
             $('#confirmProceedBtn').on('click', function() {
-                $('#modal-discount-overlap').modal('hide'); 
-                submitDiscountForm(true); 
+                $('#modal-discount-overlap').modal('hide');
+                submitDiscountForm(true);
             });
-           
-            
-        
+
+
+
         });
 
 

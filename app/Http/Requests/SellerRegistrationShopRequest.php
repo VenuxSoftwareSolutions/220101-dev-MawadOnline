@@ -46,7 +46,7 @@ class SellerRegistrationShopRequest extends FormRequest
         return [
             'trade_name_english' => 'required|string|max:128|regex:/\D/',
             'trade_name_arabic' => 'required|string|max:256|regex:/\D/',
-            'trade_license_doc' => !$this->input('trade_license_doc_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
+            'trade_license_doc' => !$this->input('trade_license_doc_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120|clamav' : 'nullable|file|mimes:pdf,jpeg,png|max:5120|clamav',
             'eshop_name_english' => 'required|string|max:128|regex:/\D/',
             'eshop_name_arabic' => 'required|string|max:256|regex:/\D/',
             'eshop_desc_en' => 'nullable|string|regex:/\D/',
@@ -63,7 +63,7 @@ class SellerRegistrationShopRequest extends FormRequest
             'vat_registered' => 'required|boolean',
             'vat_certificate' => $this->input('vat_registered') == 1 && (!$this->input('vat_certificate_old') || $this->hasFile('vat_certificate') ) ? 'required_if:vat_registered,1|file|mimes:pdf,jpeg,png|max:5120' : '',
             'trn' => $this->input('vat_registered') == 1 ? 'required_if:vat_registered,1|string|max:20' : '',
-            'tax_waiver' => $this->input('vat_registered') == 0 && (!$this->input('tax_waiver_old')  || $this->hasFile('tax_waiver'))  ? 'required_if:vat_registered,0|file|mimes:pdf,jpeg,png|max:5120' : '',
+            'tax_waiver' => 'nullable|file|max:5120|mimes:pdf,jpg,jpeg,png,webp,gif,avif,bmp,tiff,heic',
             'civil_defense_approval' => 'nullable|file|mimes:pdf,jpeg,png|max:5120',
             'first_name' => 'required|string|max:64|regex:/\D/',
             'last_name' => 'required|string|max:64|regex:/\D/',
@@ -94,7 +94,7 @@ class SellerRegistrationShopRequest extends FormRequest
             'account_number' => 'required|string|max:30',
             'iban' => 'required|string|max:34',
             'swift_code' => 'required|string|max:16',
-            'iban_certificate' => !$this->input('iban_certificate_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120' : 'nullable|file|mimes:pdf,jpeg,png|max:5120',
+            'iban_certificate' => !$this->input('iban_certificate_old') ? 'required|file|mimes:pdf,jpeg,png|max:5120|clamav' : 'nullable|file|mimes:pdf,jpeg,png|max:5120|clamav',
         ];
     }
 

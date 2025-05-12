@@ -29,7 +29,7 @@ class StockController extends Controller
 
     public function index(Request $request, $type = null)
     {
-        seller_lease_creation($user=Auth::user());
+        seller_lease_creation($user = Auth::user());
 
         // Filter by product variant and warehouse if provided
         $productVariant = $request->input('productVariant');
@@ -42,17 +42,19 @@ class StockController extends Controller
             ->exists();
 
         if ($warehouse_id && !$is_vendor_warehouse_exists) {
-            return back()->withErrors(['error' => 'Invalid warehouse.']);
+            return back()->withErrors(['error' => __('Invalid warehouse.')]);
         }
 
         if ($productVariant && $warehouse_id) {
             $inventoryData = StockSummary::where('variant_id', $productVariant)
                 ->where('warehouse_id', $warehouse_id)
                 ->where('seller_id', $seller->id)
+                ->where("current_total_quantity", ">", 0)
                 ->orderBy('updated_at', 'desc')
                 ->get();
         } else {
             $inventoryData = StockSummary::where('seller_id', $seller->id)
+                ->where("current_total_quantity", ">", 0)
                 ->orderBy('updated_at', 'desc')
                 ->get();
         }
@@ -65,7 +67,7 @@ class StockController extends Controller
 
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products','tour_steps'));
+        return view('seller.stock.index', compact('inventoryData', 'warehouses', 'products', 'tour_steps'));
     }
 
     /**
@@ -260,7 +262,7 @@ class StockController extends Controller
      */
     public function stockOperationReport(Request $request)
     {
-        seller_lease_creation($user=Auth::user());
+        seller_lease_creation($user = Auth::user());
 
         // Retrieve the authenticated user (seller).
         $seller = User::find(Auth::user()->owner_id);
@@ -268,8 +270,8 @@ class StockController extends Controller
         // Fetch all warehouses associated with the seller.
         $warehouses = Warehouse::where("user_id", $seller->id)->get();
         // Return the view for the stock operation report with the warehouses data.
-        $tour_steps=Tour::orderBy('step_number')->get();
-        return view('seller.stock.stock_operation_report', compact('warehouses','tour_steps'));
+        $tour_steps = Tour::orderBy('step_number')->get();
+        return view('seller.stock.stock_operation_report', compact('warehouses', 'tour_steps'));
     }
 
     /**
@@ -315,9 +317,9 @@ class StockController extends Controller
         $records = $query->get();
 
         // $warehouses=Warehouse::where("user_id",$seller->id)->get() ;
-        $tour_steps=Tour::orderBy('step_number')->get();
+        $tour_steps = Tour::orderBy('step_number')->get();
         // Return the view with the data required for the stock operation report.
-        return view('seller.stock.stock_operation_report', compact('records',/* 'warehouses', */ 'productVariants', 'warehouses','tour_steps'));
+        return view('seller.stock.stock_operation_report', compact('records', /* 'warehouses', */ 'productVariants', 'warehouses', 'tour_steps'));
     }
 
     public function warehouses()
@@ -326,7 +328,7 @@ class StockController extends Controller
         $warehouses = Warehouse::where('user_id', $seller->id)->get();
         $emirates = Emirate::all();
         $tour_steps = Tour::orderBy('step_number')->get();
-        return view('seller.warehouses.index', compact('warehouses', 'emirates','tour_steps'));
+        return view('seller.warehouses.index', compact('warehouses', 'emirates', 'tour_steps'));
     }
 
     public function removeWarehouse(Request $request)

@@ -12,7 +12,6 @@ use App\Http\Middleware\AppLanguage;
 use App\Http\Middleware\IsAppUserUnbanned;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
-
 class Kernel extends HttpKernel
 {
     /**
@@ -47,7 +46,8 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\Language::class,
             \App\Http\Middleware\HttpsProtocol::class,
-            \App\Http\Middleware\CheckForMaintenanceMode::class
+            \App\Http\Middleware\CheckForMaintenanceMode::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
         ],
 
         'api' => [

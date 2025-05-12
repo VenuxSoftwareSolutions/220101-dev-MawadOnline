@@ -12,6 +12,8 @@ use enshrined\svgSanitize\Sanitizer;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\GD\Imagick;
 use App\Services\UploadService;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class AizUploadController extends Controller
 {
@@ -99,6 +101,17 @@ class AizUploadController extends Controller
             if (!in_array($extension, $allowedExtensions)) {
                 return response()->json(['error' => 'File type not allowed.'], 400);
             }
+            /*clamav scan
+            $validator = Validator::make($request->all(), [
+                'aiz_file' => 'clamav',
+            ]);
+            
+            if ($validator->fails()) {
+                Log::warning('Virus detected in file upload by user ID: ' . Auth::id());
+
+                return response()->json(['error' => 'Virus detected in uploaded file.'], 400);
+            }*/
+            
     
             $upload = new Upload;
             $upload->file_original_name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);

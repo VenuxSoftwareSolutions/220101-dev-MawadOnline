@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\File;
 use Log;
 use Exception;
 use App\Rules\NonOverlappingShippingQuantityPerShipper;
+use App\Models\BuJob;
 
 class ProductController extends Controller
 {
@@ -85,32 +86,86 @@ class ProductController extends Controller
         seller_lease_creation($user = Auth::user());
 
         $search = null;
-        $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
-            $query->where('is_draft', '=', 1)
-                ->where('parent_id', 0)
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('parent_id', 0)
-                        ->where('is_parent', 0);
-                })
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('is_parent', 1);
-                });
-        })->orderBy('id', 'desc');
+
+        $products = Product::where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc');
+
+        $allMatchingProductIds = (clone $products)->pluck('id');
 
         if ($request->has('search')) {
             $search = $request->search;
             $products = $products->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('sku', 'like', '%'.$search.'%')
-                    ->orWhere('short_description', 'like', '%'.$search.'%');
+                    ->orWhere('short_description', 'like', '%'.$search.'%')
+                    ->orWhereHas('main_category', function ($category) use ($search) {
+                        $category->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
+
+        if ($request->filled('category_id')) {
+            $categoryId = $request->get('category_id');
+            $products = $products->whereHas('main_category', function ($q) use ($categoryId) {
+                $q->where('id', $categoryId);
+            });
+        }
+
+        if ($request->filled('bu_job_id')) {
+            $buJobId = $request->get('bu_job_id');
+            $products = $products->whereHas('bu_job', function ($q) use ($buJobId) {
+                $q->where('id', $buJobId);
+            });
+        }
+
+        $categories = Category::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("name")->get();
+
+        $bu_jobs = BuJob::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("created_at")->get();
+
+        if ($request->has("selectAll")) {
+            $productsIds = (clone $products)->pluck("id")->toArray();
+
+            (clone $products)->each(function ($product) use (&$productsIds) {
+                if ($product->getChildrenProducts()->count() > 0) {
+                    array_push(
+                        $productsIds,
+                        $product->getChildrenProducts()->pluck("id")->toArray()
+                    );
+                }
+            });
+
+            return response()->json([
+                "ids" => collect($productsIds)->flatten()->toArray()
+            ]);
+        }
+
         $products = $products->paginate(10);
+
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.product.products.index', compact('products', 'search', 'tour_steps'));
+        return view('seller.product.products.index', compact(
+            'products',
+            'search',
+            'tour_steps',
+            'categories',
+            'bu_jobs'
+        ));
     }
 
     public function delete_image(Request $request)
@@ -1116,6 +1171,81 @@ class ProductController extends Controller
         }
     }
 
+
+    public function bulk_publish(Request $request)
+    {
+        $action = "publish";
+
+        try {
+            $data = $request->all();
+            $productsIds = json_decode($data["products_ids"]);
+
+            if ($data["publish"] !== "1") {
+                $action = "unpublish";
+            }
+
+            $failed = [];
+            $successful = [];
+            $errorDetails = [];
+
+            if (count($productsIds) === 0) {
+                throw new Exception(__("No products selected"));
+            }
+
+            foreach ($productsIds as $productId) {
+                try {
+                    $product = Product::find($productId);
+
+                    if ($product === null) {
+                        throw new Exception(__("Product not found"));
+                    }
+
+                    $product->published = $data["publish"];
+
+                    if (!$product->save()) {
+                        throw new Exception($product->sku);
+                    }
+
+                    $successful[] = $productId;
+                } catch (Exception $e) {
+                    $failed[] = $productId;
+                    $errorDetails[$productId] = $e->getMessage();
+
+                    Log::warning("Error while bulk {$action} for product {$productId}, with message: {$e->getMessage()}");
+                }
+            }
+
+            $message = __("Bulk :action completed", ["action" => $action]);
+            $statusCode = 200;
+
+            if (!empty($failed)) {
+                if (empty($successful)) {
+                    $message = __("Bulk :action failed for all products", ["action" => $action]);
+                    $statusCode = 500;
+                } else {
+                    $message .= __(" with :count errors in products", ["count" => count($failed)]);
+                    $statusCode = 207;
+                }
+            }
+
+            return response()->json([
+                "error" => !empty($failed),
+                "message" => $message,
+                "failed" => $failed,
+                "successful" => $successful,
+                "error_details" => $errorDetails,
+                "action" => $action
+            ], $statusCode);
+        } catch (Exception $e) {
+            Log::error("Error while bulk {$action} products, with message: {$e->getMessage()}");
+
+            return response()->json([
+                'error' => true,
+                'message' => __("Something went wrong"),
+            ], 500);
+        }
+    }
+
     public function bulk_product_delete(Request $request)
     {
         try {
@@ -1123,11 +1253,13 @@ class ProductController extends Controller
                 foreach ($request->id as $product_id) {
                     $this->destroy($product_id);
                 }
+            } else {
+                throw new Exception("Product Id selection error");
             }
 
-            return 1;
-        } catch (\Exception $e) {
-            \Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
+            return response()->json(["error" => false, "message" => __("Bulk delete products ends successfully")]);
+        } catch (Exception $e) {
+            Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
 
             return response()->json(['error' => true, 'message' => __("There's an error")], 500);
         }

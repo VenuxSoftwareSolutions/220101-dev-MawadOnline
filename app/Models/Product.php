@@ -173,6 +173,45 @@ class Product extends Model
 
     protected static function booted()
     {
+        static::saved(function ($product) {
+            $newestRevision = Revision::where("revisionable_id", $product->id)
+                ->where("key", "unit_price")
+                ->latest('created_at')
+                ->first();
+
+            if ($newestRevision !== null) {
+                $newestRevision->mwd_new_value = calculateMwdIndexPrice(
+                    $newestRevision->revisionable_id,
+                    $newestRevision->new_value
+                );
+
+                if ($newestRevision->old_value !== null) {
+                    $newestRevision->mwd_old_value = calculateMwdIndexPrice(
+                        $newestRevision->revisionable_id,
+                        $newestRevision->old_value
+                    );
+                }
+
+                $newestRevision->save();
+            } else {
+                Revision::insert([
+                    'revisionable_type' => "App\Models\Product",
+                    'revisionable_id' => $product->id,
+                    'user_id' => auth()->user()->owner_id,
+                    'key' => 'unit_price',
+                    'old_value' => null,
+                    'mwd_old_value' => null,
+                    'new_value' => $product->unit_price,
+                    "mwd_new_value" => calculateMwdIndexPrice(
+                        $product->id,
+                        $product->unit_price
+                    ),
+                    'created_at' => new \DateTime(),
+                    'updated_at' => new \DateTime(),
+                ]);
+            }
+        });
+
         // Ensure cascading deletes at the model level
         static::deleting(function ($product) {
             // Automatically delete related stock summaries
@@ -726,5 +765,10 @@ class Product extends Model
         } else {
             return [];
         }
+    }
+
+    public function bu_job()
+    {
+        return $this->belongsTo(BuJob::class, "bu_job_id");
     }
 }

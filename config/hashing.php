@@ -14,8 +14,7 @@ return [
     | Supported: "bcrypt", "argon", "argon2id"
     |
     */
-
-    'driver' => 'bcrypt',
+    'driver' => env('HASHING_DRIVER', 'bcrypt'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,5 +47,13 @@ return [
         'threads' => 2,
         'time' => 2,
     ],
+    
+    'drivers' => [
+        'sha3' => [
+            'rounds' => env('SHA3_ROUNDS', 8192),
+            'secret' => env('SHA3_SECRET',"r5dpnDUl13m+oEfP/UMtxMKeFjlyDPbbibZpq7Rg1Eg="),
+        ],
+    ],
+
 
 ];

@@ -1917,7 +1917,6 @@ class ProductService
                                         ]);
                                     }
                                 }
-
                             }
                         }
 
@@ -2707,7 +2706,6 @@ class ProductService
 
                                 array_push($all_data_to_insert, $current_data);
                             }
-
                         }
 
                         PricingConfiguration::insert($all_data_to_insert);
@@ -6235,6 +6233,11 @@ class ProductService
     {
         try {
             $data = $request->session()->get('productPreviewData', null);
+
+            if (is_null($data) === null) {
+                throw new Exception("Product preview data from session is null");
+            }
+
             $variations = $data['detailedProduct']['variations'];
 
             $qty = $request->quantity;
@@ -6243,7 +6246,7 @@ class ProductService
             // Iterate through the ranges
             $unitPrice = null;
 
-            if (count($variations) > 0) {
+            if (count($variations) > 0 && isset($variations[$request->variationId])) {
                 foreach ($variations[$request->variationId]['variant_pricing-from']['from'] as $index => $from) {
                     $to = $variations[$request->variationId]['variant_pricing-from']['to'][$index];
 
@@ -6337,7 +6340,7 @@ class ProductService
             $maximum = 1;
             $minimum = 1;
 
-            if (count($variations) > 0) {
+            if (count($variations) > 0 && isset($variations[$request->variationId])) {
                 // Convert array values to integers
                 $valuesFrom = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['from']);
                 $valuesMax = array_map('intval', $variations[$request->variationId]['variant_pricing-from']['to']);
@@ -6381,8 +6384,8 @@ class ProductService
 
             return response()->json([
                 'error' => true,
-                'message' => __("There's an error"),
-            ]);
+                'message' => __("Something went wrong"),
+            ], 500);
         }
     }
 
@@ -6549,7 +6552,7 @@ class ProductService
                             $data[$product_history->key] = $product_history->old_value;
                         }
 
-                        DB::table('products')->where('id', $product->id)->update($data);
+                        Product::where('id', $product->id)->update($data);
                     }
                 }
 
@@ -6726,8 +6729,10 @@ class ProductService
         $existingProduct = Product::find($id);
 
         $product_catalog_exist = ProductCatalog::where('product_id', $id)->first();
+
         if ($product_catalog_exist != null) {
             $childrens_catalog = ProductCatalog::where('parent_id', $product_catalog_exist->id)->pluck('id')->toArray();
+
             if (count($childrens_catalog) > 0) {
                 ProductAttributeValueCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
                 UploadProductCatalog::whereIn('catalog_id', $childrens_catalog)->delete();
@@ -6749,12 +6754,12 @@ class ProductService
 
         if (! $existingProduct) {
             // Handle the case where the product with the specific ID doesn't exist
-            return redirect()->back()->with('error', 'Product not found');
+            return redirect()->back()->with('error', __('Product not found'));
         }
 
         $data = $existingProduct->attributesToArray();
         // Make necessary updates to the attributes (if any)
-        unset($data['id']);
+        unset($data['id'], $data["bu_job_id"]);
         $data['product_id'] = $id;
         $newProduct = ProductCatalog::insertGetId($data);
 

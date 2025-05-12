@@ -5,10 +5,10 @@
 /public/hot
 /public/storage
 /public/uploads
-/public/civil_defense_approvals
+/public/civil_defense_approval*
 /public/emirates_ids
 /public/iban_certificates
-/public/vat_certificates
+/public/vat_certificate*
 /public/trade_license_doc
 /public/upload_products
 /public/upload_products_catalog

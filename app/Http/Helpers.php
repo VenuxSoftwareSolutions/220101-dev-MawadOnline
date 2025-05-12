@@ -1121,7 +1121,7 @@ function getShippingCost($carts, $index, $carrier = '', $shipper = null)
             ->filter(fn ($option) => $option->shipper === $shipper)
             ->first();
 
-        if ($shippingOptions->shipper === 'vendor') {
+        if (is_null($shippingOptions) === false && $shippingOptions->shipper === 'vendor') {
             if ($shippingOptions->charge_per_unit_shipping != null) {
                 return $shippingOptions->charge_per_unit_shipping * $cartItem['quantity'];
             } else {
@@ -3111,9 +3111,17 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
             $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
             $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
 
+            $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
+            ->whereNot(function ($query) {
+                $query->where("scope", "product")
+                ->orWhere("scope", "category");
+            })->exists();
+
             $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
 
-            $priceAfterDiscountVatIncl = $withDiscount === true ? CartUtility::priceProduct($product->id, $qty) : $priceVatIncl;
+            $priceAfterDiscountVatIncl = $withDiscount === true && $isOrdersDiscountExists === false ?
+                 CartUtility::priceProduct($product->id, $qty)
+                : $priceVatIncl;
 
             $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
 
@@ -3129,6 +3137,84 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
         } catch (Exception $e) {
             Log::error("Error while calculating mwd commission for product #{$product->id} price, with message: {$e->getMessage()}");
             return $product->unit_price;
+        }
+    }
+}
+
+if (function_exists('calculateMwdIndexPrice') === false) {
+    function calculateMwdIndexPrice($product_id, $unit_price)
+    {
+
+        try {
+            $product = Product::find($product_id);
+
+            if ($product === null) {
+                throw new Exception("Product with id #{$product_id} is not found!");
+            }
+
+            $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+            $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+            $priceVatIncl = $unit_price;
+
+            $priceAfterDiscountVatIncl = CartUtility::priceProduct($product->id, 1, $unit_price);
+
+            $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+            $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+            $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+            $priceAfterMwdCommission = roundUpToTwoDigits(
+                $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+            );
+
+            return $priceAfterMwdCommission;
+        } catch (Exception $e) {
+            Log::error("Error while calculating mwd commission for product #{$product_id} price in revisions, with message: {$e->getMessage()}");
+            return $unit_price;
+        }
+    }
+}
+
+
+if (function_exists('formatBuJob') === false) {
+    function formatBuJob($bu_job, $is_products_number_shown = true)
+    {
+        try {
+            if ($is_products_number_shown === false) {
+                return trans("product.bu_job_without_count", [
+                    "filename" => $bu_job->vendor_products_file,
+                    "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+                ]);
+            }
+
+            $productsNumber = Product::whereHas('bu_job', function ($q) use ($bu_job) {
+                $q->where('id', $bu_job->id);
+            })->where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc')
+            ->count();
+
+            return trans_choice("product.bu_job", $productsNumber, [
+                "filename" => $bu_job->vendor_products_file,
+                "productsNumber" => $productsNumber,
+                "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+            ]);
+        } catch (Exception $e) {
+            Log::error("Error while formatting bu job #{$bu_job->id}, with error: {$e->getMessage()}");
+            return "";
         }
     }
 }

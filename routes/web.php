@@ -51,6 +51,8 @@ use App\Http\Controllers\SupportTicketController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\AramexController;
+use App\Http\Controllers\MawadIndexController;
+use Inertia\Inertia;
 
 /*
   |--------------------------------------------------------------------------
@@ -377,7 +379,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/addresses/set-default/{id}', 'set_default')->name('addresses.set_default');
     });
 
-    //compare list sync after login 
+    //compare list sync after login
     Route::post('/compare/sync', [CompareController::class, 'syncCompareList'])->name('compare.syncCompareList');
 
 });
@@ -508,4 +510,9 @@ Route::controller(AramexController::class)->prefix("/aramex")->group(function ()
 
     Route::any("orders/{user_id}", "calculateOrderProductsCharge")->name("user.orders");
     Route::get("emirate/{emirate_id}/states", "getEmirateStates")->name("emirate.states");
+});
+
+Route::controller(MawadIndexController::class)->prefix("/mawad")->group(function () {
+    Route::get("/index", "index")->name("mawad.index");
+    Route::get("/revisions", "fixRevisionsUnitPriceMwdCommission");
 });
