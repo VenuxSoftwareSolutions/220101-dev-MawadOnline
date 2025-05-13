@@ -1800,9 +1800,6 @@ class ProductController extends Controller
             return redirect()->back()->withErrors('No preview data found.');
         }
 
-        // Extract all variables required for the view
-        extract($previewData);
-
         // Add a flag to indicate that this is a preview
         $isPreview = true;
 
