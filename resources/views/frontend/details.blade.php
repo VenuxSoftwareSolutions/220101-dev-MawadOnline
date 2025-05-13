@@ -199,7 +199,7 @@
                     @else
                         <span>
                             {{ single_price($previewData['detailedProduct']['price']) }}
-                            @if($previewData['detailedProduct']['priceAfterMwdCommission'] !== $previewData['detailedProduct']['price'])
+                            @if(isset($previewData['detailedProduct']['priceAfterMwdCommission']) === true && $previewData['detailedProduct']['priceAfterMwdCommission'] !== $previewData['detailedProduct']['price'])
                                 <small><del class="fw-400 text-secondary">{{ single_price($previewData['detailedProduct']['priceAfterMwdCommission']) }}</del></small>
                             @endif
                         </span>
