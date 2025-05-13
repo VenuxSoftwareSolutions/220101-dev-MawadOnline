@@ -4,33 +4,33 @@
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ translate('New Address') }}</h5>
+                <h5 class="modal-title fs-17 font-prompt mt-1" id="exampleModalLabel">{{ translate('New Address') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form class="form-default" role="form" action="{{ route('addresses.store') }}" method="POST">
                 @csrf
-                <div class="modal-body c-scrollbar-light">
+                <div class="modal-body c-scrollbar-light font-prompt">
                     <div class="p-3">
                         <!-- Full Name -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Full Name') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Full Name') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control mb-3 rounded-0"
+                                <input type="text" class="form-control mb-3 border-radius-8px"
                                     placeholder="{{ translate('Your Full Name') }}" name="full_name" required>
                             </div>
                         </div>
 
                         <!-- Mobile Number -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Mobile Number') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Mobile Number') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control mb-3 rounded-0"
+                                <input type="text" class="form-control mb-3 border-radius-8px"
                                     placeholder="{{ translate('+971') }}" name="phone"
                                     pattern="^(\+971|0971)?[0-9]{9}$" required>
                             </div>
@@ -38,13 +38,13 @@
 
                         <!-- Country -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Country/Region') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Country/Region') }} *</label>
                             </div>
 
                             <div class="col-md-8">
                                 <div class="mb-3">
-                                    <select class="form-control aiz-selectpicker rounded-0" data-live-search="true"
+                                    <select class="form-control aiz-selectpicker border-radius-8px" data-live-search="true"
                                         data-placeholder="{{ translate('Select your country') }}" name="country"
                                         required>
                                         <option value="">{{ translate('Select your country') }}</option>
@@ -60,22 +60,22 @@
 
                         <!-- Street Name/Number -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Street Name/Number') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Street Name/Number') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control mb-3 rounded-0"
+                                <input type="text" class="form-control mb-3 border-radius-8px"
                                     placeholder="{{ translate('Street Name/Number') }}" name="address" required>
                             </div>
                         </div>
 
                         <!-- Building Name/Number -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Building Name/Number') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Building Name/Number') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control mb-3 rounded-0"
+                                <input type="text" class="form-control mb-3 border-radius-8px"
                                     placeholder="{{ translate('Building Name/Number') }}" name="building_name"
                                     required>
                             </div>
@@ -83,11 +83,11 @@
 
                         <!-- State -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('State/Emirate') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('State/Emirate') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <select id="emirateempire" class="form-control mb-3 aiz-selectpicker rounded-0"
+                                <select id="emirateempire" class="form-control mb-3 aiz-selectpicker border-radius-8px"
                                     data-live-search="true" name="state" required>
                                     <option value="" selected>{{ translate('please_choose') }}</option>
                                     @foreach ($emirates as $emirate)
@@ -99,11 +99,11 @@
 
                         <!-- City -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Area') }} *</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Area') }} *</label>
                             </div>
                             <div class="col-md-8">
-                                <select id="areaempire" class="form-control mb-3 aiz-selectpicker rounded-0"
+                                <select id="areaempire" class="form-control mb-3 aiz-selectpicker border-radius-8px"
                                     data-live-search="true" name="area_id" required>
                                 </select>
                             </div>
@@ -111,41 +111,41 @@
 
                         <!-- Nearest Landmark (Optional) -->
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Nearest Landmark') }}</label>
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Nearest Landmark') }}</label>
                             </div>
                             <div class="col-md-8">
-                                <input type="text" class="form-control mb-3 rounded-0"
+                                <input type="text" class="form-control mb-3 border-radius-8px"
                                     placeholder="{{ translate('Nearest Landmark') }}" name="landmark">
                             </div>
                         </div>
 
                         <!-- Address Type (Optional) -->
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
                                 <label>{{ translate('Address Type') }}</label>
                             </div>
                             <div class="col-md-8">
                                 <div>
-                                    <label><input type="radio" name="address_type" value="home">
-                                        {{ translate('Home') }}</label>
-                                    <label><input type="radio" name="address_type" value="work">
-                                        {{ translate('Work') }}</label>
-                                    <label><input type="radio" name="address_type" value="site">
-                                        {{ translate('Site') }}</label>
-                                    <label><input type="radio" name="address_type" value="other">
-                                        {{ translate('Other') }}</label>
+                                    <input class="fs-14 font-prompt radio-shipping" type="radio" name="address_type" id="address-type-home" value="home">
+                                        <label for="address-type-home" class="custom-radio-label">{{ translate('Home') }}</label>
+                                    <input class="fs-14 font-prompt radio-shipping" type="radio" name="address_type" id="address-type-work" value="work">
+                                        <label for="address-type-work" class="custom-radio-label">{{ translate('Work') }}</label>
+                                    <input class="fs-14 font-prompt radio-shipping" type="radio" name="address_type" id="address-type-site" value="site">
+                                        <label for="address-type-site" class="custom-radio-label">{{ translate('Site') }}</label>
+                                    <input class="fs-14 font-prompt radio-shipping" type="radio" name="address_type" id="address-type-other" value="other">
+                                        <label for="address-type-other" class="custom-radio-label">{{ translate('Other') }}</label>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Delivery Instructions (Optional) -->
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label>{{ translate('Delivery Instructions') }}</label>
+                        <div class="row mt-2">
+                            <div class="col-md-4 fs-14 pl-2 pr-0">
+                                <label class="mt-2">{{ translate('Delivery Instructions') }}</label>
                             </div>
                             <div class="col-md-8">
-                                <textarea class="form-control mb-3 rounded-0" placeholder="{{ translate('Delivery Instructions') }}" rows="2"
+                                <textarea class="form-control mb-3 border-radius-8px no-resize-txtarea" placeholder="{{ translate('Delivery Instructions') }}" rows="2"
                                     name="delivery_instructions"></textarea>
                             </div>
                         </div>
@@ -153,7 +153,7 @@
                         <!-- Save button -->
                         <div class="form-group text-right">
                             <button type="submit"
-                                class="btn btn-primary rounded-0 w-150px">{{ translate('Save') }}</button>
+                                class="w-150px btn btn-secondary-base btn-ori-40 text-white border-radius-12 fs-15 font-prompt py-2">{{ translate('Save') }}</button>
                         </div>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">{{ translate('New Address') }}</h5>
+                <h5 class="modal-title fs-17 font-prompt mt-1" id="exampleModalLabel">{{ translate('New Address') }}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
