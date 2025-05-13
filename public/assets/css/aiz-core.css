@@ -13783,6 +13783,40 @@ input[type="radio"].radio-shipping {
 .border-radius-6{
     border-radius: 6px;
 }
-.border-radius-1-12{
-    border-radius: 12px 0px 0px 0px;
+.border-radius-1-2-12{
+    border-radius: 12px 12px 0px 0px !important;
+}
+.border-radius-3-4-12{
+    border-radius:0px 0px 12px 12px !important;
+}
+.bg-info-mawad{
+    background-color: #378AB6;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    table thead {
+        display: none;
+    }
+
+    table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+    }
+
+    table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+    }
+
+    table tbody td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        width: 50%;
+        display: inline-block;
+    }
 }

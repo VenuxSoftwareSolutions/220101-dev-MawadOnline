@@ -102,7 +102,7 @@
         }
 
         .nav-tabs .nav-link {
-            border: 1px solid transparent;
+            border: none;
             border-top-left-radius: .0rem;
             border-top-right-radius: .0rem;
         }
@@ -136,9 +136,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: 12px 12px 0px 0px;
         }
 
-
+        /*
         .btn.btn-secondary.save-as-draft {
             background-color: rgb(218 218 218);
             color: rgb(0, 0, 0);
@@ -151,7 +152,7 @@
         .btn.btn-secondary.save-as-draft:hover {
             background-color: rgb(218 218 218);
             color: rgb(3, 3, 3);
-        }
+        }*/
 
         .Grand-title {
             padding-left: 0px;
@@ -263,8 +264,8 @@
                     <div class="col-12">
                         <ul class="nav nav-tabs shop" id="registerTabs">
                             @if (!Auth::user() || (Auth::check() && !Auth::user()->email_verified_at))
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="personal-info-tab" data-toggle="tab"
+                                <li class="nav-item border-radius-1-12">
+                                    <a class="nav-link active nav-link border-radius-1-2-12" id="personal-info-tab" data-toggle="tab"
                                         href="#personal-info">
                                         <span class="number-icon">1</span> {{ translate('Personal Info') }}
 
@@ -278,7 +279,7 @@
                                         stroke-linejoin="round" />
                                 </svg>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="code-verification-tab" data-toggle="tab"
+                                    <a class="nav-link nav-link border-radius-1-2-12" id="code-verification-tab" data-toggle="tab"
                                         href="#code-verification">
                                         <span class="number-icon">2</span> {{ translate('Code Verification Email') }}
                                     </a>
@@ -293,7 +294,7 @@
                             @endif
                             @if (!Auth::user() || (Auth::user() && (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id)))
                                 <li class="nav-item">
-                                    <a class="nav-link" id="business-info-tab" data-toggle="tab" href="#business-info">
+                                    <a class="nav-link nav-link border-radius-1-2-12" id="business-info-tab" data-toggle="tab" href="#business-info">
                                         <span class="number-icon">3</span> {{ translate('Business Information') }}
                                     </a>
                                 </li>
@@ -305,7 +306,7 @@
                                         stroke-linejoin="round" />
                                 </svg>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="contact-person-tab" data-toggle="tab" href="#contact-person">
+                                    <a class="nav-link nav-link border-radius-1-2-12" id="contact-person-tab" data-toggle="tab" href="#contact-person">
                                         <span class="number-icon">4</span> {{ translate('Contact Person') }}
                                     </a>
                                 </li>
@@ -317,7 +318,7 @@
                                         stroke-linejoin="round" />
                                 </svg>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="warehouses-tab" data-toggle="tab" href="#warehouses">
+                                    <a class="nav-link nav-link border-radius-1-2-12" id="warehouses-tab" data-toggle="tab" href="#warehouses">
                                         <span class="number-icon">5</span> {{ translate('Warehouses') }}
                                     </a>
                                 </li>
@@ -329,7 +330,7 @@
                                         stroke-linejoin="round" />
                                 </svg>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="payout-info-tab" data-toggle="tab" href="#payout-info">
+                                    <a class="nav-link border-radius-1-2-12" id="payout-info-tab" data-toggle="tab" href="#payout-info">
                                         <span class="number-icon">6</span> {{ translate('Payout Information') }}
                                     </a>
                                 </li>
@@ -343,7 +344,7 @@
                                         enctype="multipart/form-data" data-next-tab="code-verification">
                                         @csrf
                                         <!-- ... Personal Info form fields ... -->
-                                        <div class="bg-white border mb-4">
+                                        <div class="bg-white border mb-4 border-radius-3-4-12">
                                             <div class="fs-20 fw-600 p-3 orange-text">
                                                 {{ translate('Personal Info') }}
                                             </div>
@@ -356,7 +357,7 @@
                                                 <div class="form-group">
                                                     <label><b>{{ translate('First Name') }} </b><span
                                                             class="text-primary">*</span></label>
-                                                    <input type="text" class="form-control rounded-0"
+                                                    <input type="text" class="form-control"
                                                         value="{{ auth()->check() ? auth()->user()->first_name : old('first_name') }}"
                                                         id="first_name" placeholder="{{ translate('First Name') }}"
                                                         name="first_name" required>
@@ -365,7 +366,7 @@
                                                 <div class="form-group">
                                                     <label><b>{{ translate('Last name') }}</b> <span
                                                             class="text-primary">*</span></label>
-                                                    <input type="text" class="form-control rounded-0" id="last_name"
+                                                    <input type="text" class="form-control" id="last_name"
                                                         value="{{ auth()->check() ? auth()->user()->last_name : old('last_name') }}"
                                                         placeholder="{{ translate('Last name') }}" name="last_name"
                                                         required>
@@ -373,7 +374,7 @@
                                                 <div class="form-group">
                                                     <label><b>{{ translate('Your Email') }} </b><span
                                                             class="text-primary">*</span></label>
-                                                    <input id="email" type="email" class="form-control rounded-0"
+                                                    <input id="email" type="email" class="form-control"
                                                         value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                                         placeholder="{{ translate('Email') }}" name="email" required>
                                                     <div style="color: red;">
@@ -388,7 +389,7 @@
                                                     </label>
                                                     <div class="position-relative">
                                                         <input type="password" id="password" name="password"
-                                                            class="form-control rounded-0" autocomplete="off" required
+                                                            class="form-control" autocomplete="off" required
                                                             placeholder="{{ translate('Password') }}">
                                                         <i class="password-toggle las la-2x la-eye"></i>
                                                     </div>
@@ -455,7 +456,7 @@
                                                         <span class="text-primary">*</span></label>
                                                     <div class="position-relative">
                                                         <input type="password" id="password_confirmation"
-                                                            name="password_confirmation" class="form-control rounded-0"
+                                                            name="password_confirmation" class="form-control"
                                                             required placeholder="{{ translate('Confirm Password') }}">
                                                         <i class="password-toggle las la-2x la-eye"
                                                             data-target="#password_confirmation"></i>
@@ -466,7 +467,7 @@
                                         </div>
                                         <div class="text-right">
                                             <button type="button" data-action="register"
-                                                class="btn btn-primary fw-600 rounded-0" {{--
+                                                class="btn btn-primary fw-600 border-radius-8px" {{--
                                                 onclick="switchTab('code-verification')"
                                                 --}}>{{ translate('Next') }}</button>
                                         </div>
@@ -476,7 +477,7 @@
                                     <form id="codeVerificationForm" class="" action="{{ route('verify.code') }}"
                                         method="POST" data-next-tab="business-info">
                                         @csrf
-                                        <div class="bg-white border mb-4">
+                                        <div class="bg-white border mb-4 border-radius-3-4-12">
                                             <div class="fs-15 fw-600 p-3">
                                                 {{-- {{ translate('Personal Info')}} --}}
                                             </div>
@@ -488,7 +489,7 @@
                                                             class="text-primary">*</span></label>
                                                     <input type="hidden" value="{{ $user->email ?? '' }}" name="email"
                                                         id="emailAccount">
-                                                    <input type="text" class="form-control rounded-0"
+                                                    <input type="text" class="form-control"
                                                         placeholder="{{ translate('Enter Code') }}" name="verification_code"
                                                         required maxlength="6" pattern="[0-9]{6}">
                                                     <small class="text-muted">{{ translate('a_6digit_code') }}</small>
@@ -498,20 +499,20 @@
                                         <div class="text-right">
                                             <!-- Previous Button -->
                                             <button type="button" data-prv='personal-info'
-                                                class="btn btn-info fw-600 rounded-0 prv-tab">
+                                                class="btn bg-info-mawad text-white fw-600 border-radius-8px prv-tab">
                                                 {{ translate('previous') }}
                                             </button>
                                             @if (!Auth::user() || (Auth::user()->owner_id == null || Auth::user()->owner_id == Auth::user()->id))
                                                 <button id="verifyCodeBtn" type="button"
-                                                    class="btn btn-primary fw-600 rounded-0" {{--
+                                                    class="btn btn-primary fw-600 border-radius-8px" {{--
                                                     onclick="switchTab('business-info')" --}}>{{ translate('Next') }}</button>
                                             @else
-                                                <button type="submit" class="btn btn-primary fw-600 rounded-0" {{--
+                                                <button type="submit" class="btn btn-primary fw-600 border-radius-8px" {{--
                                                     onclick="switchTab('business-info')" --}}>{{ translate('Finish') }}</button>
                                             @endif
 
                                             <button id="resendCodeBtn" type="button"
-                                                class="btn btn-secondary fw-600 rounded-0">{{ translate('Resend Code') }}</button>
+                                                class="btn btn-secondary fw-600 border-radius-8px">{{ translate('Resend Code') }}</button>
 
                                         </div>
                                     </form>
@@ -523,7 +524,7 @@
                                     @csrf
                                     <!-- ... Business Info form fields ... -->
 
-                                    <div class="bg-white border mb-4">
+                                    <div class="bg-white border mb-4 border-radius-3-4-12">
                                         {{-- <div class="fs-15 fw-600 p-3">
                                             {{ translate('Business Information') }}
                                         </div> --}}
@@ -538,7 +539,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('English Trade Name') }}</b> <span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('English Trade Name') }}"
                                                             value="{{ isset($user->business_information->trade_name) ? $user->business_information->getTranslation('trade_name', 'en', false) : '' }}"
                                                             name="trade_name_english" required>
@@ -548,7 +549,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Arabic Trade Name') }}</b> <span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('Arabic Trade Name') }}"
                                                             value="{{ isset($user->business_information->trade_name) ? $user->business_information->getTranslation('trade_name', 'ar', false) : '' }}"
                                                             name="trade_name_arabic" required>
@@ -595,7 +596,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('English E-shop Name') }}</b> <span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('English E-shop Name') }}"
                                                             value="{{ isset($user->business_information->eshop_name) ? $user->business_information->getTranslation('eshop_name', 'en', false) : '' }}"
                                                             name="eshop_name_english" required>
@@ -608,7 +609,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Arabic E-shop Name') }} </b><span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('Arabic E-shop Name') }}"
                                                             value="{{ isset($user->business_information->eshop_name) ? $user->business_information->getTranslation('eshop_name', 'ar', false) : '' }}"
                                                             name="eshop_name_arabic" required>
@@ -621,7 +622,7 @@
                                                             </b><span
                                                                 class="text-primary">{{ __('profile.Optional') }}</span></label>
 
-                                                        <textarea class="form-control rounded-0"
+                                                        <textarea class="form-control"
                                                             placeholder="{{ translate('English e-Shop description') }}"
                                                             name="eshop_desc_en">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'en', false) : '' }}</textarea>
                                                     </div>
@@ -631,7 +632,7 @@
                                                         <label><b>{{ translate('Arabic e-Shop description') }}</b> <span
                                                                 class="text-primary">{{ __('profile.Optional') }}</span></label>
 
-                                                        <textarea class="form-control rounded-0"
+                                                        <textarea class="form-control"
                                                             placeholder="{{ translate('Arabic e-Shop description') }}"
                                                             name="eshop_desc_ar">{{ isset($user->business_information->eshop_desc) ? $user->business_information->getTranslation('eshop_desc', 'ar', false) : '' }}</textarea>
                                                     </div>
@@ -651,7 +652,7 @@
                                                         </label>
 
                                                         <input dir="auto" required type="{{-- date --}}text"
-                                                            class="datepicker form-control rounded-0"
+                                                            class="datepicker form-control"
                                                             placeholder="{{ translate('License Issue Date') }}"
                                                             id="license_issue_date"
                                                             value="{{ isset($user->business_information->license_issue_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_issue_date)->format('d M Y') : '' }}"
@@ -664,7 +665,7 @@
                                                                 class="text-primary">*</span></label>
 
                                                         <input dir="auto" required type="text"
-                                                            class="datepicker form-control rounded-0" {{--
+                                                            class="datepicker form-control" {{--
                                                             value="{{ $user->business_information->license_expiry_date ?? '' }}"
                                                             --}}
                                                             value="{{ isset($user->business_information->license_expiry_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_expiry_date)->format('d M Y') : '' }}"
@@ -683,7 +684,7 @@
                                                                                                                         <label><b>{{ translate('State/Emirate') }} </b><span
                                                                                                                                 class="text-primary">*</span></label>
                                                                                                                         <select required name="state"
-                                                                                                                            class="form-control rounded-0" id="emirateempire">
+                                                                                                                            class="form-control" id="emirateempire">
                                                                                                                             <option value="">{{ translate('please_choose') }}
                                                                                                                             </option>
                                                                                                                             @foreach ($emirates as $emirate)
@@ -701,7 +702,7 @@
                                                                                                                         <label><b>{{ translate('Area') }} </b><span
                                                                                                                                 class="text-primary">*</span></label>
                                                                                                                         <select required name="area_id"
-                                                                                                                            class="form-control rounded-0" id="areaempire">
+                                                                                                                            class="form-control" id="areaempire">
                                                                                                                             @php
                                                                                                                                 $areas = App\Models\Area::where('emirate_id', $user->business_information->state)->get();
                                                                                                                             @endphp
@@ -724,7 +725,7 @@
                                                                     <label><b>{{ translate('State/Emirate') }}</b> <span
                                                                             class="text-primary">*</span></label>
                                                                     <select required name="state"
-                                                                        class="form-control rounded-0" id="emirateempire">
+                                                                        class="form-control" id="emirateempire">
                                                                         <option value="" selected>
                                                                             {{ translate('please_choose') }}</option>
                                                                         @foreach ($emirates as $emirate)
@@ -741,7 +742,7 @@
                                                                     <label><b>{{ translate('Area') }} </b><span
                                                                             class="text-primary">*</span></label>
                                                                     <select required name="area_id"
-                                                                        class="form-control rounded-0" id="areaempire">
+                                                                        class="form-control" id="areaempire">
                                                                         <option value="" selected>
                                                                             {{ translate('please_choose') }}
                                                                         </option>
@@ -755,7 +756,7 @@
                                                             <div class="form-group">
                                                                 <label><b>{{ translate('Street') }} </b><span
                                                                         class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control rounded-0"
+                                                                <input type="text" class="form-control"
                                                                     value="{{ $user->business_information->street ?? '' }}"
                                                                     placeholder="{{ translate('Street') }}"
                                                                     name="street" required>
@@ -768,7 +769,7 @@
                                                             <div class="form-group">
                                                                 <label><b>{{ translate('Building') }}</b> <span
                                                                         class="text-primary">*</span></label>
-                                                                <input type="text" class="form-control rounded-0"
+                                                                <input type="text" class="form-control"
                                                                     value="{{ $user->business_information->building ?? '' }}"
                                                                     placeholder="{{ translate('Building') }}"
                                                                     name="building" required>
@@ -781,7 +782,7 @@
                                                             <div class="form-group">
                                                                 <label><b>{{ translate('Unit/Office No.') }}</b> <span
                                                                         class="text-primary">{{ __('profile.Optional') }}</span></label>
-                                                                <input type="text" class="form-control rounded-0"
+                                                                <input type="text" class="form-control"
                                                                     value="{{ $user->business_information->unit ?? '' }}"
                                                                     placeholder="{{ translate('Unit/Office No.') }}"
                                                                     name="unit">
@@ -793,7 +794,7 @@
                                                                 <label><b>{{ translate('PO Box') }} </b><span
                                                                         class="text-primary">{{ __('profile.Optional') }}</span>
                                                                 </label>
-                                                                <input type="text" class="form-control rounded-0"
+                                                                <input type="text" class="form-control"
                                                                     value="{{ $user->business_information->po_box ?? '' }}"
                                                                     placeholder="{{ translate('PO Box') }}"
                                                                     name="po_box">
@@ -810,7 +811,7 @@
                                                         <label><b>{{ translate('Landline Phone No.') }}</b><span
                                                                 class="text-primary">{{ __('profile.Optional') }}</span></label>
                                                         <input value="{{ $user->business_information->landline ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ translate('Landline Phone No.') }}"
                                                             name="landline">
 
@@ -882,7 +883,7 @@
                                                                 {{ __('profile.Tax Registration Number') }}
                                                             </b><span class="text-primary">*</span></label>
                                                         <input value="{{ $user->business_information->trn ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ __('profile.TRN') }} {{ __('profile.Tax Registration Number') }}"
                                                             name="trn">
                                                     </div>
@@ -903,7 +904,7 @@
                                                         <input type="hidden" name="tax_waiver_old"
                                                             value="{{ $user->business_information->tax_waiver }}">
                                                         @endif
-                                                        <input type="file" class="form-control rounded-0"
+                                                        <input type="file" class="form-control"
                                                             name="tax_waiver">
                                                     </div> --}}
                                                 </div>
@@ -915,7 +916,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Civil Defense Approval') }}</b> <span
                                                                 class="text-primary"></span></label>
-                                                        {{-- <input type="file" class="form-control rounded-0"
+                                                        {{-- <input type="file" class="form-control"
                                                             name="civil_defense_approval"> --}}
                                                         @if (isset($user) && isset($user->business_information) && $user->business_information->civil_defense_approval)
                                                             <a class="old_file"
@@ -943,10 +944,10 @@
                                         </div>
                                     </div>
                                     <div class="text-right">
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                        <button type="button" class="btn btn-secondary fw-600 save-as-draft border-radius-8px text-white"
                                             data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
-                                        <button type="button" class="btn btn-primary fw-600 rounded-0" {{--
+                                        <button type="button" class="btn btn-primary fw-600 border-radius-8px" {{--
                                             onclick="switchTab('contact-person')"
                                             --}}>{{ translate('Save and Continue') }}</button>
                                     </div>
@@ -960,7 +961,7 @@
                                     <!-- ... Contact Person form fields ... -->
 
 
-                                    <div class="bg-white border mb-4">
+                                    <div class="bg-white border mb-4 border-radius-3-4-12">
                                         <div class="fs-20 fw-600 p-3 orange-text">
                                             {{ __('profile.personal_information') }}
                                         </div>
@@ -985,7 +986,7 @@
 
                                                         @endphp
                                                         <input id="first_name_bi" type="text"
-                                                            class="form-control rounded-0"
+                                                            class="form-control"
                                                             placeholder="{{ translate('First Name') }}"
                                                             value="{{ $fistName }}" name="first_name" required>
 
@@ -1004,7 +1005,7 @@
                                                             }
 
                                                         @endphp
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('Last Name') }}" id="last_name_bi"
                                                             value="{{ $lastName }}" name="last_name" required>
 
@@ -1015,7 +1016,7 @@
                                                         <label><b>{{ translate('Date Of Birth') }} </b><span
                                                                 class="text-primary">*</span></label>
                                                         <input dir="auto" type="text"
-                                                            class="datepicker form-control rounded-0"
+                                                            class="datepicker form-control"
                                                             placeholder="{{ translate('Date Of Birth') }}" {{--
                                                             value="{{ $user->contact_people->date_of_birth ?? '' }}"
                                                             --}}
@@ -1053,7 +1054,7 @@
                                                             }
 
                                                         @endphp
-                                                        <input type="email" class="form-control rounded-0" id="email_bi"
+                                                        <input type="email" class="form-control" id="email_bi"
                                                             placeholder="{{ translate('Email') }}"
                                                             value="{{ $emailUser }}" name="email" required>
 
@@ -1065,7 +1066,7 @@
                                                                 class="text-primary">*</span></label>
 
 
-                                                        <input type="text" dir="auto" class="form-control rounded-0"
+                                                        <input type="text" dir="auto" class="form-control"
                                                             placeholder="{{ translate('Mobile Phone') }}"
                                                             value="{{ $user->contact_people->mobile_phone ?? '+971' }}"
                                                             name="mobile_phone" required>
@@ -1079,7 +1080,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Additional Mobile Phone') }} </b><span
                                                                 class="text-primary"></span></label>
-                                                        <input type="text" dir="auto" class="form-control rounded-0"
+                                                        <input type="text" dir="auto" class="form-control"
                                                             placeholder="{{ translate('Additional Mobile Phone') }}"
                                                             value="{{ $user->contact_people->additional_mobile_phone ?? '+971' }}"
                                                             name="additional_mobile_phone">
@@ -1098,7 +1099,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Emirates ID - Number') }} </b><span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0"
+                                                        <input type="text" class="form-control"
                                                             placeholder="{{ translate('Emirates ID - Number') }}"
                                                             value="{{ $user->contact_people->emirates_id_number ?? '' }}"
                                                             required name="emirates_id_number">
@@ -1113,7 +1114,7 @@
                                                         <label><b>{{ translate('Emirates ID - Expiry Date') }} </b><span
                                                                 class="text-primary">*</span></label>
                                                         <input dir="auto" type="text"
-                                                            class="datepicker form-control rounded-0"
+                                                            class="datepicker form-control"
                                                             placeholder="{{ translate('Emirates ID - Expiry Date') }}"
                                                             {{--
                                                             value="{{ $user->contact_people->emirates_id_expiry_date ?? '' }}"
@@ -1194,7 +1195,7 @@
                                                     <div class="form-group">
                                                         <label><b>{{ translate('Designation') }} </b><span
                                                                 class="text-primary">*</span></label>
-                                                        <input type="text" class="form-control rounded-0" required
+                                                        <input type="text" class="form-control" required
                                                             placeholder="{{ translate('Designation') }}"
                                                             value="{{ $user->contact_people->designation ?? '' }}"
                                                             name="designation">
@@ -1209,13 +1210,13 @@
                                     <div class="text-right">
                                         <!-- Previous Button -->
                                         <button type="button" data-prv='business-info'
-                                            class="btn btn-info fw-600 rounded-0 prv-tab">
+                                            class="btn btn-info fw-600 prv-tab bg-info-mawad border-radius-8px">
                                             {{ translate('Previous') }}
                                         </button>
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                        <button type="button" class="btn btn-secondary fw-600 save-as-draft border-radius-8px"
                                             data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
-                                        <button type="button" class="btn btn-primary fw-600 rounded-0" {{--
+                                        <button type="button" class="btn btn-primary fw-600 border-radius-8px" {{--
                                             onclick="switchTab('warehouses')"
                                             --}}>{{ translate('Save and Continue') }}</button>
                                     </div>
@@ -1227,7 +1228,7 @@
                                     data-next-tab="payout-info" method="POST">
                                     @csrf
                                     <!-- ... Warehouses form fields ... -->
-                                    <div class="bg-white border mb-4">
+                                    <div class="bg-white border mb-4 border-radius-3-4-12">
 
                                         <div class="fs-20 fw-600 p-3 orange-text">
                                             {{ __('profile.location_information') }}
@@ -1255,7 +1256,7 @@
                                                         <label for="state"><b>{{ translate('State/Emirate') }}</b><span
                                                                 class="text-primary">*</span></label>
                                                         <select name="state_warehouse_add"
-                                                            class="form-control rounded-0 emirateSelect"
+                                                            class="form-control emirateSelect"
                                                             id="emirateempire">
                                                             <option value="" selected>{{ translate('please_choose') }}
                                                             </option>
@@ -1311,11 +1312,12 @@
 
 
                                                 <div class="col-auto ml-auto">
-                                                    <button type="button" class="btn btn-primary"
+                                                    <button type="button" class="btn btn-primary border-radius-8px"
                                                         id="addRow">{{ translate('Add Warehouse') }}</button>
 
                                                 </div>
                                             </div>
+                                        <div class="table-responsive d-none d-md-block">
                                             <table class="table mt-3" id="warehouseTable">
                                                 <thead class="thead-dark">
                                                     <tr>
@@ -1338,7 +1340,7 @@
                                                                                                                                                         <td>
 
                                                                                                                                                             <select required name="state_warehouse[]"
-                                                                                                                                                                class="form-control rounded-0 emirateSelect"
+                                                                                                                                                                class="form-control emirateSelect"
                                                                                                                                                                 id="emirateempire">
                                                                                                                                                                 <option value="" selected>
                                                                                                                                                                     {{ translate('please_choose') }}</option>
@@ -1387,7 +1389,129 @@
 
                                                 </tbody>
                                             </table>
+                                        </div>
 
+
+                                        <!-- Start mobile friendly table -->
+
+                                        <!-- static version -->
+                                        <!-- Mobile Version -->
+                                        <div class="d-md-none mt-3">
+                                            <div class="card mb-3 p-3 border">
+                                                <div class="mb-2">
+                                                    <label class="form-label">Warehouse Name</label>
+                                                    <input type="text" class="form-control" value="Warehouse A" required>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label">State/Emirate</label>
+                                                    <select class="form-control" required>
+                                                        <option value="">Please choose</option>
+                                                        <option value="1" selected>Dubai</option>
+                                                        <option value="2">Abu Dhabi</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label">Area</label>
+                                                    <select class="form-control" required>
+                                                        <option value="">Please choose</option>
+                                                        <option value="10" selected>Al Quoz</option>
+                                                        <option value="11">Deira</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label">Street</label>
+                                                    <input type="text" class="form-control" value="12B Street" required>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label">Building</label>
+                                                    <input type="text" class="form-control" value="Al Noaimi Building" required>
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label">Unit/Office No.</label>
+                                                    <input type="text" class="form-control" value="102" required>
+                                                </div>
+
+                                                <div class="text-end">
+                                                    <button type="button" class="btn btn-danger">Remove</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-md-none">
+                                            @if (isset($user))
+                                                @foreach ($user->warehouses as $warehouse)
+                                                    <div class="card mb-3 p-3 border">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('Warehouse Name') }}</label>
+                                                            <input value="{{ $warehouse->warehouse_name }}" type="text"
+                                                                   class="form-control" name="warehouse_name[]" required>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('State/Emirate') }}</label>
+                                                            <select required name="state_warehouse[]"
+                                                                    class="form-control emirateSelect"
+                                                                    id="emirateempire">
+                                                                <option value="">{{ translate('please_choose') }}</option>
+                                                                @foreach ($emirates as $emirate)
+                                                                    <option value="{{ $emirate->id }}" @if ($warehouse->emirate_id == $emirate->id) selected @endif>
+                                                                        {{ $emirate->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('Area') }}</label>
+                                                            <select class="form-control areaSelect"
+                                                                    name="area_warehouse[]" required>
+                                                                @php
+                                                                    $areas = App\Models\Area::where('emirate_id', $warehouse->emirate_id)->get();
+                                                                @endphp
+                                                                <option value="">{{ translate('please_choose') }}</option>
+                                                                @foreach ($areas as $area)
+                                                                    <option value="{{ $area->id }}" @if ($area->id == $warehouse->area_id) selected @endif>
+                                                                        {{ $area->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('Street') }}</label>
+                                                            <input type="text" class="form-control"
+                                                                   value="{{ $warehouse->address_street }}"
+                                                                   name="street_warehouse[]" required>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('Building') }}</label>
+                                                            <input type="text" class="form-control"
+                                                                   value="{{ $warehouse->address_building }}"
+                                                                   name="building_warehouse[]" required>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <label class="form-label">{{ translate('Unit/Office No.') }}</label>
+                                                            <input type="text" class="form-control"
+                                                                   value="{{ $warehouse->address_unit }}"
+                                                                   name="unit_warehouse[]" required>
+                                                        </div>
+
+                                                        <div class="text-end">
+                                                            <button type="button"
+                                                                    class="btn btn-danger removeRow">{{ translate('Remove') }}</button>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
+                                        <!-- End mobile friendly table -->
 
                                             {{-- <div id="warehouseRowsContainer">
                                                 @if (isset($user))
@@ -1407,7 +1531,7 @@
                                                             <label for="state">State/Emirate<span
                                                                     class="text-primary">*</span></label>
                                                             <select required name="state_warehouse[]"
-                                                                class="form-control rounded-0 emirateSelect"
+                                                                class="form-control emirateSelect"
                                                                 id="emirateempire">
                                                                 <option value="" selected>Please Choose
                                                                     !!</option>
@@ -1514,7 +1638,7 @@
                                                             <label for="state">State/Emirate<span
                                                                     class="text-primary">*</span></label>
                                                             <select required name="state_warehouse[]"
-                                                                class="form-control rounded-0 emirateSelect"
+                                                                class="form-control emirateSelect"
                                                                 id="emirateempire">
                                                                 <option value="" selected>Please Choose !!
                                                                 </option>
@@ -1592,14 +1716,14 @@
                                     <div class="text-right">
                                         <!-- Previous Button -->
                                         <button type="button" data-prv='contact-person'
-                                            class="btn btn-info fw-600 rounded-0 prv-tab">
+                                            class="btn btn-info fw-600 prv-tab bg-info-mawad border-radius-8px">
                                             {{ translate('Previous') }}
                                         </button>
 
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                        <button type="button" class="btn btn-secondary fw-600 save-as-draft border-radius-8px"
                                             data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
-                                        <button type="button" class="btn btn-primary fw-600 rounded-0" {{--
+                                        <button type="button" class="btn btn-primary fw-600 border-radius-8px" {{--
                                             onclick="switchTab('payout-info')"
                                             --}}>{{ translate('Save and Continue') }}</button>
                                     </div>
@@ -1611,7 +1735,7 @@
                                     data-next-tab="payout-info" method="POST">
                                     @csrf
                                     <!-- ... Payout Info form fields ... -->
-                                    <div class="bg-white border mb-4">
+                                    <div class="bg-white border mb-4 border-radius-3-4-12">
                                         <div class="fs-20 fw-600 p-3 orange-text">
                                             {{ translate('Bank Information') }}
                                         </div>
@@ -1625,7 +1749,7 @@
                                                         <label><b>{{ translate('Bank Name') }}</b> <span
                                                                 class="text-primary">*</span></label>
                                                         <input value="{{ $user->payout_information->bank_name ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ translate('Bank Name') }}" name="bank_name"
                                                             required>
                                                     </div>
@@ -1636,7 +1760,7 @@
                                                                 class="text-primary">*</span></label>
                                                         <input
                                                             value="{{ $user->payout_information->account_name ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ translate('Account Name') }}"
                                                             name="account_name" required>
                                                     </div>
@@ -1647,7 +1771,7 @@
                                                                 class="text-primary">*</span></label>
                                                         <input
                                                             value="{{ $user->payout_information->account_number ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ translate('Account Number') }}"
                                                             name="account_number" required>
                                                     </div>
@@ -1657,7 +1781,7 @@
                                                         <label><b>{{ __('profile.IBAN') }}</b><span
                                                                 class="text-primary">*</span></label>
                                                         <input value="{{ $user->payout_information->iban ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ __('profile.IBAN') }}" name="iban" required>
                                                     </div>
                                                 </div>
@@ -1666,7 +1790,7 @@
                                                         <label><b>{{ __('profile.Swift Code') }}</b><span
                                                                 class="text-primary">*</span></label>
                                                         <input value="{{ $user->payout_information->swift_code ?? '' }}"
-                                                            type="text" class="form-control rounded-0"
+                                                            type="text" class="form-control"
                                                             placeholder="{{ __('profile.Swift Code') }}"
                                                             name="swift_code" required>
                                                     </div>
@@ -1710,15 +1834,15 @@
                                     {{-- <div class="text-right">
                                         <!-- Previous Button -->
                                         <button type="button" data-prv='warehouses'
-                                            class="btn btn-info fw-600 rounded-0 prv-tab">
+                                            class="btn btn-info fw-600 prv-tab">
                                             {{ translate('Previous') }}
                                         </button>
 
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                        <button type="button" class="btn btn-secondary fw-600 save-as-draft"
                                             data-action="save-as-draft">{{ translate('Save as Draft') }}</button>
 
                                         <button id="registerShop" type="submit"
-                                            class="btn btn-primary fw-600 rounded-0">{{ translate('Register Your Shop')
+                                            class="btn btn-primary fw-600">{{ translate('Register Your Shop')
                                             }}</button>
 
                                     </div> --}}
@@ -1735,18 +1859,18 @@
 
                                         <!-- Previous Button -->
                                         <button type="button" data-prv='warehouses'
-                                            class="btn btn-info fw-600 rounded-0 prv-tab" style="font-size: 14px;">
+                                            class="btn btn-info fw-600 prv-tab bg-info-mawad border-radius-8px" style="font-size: 14px;">
                                             {{ translate('Previous') }}
                                         </button>
 
                                         <!-- Save as Draft Button -->
-                                        <button type="button" class="btn btn-secondary fw-600 rounded-0 save-as-draft"
+                                        <button type="button" class="btn btn-secondary fw-600 save-as-draft border-radius-8px"
                                             data-action="save-as-draft" style="font-size: 14px;">
                                             {{ translate('Save as Draft') }}
                                         </button>
 
                                         <!-- Register Your e-Shop Button (Initially Disabled) -->
-                                        <button id="registerShop" type="submit" class="btn btn-primary fw-600 rounded-0"
+                                        <button id="registerShop" type="submit" class="btn btn-primary fw-600 border-radius-8px"
                                             style="font-size: 14px;" disabled>
                                             {{ __('profile.Register your e-Shop') }}
                                         </button>
@@ -1897,7 +2021,7 @@
                     '<td><input type="text" class="form-control" name="warehouse_name[]" value="' +
                     warehouseName + '" required></td>');
                 newRow.append(
-                    '<td><select required name="state_warehouse[]" class="form-control rounded-0 emirateSelect"><option value="' +
+                    '<td><select required name="state_warehouse[]" class="form-control emirateSelect"><option value="' +
                     state + '" selected>' + stateText + '</option></select></td>');
                 newRow.append(
                     '<td><select class="form-control areaSelect" name="area_warehouse[]" required><option value="' +
