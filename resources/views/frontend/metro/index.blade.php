@@ -62,17 +62,6 @@
                                                         <a href="https://about.mawadonline.com/"><button type="button"
                                                                 class="btn bg-white slider-register-buyer margin-s-r-b text-secondary-base border-radius-16 fs-16 font-prompt py-2">
                                                                 {{ __('Join Buyer Waitlist') }}
-                                                                <svg width="24" height="24" viewBox="0 0 24 24"
-                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path
-                                                                        d="M14.4299 5.92993L20.4999 11.9999L14.4299 18.0699"
-                                                                        stroke="#CB774B" stroke-width="1.5"
-                                                                        stroke-miterlimit="10" stroke-linecap="round"
-                                                                        stroke-linejoin="round" />
-                                                                    <path d="M3.5 12H20.33" stroke="#CB774B"
-                                                                        stroke-width="1.5" stroke-miterlimit="10"
-                                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                                </svg>
                                                             </button></a>
                                                     </div>
                                                 </div>
@@ -665,8 +654,8 @@
     @endif
 
     <div class="container mb-5 mt-5">
-        <img class="mb-5 border-radius-12"
-    src="{{ $slider ? my_asset('public/uploads/all/bannerads.png') : static_asset('assets/img/placeholder.jpg') }}">
+       <!-- <img class="mb-5 border-radius-12 img-fluid	img-thumbnail"
+    src="{{ $slider ? my_asset('public/uploads/all/bannerads.png') : static_asset('assets/img/placeholder.jpg') }}"> -->
         <!-- 24/7 Virtual Showroom -->
         <div class="col-xl-4 col-lg-6 col-12 pr-xl-3 pr-lg-3 pb-lg-3 pb-md-3 p-0 pb-3 float-left">
             <div class="sllng-point col-md-12 p-5">

@@ -13411,7 +13411,7 @@ border:none !important;
 }
 .slider-register-buyer{
     border: none;
-    width: 224px;
+    width: 205px;
     height: 48px;
 }
 .slider-buyder-btn{
@@ -13453,13 +13453,13 @@ border:none !important;
     border-radius: 12px;
     border: solid 1px #DBDCDF;
 }
-@media (max-width: 511px) {
+@media (max-width: 480px) {
     .margin-s-r-b{
         margin-top:5px;
         margin-left: 0px;
     }
   }
-  @media (min-width: 511px) {
+  @media (min-width: 480px) {
     .margin-s-r-b{
         margin-top:0px;
         margin-left: 5px;
@@ -13782,4 +13782,7 @@ input[type="radio"].radio-shipping {
   }
 .border-radius-6{
     border-radius: 6px;
+}
+.border-radius-1-12{
+    border-radius: 12px 0px 0px 0px;
 }

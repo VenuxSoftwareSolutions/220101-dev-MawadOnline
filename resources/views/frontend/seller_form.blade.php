@@ -239,7 +239,7 @@
 <section class="pt-4 mb-4">
     <!-- ... Existing HTML code ... -->
 </section>
-<section class="pt-4 mb-4">
+<section class="pt-4 mb-4 font-prompt">
     <div class="container">
         <div class="row">
             <div class="mx-auto col-11">
@@ -1296,7 +1296,7 @@
                                                         <label for="building"><b>{{ translate('Building') }}</b><span
                                                                 class="text-primary">*</span></label>
                                                         <input type="text" class="form-control" id="building_warehouse_add" placeholder="{{ translate('Building') }}" name="building_warehouse_add">
-                                                            
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -1785,7 +1785,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -1819,7 +1819,7 @@
                     switchTab('business-info'); // Default to the first tab if stepNumber is not recognized
                     break;
             }
-            
+
 
             $('.prv-tab').on('click', function () {
                 switchTab($(this).data('prv'));
@@ -1988,7 +1988,7 @@
                             html: 'Processing Account Creation',
                             allowOutsideClick: false,
                             didOpen: () => { Swal.showLoading() }
-                        }); 
+                        });
 
 
                         $.ajax({
@@ -2012,7 +2012,7 @@
                                     contentType: false, // Required for sending FormData
                                     processData: false, // Required for sending FormData
                                     success: function (response) {
-                                        Swal.close(); 
+                                        Swal.close();
                                         if (form.attr('id') == 'shop') {
                                             var email = $('#email').val();
                                             $('#emailAccount').val(email);
@@ -2078,7 +2078,7 @@
                                                 "{{ translate('Too many attempts. Please try again later.') }}"
                                             );
                                         } else {
-                                           
+
                                             if (xhr.status === 403) {
                                                 // Authorization failed
                                                 toastr.error(xhr.responseJSON
@@ -2114,7 +2114,7 @@
                                                 );
                                             }
 
-                                        
+
                                         }
 
                                     }
@@ -2142,7 +2142,7 @@
                             type: 'POST',
                             data: formData,
                             contentType: false,
-                            processData: false, 
+                            processData: false,
                             success: function (response) {
                                 Swal.close();
 
@@ -2227,13 +2227,13 @@
                                         shouldContinue = false;
 
                                     }
-                                    else if (xhr.status === 422) { 
+                                    else if (xhr.status === 422) {
                                         var errors = xhr.responseJSON.errors;
                                         if (errors) {
                                             displayValidationErrors(errors, form);
                                             $(form).find('.is-invalid').first().focus();
                                         }
-                                        shouldContinue = false;  
+                                        shouldContinue = false;
                                     }
                                     else {
                                         toastr.error(xhr.responseJSON.message || "{{ translate('An unexpected error occurred.') }}");
