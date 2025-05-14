@@ -37,11 +37,17 @@
                                 <div class="product-name text-truncate fs-14 mb-5px">
                                     {{  $product->getTranslation('name')  }}
                                 </div>
-                                <div class="">
-                                    @if(home_base_price($product) != home_discounted_base_price($product))
-                                        <del class="opacity-60 fs-15">{{ home_base_price($product) }}</del>
+                                <div>
+                                    @php
+                                        $priceAfterDiscountVatIncl = \App\Utility\CartUtility::priceProduct($product->id, 1);
+                                        $priceAfterMwdCommission = calculatePriceWithDiscountAndMwdCommission($product, 1, false);
+
+                                        $mwd_price = calculatePriceWithDiscountAndMwdCommission($product);
+                                    @endphp
+                                    @if($priceAfterDiscountVatIncl !== $product->unit_price)
+                                        <del class="opacity-60 fs-15">{{ single_price($priceAfterMwdCommission) }}</del>
                                     @endif
-                                    <span class="fw-600 fs-16 text-primary">{{ home_discounted_base_price($product) }}</span>
+                                    <span class="fw-600 fs-16 text-primary">{{ single_price($mwd_price) }}</span>
                                 </div>
                             </div>
                         </div>

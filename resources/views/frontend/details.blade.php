@@ -655,7 +655,11 @@
                     <input type="hidden"
                         value="{{ $previewData['detailedProduct']['variationId'] ?? $previewData['detailedProduct']['product_id'] }}"
                         name="variationId" id="variationId">
-
+                    @if(isset($previewData["detailedProduct"]["sampleDetails"]["sample_price"]))
+                        <input type="hidden"
+                            value="{{ $previewData['detailedProduct']['sampleDetails']["sample_price"] }}"
+                            name="sample_price" id="sample_price" />
+                    @endif
                 </div>
                 <div class="avialable-amount opacity-60">
                 </div>

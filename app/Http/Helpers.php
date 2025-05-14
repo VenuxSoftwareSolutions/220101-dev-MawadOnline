@@ -270,9 +270,9 @@ if (! function_exists('format_price')) {
     function format_price($price, $isMinimize = false)
     {
         if (get_setting('decimal_separator') == 1) {
-            $fomated_price = number_format($price, get_setting('no_of_decimals'));
+            $formatted_price = number_format($price, get_setting('no_of_decimals'));
         } else {
-            $fomated_price = number_format($price, get_setting('no_of_decimals'), ',', '.');
+            $formatted_price = number_format($price, get_setting('no_of_decimals'), ',', '.');
         }
 
         // Minimize the price
@@ -280,24 +280,24 @@ if (! function_exists('format_price')) {
             $temp = number_format($price / 1000000000, get_setting('no_of_decimals'), '.', '');
 
             if ($temp >= 1) {
-                $fomated_price = $temp.'B';
+                $formatted_price = $temp.'B';
             } else {
                 $temp = number_format($price / 1000000, get_setting('no_of_decimals'), '.', '');
                 if ($temp >= 1) {
-                    $fomated_price = $temp.'M';
+                    $formatted_price = $temp.'M';
                 }
             }
         }
 
         if (get_setting('symbol_format') == 1) {
-            return currency_symbol().$fomated_price;
+            return sprintf("%s %s", currency_symbol(), $formatted_price);
         } elseif (get_setting('symbol_format') == 3) {
-            return currency_symbol().' '.$fomated_price;
+            return sprintf("%s %s", currency_symbol(), $formatted_price);
         } elseif (get_setting('symbol_format') == 4) {
-            return $fomated_price.' '.currency_symbol();
+            return sprintf("%s %s", $formatted_price, currency_symbol());
         }
 
-        return $fomated_price.currency_symbol();
+        return sprintf("%s %s", $formatted_price, currency_symbol());
     }
 }
 
@@ -3113,11 +3113,15 @@ if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
 
             $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
             ->whereNot(function ($query) {
-                $query->where("scope", "product")
-                ->orWhere("scope", "category");
-            })->exists();
+                $query->whereIn("scope", ["product", "category"]);
+            })->withinDateRange()->active()->exists();
 
-            $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            if (isset($product->unit_price) && is_null($product->unit_price) === false) {
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            } else {
+                $product = Product::findOrFail($product->id);
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            }
 
             $priceAfterDiscountVatIncl = $withDiscount === true && $isOrdersDiscountExists === false ?
                  CartUtility::priceProduct($product->id, $qty)
@@ -3216,5 +3220,76 @@ if (function_exists('formatBuJob') === false) {
             Log::error("Error while formatting bu job #{$bu_job->id}, with error: {$e->getMessage()}");
             return "";
         }
+    }
+}
+
+if (function_exists("getOrdersDiscount") === false) {
+    function getOrdersDiscount($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return 0;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return 0;
+            }
+
+            $discount = $discount->toArray();
+            $percentage = ($subTotal * $discount["discount_percentage"]) / 100;
+
+            if (
+                $percentage > $discount["max_discount"]
+            ) {
+                return $discount["max_discount"];
+            } else {
+                return $percentage;
+            }
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return 0;
+        }
+    }
+}
+
+if (function_exists("getOrdersDiscountId") === false) {
+    function getOrdersDiscountId($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return null;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return null;
+            }
+
+            return $discount->id;
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount id for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return null;
+        }
+    }
+}
+
+if (function_exists("itemDiscountShare") === false) {
+    function itemDiscountShare($itemPrice, $vendorSubTotal = 0, $vendorDiscount = 0)
+    {
+        return roundUpToTwoDigits(
+            $vendorSubTotal > 0
+                ? ($itemPrice / $vendorSubTotal) * $vendorDiscount : 0
+        );
     }
 }

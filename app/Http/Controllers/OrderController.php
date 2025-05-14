@@ -173,14 +173,25 @@ class OrderController extends Controller
 
             $seller_products = [];
 
+            $subTotalByVendor = $carts->pluck("owner_id")
+                ->unique()
+                ->mapWithKeys(fn ($ownerId) => [$ownerId => 0])
+                ->toArray();
+
             foreach ($carts as $cartItem) {
                 $product_ids = [];
                 $product = Product::find($cartItem['product_id']);
+
                 if (isset($seller_products[$product->user_id])) {
                     $product_ids = $seller_products[$product->user_id];
                 }
+
                 array_push($product_ids, $cartItem);
                 $seller_products[$product->user_id] = $product_ids;
+
+                if (array_key_exists($product->user_id, $subTotalByVendor)) {
+                    $subTotalByVendor[$product->user_id] += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                }
             }
 
             foreach ($seller_products as $seller_product) {
@@ -223,7 +234,40 @@ class OrderController extends Controller
                     $order_detail->seller_id = $product->user_id;
                     $order_detail->product_id = $product->id;
                     $order_detail->variation = $product_variation;
-                    $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+
+                    $price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $order_detail->price = $price;
+
+                    $discount_share = array_key_exists($product->user_id, $subTotalByVendor) === true ?
+                        itemDiscountShare(
+                            $price,
+                            $subTotalByVendor[$cartItem->owner_id],
+                            getOrdersDiscount($subTotalByVendor[$cartItem->owner_id], $cartItem->owner_id)
+                        ) : 0;
+
+                    $order_detail->discount_share = $discount_share;
+
+                    $applied_discount_id = getOrdersDiscountId(
+                        $subTotalByVendor[$cartItem->owner_id],
+                        $cartItem->owner_id
+                    );
+
+                    // in `category/product discount` case, save those info
+                    if (is_null($applied_discount_id) === true) {
+                        $highestDiscount = Discount::getHighestPriorityDiscountByProduct($product->id);
+                        $order_detail->product_price_before_discount = $product->unit_price;
+                        $order_detail->product_price_after_discount = cart_product_price(
+                            $cartItem,
+                            $product,
+                            false,
+                            false
+                        );
+                        $order_detail->discount_percentage = $highestDiscount->discount_percentage;
+                        $applied_discount_id = $highestDiscount->id;
+                    }
+
+                    $order_detail->applied_discount_id = $applied_discount_id;
+
                     $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                     $order_detail->shipping_type = $cartItem['shipping_type'];
                     $order_detail->product_referral_code = $cartItem['product_referral_code'];
@@ -277,6 +321,7 @@ class OrderController extends Controller
                     }
                 }
 
+                $order->total_shipping_cost = $shipping;
                 $order->grand_total = ($coupon_discount > 0 ? $coupon_discount : $subtotal) + $tax + $shipping;
 
                 if ($seller_product[0]->coupon_code != null) {
@@ -293,10 +338,16 @@ class OrderController extends Controller
                 $order->save();
             }
 
+            $orderTotal = request()->session()->get("orderTotal", null);
+
+            if (is_null($orderTotal) === false) {
+                $combined_order->grand_total = $orderTotal;
+            }
+
             $combined_order->save();
 
             $request->session()->put('combined_order_id', $combined_order->id);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
             flash(translate("Something went wrong!"))->error();
             return redirect()->route("home");

@@ -629,8 +629,7 @@ class CartController extends Controller
 
         $cart->is_sample = true;
 
-        $price = $productPreview["sampleDetails"]["sample_price"] * $quantity;
-
+        $price = (isset($productPreview["sampleDetails"]["sample_price"]) ? $productPreview["sampleDetails"]["sample_price"] : request()->sample_price) * $quantity;
         $tax = 0;
 
         CartUtility::save_cart_data($cart, $product, $price, $tax, $quantity);

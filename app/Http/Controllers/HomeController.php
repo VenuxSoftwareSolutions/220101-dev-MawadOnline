@@ -299,6 +299,8 @@ class HomeController extends Controller
                 session(['productPreviewData' => $previewData]);
 
                 return view('frontend.product_details', compact('previewData'));
+            } else {
+                throw new Exception("Product with slug '$slug' is not found");
             }
 
             abort(404);

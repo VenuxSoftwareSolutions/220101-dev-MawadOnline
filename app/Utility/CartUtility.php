@@ -177,9 +177,8 @@ class CartUtility
 
         $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
             ->whereNot(function ($query) {
-                $query->where("scope", "product")
-                ->orWhere("scope", "category");
-            })->exists();
+                $query->whereIn("scope", ["product", "category"]);
+            })->withinDateRange()->active()->exists();
 
         $unitPrice = $unit_price !== null ? $unit_price : $product->unit_price;
 

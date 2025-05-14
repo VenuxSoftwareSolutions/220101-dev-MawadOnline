@@ -660,12 +660,29 @@
 @endsection
 
 @section('script')
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
             $(".online_payment").click(function() {
                 $('#manual_payment_description').parent().addClass('d-none');
             });
             toggleManualPaymentData($('input[name=payment_option]:checked').data('id'));
+
+            const toggleLink = document.querySelector('.toggle-discounts');
+            const rows = document.querySelectorAll('.ordersDiscountsDetails');
+
+            toggleLink?.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                rows.forEach(row => {
+                    row.classList.toggle('show__clz');
+                });
+
+                if (rows[0].classList.contains('show__clz')) {
+                    toggleLink.textContent = '−';
+                } else {
+                    toggleLink.textContent = '+';
+                }
+            });
         });
 
         var minimum_order_amount_check = {{ get_setting('minimum_order_amount_check') == 1 ? 1 : 0 }};

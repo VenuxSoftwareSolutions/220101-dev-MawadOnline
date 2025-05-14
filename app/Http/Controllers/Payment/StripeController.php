@@ -32,7 +32,10 @@ class StripeController extends Controller
             if (request()->session()->get('payment_type') == 'cart_payment') {
                 $combined_order = CombinedOrder::findOrFail(Session::get('combined_order_id'));
                 $client_reference_id = $combined_order->id;
-                $amount = round($combined_order->grand_total * 100);
+
+                $orderTotal = request()->session()->get("orderTotal", null);
+
+                $amount = round((is_null($orderTotal) ? $combined_order->grand_total : $orderTotal) * 100);
             } elseif (request()->session()->get('payment_type') == 'wallet_payment') {
                 $amount = round(request()->session()->get('payment_data')['amount'] * 100);
                 $client_reference_id = auth()->id();

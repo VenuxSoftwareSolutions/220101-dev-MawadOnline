@@ -72,18 +72,24 @@ class SearchController extends Controller
         $min_all_price = !empty($prices) ? min($prices) : 0;
 
         //Filter products By Category
-        ['products' => $products, 'attributes' => $attributes, 'category_ids' => $category_ids, 'category_parents_ids' => $category_parents_ids, 'category' => $category] = $this->productService->filterProductsAndAttributesByCategory($category_id, $query);
+        [
+            'products' => $products,
+            'attributes' => $attributes,
+            'category_ids' => $category_ids,
+            'category_parents_ids' => $category_parents_ids,
+            'category' => $category
+        ] = $this->productService->filterProductsAndAttributesByCategory($category_id, $query);
 
         $baseQuery = clone $products;
 
         $brandQuery = clone $baseQuery;
 
         $brands = $brandQuery->join('brands', 'brands.id', '=', 'products.brand_id')
-        ->where('brands.approved', '=', 1)
-        ->whereNull('products.deleted_at')
-        ->select('brands.*')
-        ->distinct()
-        ->get();
+            ->where('brands.approved', '=', 1)
+            ->whereNull('products.deleted_at')
+            ->select('brands.*')
+            ->distinct()
+            ->get();
 
         $brand_ids = $this->productService->filterProductsByBrand($request, $brand_id, $products);
 
@@ -137,6 +143,7 @@ class SearchController extends Controller
             'id',
             'slug',
             'name',
+            'unit_price',
             'auction_product',
             'discount',
             'wholesale_product',
@@ -145,8 +152,7 @@ class SearchController extends Controller
             'brand_id',
             'user_id',
             'created_at'
-        ])
-        ->paginate(6);
+        ])->paginate(6);
 
         if ($request->ajax()) {
             $html = '';
