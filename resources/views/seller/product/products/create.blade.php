@@ -6034,11 +6034,21 @@
                                     "{{ translate('The sample price variant is required and must be greater than or equal to 0.1 AED.') }}";
                                 remarks.push(message);
                             }
+
+                            let shippingQtyRangeCheck = validateShippingQuantityRanges();
+
+                            check_shipping = check_shipping && shippingQtyRangeCheck.status;
+
                             if (check_shipping == false) {
-                                var message =
-                                    "{{ translate('There is an issue with your shipping configuration.') }}";
+                                let message = "{{ translate('There is an issue with your shipping configuration.') }}";
+
+                                if(shippingQtyRangeCheck.status === false) {
+                                   message = `${message.replace(".", ":")} ${shippingQtyRangeCheck.message}`;
+                                }
+
                                 remarks.push(message);
                             }
+
                             if (check_sample_shipping_variant == false) {
                                 var message =
                                     "{{ translate('There is a problem with the configuration of your shipping variant sample.') }}";

@@ -1170,6 +1170,64 @@
                 $("#search-menu").html('')
             }
         }
+
+        const translations = {
+            rangeError: {{ Js::from(__('range starts at :from, but expected :expected.', [
+                'from' => '__FROM__',
+                'expected' => '__EXPECTED__'
+            ])) }},
+            uncoveredRange: @json(
+                __('quantities from :from to :to are not covered.', [
+                    'from' => '__FROM__',
+                    'to' => '__TO__'
+                ])
+            )
+        };
+
+        function validateShippingQuantityRanges() {
+            let ranges = [];
+
+            $("#bloc_shipping_configuration tr").each(function () {
+                let from = parseInt($(this).find(".min-qty-shipping").val(), 10);
+                let to = parseInt($(this).find(".max-qty-shipping").val(), 10);
+
+                if (!isNaN(from) && !isNaN(to)) {
+                    ranges.push({ from, to });
+                }
+            });
+
+            ranges.sort((a, b) => a.from - b.from);
+
+            let current = 1;
+            for (let i = 0; i < ranges.length; i++) {
+                let from = ranges[i].from;
+                let to = ranges[i].to;
+
+                if (from > current) {
+                    return {
+                        message: translations.rangeError
+                            .replace('__FROM__', from)
+                            .replace('__EXPECTED__', current),
+                        status: false
+                    };
+                }
+
+                current = to + 1;
+            }
+
+            const maxShippingQty = {{ MAX_SHIPPING_QUANTITY }};
+
+            if (current <= maxShippingQty) {
+                return {
+                    message: translations.uncoveredRange
+                        .replace('__FROM__', current)
+                        .replace('__TO__', maxShippingQty),
+                    status: false
+                };
+            }
+
+            return { message: null, status: true};
+        }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
     <script src="{{ static_asset('assets/js/jquery.multi-select.js') }}"></script>

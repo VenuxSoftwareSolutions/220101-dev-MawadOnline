@@ -5746,11 +5746,21 @@
                                 "{{ translate('There is a problem with the configuration of your shipping variant sample.') }}";
                             remarks.push(message);
                         }
+
+                        let shippingQtyRangeCheck = validateShippingQuantityRanges();
+
+                        check_shipping = check_shipping && shippingQtyRangeCheck.status;
+
                         if (check_shipping == false) {
-                            var message =
-                                "{{ translate('There is an issue with your shipping configuration.') }}";
+                            let message = "{{ translate('There is an issue with your shipping configuration.') }}"
+
+                            if(shippingQtyRangeCheck.status === false) {
+                               message = `${message.replace(".", ":")} ${shippingQtyRangeCheck.message}`;
+                            }
+
                             remarks.push(message);
                         }
+
                         if (check_sku == false) {
                             var message = "{{ translate('There is an empty SKU.') }}";
                             remarks.push(message);
