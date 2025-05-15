@@ -236,6 +236,8 @@
     </style>
 @endsection
 @section('content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <section class="pt-4 mb-4">
     <!-- ... Existing HTML code ... -->
 </section>
@@ -646,16 +648,15 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label><b>{{ translate('License Issue Date') }} </b><span
-                                                                class="text-primary">*</span>
-                                                        </label>
-
-                                                        <input dir="auto" required type="{{-- date --}}text"
-                                                            class="datepicker form-control rounded-0"
-                                                            placeholder="{{ translate('License Issue Date') }}"
-                                                            id="license_issue_date"
-                                                            value="{{ isset($user->business_information->license_issue_date) ? Carbon::createFromFormat('Y-m-d', $user->business_information->license_issue_date)->format('d M Y') : '' }}"
-                                                            name="license_issue_date">
+                                                        <label><b>{{ translate('License Issue Date') }}</b> <span class="text-primary">*</span></label>
+                                                        <input dir="auto" 
+                                                               required 
+                                                               type="text"
+                                                               class="form-control rounded-0 flatpickr-date"
+                                                               placeholder="{{ translate('License Issue Date') }}"
+                                                               id="license_issue_date"
+                                                               value="{{ isset($user->business_information->license_issue_date) ? $user->business_information->license_issue_date : '' }}"
+                                                               name="license_issue_date">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -1786,6 +1787,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.9.3/sha3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -2744,6 +2746,16 @@
             closeButton: true,
             timeOut: 3000, // Set the duration for which the toast will be displayed (in milliseconds)
         };
+        document.addEventListener('DOMContentLoaded', function() {
+            flatpickr('.flatpickr-date', {
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'd M Y',
+                locale: 'default', 
+                allowInput: true 
+            });
+        });
+
         $(document).ready(function () {
             const $password = $('#password');
             const $bar = $('#strength-bar');
