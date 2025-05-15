@@ -41,6 +41,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Log;
 use Exception;
+use App\Rules\NonOverlappingShippingQuantityPerShipper;
+use App\Models\BuJob;
 
 class ProductController extends Controller
 {
@@ -84,32 +86,86 @@ class ProductController extends Controller
         seller_lease_creation($user = Auth::user());
 
         $search = null;
-        $products = Product::where('user_id', Auth::user()->owner_id)->where(function ($query) {
-            $query->where('is_draft', '=', 1)
-                ->where('parent_id', 0)
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('parent_id', 0)
-                        ->where('is_parent', 0);
-                })
-                ->orWhere(function ($query) {
-                    $query->where('is_draft', 0)
-                        ->where('is_parent', 1);
-                });
-        })->orderBy('id', 'desc');
+
+        $products = Product::where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc');
+
+        $allMatchingProductIds = (clone $products)->pluck('id');
 
         if ($request->has('search')) {
             $search = $request->search;
             $products = $products->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')
                     ->orWhere('sku', 'like', '%'.$search.'%')
-                    ->orWhere('short_description', 'like', '%'.$search.'%');
+                    ->orWhere('short_description', 'like', '%'.$search.'%')
+                    ->orWhereHas('main_category', function ($category) use ($search) {
+                        $category->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
+
+        if ($request->filled('category_id')) {
+            $categoryId = $request->get('category_id');
+            $products = $products->whereHas('main_category', function ($q) use ($categoryId) {
+                $q->where('id', $categoryId);
+            });
+        }
+
+        if ($request->filled('bu_job_id')) {
+            $buJobId = $request->get('bu_job_id');
+            $products = $products->whereHas('bu_job', function ($q) use ($buJobId) {
+                $q->where('id', $buJobId);
+            });
+        }
+
+        $categories = Category::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("name")->get();
+
+        $bu_jobs = BuJob::whereHas('products', function ($query) use ($allMatchingProductIds) {
+            $query->whereIn('products.id', $allMatchingProductIds);
+        })->orderBy("created_at")->get();
+
+        if ($request->has("selectAll")) {
+            $productsIds = (clone $products)->pluck("id")->toArray();
+
+            (clone $products)->each(function ($product) use (&$productsIds) {
+                if ($product->getChildrenProducts()->count() > 0) {
+                    array_push(
+                        $productsIds,
+                        $product->getChildrenProducts()->pluck("id")->toArray()
+                    );
+                }
+            });
+
+            return response()->json([
+                "ids" => collect($productsIds)->flatten()->toArray()
+            ]);
+        }
+
         $products = $products->paginate(10);
+
         $tour_steps = Tour::orderBy('step_number')->get();
 
-        return view('seller.product.products.index', compact('products', 'search', 'tour_steps'));
+        return view('seller.product.products.index', compact(
+            'products',
+            'search',
+            'tour_steps',
+            'categories',
+            'bu_jobs'
+        ));
     }
 
     public function delete_image(Request $request)
@@ -171,15 +227,18 @@ class ProductController extends Controller
 
                 if (count($shipper_areas) > 0) {
                     foreach ($shipper_areas as $area) {
-                        $warhouses = Warehouse::where('user_id', Auth::user()->owner_id)->where('emirate_id', $area->emirate_id)->where('area_id', $area->area_id)->get();
-                        if (count($warhouses) > 0) {
+                        $warehouses = Warehouse::where('user_id', Auth::user()->owner_id)
+                            ->where('emirate_id', $area->emirate_id)
+                            ->where('area_id', $area->area_id)
+                            ->get();
+
+                        if (count($warehouses) > 0) {
                             if (! array_key_exists($shipper->id, $supported_shippers)) {
                                 $supported_shippers[$shipper->id] = $shipper;
                             }
                         }
                     }
                 }
-
             }
         }
 
@@ -807,13 +866,16 @@ class ProductController extends Controller
 
         $rules = [
             'unit_sale_price' => ['required', 'numeric'],
-            'from_shipping' => [
-                'required', 'array',
-                new NoPricingOverlap($request->input('from_shipping'), $request->input('to_shipping'), $is_shipping),
-            ],
-            'to_shipping' => ['required', 'array'],
-            'from_shipping.*' => 'numeric',
-            'to_shipping.*' => 'numeric',
+            'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                $request->get("shipper"),
+                $request->get("from_shipping"),
+                $request->get("to_shipping")
+            )],
+            'from_shipping' => 'bail|required|array',
+            'to_shipping' => 'bail|required|array',
+            'shipper.*' => 'bail|required|string',
+            'from_shipping.*' => 'bail|required|integer|min:1',
+            'to_shipping.*' => 'bail|required|integer|min:1',
         ];
 
         $variantsPricing = collect($request->all())
@@ -831,6 +893,24 @@ class ProductController extends Controller
                     new NoPricingOverlap($from, $to, false, $index),
                 ];
             }
+        }
+
+        foreach (
+            $request->collect()
+                   ->filter(
+                       fn ($value, $key) => str_starts_with($key, 'variant_shipping-')
+                   )->all() as $value
+        ) {
+            $request->validate([
+                'shipper' => ['bail', 'required', 'array', new NonOverlappingShippingQuantityPerShipper(
+                    $value["shipper"],
+                    $value["from"],
+                    $value["to"],
+                    true
+                )],
+                'from' => 'bail|required|array',
+                'to' => 'bail|required|array',
+            ]);
         }
 
         $request->validate($rules);
@@ -1091,6 +1171,81 @@ class ProductController extends Controller
         }
     }
 
+
+    public function bulk_publish(Request $request)
+    {
+        $action = "publish";
+
+        try {
+            $data = $request->all();
+            $productsIds = json_decode($data["products_ids"]);
+
+            if ($data["publish"] !== "1") {
+                $action = "unpublish";
+            }
+
+            $failed = [];
+            $successful = [];
+            $errorDetails = [];
+
+            if (count($productsIds) === 0) {
+                throw new Exception(__("No products selected"));
+            }
+
+            foreach ($productsIds as $productId) {
+                try {
+                    $product = Product::find($productId);
+
+                    if ($product === null) {
+                        throw new Exception(__("Product not found"));
+                    }
+
+                    $product->published = $data["publish"];
+
+                    if (!$product->save()) {
+                        throw new Exception($product->sku);
+                    }
+
+                    $successful[] = $productId;
+                } catch (Exception $e) {
+                    $failed[] = $productId;
+                    $errorDetails[$productId] = $e->getMessage();
+
+                    Log::warning("Error while bulk {$action} for product {$productId}, with message: {$e->getMessage()}");
+                }
+            }
+
+            $message = __("Bulk :action completed", ["action" => $action]);
+            $statusCode = 200;
+
+            if (!empty($failed)) {
+                if (empty($successful)) {
+                    $message = __("Bulk :action failed for all products", ["action" => $action]);
+                    $statusCode = 500;
+                } else {
+                    $message .= __(" with :count errors in products", ["count" => count($failed)]);
+                    $statusCode = 207;
+                }
+            }
+
+            return response()->json([
+                "error" => !empty($failed),
+                "message" => $message,
+                "failed" => $failed,
+                "successful" => $successful,
+                "error_details" => $errorDetails,
+                "action" => $action
+            ], $statusCode);
+        } catch (Exception $e) {
+            Log::error("Error while bulk {$action} products, with message: {$e->getMessage()}");
+
+            return response()->json([
+                'error' => true,
+                'message' => __("Something went wrong"),
+            ], 500);
+        }
+    }
+
     public function bulk_product_delete(Request $request)
     {
         try {
@@ -1098,11 +1253,13 @@ class ProductController extends Controller
                 foreach ($request->id as $product_id) {
                     $this->destroy($product_id);
                 }
+            } else {
+                throw new Exception("Product Id selection error");
             }
 
-            return 1;
-        } catch (\Exception $e) {
-            \Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
+            return response()->json(["error" => false, "message" => __("Bulk delete products ends successfully")]);
+        } catch (Exception $e) {
+            Log::error("Error while bulk delete products, with message: {$e->getMessage()}");
 
             return response()->json(['error' => true, 'message' => __("There's an error")], 500);
         }
@@ -1706,7 +1863,6 @@ class ProductController extends Controller
                 if (! isset($variation[$attributeId]) ||
                     (is_array($variation[$attributeId]) && $valueString !== $value) ||
                     (! is_array($variation[$attributeId]) && $variation[$attributeId] !== $value)) {
-
                     $matchesCheckedAttributes = false;
                     break;
                 }
@@ -1747,14 +1903,16 @@ class ProductController extends Controller
                     }
 
                     $sku = $variation['sku'] ?? null;
-                    $quantity = $variation['variant_pricing-from']['from'][0] ?? '';
-                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? $product->unit_price;
+                    $quantity = $variation['variant_pricing-from']['from'][0] ?? 1;
+
+                    $price = $variation['variant_pricing-from']['unit_price'][0] ?? calculatePriceWithDiscountAndMwdCommission($product);
+
                     $total = (
                         isset($variation['variant_pricing-from']['from'][0]) &&
                         isset($variation['variant_pricing-from']['unit_price'][0])
                     ) ? (
                         $variation['variant_pricing-from']['from'][0] * $variation['variant_pricing-from']['unit_price'][0]
-                    ) : $product->unit_price;
+                    ) : calculatePriceWithDiscountAndMwdCommission($product);
 
                     if (
                         isset($variation['variant_pricing-from']['discount']['date']) &&
@@ -1845,6 +2003,8 @@ class ProductController extends Controller
                     $product_stock = StockSummary::where('variant_id', $variationId)->sum('current_total_quantity');
                     if ($product_stock < $minimum) {
                         $outStock = true;
+                    } else {
+                        $maximum = (float) $product_stock;
                     }
                 }
             }
@@ -1858,7 +2018,10 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => $price ? single_price($price) : null,
+                "unit_price" => isset($variationId) ? get_single_product($variationId)->unit_price : null,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? $total ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,
@@ -1878,7 +2041,15 @@ class ProductController extends Controller
                 'variationId' => $variationId ?? null,
                 'quantity' => $quantity ?? null,
                 'price' => $price ?? null,
+                'formattedPrice' => isset($price) === true ? single_price($price) : null,
+                'formattedMwdCommissionPrice' =>  isset($variationId) ? single_price(calculatePriceWithDiscountAndMwdCommission(
+                    get_single_product($variationId),
+                    $quantity ?? 1,
+                    false
+                )) : null,
+                "unit_price" => isset($variationId) ? get_single_product($variationId)->unit_price : null,
                 'total' => $totalDiscount ?? $total ?? null,
+                'formattedTotal' => $totalDiscount ?? isset($total) ? single_price($total) : null,
                 'maximum' => $maximum,
                 'minimum' => $minimum,
                 'discountedPrice' => $discountedPrice ?? null,

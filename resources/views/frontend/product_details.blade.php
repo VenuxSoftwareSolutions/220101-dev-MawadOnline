@@ -28,16 +28,16 @@
         <div class="container">
             <div class="row gutters-16">
                 <!-- Left side
-                    <div class="col-lg-3">
-                        <!-- Seller Info
+                            <div class="col-lg-3">
+                                <!-- Seller Info
 
-                        <!-- Top Selling Products
-                        <div class="d-none d-lg-block">
-                            <div class="bg-white border mb-4">
-                                <div class="p-3 p-sm-4 fs-16 fw-600">
-                                    Top Selling Products
-                                </div>
-                                {{-- <div class="px-3 px-sm-4 pb-4">
+                                <!-- Top Selling Products
+                                <div class="d-none d-lg-block">
+                                    <div class="bg-white border mb-4">
+                                        <div class="p-3 p-sm-4 fs-16 fw-600">
+                                            Top Selling Products
+                                        </div>
+                                        {{-- <div class="px-3 px-sm-4 pb-4">
                                 <ul class="list-group list-group-flush">
                                     <li class="py-3 px-0 list-group-item border-0">
                                         <div
@@ -242,22 +242,22 @@
                                     </li>
                                 </ul>
                             </div> --}}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Right side -->
+                            <!-- Right side -->
                 <div class="col-lg-12">
 
                     <!-- Reviews & Ratings -->
                     <div class="bg-white mb-4">
                         <!--<div class="p-3 p-sm-4">
-                                <h3 class="fs-16 fw-700 mb-0">
-                                    <span class="mr-4">Reviews &amp; Ratings</span>
-                                </h3>
-                            </div>
-                            <!-- Ratting
-                            {{-- <div class="px-3 px-sm-4 mb-4">
+                                        <h3 class="fs-16 fw-700 mb-0">
+                                            <span class="mr-4">Reviews &amp; Ratings</span>
+                                        </h3>
+                                    </div>
+                                    <!-- Ratting
+                                    {{-- <div class="px-3 px-sm-4 mb-4">
                             <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-8 mb-3">
@@ -288,11 +288,11 @@
                                 </div>
                             </div>
                         </div> --}} <!--
-                            <div class="px-3 px-sm-4 mb-4">
-                                <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8 mb-3">
-                                            @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
+                                    <div class="px-3 px-sm-4 mb-4">
+                                        <div class="border border-secondary-base bg-soft-secondary-base p-3 p-sm-4">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-8 mb-3">
+                                                    @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
     @php
         if ($previewData['detailedProduct']['variationId']) {
             $detailedProduct = get_single_product($previewData['detailedProduct']['variationId']);
@@ -301,69 +301,69 @@
         }
         $totalRating = $detailedProduct !== null ? $detailedProduct->reviews->count() : 0;
     @endphp
-                                            <div
-                                                class="d-flex align-items-center justify-content-between justify-content-md-start">
-                                                <div class="w-100 w-sm-auto">
-                                                    <span class="avgRating fs-36 mr-3">{{ $totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
-                                                    <span class="fs-14 mr-3">out of 5.0</span>
-                                                </div>
-                                                <div
-                                                    class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
-                                                    <span class="rating rating-mr-1 rating-var">
-                                                        @if ($totalRating > 0)
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                                        <div class="w-100 w-sm-auto">
+                                                            <span class="avgRating fs-36 mr-3">{{ $totalRating > 0 ? $detailedProduct->reviews->sum('rating') / $totalRating : 0 }}</span>
+                                                            <span class="fs-14 mr-3">out of 5.0</span>
+                                                        </div>
+                                                        <div
+                                                            class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                            <span class="rating rating-mr-1 rating-var">
+                                                                @if ($totalRating > 0)
     {{ renderStarRating($detailedProduct->reviews->sum('rating') / $totalRating) }}
 @else
     {{ renderStarRating(0) }} <!-- Assuming 0 stars when there are no reviews
     @endif
-                                                    </span>
-                                                    <span class="total-var-rating ml-1 fs-14">({{ $totalRating }}
-                                                        reviews)</span>
-                                                </div>
-                                            </div>
+                                                            </span>
+                                                            <span class="total-var-rating ml-1 fs-14">({{ $totalRating }}
+                                                                reviews)</span>
+                                                        </div>
+                                                    </div>
 @else
     <div
-                                            class="d-flex align-items-center justify-content-between justify-content-md-start">
-                                            <div class="w-100 w-sm-auto">
-                                                <span class="fs-36 mr-3">0</span>
-                                                <span class="fs-14 mr-3">out of 5.0</span>
-                                            </div>
-                                            <div
-                                                class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
-                                                <span class="rating rating-mr-1 rating-var">
-                                                    <i class="las la-star"></i><i class="las la-star"></i><i
-                                                        class="las la-star"></i><i class="las la-star"></i><i
-                                                        class="las la-star"></i>
-                                                </span>
-                                                <span class="total-var-rating ml-1 fs-14">(0
-                                                    reviews)</span>
-                                            </div>
-                                            </div>
+                                                    class="d-flex align-items-center justify-content-between justify-content-md-start">
+                                                    <div class="w-100 w-sm-auto">
+                                                        <span class="fs-36 mr-3">0</span>
+                                                        <span class="fs-14 mr-3">out of 5.0</span>
+                                                    </div>
+                                                    <div
+                                                        class="mt-sm-3 w-100 w-sm-auto d-flex flex-wrap justify-content-end justify-content-md-start">
+                                                        <span class="rating rating-mr-1 rating-var">
+                                                            <i class="las la-star"></i><i class="las la-star"></i><i
+                                                                class="las la-star"></i><i class="las la-star"></i><i
+                                                                class="las la-star"></i>
+                                                        </span>
+                                                        <span class="total-var-rating ml-1 fs-14">(0
+                                                            reviews)</span>
+                                                    </div>
+                                                    </div>
     @endif
-                                        </div>
-                                        <div class="col-md-4 text-right">
-                                            <a href="javascript:void(0);" onclick="product_review('3')"
-                                                class="btn btn-secondary-base fw-400 rounded-0 text-white">
-                                                <span class="d-md-inline-block"> Rate this Product</span>
-                                            </a>
+                                                </div>
+                                                <div class="col-md-4 text-right">
+                                                    <a href="javascript:void(0);" onclick="product_review('3')"
+                                                        class="btn btn-secondary-base fw-400 rounded-0 text-white">
+                                                        <span class="d-md-inline-block"> Rate this Product</span>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <!-- Reviews
-                            <div class="py-3 reviews-area">
-                                <ul class="list-group list-group-flush">
-                                </ul>
+                                    <!-- Reviews
+                                    <div class="py-3 reviews-area">
+                                        <ul class="list-group list-group-flush">
+                                        </ul>
 
-                                <div class="text-center fs-18 opacity-70">
-                                    There have been no reviews for this product yet.
-                                </div>
+                                        <div class="text-center fs-18 opacity-70">
+                                            There have been no reviews for this product yet.
+                                        </div>
 
-                                <!-- Pagination
-                                <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
+                                        <!-- Pagination
+                                        <div class="aiz-pagination product-reviews-pagination py-2 px-4 d-flex justify-content-end">
 
-                                </div>
-                            </div>
-                        </div> -->
+                                        </div>
+                                    </div>
+                                </div> -->
                         <!-- Description, Video, Downloads -->
                         <div class="bg-white mb-4 p-3 p-sm-4 col-12 col-md-12 float-left">
                             <!-- Tabs -->
@@ -372,7 +372,9 @@
                                     class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset active show">Description</a>
                                 <a href="#tab_default_2" data-toggle="tab"
                                     class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset">Downloadable</a>
-                                <a href="#tab_default_3" data-toggle="tab" class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset">Reviews( {{ $totalRating ?? '0' }} )</a>
+                                <a href="#tab_default_3" data-toggle="tab"
+                                    class="mr-2 mr-md-5 pb-2 fs-16 fw-700 text-reset">Reviews( {{ $totalRating ?? '0' }}
+                                    )</a>
                             </div>
 
                             <!-- Description -->
@@ -417,26 +419,26 @@
                                             </div>
                                             <p></p>
                                             <!--
-                                            <div id="featurebullets_feature_div" class="celwidget"
-                                                data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
-                                                data-cel-widget="featurebullets_feature_div"
-                                                style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
-                                                <div id="feature-bullets"
-                                                    class="a-section a-spacing-medium a-spacing-top-small"
-                                                    style="box-sizing: border-box; margin-top: 8px !important; margin-bottom: 0px;">
-                                                    <ul class="a-unordered-list a-vertical a-spacing-mini"
-                                                        style="box-sizing: border-box; margin: 0px 0px 0px 18px; color: rgb(15, 17, 17); padding: 0px;">
-                                                        <li
-                                                            style="box-sizing: border-box; list-style: disc; overflow-wrap: break-word; margin: 0px;">
-                                                            <span class="a-list-item"
-                                                                style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
-                                                                <h2
-                                                                    style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
-                                                                    Product details</h2>
-                                                                <div id="detailBullets_feature_div">
-                                                                    <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
-                                                                        style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
-                                                                        {{-- <li
+                                                    <div id="featurebullets_feature_div" class="celwidget"
+                                                        data-feature-name="featurebullets" data-csa-c-id="reqzvc-d8zszu-2bgmto-k7o74x"
+                                                        data-cel-widget="featurebullets_feature_div"
+                                                        style="box-sizing: border-box; color: rgb(15, 17, 17); font-family: &quot;Amazon Ember&quot;, Arial, sans-serif; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">
+                                                        <div id="feature-bullets"
+                                                            class="a-section a-spacing-medium a-spacing-top-small"
+                                                            style="box-sizing: border-box; margin-top: 8px !important; margin-bottom: 0px;">
+                                                            <ul class="a-unordered-list a-vertical a-spacing-mini"
+                                                                style="box-sizing: border-box; margin: 0px 0px 0px 18px; color: rgb(15, 17, 17); padding: 0px;">
+                                                                <li
+                                                                    style="box-sizing: border-box; list-style: disc; overflow-wrap: break-word; margin: 0px;">
+                                                                    <span class="a-list-item"
+                                                                        style="box-sizing: border-box; color: rgb(15, 17, 17); overflow-wrap: break-word; display: block;">
+                                                                        <h2
+                                                                            style="padding: 0px 0px 4px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; text-rendering: optimizelegibility; font-weight: 700; font-size: 24px; line-height: 32px;">
+                                                                            Product details</h2>
+                                                                        <div id="detailBullets_feature_div">
+                                                                            <ul class="a-unordered-list a-nostyle a-vertical a-spacing-none detail-bullet-list"
+                                                                                style="margin-right: 0px; margin-bottom: 1px; margin-left: 18px; padding: 0px;">
+                                                                                {{-- <li
                                                                         style="list-style: none; overflow-wrap: break-word; margin: 0px 0px 5.5px;">
                                                                         <span class="a-list-item"><span
                                                                                 class="a-text-bold"
@@ -444,7 +446,7 @@
                                                                                 Discontinued By Manufacturer ‏ :
                                                                                 ‎&nbsp;</span>No</span>
                                                                     </li> --}}
-                                                                        {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
+                                                                                {{-- @foreach ($previewData['detailedProduct']['general_attributes'] as $key => $general_attribute)
                                                                     @php
                                                                     $attribue_general = App\Models\Attribute::find($key) ;
 
@@ -466,13 +468,13 @@
 
                                                                     @endforeach --}}
 
-                                                                    </ul>
-                                                                </div>
-                                                            </span>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div> -->
+                                                                            </ul>
+                                                                        </div>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div> -->
                                         </div>
                                     </div>
                                     <div class="bg-white p-sm-4 col-12 col-md-6 float-left mt-4 product-table-style">
@@ -549,22 +551,22 @@
                                 </div>
 
                                 <!-- Video
-                                <div class="tab-pane fade" id="tab_default_2">
-                                    <div class="py-5">
-                                        <div class="embed-responsive embed-responsive-16by9">
-                                            @if (isset($previewData['detailedProduct']['video_provider']) &&
-                                                    $previewData['detailedProduct']['video_provider'] == 'youtube')
+                                        <div class="tab-pane fade" id="tab_default_2">
+                                            <div class="py-5">
+                                                <div class="embed-responsive embed-responsive-16by9">
+                                                    @if (isset($previewData['detailedProduct']['video_provider']) &&
+                                                            $previewData['detailedProduct']['video_provider'] == 'youtube')
     <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $previewData['detailedProduct']['getYoutubeVideoId'] }}" allowfullscreen></iframe>
 @elseif(isset($previewData['detailedProduct']['video_provider']) &&
         $previewData['detailedProduct']['video_provider'] == 'vimeo')
     <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/{{ $previewData['detailedProduct']['getVimeoVideoId'] }}" allowfullscreen></iframe>
     @endif
-                                            {{-- @if ($videoData['video_provider'] === 'youtube') --}}
-                                            {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
-                                            {{-- @endif --}}
-                                        </div>
-                                    </div>
-                                </div>-->
+                                                    {{-- @if ($videoData['video_provider'] === 'youtube') --}}
+                                                    {{-- <iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=nk1n4wYSGAs&t=2245s" allowfullscreen></iframe> --}}
+                                                    {{-- @endif --}}
+                                                </div>
+                                            </div>
+                                        </div>-->
 
                                 <!-- Download -->
                                 <div class="tab-pane fade" id="tab_default_2">
@@ -591,19 +593,19 @@
                                                                                     <g>
                                                                                         <path style="fill:#E2574C;"
                                                                                             d="M38.658,0h164.23l87.049,86.711v203.227c0,10.679-8.659,19.329-19.329,19.329H38.658
-                                                                                       c-10.67,0-19.329-8.65-19.329-19.329V19.329C19.329,8.65,27.989,0,38.658,0z" />
+                                                                                                               c-10.67,0-19.329-8.65-19.329-19.329V19.329C19.329,8.65,27.989,0,38.658,0z" />
                                                                                         <path style="fill:#B53629;"
                                                                                             d="M289.658,86.981h-67.372c-10.67,0-19.329-8.659-19.329-19.329V0.193L289.658,86.981z" />
                                                                                         <path style="fill:#FFFFFF;"
                                                                                             d="M217.434,146.544c3.238,0,4.823-2.822,4.823-5.557c0-2.832-1.653-5.567-4.823-5.567h-18.44
-                                                                                       c-3.605,0-5.615,2.986-5.615,6.282v45.317c0,4.04,2.3,6.282,5.412,6.282c3.093,0,5.403-2.242,5.403-6.282v-12.438h11.153
-                                                                                       c3.46,0,5.19-2.832,5.19-5.644c0-2.754-1.73-5.49-5.19-5.49h-11.153v-16.903C204.194,146.544,217.434,146.544,217.434,146.544z
-                                                                                        M155.107,135.42h-13.492c-3.663,0-6.263,2.513-6.263,6.243v45.395c0,4.629,3.74,6.079,6.417,6.079h14.159
-                                                                                       c16.758,0,27.824-11.027,27.824-28.047C183.743,147.095,173.325,135.42,155.107,135.42z M155.755,181.946h-8.225v-35.334h7.413
-                                                                                       c11.221,0,16.101,7.529,16.101,17.918C171.044,174.253,166.25,181.946,155.755,181.946z M106.33,135.42H92.964
-                                                                                       c-3.779,0-5.886,2.493-5.886,6.282v45.317c0,4.04,2.416,6.282,5.663,6.282s5.663-2.242,5.663-6.282v-13.231h8.379
-                                                                                       c10.341,0,18.875-7.326,18.875-19.107C125.659,143.152,117.425,135.42,106.33,135.42z M106.108,163.158h-7.703v-17.097h7.703
-                                                                                       c4.755,0,7.78,3.711,7.78,8.553C113.878,159.447,110.863,163.158,106.108,163.158z" />
+                                                                                                               c-3.605,0-5.615,2.986-5.615,6.282v45.317c0,4.04,2.3,6.282,5.412,6.282c3.093,0,5.403-2.242,5.403-6.282v-12.438h11.153
+                                                                                                               c3.46,0,5.19-2.832,5.19-5.644c0-2.754-1.73-5.49-5.19-5.49h-11.153v-16.903C204.194,146.544,217.434,146.544,217.434,146.544z
+                                                                                                                M155.107,135.42h-13.492c-3.663,0-6.263,2.513-6.263,6.243v45.395c0,4.629,3.74,6.079,6.417,6.079h14.159
+                                                                                                               c16.758,0,27.824-11.027,27.824-28.047C183.743,147.095,173.325,135.42,155.107,135.42z M155.755,181.946h-8.225v-35.334h7.413
+                                                                                                               c11.221,0,16.101,7.529,16.101,17.918C171.044,174.253,166.25,181.946,155.755,181.946z M106.33,135.42H92.964
+                                                                                                               c-3.779,0-5.886,2.493-5.886,6.282v45.317c0,4.04,2.416,6.282,5.663,6.282s5.663-2.242,5.663-6.282v-13.231h8.379
+                                                                                                               c10.341,0,18.875-7.326,18.875-19.107C125.659,143.152,117.425,135.42,106.33,135.42z M106.108,163.158h-7.703v-17.097h7.703
+                                                                                                               c4.755,0,7.78,3.711,7.78,8.553C113.878,159.447,110.863,163.158,106.108,163.158z" />
                                                                                     </g>
                                                                                 </svg>
                                                                                 <br /><span
@@ -650,7 +652,7 @@
                                                                                     <g>
                                                                                         <path style="fill:#E9E9E0;"
                                                                                             d="M36.985,0H7.963C7.155,0,6.5,0.655,6.5,1.926V55c0,0.345,0.655,1,1.463,1h40.074
-                                                                                       c0.808,0,1.463-0.655,1.463-1V12.978c0-0.696-0.093-0.92-0.257-1.085L37.607,0.257C37.442,0.093,37.218,0,36.985,0z" />
+                                                                                                               c0.808,0,1.463-0.655,1.463-1V12.978c0-0.696-0.093-0.92-0.257-1.085L37.607,0.257C37.442,0.093,37.218,0,36.985,0z" />
                                                                                         <polygon style="fill:#D9D7CA;"
                                                                                             points="37.5,0.151 37.5,12 49.349,12 	" />
                                                                                         <circle style="fill:#F3D55B;"
@@ -663,27 +665,28 @@
                                                                                         <g>
                                                                                             <path style="fill:#FFFFFF;"
                                                                                                 d="M21.426,42.65v7.848c0,0.474-0.087,0.873-0.26,1.196c-0.173,0.323-0.406,0.583-0.697,0.779
-                                                                                           c-0.292,0.196-0.627,0.333-1.005,0.41C19.085,52.961,18.696,53,18.295,53c-0.201,0-0.436-0.021-0.704-0.062
-                                                                                           c-0.269-0.041-0.547-0.104-0.834-0.191s-0.563-0.185-0.827-0.294c-0.265-0.109-0.488-0.232-0.67-0.369l0.697-1.107
-                                                                                           c0.091,0.063,0.221,0.13,0.39,0.198c0.168,0.068,0.353,0.132,0.554,0.191c0.2,0.06,0.41,0.111,0.629,0.157
-                                                                                           s0.424,0.068,0.615,0.068c0.483,0,0.868-0.094,1.155-0.28s0.439-0.504,0.458-0.95V42.65H21.426z" />
+                                                                                                                   c-0.292,0.196-0.627,0.333-1.005,0.41C19.085,52.961,18.696,53,18.295,53c-0.201,0-0.436-0.021-0.704-0.062
+                                                                                                                   c-0.269-0.041-0.547-0.104-0.834-0.191s-0.563-0.185-0.827-0.294c-0.265-0.109-0.488-0.232-0.67-0.369l0.697-1.107
+                                                                                                                   c0.091,0.063,0.221,0.13,0.39,0.198c0.168,0.068,0.353,0.132,0.554,0.191c0.2,0.06,0.41,0.111,0.629,0.157
+                                                                                                                   s0.424,0.068,0.615,0.068c0.483,0,0.868-0.094,1.155-0.28s0.439-0.504,0.458-0.95V42.65H21.426z" />
                                                                                             <path style="fill:#FFFFFF;"
                                                                                                 d="M25.514,52.932h-1.641V42.855h2.898c0.428,0,0.852,0.068,1.271,0.205
-                                                                                           c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
-                                                                                           c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
-                                                                                           s-0.921,0.232-1.449,0.232h-1.217V52.932z M25.514,44.1v3.992h1.504c0.2,0,0.398-0.034,0.595-0.103
-                                                                                           c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032c0-0.164-0.023-0.354-0.068-0.567
-                                                                                           c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492C27.5,44.166,27.163,44.1,26.744,44.1H25.514z" />
-                                                                                            <path style="fill:#FFFFFF;" d="M39.5,47.736v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417
-                                                                                           s-0.583,0.187-0.889,0.232C36.781,52.978,36.479,53,36.178,53c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
-                                                                                           c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242s0.107-1.593,0.321-2.235
-                                                                                           c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
-                                                                                           c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
-                                                                                           c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
-                                                                                           c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
-                                                                                           c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
-                                                                                           c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
-                                                                                           v-1.121H39.5z" />
+                                                                                                                   c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
+                                                                                                                   c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
+                                                                                                                   s-0.921,0.232-1.449,0.232h-1.217V52.932z M25.514,44.1v3.992h1.504c0.2,0,0.398-0.034,0.595-0.103
+                                                                                                                   c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032c0-0.164-0.023-0.354-0.068-0.567
+                                                                                                                   c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492C27.5,44.166,27.163,44.1,26.744,44.1H25.514z" />
+                                                                                            <path style="fill:#FFFFFF;"
+                                                                                                d="M39.5,47.736v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417
+                                                                                                                   s-0.583,0.187-0.889,0.232C36.781,52.978,36.479,53,36.178,53c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
+                                                                                                                   c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242s0.107-1.593,0.321-2.235
+                                                                                                                   c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
+                                                                                                                   c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
+                                                                                                                   c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
+                                                                                                                   c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
+                                                                                                                   c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
+                                                                                                                   c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
+                                                                                                                   v-1.121H39.5z" />
                                                                                         </g>
                                                                                     </g>
                                                                                 </svg>
@@ -731,33 +734,34 @@
                                                                                     <g>
                                                                                         <path
                                                                                             d="M50.95,12.187L39.313,0.55C38.964,0.201,38.48,0,37.985,0H8.963C7.777,0,6.5,0.916,6.5,2.926V39h0.633l16.736-14.245
-                                                                                       c0.397-0.337,0.986-0.314,1.355,0.055l4.743,4.743l9.795-10.727c0.181-0.198,0.434-0.315,0.703-0.325
-                                                                                       c0.282-0.009,0.53,0.09,0.725,0.274l10,9.5l0.311,0.297V13.978C51.5,13.212,51.408,12.645,50.95,12.187z M16.5,23.638
-                                                                                       c-3.071,0-5.569-2.498-5.569-5.569S13.429,12.5,16.5,12.5s5.569,2.498,5.569,5.569S19.571,23.638,16.5,23.638z M48.109,14H37.5
-                                                                                       V3.391c0-0.458,0.553-0.687,0.877-0.363l10.095,10.095C48.796,13.447,48.567,14,48.109,14z" />
-                                                                                        <path d="M31.383,30.969l4.807,4.807c0.391,0.391,0.391,1.023,0,1.414s-1.023,0.391-1.414,0L24.462,26.876L10.218,39H51.5v-7.636
-                                                                                       L40.551,20.928L31.383,30.969z" />
+                                                                                                               c0.397-0.337,0.986-0.314,1.355,0.055l4.743,4.743l9.795-10.727c0.181-0.198,0.434-0.315,0.703-0.325
+                                                                                                               c0.282-0.009,0.53,0.09,0.725,0.274l10,9.5l0.311,0.297V13.978C51.5,13.212,51.408,12.645,50.95,12.187z M16.5,23.638
+                                                                                                               c-3.071,0-5.569-2.498-5.569-5.569S13.429,12.5,16.5,12.5s5.569,2.498,5.569,5.569S19.571,23.638,16.5,23.638z M48.109,14H37.5
+                                                                                                               V3.391c0-0.458,0.553-0.687,0.877-0.363l10.095,10.095C48.796,13.447,48.567,14,48.109,14z" />
+                                                                                        <path
+                                                                                            d="M31.383,30.969l4.807,4.807c0.391,0.391,0.391,1.023,0,1.414s-1.023,0.391-1.414,0L24.462,26.876L10.218,39H51.5v-7.636
+                                                                                                               L40.551,20.928L31.383,30.969z" />
                                                                                         <path
                                                                                             d="M20.823,49.058c0.196-0.068,0.376-0.18,0.54-0.335s0.296-0.371,0.396-0.649c0.1-0.278,0.15-0.622,0.15-1.032
-                                                                                       c0-0.164-0.023-0.354-0.068-0.567c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492
-                                                                                       c-0.255-0.132-0.593-0.198-1.012-0.198h-1.23v3.992h1.504C20.429,49.16,20.627,49.126,20.823,49.058z" />
+                                                                                                               c0-0.164-0.023-0.354-0.068-0.567c-0.046-0.214-0.139-0.419-0.28-0.615c-0.142-0.196-0.34-0.36-0.595-0.492
+                                                                                                               c-0.255-0.132-0.593-0.198-1.012-0.198h-1.23v3.992h1.504C20.429,49.16,20.627,49.126,20.823,49.058z" />
                                                                                         <path
                                                                                             d="M16.5,14.5c-1.968,0-3.569,1.601-3.569,3.569s1.601,3.569,3.569,3.569s3.569-1.601,3.569-3.569S18.468,14.5,16.5,14.5z" />
                                                                                         <path
                                                                                             d="M7.85,41H6.5v1.08V43v13c0,1.009,1.22,2,2.463,2h40.074c1.243,0,2.463-0.991,2.463-2V41h-43H7.85z M35.302,46.679
-                                                                                       c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
-                                                                                       c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
-                                                                                       c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
-                                                                                       c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
-                                                                                       c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
-                                                                                       c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
-                                                                                       v-1.121H42.5v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417S40.392,53.954,40.087,54
-                                                                                       c-0.306,0.046-0.608,0.068-0.909,0.068c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
-                                                                                       c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242S35.087,47.321,35.302,46.679z M25.369,43.924h1.668
-                                                                                       l3.951,6.945v-6.945h1.668V54h-1.668l-3.951-6.945V54h-1.668V43.924z M17.084,43.924h2.898c0.428,0,0.852,0.068,1.271,0.205
-                                                                                       c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
-                                                                                       c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
-                                                                                       s-0.921,0.232-1.449,0.232h-1.217V54h-1.641V43.924z" />
+                                                                                                               c0.214-0.643,0.51-1.178,0.889-1.606c0.378-0.429,0.822-0.754,1.333-0.978c0.51-0.224,1.062-0.335,1.654-0.335
+                                                                                                               c0.547,0,1.057,0.091,1.531,0.273c0.474,0.183,0.897,0.456,1.271,0.82l-1.135,1.012c-0.219-0.265-0.47-0.456-0.752-0.574
+                                                                                                               c-0.283-0.118-0.574-0.178-0.875-0.178c-0.337,0-0.659,0.063-0.964,0.191c-0.306,0.128-0.579,0.344-0.82,0.649
+                                                                                                               c-0.242,0.306-0.431,0.699-0.567,1.183s-0.21,1.075-0.219,1.777c0.009,0.684,0.08,1.276,0.212,1.777
+                                                                                                               c0.132,0.501,0.314,0.911,0.547,1.23s0.497,0.556,0.793,0.711c0.296,0.155,0.608,0.232,0.937,0.232c0.1,0,0.234-0.007,0.403-0.021
+                                                                                                               c0.168-0.014,0.337-0.036,0.506-0.068c0.168-0.032,0.33-0.075,0.485-0.13c0.155-0.055,0.269-0.132,0.342-0.232v-2.488h-1.709
+                                                                                                               v-1.121H42.5v3.896c-0.21,0.265-0.444,0.48-0.704,0.649s-0.533,0.308-0.82,0.417S40.392,53.954,40.087,54
+                                                                                                               c-0.306,0.046-0.608,0.068-0.909,0.068c-0.602,0-1.155-0.109-1.661-0.328s-0.948-0.542-1.326-0.971
+                                                                                                               c-0.378-0.429-0.675-0.966-0.889-1.613c-0.214-0.647-0.321-1.395-0.321-2.242S35.087,47.321,35.302,46.679z M25.369,43.924h1.668
+                                                                                                               l3.951,6.945v-6.945h1.668V54h-1.668l-3.951-6.945V54h-1.668V43.924z M17.084,43.924h2.898c0.428,0,0.852,0.068,1.271,0.205
+                                                                                                               c0.419,0.137,0.795,0.342,1.128,0.615c0.333,0.273,0.602,0.604,0.807,0.991s0.308,0.822,0.308,1.306
+                                                                                                               c0,0.511-0.087,0.973-0.26,1.388c-0.173,0.415-0.415,0.764-0.725,1.046c-0.31,0.282-0.684,0.501-1.121,0.656
+                                                                                                               s-0.921,0.232-1.449,0.232h-1.217V54h-1.641V43.924z" />
                                                                                     </g>
                                                                                 </svg>
                                                                                 <br /><span
@@ -1775,14 +1779,21 @@
                                         @if ($previewData['detailedProduct']['variationId'] || $previewData['detailedProduct']['product_id'])
                                             @php
                                                 if ($previewData['detailedProduct']['variationId']) {
-                                                    $detailedProduct = get_single_product($previewData['detailedProduct']['variationId']);
+                                                    $detailedProduct = get_single_product(
+                                                        $previewData['detailedProduct']['variationId'],
+                                                    );
                                                 } else {
-                                                    $detailedProduct = get_single_product($previewData['detailedProduct']['product_id']);
+                                                    $detailedProduct = get_single_product(
+                                                        $previewData['detailedProduct']['product_id'],
+                                                    );
                                                 }
-                                                $totalRating = $detailedProduct !== null ? $detailedProduct->reviews->count() : 0;
+                                                $totalRating =
+                                                    $detailedProduct !== null ? $detailedProduct->reviews->count() : 0;
                                             @endphp
-                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">{{ __("Total Reviews") }}</div>
-                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">{{ __("This shows the average of reviews") }}</div>
+                                            <div class="review-title fs-20 font-prompt-md text-left col-md-12">
+                                                {{ __('Total Reviews') }}</div>
+                                            <div class="review-subtitle fs-16 font-prompt-md text-left col-md-12">
+                                                {{ __('This shows the average of reviews') }}</div>
                                             <div class="row">
                                                 <div class="col-lg-4 col-md-6 col-12 mt-4 review-box p-4">
                                                     <div class="col-12 fs-48 font-prompt-md text-center">
@@ -1872,7 +1883,10 @@
                                             </div>
 
                                             @php
-                                                $comments = App\Models\Review::where('product_id', $previewData['detailedProduct']['product_id'])
+                                                $comments = App\Models\Review::where(
+                                                    'product_id',
+                                                    $previewData['detailedProduct']['product_id'],
+                                                )
                                                     ->where('status', 1)
                                                     ->take(3)
                                                     ->get();
@@ -1952,6 +1966,37 @@
                                                 </div>
                                             @endif
                                         </div>
+                                        @php
+                                            $maxReviews = (int) DB::table('business_settings')
+                                                ->where('type', 'max_reviews_per_product')
+                                                ->value('value');
+
+                                            $userReviewCount = 0;
+                                            if (Auth::check()) {
+                                                $userReviewCount = \App\Models\Review::where(
+                                                    'product_id',
+                                                    $previewData['detailedProduct']['product_id'],
+                                                )
+                                                    ->where('user_id', Auth::id())
+                                                    ->count();
+                                            }
+                                            $existingRatingReview = null;
+                                            $userRating = null;
+                                            if (Auth::check()) {
+                                                $existingRatingReview = \App\Models\Review::where(
+                                                    'product_id',
+                                                    $previewData['detailedProduct']['product_id'],
+                                                )
+                                                    ->where('user_id', Auth::id())
+                                                    ->whereNotNull('rating')
+                                                    ->first();
+                                                if ($existingRatingReview) {
+                                                    $userRating = $existingRatingReview->rating;
+                                                }
+                                            }
+
+                                        @endphp
+
                                         <!-- end comment and button -->
                                         <div class="row pt-5">
                                             <div class="review-title fs-20 font-prompt-md text-left col-md-12">Submit Your
@@ -1982,61 +2027,62 @@
                                                         You are in preview mode. You cannot submit a review.
                                                     </div>
                                                 @else
-                                                    <form method="POST" action="{{ route('reviews.store') }}">
-                                                        @csrf
-                                                        <input type="hidden" name="product_id"
-                                                            value="{{ $previewData['detailedProduct']['product_id'] }}">
-                                                        <div class="form-group">
-                                                            <label class="opacity-60">{{ translate('Rating') }}</label>
-                                                            <div class="rating rating-input">
-                                                                <label>
-                                                                    <input type="radio" name="rating" value="1"
-                                                                        required>
-                                                                    <i class="las la-star"></i>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="rating" value="2">
-                                                                    <i class="las la-star"></i>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="rating" value="3">
-                                                                    <i class="las la-star"></i>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="rating" value="4">
-                                                                    <i class="las la-star"></i>
-                                                                </label>
-                                                                <label>
-                                                                    <input type="radio" name="rating" value="5">
-                                                                    <i class="las la-star"></i>
-                                                                </label>
+                                                    @if (Auth::check() && $userReviewCount >= $maxReviews)
+                                                        <div class="alert alert-warning mt-3" role="alert">
+                                                            Maximum allowed reviews ({{ $maxReviews }}) for this product
+                                                            have been reached.
+                                                        </div>
+                                                    @else
+                                                        <form method="POST" action="{{ route('reviews.store') }}">
+                                                            @csrf
+                                                            <input type="hidden" name="product_id"
+                                                                value="{{ $previewData['detailedProduct']['product_id'] }}">
+                                                            <div class="form-group">
+                                                                <label
+                                                                    class="opacity-60">{{ translate('Rating') }}</label>
+                                                                <div class="rating rating-input" style="@if ($userRating) pointer-events: none; @endif">
+                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                        <label>
+                                                                            <input type="radio" name="rating"
+                                                                                value="{{ $i }}"
+                                                                                @if ($userRating) disabled @else required @endif
+                                                                                @if ($userRating == $i) checked @endif>
+                                                                            <i class="las la-star"></i>
+                                                                        </label>
+                                                                    @endfor
+                                                                    @if ($userRating)
+                                                                        <input type="hidden" name="rating" value="{{ $userRating }}">
+                                                                    @endif
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group m-0">
-                                                            <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3"
-                                                                placeholder="Write your review here" name="comment" rows="5"></textarea>
-                                                        </div>
-                                                        <div class="form-group m-0">
-                                                            <input type="text"
-                                                                class="form-control text-input-review-f fs-16 mt-2"
-                                                                placeholder="Name"
-                                                                @if (Auth::check()) value="{{ Auth::user()->name }}" @endif
-                                                                aria-label="name" name="name"
-                                                                aria-describedby="basic-addon1">
-                                                        </div>
-                                                        @if (Auth::check())
-                                                            <button
-                                                                class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit
-                                                                Review</button>
-                                                        @else
-                                                            <div class="alert alert-danger mt-3" role="alert">
-                                                                You must be <a href="{{ route('user.login') }}"
-                                                                    class="alert-link">logged in</a> to write a comment on
-                                                                this product.
+                                                            <div class="form-group m-0">
+                                                                <textarea class="form-control text-a-review-f fs-16 mt-3" id="exampleFormControlTextarea3"
+                                                                    placeholder="Write your review here" name="comment" rows="5"></textarea>
                                                             </div>
-                                                        @endif
-                                                    </form>
+                                                            <div class="form-group m-0">
+                                                                <input type="text"
+                                                                    class="form-control text-input-review-f fs-16 mt-2"
+                                                                    placeholder="Name"
+                                                                    @if (Auth::check()) value="{{ Auth::user()->name }}" @endif
+                                                                    aria-label="name" name="name"
+                                                                    aria-describedby="basic-addon1">
+                                                            </div>
+                                                            @if (Auth::check())
+                                                                <button
+                                                                    class="btn-review-f fs-16 mt-2 font-prompt py-2 col-6 col-md-3 col-lg-2">Submit
+                                                                    Review</button>
+                                                            @else
+                                                                <div class="alert alert-danger mt-3" role="alert">
+                                                                    You must be <a href="{{ route('user.login') }}"
+                                                                        class="alert-link">logged in</a> to write a comment
+                                                                    on
+                                                                    this product.
+                                                                </div>
+                                                            @endif
+                                                        </form>
+                                                    @endif
                                                 @endif
+
                                             </div>
                                         </div>
                                         <!-- end form comment -->
@@ -2065,31 +2111,31 @@
                     </div>
                 </div> --}}
                     <!-- Product Query
-                    <div class="bg-white border mt-4 mb-4" id="product_query">
-                        <div class="p-3 p-sm-4">
-                            <h3 class="fs-16 fw-700 mb-0">
-                                <span>Product Queries (4)</span>
-                            </h3>
-                        </div>
+                            <div class="bg-white border mt-4 mb-4" id="product_query">
+                                <div class="p-3 p-sm-4">
+                                    <h3 class="fs-16 fw-700 mb-0">
+                                        <span>Product Queries (4)</span>
+                                    </h3>
+                                </div>
 
-                        <!-- Login & Register
-                        <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
-                                href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
-                                href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
-                            your questions to seller
-                        </p>
+                                <!-- Login & Register
+                                <p class="fs-14 fw-400 mb-0 px-3 px-sm-4 mt-3"><a
+                                        href="https://demo.activeitzone.com/ecommerce/users/login">Login</a> Or <a class="mr-1"
+                                        href="https://demo.activeitzone.com/ecommerce/users/registration">Register</a>to submit
+                                    your questions to seller
+                                </p>
 
-                        <!-- Query Submit -->
+                                <!-- Query Submit -->
 
                     <!-- Others Queries
-                        <div class="queries-area my-4 mb-0 px-3 px-sm-4">
-                            <div class="py-3">
-                                <h3 class="fs-16 fw-700 mb-0">
-                                    <span>Other Questions</span>
-                                </h3>
-                            </div>
+                                <div class="queries-area my-4 mb-0 px-3 px-sm-4">
+                                    <div class="py-3">
+                                        <h3 class="fs-16 fw-700 mb-0">
+                                            <span>Other Questions</span>
+                                        </h3>
+                                    </div>
 
-                            <!-- Product queries -->
+                                    <!-- Product queries -->
                     {{-- <div class="produc-queries mb-4">
                             <div class="query d-flex  my-2">
                                 <span class="mt-1">
@@ -2301,7 +2347,7 @@
 
                         </div> --}}
                     <!--</div>
-                    </div>-->
+                            </div>-->
 
                     <!-- Top Selling Products -->
                     <div class="d-lg-none">
@@ -2596,7 +2642,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">{{ translate('Bid For Product') }}
-                            <small>({{ translate('Min Bid Amount: ') . $min_bid_amount }})</small> </h5>
+                            <small>({{ translate('Min Bid Amount: ') . $min_bid_amount }})</small>
+                        </h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         </button>
                     </div>
@@ -2702,9 +2749,9 @@
             document
                 .querySelector('#option-choice-form-preview')
                 .addEventListener('keydown', function(event) {
-                  if (event.key === "Enter" && event.target.tagName === 'INPUT') {
-                    event.preventDefault();
-                  }
+                    if (event.key === "Enter" && event.target.tagName === 'INPUT') {
+                        event.preventDefault();
+                    }
                 });
 
             getVariantPrice();
@@ -2878,20 +2925,22 @@
 
                                 if (value <= min) {
                                     $this.siblings('[data-type="minus"]').attr('disabled', true)
-                                } else if ($this.siblings('[data-type="minus"]').attr('disabled')) {
+                                } else if ($this.siblings('[data-type="minus"]').attr(
+                                        'disabled')) {
                                     $this.siblings('[data-type="minus"]').removeAttr('disabled')
                                 }
 
                                 if (value >= max) {
                                     $this.siblings('[data-type="plus"]').attr('disabled', true)
-                                } else if ($this.siblings('[data-type="plus"]').attr('disabled')) {
+                                } else if ($this.siblings('[data-type="plus"]').attr(
+                                        'disabled')) {
                                     $this.siblings('[data-type="plus"]').removeAttr('disabled')
                                 }
                             });
                         }
                     },
                     error: function(xhr, status, error) {
-                        AIZ.plugins.notify("warning", "{{ __("Error while updating quantity") }}");
+                        AIZ.plugins.notify("warning", "{{ __('Error while updating quantity') }}");
                         console.error('Error updating quantity:', error);
                     }
                 });
@@ -2929,9 +2978,7 @@
                         if (response.price > 0) {
                             $("#product-add-to-cart-btn").attr("disabled", response.outStock === true);
                             $('#variationId').val(response.variationId);
-                            $("#qty-interval").text(response.price);
                             $("#quantity").val(response.quantity === "" ? 0 : response.quantity);
-                            $("#chosen_price").text(response.total);
                             $('#quantity').attr('min', response.minimum); // Minimum value
                             $('#quantity').attr('max', response.maximum); // Maximum value
 
@@ -2951,10 +2998,24 @@
                                 $("#previous-price").text('');
                                 $("#percent").removeClass("bg-primary");
 
-                                $("#qty-interval").text(response.price)
-                                $("#chosen_price").text(response.total)
+                                $("#qty-interval").text(response.formattedPrice)
+
+
+                                if(
+                                    $("#product-price > strong > span > small > del").length > 0 &&
+                                    response.formattedMwdCommissionPrice !== null
+                                ) {
+                                    $("#product-price > strong > span").html(
+                                         `${response.formattedPrice} <small><del class="fw-400 text-secondary">${response.formattedMwdCommissionPrice}</del></small>`
+                                    );
+                                } else {
+                                    $("#product-price > strong > span").text(response.formattedPrice)
+                                }
+
+                                $("#chosen_price").text(response.formattedTotal)
                                 $("#percent").text('')
                             }
+
                             $('.aiz-plus-minus input').each(function() {
                                 var $this = $(this);
                                 var min = parseInt($(this).attr("min"));
@@ -3140,7 +3201,7 @@
                         for (var attributeId in response.availableAttributes) {
                             if (response.availableAttributes.hasOwnProperty(attributeId)) {
                                 var availableValues = response.availableAttributes[
-                                attributeId]; // Get the entire array
+                                    attributeId]; // Get the entire array
 
                                 // Iterate over each radio button for this attribute
                                 $('.attribute_value input[type=radio][attributeId="' + attributeId + '"]').each(
@@ -3152,7 +3213,7 @@
                                         if (!availableValues.some(value => value === radioValue)) {
                                             // If not in available values, style accordingly
                                             label.find('span').css('border-bottom',
-                                            '1px solid red'); // Change to red
+                                                '1px solid red'); // Change to red
                                         } else {
                                             // If it is in available values, style accordingly
                                             label.find('span').css('border-bottom',
@@ -3164,7 +3225,7 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    AIZ.plugins.notify("danger", "{{ __("Something went wrong!") }}");
+                    AIZ.plugins.notify("danger", "{{ __('Something went wrong!') }}");
                 }
             });
         }

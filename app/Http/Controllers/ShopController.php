@@ -34,6 +34,8 @@ use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Cache;
 use Log;
 use Mail;
 use Storage;
@@ -144,36 +146,16 @@ class ShopController extends Controller
      */
     public function store(SellerRegistrationRequest $request)
     {
-
-        // $validator = Validator::make($request->all(), [
-        //     'first_name' => 'required|string|max:255',
-        //     'last_name' => 'required|string|max:255',
-        //     'email' => [
-        //         'required', 'email',
-        //         Rule::unique('users', 'email')->where(function ($query) {
-        //             $query->whereNotNull('email_verified_at');
-        //         }),
-        //     ],
-        //     // 'password' => ['required', 'confirmed', new CustomPasswordRule],
-        //     'password' => ['required', 'confirmed', new CustomPasswordRule($request->input('first_name'), $request->input('last_name'), $request->input('email'))],
-
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-
-        // $user = new User;
-        // $user->name = $request->first_name . " " . $request->last_name;
-        // $user->email = $request->email;
-        // $user->user_type = "seller";
-        // $user->password = Hash::make($request->password);
-        // $user->save();
         $user = User::where('email', $request->email)->first();
+      
         if ($user && $user->id != $user->owner_id && $user->owner_id != null) {
-
-            if (Hash::check($request->password, $user->password) == true) {
-                return response()->json(['message' => 'You can\'t use the same password'], 403);
+            if (Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'message' => 'Password validation failed',
+                    'errors' => [
+                        'password' => ["You can't use the same password"]
+                    ]
+                ], 422);  
             }
         }
         $user = User::updateOrCreate(
@@ -184,6 +166,7 @@ class ShopController extends Controller
                 'last_name' => $request->last_name,
                 'user_type' => 'seller', // Set the user_type explicitly
                 'password' => Hash::make($request->password),
+                //'password' => $request->password,
             ]
         );
 
@@ -203,8 +186,11 @@ class ShopController extends Controller
             $user->step_number = 1;
             $user->save();
 
-            // Send the verification code to the user's email
-            Mail::to($request->email)->send(new VerificationCodeEmail($verificationCode));
+            Mail::to($request->email)->send(new VerificationCodeEmail(
+                $verificationCode,
+                $request->first_name.' '.$request->last_name,
+                10
+            ));
         }
 
         return response()->json(['success' => true, 'message' => translate('Your account has been created successfully. Please check your email for verification.')]);
@@ -264,28 +250,25 @@ class ShopController extends Controller
 
     public function storeBusinessInfo(StoreBusinessInfoRequest $request)
     {
-
         $action = $request->input('action');
         // it indicates the "save as draft" action.
 
         if ($request->input('vat_registered') == 1) {
-
             // If VAT is registered, handle VAT certificate and TRN
             if (isset($request->vat_certificate_old) && ! $request->hasFile('vat_certificate')) {
                 $vatCertificatePath = $request->vat_certificate_old;
             } elseif ($request->hasFile('vat_certificate')) {
                 $vatCertificatePath = Storage::putFile('vat_certificate', $request->file('vat_certificate'));
             }
-
             $trn = $request->input('trn');
-        } else {
+        } /* else {
             // If VAT is not registered, handle tax waiver
             if (isset($request->tax_waiver_old) && ! $request->hasFile('tax_waiver')) {
                 $taxWaiverPath = $request->tax_waiver_old;
             } elseif ($request->hasFile('tax_waiver')) {
                 $taxWaiverPath = Storage::putFile('tax_waiver', $request->file('tax_waiver'));
             }
-        }
+        } */
 
         $civil_defense_approval = null;
         if (isset($request->civil_defense_approval_old)) {
@@ -322,26 +305,22 @@ class ShopController extends Controller
                 'tax_waiver' => isset($taxWaiverPath) ? $taxWaiverPath : null,
                 'civil_defense_approval' => $request->hasFile('civil_defense_approval') ? $request->file('civil_defense_approval')->store('civil_defense_approval') : $civil_defense_approval,
                 'saveasdraft' => isset($action) ? true : false,
-
             ]
         );
-        if (! $action) {
 
+        if (! $action) {
             $user = Auth::user();
             $user->step_number = 3;
             $user->save();
 
             return response()->json(['success' => true, 'message' => translate('Business info stored successfully')]);
-
         } else {
             $user = Auth::user();
             $user->step_number = 2;
             $user->save();
 
             return response()->json(['success' => true, 'message' => translate('Draft Business info saved successfully'), 'save_as_draft' => true]);
-
         }
-        // Return a response
     }
 
     public function storeContactPerson(StoreContactPersonRequest $request)
@@ -826,7 +805,7 @@ class ShopController extends Controller
 
         $role = Role::where('name', 'pro')->first();
         $user->assignRole($role);
-        $staff = new Staff;
+        $staff = new Staff();
         $staff->user_id = $user->id;
         $staff->role_id = $role->id;
         $staff->save();
@@ -859,11 +838,13 @@ class ShopController extends Controller
     public function getWords()
     {
 
-        $dictionaryPath = public_path('dictionary/dictionary.txt');
+        $dictionaryPath = storage_path('app/dictionary/dictionary.txt');
         $words = File::lines($dictionaryPath);
 
         return response()->json($words);
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

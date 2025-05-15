@@ -51,6 +51,7 @@ use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ZoneController;
 use App\Http\Controllers\UnityController;
 use App\Http\Controllers\Seller\CatalogController;
+use App\Http\Controllers\MawadIndexController;
 
 /*
   |--------------------------------------------------------------------------
@@ -72,7 +73,7 @@ Route::controller(UpdateController::class)->group(function () {
 });
 
 Route::get('/admin', [AdminController::class, 'admin_dashboard'])->name('admin.dashboard')->middleware(['auth', 'admin', 'prevent-back-history']);
-Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-back-history']], function () {
     //Product Catalog routes
     Route::controller(CatalogController::class)->group(function () {
         Route::post('/catalog/add_product_to_catalog', 'add_product_to_catalog')->name('catalog.add_product_to_catalog');
@@ -169,7 +170,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::post('/bulk-product-upload', 'bulk_upload')->name('bulk_product_upload');
         Route::get('/product-csv-download/{type}', 'import_product')->name('product_csv.download');
         Route::get('/vendor-product-csv-download/{id}', 'import_vendor_product')->name('import_vendor_product.download');
-        Route::group(['prefix' => 'bulk-upload/download'], function() {
+        Route::group(['prefix' => 'bulk-upload/download'], function () {
             Route::get('/category', 'pdf_download_category')->name('pdf.download_category');
             Route::get('/brand', 'pdf_download_brand')->name('pdf.download_brand');
             Route::get('/seller', 'pdf_download_seller')->name('pdf.download_seller');
@@ -210,7 +211,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
         Route::get('/sellers/{seller}/staff', 'showStaff')->name('sellers.staff');
         Route::get('/vendors-status-history-report', 'VendorsStatusHistory')->name('vendors.status-history-report');
         Route::get('/vendor/{id}/details-reason', 'suspensionReasonDetail')->name('vendor.suspension_reason');
-        Route::post('/update-drop-down',  'updateSellerDropDown')->name('update.seller.dropdown');
+        Route::post('/update-drop-down', 'updateSellerDropDown')->name('update.seller.dropdown');
         Route::get('/approve-changes/{id}', 'approveChanges')->name('approve-changes');
 
 
@@ -328,7 +329,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
 
     // website setting
-    Route::group(['prefix' => 'website'], function() {
+    Route::group(['prefix' => 'website'], function () {
         Route::controller(WebsiteController::class)->group(function () {
             Route::get('/footer', 'footer')->name('website.footer');
             Route::get('/header', 'header')->name('website.header');
@@ -445,6 +446,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     //Reviews
+    Route::resource('reviews', ReviewController::class);
     Route::controller(ReviewController::class)->group(function () {
         Route::get('/reviews', 'index')->name('reviews.index');
         Route::post('/reviews/published', 'updatePublished')->name('reviews.published');
@@ -467,7 +469,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     //conversation of seller customer
     Route::controller(ConversationController::class)->group(function () {
         Route::get('conversations', 'admin_index')->name('conversations.admin_index');
-        Route::get('conversations/{id}/show','admin_show')->name('conversations.admin_show');
+        Route::get('conversations/{id}/show', 'admin_show')->name('conversations.admin_show');
     });
 
     // product Queries show on Admin panel
@@ -478,7 +480,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     // Product Attribute
-    Route::resource('attributes', AttributeController::class );
+    Route::resource('attributes', AttributeController::class);
     Route::controller(AttributeController::class)->group(function () {
         Route::get('/attributes/edit/{id}', 'edit')->name('attributes.edit');
         Route::get('/attributes/destroy/{id}', 'destroy')->name('attributes.destroy');
@@ -512,13 +514,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     });
 
     // Size Chart
-    Route::resource('size-charts', SizeChartController::class );
-    Route::get('/size-charts/destroy/{id}',  [SizeChartController::class, 'destroy'])->name('size-charts.destroy');
-    Route::post('size-charts/get-combination',   [SizeChartController::class, 'get_combination'])->name('size-charts.get-combination');
+    Route::resource('size-charts', SizeChartController::class);
+    Route::get('/size-charts/destroy/{id}', [SizeChartController::class, 'destroy'])->name('size-charts.destroy');
+    Route::post('size-charts/get-combination', [SizeChartController::class, 'get_combination'])->name('size-charts.get-combination');
 
     // Measurement Points
-    Route::resource('measurement-points', MeasurementPointsController::class );
-    Route::get('/measurement-points/destroy/{id}',  [MeasurementPointsController::class, 'destroy'])->name('measurement-points.destroy');
+    Route::resource('measurement-points', MeasurementPointsController::class);
+    Route::get('/measurement-points/destroy/{id}', [MeasurementPointsController::class, 'destroy'])->name('measurement-points.destroy');
     //Product unites
     Route::resource('units', UnityController::class);
 
@@ -546,7 +548,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
 
     // States
     Route::resource('states', StateController::class);
-	Route::post('/states/status', [StateController::class, 'updateStatus'])->name('states.status');
+    Route::post('/states/status', [StateController::class, 'updateStatus'])->name('states.status');
 
     // Carriers
     Route::resource('carriers', CarrierController::class);
@@ -584,4 +586,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'admin', 'prevent-ba
     Route::get('/clear-cache', [AdminController::class, 'clearCache'])->name('cache.clear');
 
     Route::get('/admin-permissions', [RoleController::class, 'create_admin_permissions']);
+
+    Route::get("/mawad/index", [MawadIndexController::class, "adminIndex"])->name("admin.mawad.index");
+
+    Route::post(
+        "/mawad/index/select/catgory",
+        [MawadIndexController::class, "selectCategory"]
+    )->name("admin.mawad.index.select.category");
 });

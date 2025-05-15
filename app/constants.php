@@ -25,3 +25,7 @@ const EVERY_EIGHT_HOURS = '0 */8 * * *';
 
 const MAX_STOCK_QTY_LIMIT = 9999;
 const MIN_STOCK_QTY_LIMIT = 1;
+
+const COMPLETED_STAGE = "COMP";
+
+const ITEMS_PER_PAGE = 10;

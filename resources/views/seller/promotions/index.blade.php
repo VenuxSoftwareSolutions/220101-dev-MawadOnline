@@ -272,7 +272,7 @@
                             <input type="date" class="form-control"  name="end_date" id="endDate">
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 field-amount" style="display: none;">
                             <label for="amount" class="form-label">Amount</label>
                             <input type="text" class="form-control" id="amount" disabled>
                         </div>
@@ -282,7 +282,7 @@
                             <input type="text" class="form-control" id="percentage" disabled>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 field-max_discount" style="display: none;">
                             <label for="maxDiscount" class="form-label">Max Discount</label>
                             <input type="text" class="form-control" id="maxDiscount" disabled>
                         </div>
@@ -320,7 +320,7 @@
                             <label for="endDateCoupon" class="form-label">End Date</label>
                             <input type="date" class="form-control" name="end_date" id="endDateCoupon">
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 field-amount" style="display: none;">
                             <label for="amountCoupon" class="form-label">Amount</label>
                             <input type="text" class="form-control" id="amountCoupon" disabled>
                         </div>
@@ -328,7 +328,7 @@
                             <label for="percentageCoupon" class="form-label">Percentage</label>
                             <input type="text" class="form-control" id="percentageCoupon" disabled>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 field-max_discount" style="display: none;">
                             <label for="maxDiscountCoupon" class="form-label">Max Discount</label>
                             <input type="text" class="form-control" id="maxDiscountCoupon" disabled>
                         </div>
@@ -380,7 +380,41 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
+    function showEditModal(data, isCoupon = false) {
+    const modalSelector = isCoupon ? '#editCouponModal' : '#editDiscountModal';
+    const scope = data.scope;
+    const $modal = $(modalSelector);
+    
+    $modal.find('.field-amount, .field-max_discount').hide();
+    
+    if (scope === 'allOrders') {
+        $modal.find('.field-max_discount').show();
 
+    } 
+    else if (!['product', 'category'].includes(scope)) {
+        $modal.find('.field-amount, .field-max_discount').show();
+    }
+
+    if (isCoupon) {
+        $modal.find('#couponCode').val(data.code);
+        $modal.find('#startDateCoupon').val(formatDate(data.start_date));
+        $modal.find('#endDateCoupon').val(formatDate(data.end_date));
+        $modal.find('#amountCoupon').val(data.min_order_amount);
+        $modal.find('#percentageCoupon').val(data.discount_percentage);
+        $modal.find('#maxDiscountCoupon').val(data.max_discount);
+    } else {
+        $modal.find('#startDate').val(formatDate(data.start_date));
+        $modal.find('#endDate').val(formatDate(data.end_date));
+        $modal.find('#amount').val(data.min_order_amount);
+        $modal.find('#percentage').val(data.discount_percentage);
+        $modal.find('#maxDiscount').val(data.max_discount);
+    }
+
+    $modal.find('.btn-primary').data('id', data.id);
+    
+    $modal.modal('show');
+}
+    
     function formatDate(dateString) {
         return dateString.split('T')[0];
     }
@@ -389,18 +423,10 @@
         return fetch(`/vendor/discounts/${discountId}/edit`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('startDate').value = formatDate(data.start_date);
-                document.getElementById('endDate').value = formatDate(data.end_date);
-                document.getElementById('amount').value = data.min_order_amount;
-                document.getElementById('percentage').value = data.discount_percentage;
-                document.getElementById('maxDiscount').value = data.max_discount;
+              
+                showEditModal(data); 
+                return data; 
 
-                document.getElementById('amount').disabled = true;
-                document.getElementById('percentage').disabled = true;
-                document.getElementById('maxDiscount').disabled = true;
-
-                const modal = new bootstrap.Modal(document.getElementById('editDiscountModal'));
-                modal.show();
             })
             .catch(error => console.error('Error fetching discount data:', error));
     }
@@ -446,21 +472,11 @@
         return fetch(`/vendor/coupons/${couponId}/edit`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                document.getElementById('startDateCoupon').value = formatDate(data.start_date);
-                document.getElementById('endDateCoupon').value = formatDate(data.end_date);
-                document.getElementById('couponCode').value = data.code;
-                document.getElementById('amountCoupon').value = data.min_order_amount;
-                document.getElementById('percentageCoupon').value = data.discount_percentage;
-                document.getElementById('maxDiscountCoupon').value = data.max_discount;
 
-                document.getElementById('couponCode').disabled = true;
-                document.getElementById('amountCoupon').disabled = true;
-                document.getElementById('percentageCoupon').disabled = true;
-                document.getElementById('maxDiscountCoupon').disabled = true;
 
-                const modal = new bootstrap.Modal(document.getElementById('editCouponModal'));
-                modal.show();
+                showEditModal(data); 
+                return data; 
+
             })
             .catch(error => console.error('Error fetching coupon data:', error));
     }   
@@ -561,12 +577,29 @@
             });
         });
 
-        document.querySelectorAll('.edit-discount-btn').forEach(button => {
+       /*  document.querySelectorAll('.edit-discount-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
                 const discountId = button.getAttribute('data-id');
                 fetchDiscountData(discountId);
             });
+        }); */
+        $(document).on('click', '.edit-discount-btn', function() {
+            const discountId = $(this).data('id');
+            fetchDiscountData(discountId)
+                .then(data => {
+                    $('#saveChangesBtn').data('id', discountId);
+                    $('#deleteDiscountBtn').data('id', discountId);
+                });
+        });
+
+        $(document).on('click', '.edit-coupon-btn', function() {
+            const couponId = $(this).data('id');
+            fetchCouponData(couponId)
+                .then(data => {
+                    $('#saveCouponChangesBtn').data('id', couponId);
+                    $('#deleteCouponBtn').data('id', couponId);
+                });
         });
 
         document.getElementById('saveChangesBtn').addEventListener('click', function() {
@@ -588,13 +621,13 @@
             }
         });
 
-        document.querySelectorAll('.edit-coupon-btn').forEach(button => {
+        /* document.querySelectorAll('.edit-coupon-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
                 const couponId = button.getAttribute('data-id');
                 fetchCouponData(couponId);
             });
-        });
+        }); */
         document.getElementById('saveCouponChangesBtn').addEventListener('click', function() {
             const couponId = document.querySelector('.edit-coupon-btn[data-id]').getAttribute('data-id');
             const start_date = document.getElementById('startDateCoupon').value;

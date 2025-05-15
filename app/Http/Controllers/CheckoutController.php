@@ -50,7 +50,7 @@ class CheckoutController extends Controller
             }
         }
 
-        (new OrderController)->store($request);
+        (new OrderController())->store($request);
 
         $request->session()->put('payment_type', 'cart_payment');
 
@@ -62,9 +62,10 @@ class CheckoutController extends Controller
             $decorator = __NAMESPACE__.'\\Payment\\'.str_replace(' ', '', ucwords(str_replace('_', ' ', $request->payment_option))).'Controller';
 
             if (class_exists($decorator)) {
-                return (new $decorator)->pay($request);
+                return (new $decorator())->pay($request);
             } else {
                 $combined_order = CombinedOrder::findOrFail($request->session()->get('combined_order_id'));
+
                 $manual_payment_data = [
                     'name' => $request->payment_option,
                     'amount' => $combined_order->grand_total,
@@ -114,7 +115,7 @@ class CheckoutController extends Controller
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
         if ($carts && $carts->count() > 0) {
-            $carts->each(function($cart) {
+            $carts->each(function ($cart) {
                 $cart->reserved = "YES";
 
                 $reservedQuantity = - $cart->quantity;
@@ -139,14 +140,16 @@ class CheckoutController extends Controller
 
             $categories = Category::all();
 
-            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
                 ->count() > 0;
 
             return view(
                 'frontend.shipping_info',
                 compact(
-                    'categories', 'carts',
-                    'emirates', 'isCheckoutSessionTimeoutExpires'
+                    'categories',
+                    'carts',
+                    'emirates',
+                    'isCheckoutSessionTimeoutExpires'
                 )
             );
         }
@@ -166,7 +169,7 @@ class CheckoutController extends Controller
 
         $carts = Cart::where('user_id', Auth::user()->id)->get();
 
-        $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+        $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
             ->count() > 0;
 
         if ($carts->isEmpty()) {
@@ -206,11 +209,15 @@ class CheckoutController extends Controller
         $productQtyPanier = [];
         $admin_product_variation = [];
         $seller_product_variation = [];
+        $shippings = [];
 
         $carts->each(function ($cart) use (
-            &$admin_products, &$seller_products,
-            &$productQtyPanier, &$admin_product_variation,
-            &$seller_product_variation
+            &$admin_products,
+            &$seller_products,
+            &$productQtyPanier,
+            &$admin_product_variation,
+            &$seller_product_variation,
+            &$shippings
         ) {
             $product = get_single_product($cart['product_id']);
             $productId = $cart['product_id'];
@@ -234,6 +241,24 @@ class CheckoutController extends Controller
                 $seller_products[$product->user_id] = $product_ids;
                 $seller_product_variation[] = $cart['variation'];
             }
+
+            $shippers = [];
+            $shippingOptions = $product->shippingOptions($productQtyPanier[$product->id], $cart->is_sample);
+            $duration = [];
+
+            foreach ($shippingOptions as $key => $option) {
+                $shippers[$key] = $option->shipper;
+                $duration[$key] = $option->shipper === "vendor" ?
+                    $option->estimated_order + $option->estimated_shipping :
+                    getAramexShippingDuration($product, $productQtyPanier[$product->id], $cart->is_sample);
+            }
+
+            $shippings[$productId] = [
+                "shippers" => $shippers,
+                "shippingOptions" => $shippingOptions,
+                "durations" => $duration,
+                "productWeight" => getProductWeightGeneralAttribute($product->id)
+            ];
         });
 
         $pickup_point_list = [];
@@ -243,10 +268,17 @@ class CheckoutController extends Controller
         }
 
         return view('frontend.delivery_info', compact(
-            'carts', 'carrier_list', 'shippers_areas',
-            'pickup_point_list', 'admin_products', 'seller_products',
-            'productQtyPanier', 'admin_product_variation', 'seller_product_variation',
-            'isCheckoutSessionTimeoutExpires'
+            'carts',
+            'carrier_list',
+            'shippers_areas',
+            'pickup_point_list',
+            'admin_products',
+            'seller_products',
+            'productQtyPanier',
+            'admin_product_variation',
+            'seller_product_variation',
+            'isCheckoutSessionTimeoutExpires',
+            'shippings'
         ));
     }
 
@@ -265,14 +297,19 @@ class CheckoutController extends Controller
 
         $total = 0;
         $tax = 0;
+        $ordersDiscounts = [];
         $shipping = 0;
         $subtotal = 0;
 
         if ($carts && count($carts) > 0) {
             foreach ($carts as $key => $cart) {
                 $product = Product::find($cart['product_id']);
+                $shipper = $request["shipping_method_{$product->id}"];
                 $tax += cart_product_tax($cart, $product, false) * $cart['quantity'];
-                $subtotal += cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                $localSubTotal = cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                $subtotal += $localSubTotal;
 
                 if (
                     get_setting('shipping_type') != 'carrier_wise_shipping' ||
@@ -288,28 +325,39 @@ class CheckoutController extends Controller
                     $cart['shipping_cost'] = 0;
 
                     if ($cart['shipping_type'] == 'home_delivery') {
-                        $cart['shipping_cost'] = getShippingCost($carts, $key);
+                        $cart['shipping_cost'] = getShippingCost($carts, $key, '', $shipper);
                     }
                 } else {
                     $cart['shipping_type'] = 'carrier';
                     $cart['carrier_id'] = $request['carrier_id_'.$product->user_id];
-                    $cart['shipping_cost'] = getShippingCost($carts, $key, $cart['carrier_id']);
+                    $cart['shipping_cost'] = getShippingCost($carts, $key, $cart['carrier_id'], $shipper);
                 }
 
                 $shipping += $cart['shipping_cost'];
                 $cart->save();
             }
 
-            $total = $subtotal + $tax + $shipping;
+            $ordersDiscounts = $this->getOrdersDiscountsFromCarts($carts);
 
-            $isCheckoutSessionTimeoutExpires = $carts->filter(fn($cart) => str()->upper($cart->reserved) === "NO")
+            $total = $subtotal + $tax + $shipping - array_sum($ordersDiscounts);
+
+            if (array_sum($ordersDiscounts) !== 0) {
+                $request->session()->put("orderTotal", $total);
+
+                $request->session()->put("ordersDiscounts", $ordersDiscounts);
+            }
+
+            $isCheckoutSessionTimeoutExpires = $carts->filter(fn ($cart) => str()->upper($cart->reserved) === "NO")
                 ->count() > 0;
 
             return view(
                 'frontend.payment_select',
                 compact(
-                    'carts', 'shipping_info',
-                    'total', 'isCheckoutSessionTimeoutExpires'
+                    'carts',
+                    'shipping_info',
+                    'total',
+                    'isCheckoutSessionTimeoutExpires',
+                    'ordersDiscounts'
                 )
             );
         } else {
@@ -339,7 +387,7 @@ class CheckoutController extends Controller
                         $request->code,
                         $cart->product->id
                     );
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     throw $e;
                 }
 
@@ -372,7 +420,7 @@ class CheckoutController extends Controller
                 "total" => single_price($total + $tax + $shipping),
                 "subTotal" => $total + $tax + $shipping
             ], 200);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while applying coupon code, with message: {$e->getMessage()}");
             return response()->json([
                 "error" => true,
@@ -434,31 +482,75 @@ class CheckoutController extends Controller
         } else {
             Log::info(
                 sprintf(
-                    "User % hasn't an email ! We can't send you an order confirmation email !",
+                    "User % hasn't an email ! We can't send him an order confirmation email !",
                     auth()->user()->name
                 )
             );
 
             flash(
                 __(
-                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !", [
+                    "Hey :name ! You don't seem to have an email ! Sorry, We can't send you an order confirmation email !",
+                    [
                         "name" => auth()->user()->name
                     ]
                 )
             )->warning();
         }
 
-        Cart::where('user_id', $combined_order->user_id)
-            ->delete();
+        $carts = Cart::where('user_id', $combined_order->user_id);
+
+        $ordersDiscounts = request()->session()->get("ordersDiscounts", []);
+
+        $carts->delete();
 
         $first_order = $combined_order->orders->first()->toArray();
         $first_order["shipping_address"] = json_decode($first_order["shipping_address"], true);
 
-        return view('frontend.order_confirmed', compact('combined_order', 'first_order'));
+        return view('frontend.order_confirmed', compact(
+            'combined_order',
+            'first_order',
+            'ordersDiscounts'
+        ));
     }
 
     public function cancelCheckout($combined_order_id)
     {
-        return (new OrderController)->deleteOrderIfPaymentFail($combined_order_id);
+        return (new OrderController())->deleteOrderIfPaymentFail($combined_order_id);
+    }
+
+    public function getOrdersDiscountsFromCarts($carts)
+    {
+        $ordersDiscounts = [];
+        $localCarts = $carts;
+        $subtotal = 0;
+
+        try {
+            if ($localCarts && count($localCarts) > 0) {
+                $ordersDiscounts = $localCarts->pluck("owner_id")->unique()->mapWithKeys(fn ($ownerId) => [$ownerId => 0])->toArray();
+                $subTotalByVendor = $localCarts->pluck("owner_id")->unique()->mapWithKeys(fn ($ownerId) => [$ownerId => 0])->toArray();
+
+                foreach ($localCarts as $key => $cart) {
+                    $product = Product::find($cart['product_id']);
+
+                    $localSubTotal = cart_product_price($cart, $product, false, false) * $cart['quantity'];
+
+                    $subtotal += $localSubTotal;
+                    $subTotalByVendor[$cart->owner_id] += $localSubTotal;
+                }
+
+                foreach ($subTotalByVendor as $key => $subTotal) {
+                    if (
+                        array_key_exists($key, $ordersDiscounts) === true
+                    ) {
+                        $ordersDiscounts[$key] = getOrdersDiscount($subTotal, $key);
+                    }
+                }
+            }
+
+            return $ordersDiscounts;
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discounts from carts, with message: {$e->getMessage()}");
+            return $ordersDiscounts;
+        }
     }
 }

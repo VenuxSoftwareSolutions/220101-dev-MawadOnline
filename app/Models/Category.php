@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     protected $with = ['category_translations'];
+    protected $appends = ['is_leaf'];
 
     public function parent()
     {
@@ -49,7 +50,9 @@ class Category extends Model
 
         return $category_translation != null ? $category_translation->$field : $this->$field;
     }
-
+    public function getIsLeafAttribute() {
+        return !Category::where('parent_id', $this->id)->exists();
+    }    
     public function category_translations()
     {
         return $this->hasMany(CategoryTranslation::class);

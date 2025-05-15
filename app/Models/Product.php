@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
-    use EnhancedRevisionableTrait, SoftDeletes;
+    use EnhancedRevisionableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -172,10 +173,50 @@ class Product extends Model
 
     protected static function booted()
     {
+        static::saved(function ($product) {
+            $newestRevision = Revision::where("revisionable_id", $product->id)
+                ->where("key", "unit_price")
+                ->latest('created_at')
+                ->first();
+
+            if ($newestRevision !== null) {
+                $newestRevision->mwd_new_value = calculateMwdIndexPrice(
+                    $newestRevision->revisionable_id,
+                    $newestRevision->new_value
+                );
+
+                if ($newestRevision->old_value !== null) {
+                    $newestRevision->mwd_old_value = calculateMwdIndexPrice(
+                        $newestRevision->revisionable_id,
+                        $newestRevision->old_value
+                    );
+                }
+
+                $newestRevision->save();
+            } else {
+                Revision::insert([
+                    'revisionable_type' => "App\Models\Product",
+                    'revisionable_id' => $product->id,
+                    'user_id' => auth()->user()->owner_id,
+                    'key' => 'unit_price',
+                    'old_value' => null,
+                    'mwd_old_value' => null,
+                    'new_value' => $product->unit_price,
+                    "mwd_new_value" => calculateMwdIndexPrice(
+                        $product->id,
+                        $product->unit_price
+                    ),
+                    'created_at' => new \DateTime(),
+                    'updated_at' => new \DateTime(),
+                ]);
+            }
+        });
+
         // Ensure cascading deletes at the model level
         static::deleting(function ($product) {
             // Automatically delete related stock summaries
             $product->stockSummaries()->delete();
+            $product->shippingRelation()->delete();
         });
     }
 
@@ -559,6 +600,7 @@ class Product extends Model
                         // when from = to = 1 => it's a sample shipping
                        ->where('from_shipping', 1)
                        ->where('to_shipping', 1)
+                       ->where("is_sample", true)
                        ->get();
     }
 
@@ -639,11 +681,22 @@ class Product extends Model
         }
     }
 
-    public function shippingOptions($qty)
+    public function shippingOptions($qty, $is_sample = false)
     {
         return Shipping::where('product_id', $this->id)
             ->where('from_shipping', '<=', $qty)
             ->where('to_shipping', '>=', $qty)
+            ->where("is_sample", $is_sample)
+            ->get();
+    }
+
+    public function thirdPartyShippingOptions($qty, $is_sample = false)
+    {
+        return Shipping::where('product_id', $this->id)
+            ->where('from_shipping', '<=', $qty)
+            ->where('to_shipping', '>=', $qty)
+            ->where("shipper", "third_party")
+            ->where("is_sample", $is_sample)
             ->first();
     }
 
@@ -693,11 +746,11 @@ class Product extends Model
 
     public function getSampleDetails()
     {
-        if ($this->sample_price === 0) {
+        if ($this->sample_price === 0 || $this->sample_available === 0) {
             return [];
         }
 
-        $tableName = (new Product)->getTable();
+        $tableName = (new Product())->getTable();
         $columns = DB::getSchemaBuilder()->getColumnListing($tableName);
 
         $sampleColumns = array_filter($columns, function ($column) {
@@ -712,5 +765,10 @@ class Product extends Model
         } else {
             return [];
         }
+    }
+
+    public function bu_job()
+    {
+        return $this->belongsTo(BuJob::class, "bu_job_id");
     }
 }

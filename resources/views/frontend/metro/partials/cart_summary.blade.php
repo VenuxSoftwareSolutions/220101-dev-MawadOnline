@@ -141,6 +141,29 @@
 
         <table class="table" style="margin-top: 2rem!important;">
             <tfoot>
+                @if(count($ordersDiscounts) > 0 && array_sum($ordersDiscounts) !== 0)
+                    <tr class="orders-discounts__clz">
+                        <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                            <a class="toggle-discounts mr-1" data-target=".ordersDiscountsDetails" href="#" data-toggle="collapse" aria-expanded="false" aria-controls="ordersDiscountsDetails">+</a>
+                            <span>{{ translate('Order discount') }}</span>
+                        </th>
+                        <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
+                            <span class="fw-600">-{{ single_price(array_sum($ordersDiscounts)) }}</span>
+                        </td>
+                    </tr>
+                    @foreach($ordersDiscounts as $vendor_id => $discount)
+                        <tr class="collapse ordersDiscountsDetails">
+                            <th class="pl-3 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">
+                                <span>{{ get_shop_by_user_id($vendor_id)->name }}</span>
+                            </th>
+                            <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
+                              <div class="p-1">
+                                  -{{ single_price($discount) }}
+                              </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
                 <!-- Subtotal -->
                 <tr class="cart-subtotal">
                     <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Subtotal') }}</th>
@@ -149,8 +172,13 @@
                     </td>
                 </tr>
                 <!-- Tax -->
+<<<<<<< HEAD
                 <tr class="cart-tax">
                     <th class="pl-0 fs-14 pt-0 pb-2 dark-c3 font-prompt border-top-0">{{ translate('Tax') }}</th>
+=======
+                <tr class="d-none cart-tax">
+                    <th class="pl-0 fs-14 pt-0 pb-2 text-dark fw-600 border-top-0">{{ translate('Tax') }}</th>
+>>>>>>> 006ddc7f8f49066beb87496942a2d5f5b59eac47
                     <td class="text-right pr-0 fs-14 pt-0 pb-2 fw-600 text-primary border-top-0">
                         <span class="font-prompt">{{ single_price($tax) }}</span>
                     </td>
@@ -185,7 +213,6 @@
                 @endif
 
                 @php
-                    $total = $subtotal + $tax + $shipping;
                     if (Session::has('club_point')) {
                         $total -= Session::get('club_point');
                     }

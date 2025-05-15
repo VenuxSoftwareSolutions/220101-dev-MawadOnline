@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Exception;
 
 class Discount extends Model
 {
@@ -117,10 +118,15 @@ class Discount extends Model
             return false;
         }
 
-        if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
-            return true;
-        } elseif ($newDiscountData['max_discount'] < $existingDiscount->max_discount) {
-            return false;
+        $ignoreMaxForExisting = in_array($existingDiscount->scope, ['product', 'category']);
+        $ignoreMaxForNew = in_array($newDiscountData['scope'], ['product', 'category']);
+
+        if (!$ignoreMaxForExisting && !$ignoreMaxForNew) {
+            if ($newDiscountData['max_discount'] > $existingDiscount->max_discount) {
+                return true;
+            } elseif ($newDiscountData['max_discount'] < $existingDiscount->max_discount) {
+                return false;
+            }
         }
 
         return Carbon::now()->greaterThan($existingDiscount->created_at);
@@ -146,13 +152,16 @@ class Discount extends Model
         }
 
         $highestPriorityDiscount = $discounts->sort(function ($a, $b) {
+            $aMax = in_array($a->scope, ['product', 'category']) ? PHP_INT_MAX : $a->max_discount;
+            $bMax = in_array($b->scope, ['product', 'category']) ? PHP_INT_MAX : $b->max_discount;
+
             return [
                 $b->discount_percentage,
-                $b->max_discount,
+                $bMax,
                 $b->created_at,
             ] <=> [
                 $a->discount_percentage,
-                $a->max_discount,
+                $aMax,
                 $a->created_at,
             ];
         })->first();
@@ -160,38 +169,65 @@ class Discount extends Model
         return $highestPriorityDiscount;
     }
 
+    public static function getHighestPriorityOrderDiscount($vendor_id)
+    {
+        $discounts = self::whereIn('scope', ['ordersOverAmount', 'allOrders'])
+            ->where("user_id", $vendor_id)
+            ->withinDateRange()->active()->get();
+
+        if ($discounts->isEmpty()) {
+            return null;
+        }
+
+        return $discounts->sort(function ($a, $b) {
+            $aMax = $a->max_discount;
+            $bMax = $b->max_discount;
+
+            return [
+                $b->discount_percentage,
+                $bMax,
+                $b->created_at,
+            ] <=> [
+                $a->discount_percentage,
+                $aMax,
+                $a->created_at,
+            ];
+        })->first();
+    }
+
     public static function getDiscountPercentage($productId)
     {
         $highestDiscount = self::getHighestPriorityDiscountByProduct($productId);
 
         if (! $highestDiscount) {
-            throw new \Exception('Discount not found or not applicable.');
+            throw new Exception('Discount not found or not applicable.');
         }
 
-
         if ($highestDiscount->scope === 'product' && $highestDiscount->product_id != $productId) {
-            throw new \Exception('Discount does not apply to this product.');
+            throw new Exception('Discount does not apply to this product.');
         }
 
         if ($highestDiscount->scope === 'category' && ! self::isProductInCategory($productId, $highestDiscount->category_id)) {
-            throw new \Exception('Discount does not apply to this product category.');
+            throw new Exception('Discount does not apply to this product category.');
         }
 
-        return [
-            'discount_percentage' => $highestDiscount->discount_percentage,
-            'max_discount_amount' => $highestDiscount->max_discount,
-        ];
+        $result = ['discount_percentage' => $highestDiscount->discount_percentage];
+
+        if (!in_array($highestDiscount->scope, ['product', 'category'])) {
+            $result['discount_percentage'] = 0;
+            $result['max_discount_amount'] = 0;
+        }
+
+        return $result;
     }
-    
+
     public function isApplicableForQuantity($qty)
     {
         if ((!is_null($this->min_qty) && $qty < $this->min_qty) ||
             (!is_null($this->max_qty) && $qty > $this->max_qty)) {
             return false;
         }
-    
+
         return true;
     }
-    
-
 }

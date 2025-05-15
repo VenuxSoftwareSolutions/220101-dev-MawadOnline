@@ -61,7 +61,8 @@ class ForgotPasswordController extends Controller
 
                 Mail::to($user->email)->queue(new SecondEmailVerifyMailManager($array));
 
-                return view('auth.'.get_setting('authentication_layout_select').'.reset_password');
+                return view('auth.'.get_setting('authentication_layout_select').'.reset_password',[
+                    'email' => $user->email]);
             }
             else {
                 $message = translate('No account exists with this email');

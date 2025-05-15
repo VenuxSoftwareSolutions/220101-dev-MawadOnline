@@ -67,7 +67,7 @@
             <div class="absolute-top-left aiz-p-hov-span font-prompt @if($product->discount !== Null) aiz-p-hov-span-bg-orange @else aiz-p-hov-span-bg-dark @endif">
                 <a href="javascript:void(0)" class="hov-svg-white border-radius-8px" data-toggle="tooltip" data-placement="left">
                     <span>
-                            Featured
+                            {{ __("Featured") }}
                     </span>
                 </a>
             </div>
@@ -205,6 +205,24 @@
                     @else
                         <div class="">
                             <span class="fw-700 text-dark mr-1">{{ "AED" . number_format($product->getFirstPricingConfiguration()->unit_price, 2, '.', ',') }}</span>
+                        </div>
+                    @endif
+                @else
+                    @php
+                        $priceAfterDiscountVatIncl = \App\Utility\CartUtility::priceProduct($product->id, 1);
+                        $priceAfterMwdCommission = calculatePriceWithDiscountAndMwdCommission($product, 1, false);
+
+                        if(isset($mwd_price) === false)
+                            $mwd_price = calculatePriceWithDiscountAndMwdCommission($product);
+
+                    @endphp
+                    <div class="discounted-price__clz" data-unit_price="{{ $product->unit_price }}" data-product_id="{{ $product->id }}" data-price_after_mwd_commission="{{ $priceAfterMwdCommission }}">
+                        <span class="fw-700 text-dark mr-1">{{ single_price($mwd_price) }}</span>
+                    </div>
+
+                    @if(is_null($product->unit_price) === false && $priceAfterDiscountVatIncl !== $product->unit_price)
+                        <div class="main-price__clz">
+                            <del class="fw-400 text-secondary">{{ single_price($priceAfterMwdCommission) }}</del>
                         </div>
                     @endif
                 @endif

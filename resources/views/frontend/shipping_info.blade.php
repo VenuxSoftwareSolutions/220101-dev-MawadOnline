@@ -80,7 +80,7 @@
                                             <div class="col-md-8">
                                                 <label class="aiz-megabox d-block mb-0">
                                                     <input type="radio" name="address_id" value="{{ $address->id }}"
-                                                        @if ($address->set_default) checked @endif required>
+                                                        @if ($address->set_default || Auth::user()->addresses->count() === 1) checked @endif required>
                                                     <span class="d-flex p-3 aiz-megabox-elem border-0">
                                                         <!-- Checkbox -->
                                                         <span class="aiz-rounded-check flex-shrink-0 mt-1"></span>

@@ -64,6 +64,8 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
+use App\Utility\CartUtility;
+use App\Models\Discount;
 
 if (! function_exists('humanFileSize')) {
     function humanFileSize($bytes, $decimals = 2)
@@ -268,9 +270,9 @@ if (! function_exists('format_price')) {
     function format_price($price, $isMinimize = false)
     {
         if (get_setting('decimal_separator') == 1) {
-            $fomated_price = number_format($price, get_setting('no_of_decimals'));
+            $formatted_price = number_format($price, get_setting('no_of_decimals'));
         } else {
-            $fomated_price = number_format($price, get_setting('no_of_decimals'), ',', '.');
+            $formatted_price = number_format($price, get_setting('no_of_decimals'), ',', '.');
         }
 
         // Minimize the price
@@ -278,24 +280,24 @@ if (! function_exists('format_price')) {
             $temp = number_format($price / 1000000000, get_setting('no_of_decimals'), '.', '');
 
             if ($temp >= 1) {
-                $fomated_price = $temp.'B';
+                $formatted_price = $temp.'B';
             } else {
                 $temp = number_format($price / 1000000, get_setting('no_of_decimals'), '.', '');
                 if ($temp >= 1) {
-                    $fomated_price = $temp.'M';
+                    $formatted_price = $temp.'M';
                 }
             }
         }
 
         if (get_setting('symbol_format') == 1) {
-            return currency_symbol().$fomated_price;
+            return sprintf("%s %s", currency_symbol(), $formatted_price);
         } elseif (get_setting('symbol_format') == 3) {
-            return currency_symbol().' '.$fomated_price;
+            return sprintf("%s %s", currency_symbol(), $formatted_price);
         } elseif (get_setting('symbol_format') == 4) {
-            return $fomated_price.' '.currency_symbol();
+            return sprintf("%s %s", $formatted_price, currency_symbol());
         }
 
-        return $fomated_price.currency_symbol();
+        return sprintf("%s %s", $formatted_price, currency_symbol());
     }
 }
 
@@ -946,7 +948,7 @@ function translate($key, $lang = null, $addslashes = false)
     });
 
     if (! isset($translations_en[$lang_key])) {
-        $translation_def = new Translation;
+        $translation_def = new Translation();
         $translation_def->lang = 'en';
         $translation_def->lang_key = $lang_key;
         $translation_def->lang_value = str_replace(["\r", "\n", "\r\n"], '', $key);
@@ -1013,7 +1015,7 @@ if (! function_exists('translation_tables')) {
     }
 }
 
-function getShippingCost($carts, $index, $carrier = '')
+function getShippingCost($carts, $index, $carrier = '', $shipper = null)
 {
     $shipping_type = get_setting('shipping_type');
     $admin_products = [];
@@ -1115,9 +1117,11 @@ function getShippingCost($carts, $index, $carrier = '')
 
         return 0;
     } else {
-        $shippingOptions = $product->shippingOptions($cartItem['quantity']);
+        $shippingOptions = $product->shippingOptions($cartItem['quantity'], $cartItem->is_sample)
+            ->filter(fn ($option) => $option->shipper === $shipper)
+            ->first();
 
-        if ($shippingOptions->shipper === 'vendor') {
+        if (is_null($shippingOptions) === false && $shippingOptions->shipper === 'vendor') {
             if ($shippingOptions->charge_per_unit_shipping != null) {
                 return $shippingOptions->charge_per_unit_shipping * $cartItem['quantity'];
             } else {
@@ -1127,7 +1131,7 @@ function getShippingCost($carts, $index, $carrier = '')
             // supported 3rd party shipper is aramex for now
             request()->merge(['product_id' => $product->id]);
 
-            $apiResult = (new \App\Http\Controllers\AramexController)
+            $apiResult = (new \App\Http\Controllers\AramexController())
                 ->calculateOrderProductsCharge(auth()->user()->id);
 
             if ($apiResult->original['error'] === false && $apiResult->original["data"] !== null) {
@@ -1463,7 +1467,7 @@ if (! function_exists('get_setting')) {
 
 function hex2rgba($color, $opacity = false)
 {
-    return (new ColorCodeConverter)->convertHexToRgba($color, $opacity);
+    return (new ColorCodeConverter())->convertHexToRgba($color, $opacity);
 }
 
 if (! function_exists('isAdmin')) {
@@ -1580,7 +1584,7 @@ if (! function_exists('wallet_payment_done')) {
         $user->balance = $user->balance + $amount;
         $user->save();
 
-        $wallet = new Wallet;
+        $wallet = new Wallet();
         $wallet->user_id = $user->id;
         $wallet->amount = $amount;
         $wallet->payment_method = $payment_method;
@@ -1612,7 +1616,7 @@ if (! function_exists('seller_purchase_payment_done')) {
         $seller->package_invalid_at = date('Y-m-d', strtotime($seller->package_invalid_at.' +'.$seller_package->duration.'days'));
         $seller->save();
 
-        $seller_package = new SellerPackagePayment;
+        $seller_package = new SellerPackagePayment();
         $seller_package->user_id = $user_id;
         $seller_package->seller_package_id = $seller_package_id;
         $seller_package->payment_method = $payment_method;
@@ -1657,15 +1661,15 @@ if (! function_exists('product_restock')) {
 if (! function_exists('calculateCommissionAffilationClubPoint')) {
     function calculateCommissionAffilationClubPoint($order)
     {
-        (new CommissionController)->calculateCommission($order);
+        (new CommissionController())->calculateCommission($order);
 
         if (addon_is_activated('affiliate_system')) {
-            (new AffiliateController)->processAffiliatePoints($order);
+            (new AffiliateController())->processAffiliatePoints($order);
         }
 
         if (addon_is_activated('club_point')) {
             if ($order->user != null) {
-                (new ClubPointController)->processClubPoints($order);
+                (new ClubPointController())->processClubPoints($order);
             }
         }
 
@@ -2593,7 +2597,7 @@ if (! function_exists('offerUserWelcomeCoupon')) {
 
             $couponDetails = json_decode($coupon->details);
 
-            $user_coupon = new UserCoupon;
+            $user_coupon = new UserCoupon();
             $user_coupon->user_id = auth()->user()->id;
             $user_coupon->coupon_id = $coupon->id;
             $user_coupon->coupon_code = $coupon->code;
@@ -2843,7 +2847,7 @@ if (! function_exists('seller_lease_creation')) {
                 $seller->seller_package_id = 4;
                 $seller->save();
 
-                $seller_lease = new SellerLease;
+                $seller_lease = new SellerLease();
                 $seller_lease->vendor_id = $user->id;
                 $seller_lease->package_id = 4;
                 $seller_lease->start_date = $startDate->format('Y-m-d');
@@ -2865,7 +2869,7 @@ if (! function_exists('generateUniqueSlug')) {
         $slug = Str::slug($title);
 
         // Check if slug exists in the specified model
-        $existingSlugCount = DB::table((new $model)->getTable())
+        $existingSlugCount = DB::table((new $model())->getTable())
             ->where($column, 'LIKE', "{$slug}%")
             ->count();
 
@@ -2897,7 +2901,9 @@ if (! function_exists('generateUniqueSlug')) {
 if (function_exists('formatChargeBasedOnChargeType') === false) {
     function formatChargeBasedOnChargeType(object $shippingOptions, $carts): string
     {
-        if ($shippingOptions->charge_per_unit_shipping != null) {
+        if ($shippingOptions->paid === "vendor") {
+            return __('Free (handled by vendor)');
+        } elseif ($shippingOptions->charge_per_unit_shipping != null) {
             $qty = 0;
             $carts->each(function ($cart) use ($shippingOptions, &$qty) {
                 if ($cart->product_id === $shippingOptions->product_id) {
@@ -3069,11 +3075,12 @@ if (function_exists('getProductWeightGeneralAttribute') === false) {
 }
 
 if (function_exists('getAramexShippingDuration') === false) {
-    function getAramexShippingDuration($product, $quantity)
+    function getAramexShippingDuration($product, $quantity, $is_sample = false)
     {
         $weight = (float) getProductWeightGeneralAttribute($product->id);
 
-        $orderPreparationEstimatedDuration = $product->shippingOptions($quantity)->estimated_order;
+        $orderPreparationEstimatedDuration = $product->thirdPartyShippingOptions($quantity, $is_sample)
+            ->estimated_order;
 
         $shippingDurations = $weight >= 20 ? [
             1 + $orderPreparationEstimatedDuration,
@@ -3083,6 +3090,206 @@ if (function_exists('getAramexShippingDuration') === false) {
             4 + $orderPreparationEstimatedDuration,
         ];
 
-        return __("{$shippingDurations[0]} to {$shippingDurations[1]} days");
+        return __(":from to :to days", [
+            "from" => $shippingDurations[0],
+            "to" => $shippingDurations[1]
+        ]);
+    }
+}
+
+if (function_exists('roundUpToTwoDigits') === false) {
+    function roundUpToTwoDigits($number)
+    {
+        return ceil($number * 100) / 100;
+    }
+}
+
+if (function_exists('calculatePriceWithDiscountAndMwdCommission') === false) {
+    function calculatePriceWithDiscountAndMwdCommission($product, $qty = 1, $withDiscount = true, $is_sample = false)
+    {
+        try {
+            $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+            $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+            $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
+            ->whereNot(function ($query) {
+                $query->whereIn("scope", ["product", "category"]);
+            })->withinDateRange()->active()->exists();
+
+            if (isset($product->unit_price) && is_null($product->unit_price) === false) {
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            } else {
+                $product = Product::findOrFail($product->id);
+                $priceVatIncl = $is_sample === true ? $product->sample_price : $product->unit_price;
+            }
+
+            $priceAfterDiscountVatIncl = $withDiscount === true && $isOrdersDiscountExists === false ?
+                 CartUtility::priceProduct($product->id, $qty)
+                : $priceVatIncl;
+
+            $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+            $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+            $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+            $priceAfterMwdCommission = roundUpToTwoDigits(
+                $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+            );
+
+            return $priceAfterMwdCommission;
+        } catch (Exception $e) {
+            Log::error("Error while calculating mwd commission for product #{$product->id} price, with message: {$e->getMessage()}");
+            return $product->unit_price;
+        }
+    }
+}
+
+if (function_exists('calculateMwdIndexPrice') === false) {
+    function calculateMwdIndexPrice($product_id, $unit_price)
+    {
+
+        try {
+            $product = Product::find($product_id);
+
+            if ($product === null) {
+                throw new Exception("Product with id #{$product_id} is not found!");
+            }
+
+            $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+            $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+            $priceVatIncl = $unit_price;
+
+            $priceAfterDiscountVatIncl = CartUtility::priceProduct($product->id, 1, $unit_price);
+
+            $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+            $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+            $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+            $priceAfterMwdCommission = roundUpToTwoDigits(
+                $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+            );
+
+            return $priceAfterMwdCommission;
+        } catch (Exception $e) {
+            Log::error("Error while calculating mwd commission for product #{$product_id} price in revisions, with message: {$e->getMessage()}");
+            return $unit_price;
+        }
+    }
+}
+
+
+if (function_exists('formatBuJob') === false) {
+    function formatBuJob($bu_job, $is_products_number_shown = true)
+    {
+        try {
+            if ($is_products_number_shown === false) {
+                return trans("product.bu_job_without_count", [
+                    "filename" => $bu_job->vendor_products_file,
+                    "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+                ]);
+            }
+
+            $productsNumber = Product::whereHas('bu_job', function ($q) use ($bu_job) {
+                $q->where('id', $bu_job->id);
+            })->where('user_id', Auth::user()->owner_id)
+            ->where(function ($query) {
+                $query->where('is_draft', '=', 1)
+                    ->where('parent_id', 0)
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('parent_id', 0)
+                            ->where('is_parent', 0);
+                    })
+                    ->orWhere(function ($query) {
+                        $query->where('is_draft', 0)
+                            ->where('is_parent', 1);
+                    });
+            })->orderBy('id', 'desc')
+            ->count();
+
+            return trans_choice("product.bu_job", $productsNumber, [
+                "filename" => $bu_job->vendor_products_file,
+                "productsNumber" => $productsNumber,
+                "date" => Carbon::parse($bu_job->created_at)->format("d-m-Y h:m")
+            ]);
+        } catch (Exception $e) {
+            Log::error("Error while formatting bu job #{$bu_job->id}, with error: {$e->getMessage()}");
+            return "";
+        }
+    }
+}
+
+if (function_exists("getOrdersDiscount") === false) {
+    function getOrdersDiscount($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return 0;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return 0;
+            }
+
+            $discount = $discount->toArray();
+            $percentage = ($subTotal * $discount["discount_percentage"]) / 100;
+
+            if (
+                $percentage > $discount["max_discount"]
+            ) {
+                return $discount["max_discount"];
+            } else {
+                return $percentage;
+            }
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return 0;
+        }
+    }
+}
+
+if (function_exists("getOrdersDiscountId") === false) {
+    function getOrdersDiscountId($subTotal, $vendor_id)
+    {
+        try {
+            $discount = Discount::getHighestPriorityOrderDiscount($vendor_id);
+
+            if (is_null($discount)) {
+                return null;
+            }
+
+            $now = Carbon::now();
+            $isDiscountNotApplicable = (!is_null($discount->start_date) && $now->lt(Carbon::parse($discount->start_date))) ||
+                                (!is_null($discount->end_date) && $now->gt(Carbon::parse($discount->end_date)));
+
+            if ($isDiscountNotApplicable === true) {
+                return null;
+            }
+
+            return $discount->id;
+        } catch (Exception $e) {
+            Log::error("Error while getting orders discount id for vendor #{$vendor_id}, with message: {$e->getMessage()}");
+            return null;
+        }
+    }
+}
+
+if (function_exists("itemDiscountShare") === false) {
+    function itemDiscountShare($itemPrice, $vendorSubTotal = 0, $vendorDiscount = 0)
+    {
+        return roundUpToTwoDigits(
+            $vendorSubTotal > 0
+                ? ($itemPrice / $vendorSubTotal) * $vendorDiscount : 0
+        );
     }
 }

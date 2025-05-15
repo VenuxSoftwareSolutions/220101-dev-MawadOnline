@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Route;
 use Mail;
 use Log;
 use App\Jobs\firstCountDownNotificationJob;
+use App\Models\CommissionVat;
+use App\Models\Discount;
+use App\Utility\CartUtility;
 
 class OrderController extends Controller
 {
@@ -145,7 +148,6 @@ class OrderController extends Controller
                 return redirect()->route('home');
             }
 
-
             $address = Address::where('id', $carts->first()->address_id)->first();
             $shippingAddress = [];
 
@@ -164,25 +166,36 @@ class OrderController extends Controller
                 }
             }
 
-            $combined_order = new CombinedOrder;
+            $combined_order = new CombinedOrder();
             $combined_order->user_id = Auth::user()->id;
             $combined_order->shipping_address = json_encode($shippingAddress);
             $combined_order->save();
 
             $seller_products = [];
 
+            $subTotalByVendor = $carts->pluck("owner_id")
+                ->unique()
+                ->mapWithKeys(fn ($ownerId) => [$ownerId => 0])
+                ->toArray();
+
             foreach ($carts as $cartItem) {
                 $product_ids = [];
                 $product = Product::find($cartItem['product_id']);
+
                 if (isset($seller_products[$product->user_id])) {
                     $product_ids = $seller_products[$product->user_id];
                 }
+
                 array_push($product_ids, $cartItem);
                 $seller_products[$product->user_id] = $product_ids;
+
+                if (array_key_exists($product->user_id, $subTotalByVendor)) {
+                    $subTotalByVendor[$product->user_id] += cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                }
             }
 
             foreach ($seller_products as $seller_product) {
-                $order = new Order;
+                $order = new Order();
                 $order->combined_order_id = $combined_order->id;
                 $order->user_id = Auth::user()->id;
                 $order->shipping_address = $combined_order->shipping_address;
@@ -216,12 +229,45 @@ class OrderController extends Controller
                     // 2. deduct qty from the first stock summaries that has enough stock
                     // 3. add a stock details entry which record the stock deduction (same warehouse of prev stock summaries)
 
-                    $order_detail = new OrderDetail;
+                    $order_detail = new OrderDetail();
                     $order_detail->order_id = $order->id;
                     $order_detail->seller_id = $product->user_id;
                     $order_detail->product_id = $product->id;
                     $order_detail->variation = $product_variation;
-                    $order_detail->price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+
+                    $price = cart_product_price($cartItem, $product, false, false) * $cartItem['quantity'];
+                    $order_detail->price = $price;
+
+                    $discount_share = array_key_exists($product->user_id, $subTotalByVendor) === true ?
+                        itemDiscountShare(
+                            $price,
+                            $subTotalByVendor[$cartItem->owner_id],
+                            getOrdersDiscount($subTotalByVendor[$cartItem->owner_id], $cartItem->owner_id)
+                        ) : 0;
+
+                    $order_detail->discount_share = $discount_share;
+
+                    $applied_discount_id = getOrdersDiscountId(
+                        $subTotalByVendor[$cartItem->owner_id],
+                        $cartItem->owner_id
+                    );
+
+                    // in `category/product discount` case, save those info
+                    if (is_null($applied_discount_id) === true) {
+                        $highestDiscount = Discount::getHighestPriorityDiscountByProduct($product->id);
+                        $order_detail->product_price_before_discount = $product->unit_price;
+                        $order_detail->product_price_after_discount = cart_product_price(
+                            $cartItem,
+                            $product,
+                            false,
+                            false
+                        );
+                        $order_detail->discount_percentage = $highestDiscount->discount_percentage;
+                        $applied_discount_id = $highestDiscount->id;
+                    }
+
+                    $order_detail->applied_discount_id = $applied_discount_id;
+
                     $order_detail->tax = cart_product_tax($cartItem, $product, false) * $cartItem['quantity'];
                     $order_detail->shipping_type = $cartItem['shipping_type'];
                     $order_detail->product_referral_code = $cartItem['product_referral_code'];
@@ -236,6 +282,9 @@ class OrderController extends Controller
                     }
 
                     $order_detail->save();
+
+                    $this->storeMwdCommission($product, $cartItem["quantity"], $order_detail->id);
+
                     firstCountDownNotificationJob::dispatch($order_detail)
                                                 ->delay(now()->addHours(24));
 
@@ -262,21 +311,23 @@ class OrderController extends Controller
                     if (addon_is_activated('affiliate_system')) {
                         if ($order_detail->product_referral_code) {
                             $referred_by_user = User::where(
-                                'referral_code', $order_detail->product_referral_code
+                                'referral_code',
+                                $order_detail->product_referral_code
                             )->first();
 
-                            (new AffiliateController)
+                            (new AffiliateController())
                                 ->processAffiliateStats($referred_by_user->id, 0, $order_detail->quantity, 0, 0);
                         }
                     }
                 }
 
+                $order->total_shipping_cost = $shipping;
                 $order->grand_total = ($coupon_discount > 0 ? $coupon_discount : $subtotal) + $tax + $shipping;
 
                 if ($seller_product[0]->coupon_code != null) {
                     $order->coupon_discount = $coupon_discount;
 
-                    $coupon_usage = new CouponUsage;
+                    $coupon_usage = new CouponUsage();
                     $coupon_usage->user_id = Auth::user()->id;
                     $coupon_usage->coupon_id = Coupon::where('code', $seller_product[0]->coupon_code)->first()->id;
                     $coupon_usage->save();
@@ -287,10 +338,16 @@ class OrderController extends Controller
                 $order->save();
             }
 
+            $orderTotal = request()->session()->get("orderTotal", null);
+
+            if (is_null($orderTotal) === false) {
+                $combined_order->grand_total = $orderTotal;
+            }
+
             $combined_order->save();
 
             $request->session()->put('combined_order_id', $combined_order->id);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while storing order, with message {$e->getMessage()}");
             flash(translate("Something went wrong!"))->error();
             return redirect()->route("home");
@@ -407,7 +464,7 @@ class OrderController extends Controller
                 "error" => true,
                 "message" => translate('Something went wrong')
             ], 500);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while `deleting order if payment fail`, with message: {$e->getMessage()}");
 
             return response()->json([
@@ -509,7 +566,7 @@ class OrderController extends Controller
 
                         $referred_by_user = User::where('referral_code', $orderDetail->product_referral_code)->first();
 
-                        $affiliateController = new AffiliateController;
+                        $affiliateController = new AffiliateController();
                         $affiliateController->processAffiliateStats($referred_by_user->id, 0, 0, $no_of_delivered, $no_of_canceled);
                     }
                 }
@@ -540,7 +597,7 @@ class OrderController extends Controller
 
         if (addon_is_activated('delivery_boy')) {
             if (Auth::user()->user_type == 'delivery_boy') {
-                $deliveryBoyController = new DeliveryBoyController;
+                $deliveryBoyController = new DeliveryBoyController();
                 $deliveryBoyController->store_delivery_history($order);
             }
         }
@@ -631,7 +688,7 @@ class OrderController extends Controller
                 ->first();
 
             if (empty($delivery_history)) {
-                $delivery_history = new \App\Models\DeliveryHistory;
+                $delivery_history = new \App\Models\DeliveryHistory();
 
                 $delivery_history->order_id = $order->id;
                 $delivery_history->delivery_status = $order->delivery_status;
@@ -662,5 +719,52 @@ class OrderController extends Controller
         }
 
         return 1;
+    }
+
+    public function storeMwdCommission($product, $qty, $subOrderId)
+    {
+        $mwdCommissionPercentage = get_setting("mwd_commission_percentage") ?? 1;
+        $mwdCommissionPercentageVat = get_setting("mwd_commission_percentage_vat") ?? 1;
+
+        $priceVatIncl = $product->unit_price;
+
+        $discount = 0;
+
+        try {
+            $discount = Discount::getDiscountPercentage($product->id, $qty);
+        } catch (Exception $e) {
+            Log::info("Error while getting product #{$product->id} discount, with message: {$e->getMessage()}");
+        }
+
+        $priceAfterDiscountVatIncl = CartUtility::priceProduct($product->id, $qty);
+
+        $mwdCommissionPercentageAmount = $priceAfterDiscountVatIncl * $mwdCommissionPercentage;
+
+        $mwdCommissionPercentageVatAmount = $mwdCommissionPercentageAmount * $mwdCommissionPercentageVat;
+
+        $mwdCommissionTotalPercentage = $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount;
+
+        $priceAfterMwdCommission = roundUpToTwoDigits(
+            $priceAfterDiscountVatIncl + $mwdCommissionPercentageAmount + $mwdCommissionPercentageVatAmount
+        );
+
+        $data = [
+            "sub_order_id" => $subOrderId,
+            "price_vat_incl" => $priceVatIncl,
+            "discount_percentage" => is_array($discount) === true ? $discount["discount_percentage"] : 0,
+            "price_after_discount_vat_incl" => $priceAfterDiscountVatIncl,
+            "mwd_commission_percentage" => $mwdCommissionPercentage,
+            "mwd_commission_percentage_vat" => $mwdCommissionPercentageVat,
+            "mwd_commission_percentage_amount" => $mwdCommissionPercentageAmount,
+            "mwd_commission_percentage_vat_amount" => $mwdCommissionPercentageVatAmount,
+            "mwd_total_percentage" => $mwdCommissionTotalPercentage,
+            "price_after_mwd_percentage" => $priceAfterMwdCommission,
+        ];
+
+        $isDataInserted = CommissionVat::insert($data);
+
+        if ($isDataInserted === true) {
+            Log::info("Commission vat inserted data:", $data);
+        }
     }
 }

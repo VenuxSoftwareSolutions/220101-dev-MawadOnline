@@ -76,7 +76,7 @@ class CartUtility
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -121,7 +121,7 @@ class CartUtility
                         [$startDate, $endDate] = explode(' to ', $dateRange);
 
                         // Convert date strings to DateTime objects for comparison
-                        $currentDate = new DateTime; // Current date/time
+                        $currentDate = new DateTime(); // Current date/time
                         $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                         $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -164,8 +164,40 @@ class CartUtility
         return $unitPrice;
     }
 
-    public static function priceProduct($id, $qty)
+    public static function priceProduct($id, $qty, $unit_price = null)
     {
+        try {
+            $discount = Discount::getDiscountPercentage($id);
+        } catch (Exception $e) {
+            Log::error("Error while getting discount for product $id, with message: {$e->getMessage()}");
+            $discount = null;
+        }
+
+        $product = get_single_product($id);
+
+        $isOrdersDiscountExists = Discount::where("user_id", $product->user_id)
+            ->whereNot(function ($query) {
+                $query->whereIn("scope", ["product", "category"]);
+            })->withinDateRange()->active()->exists();
+
+        $unitPrice = $unit_price !== null ? $unit_price : $product->unit_price;
+
+        if (is_array($discount) && $isOrdersDiscountExists === false) {
+            $percentage = ($unitPrice * $discount["discount_percentage"]) / 100;
+
+            if (
+                isset($discount["max_discount_amount"]) &&
+                is_null($discount["max_discount_amount"]) !== true &&
+                $percentage > $discount["max_discount_amount"]
+            ) {
+                $unitPrice -= $discount["max_discount_amount"];
+            } else {
+                $unitPrice -= $percentage;
+            }
+        }
+
+        return $unitPrice;
+
         $pricing = [];
         $pricing['from'] = PricingConfiguration::where('id_products', $id)
             ->pluck('from')
@@ -228,7 +260,7 @@ class CartUtility
                     $dateRange = $pricing['variant_pricing-from']['discount']['date'][$index];
                     [$startDate, $endDate] = explode(' to ', $dateRange);
 
-                    $currentDate = new DateTime;
+                    $currentDate = new DateTime();
                     $startDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $startDate);
                     $endDateTime = DateTime::createFromFormat('d-m-Y H:i:s', $endDate);
 
@@ -258,14 +290,14 @@ class CartUtility
 
         try {
             $discount = Discount::getDiscountPercentage($id);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Log::error("Error while getting discount for product $id, with message: {$e->getMessage()}");
             $discount = null;
         }
 
         if (isset($discountPrice) && $discountPrice > 0) {
             return $discountPrice;
-        } else if (is_array($discount)) {
+        } elseif (is_array($discount)) {
             $unitPrice = 0;
 
             foreach ($pricing['from'] as $index => $from) {
