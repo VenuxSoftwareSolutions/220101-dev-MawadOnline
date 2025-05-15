@@ -47,7 +47,10 @@ return [
             'driver' => 'local',
             'root' => public_path(),
         ],
-
+        'mwd_storage' => [
+            'driver' => 'local',
+            'root' => '/home/mwd/SmartBulkUpload',
+        ],
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

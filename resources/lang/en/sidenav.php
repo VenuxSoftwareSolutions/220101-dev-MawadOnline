@@ -33,5 +33,7 @@ return [
     'Offers' => 'Offers',
     'Offers_list' => 'Offers List',
     'Offers_create' => 'Add Offer',
+    'bulk_jobs_history' => 'Bulk Upload Jobs History',
+
 
 ];

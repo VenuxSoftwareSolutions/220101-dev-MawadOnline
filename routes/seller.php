@@ -10,6 +10,8 @@ use App\Http\Controllers\Seller\SellerStaffController;
 use App\Http\Controllers\Seller\CatalogController;
 use App\Http\Controllers\Seller\DiscountController;
 use App\Http\Controllers\Seller\CouponController;
+use App\Http\Controllers\Seller\SmartBulkUploadController;
+use App\Http\Controllers\Seller\BulkJobController;
 
 //Upload
 Route::group(['prefix' => 'vendor', 'middleware' => ['seller', 'verified', 'user', 'prevent-back-history','throttle:global'], 'as' => 'seller.'], function () {
@@ -91,6 +93,39 @@ Route::group(['namespace' => 'App\Http\Controllers\Seller', 'prefix' => 'vendor'
         Route::post('/products/bulk-downlod', 'download_file')->name('products.bulk_upload.download_file');
 
     });
+    //smart bulk upload 
+    Route::post('/upload-vendor-products', [SmartBulkUploadController::class, 'uploadVendorProducts'])->name('vendor.fileupload');
+    Route::post('set-shipping-config', [SmartBulkUploadController::class, 'setShippingConfig'])->name('shipping.config');
+    Route::post('/set-discount-config', [SmartBulkUploadController::class, 'setDiscountConfig'])->name('discount.config');
+    Route::post('/submit-job', [SmartBulkUploadController::class, 'submitJob'])->name('job.submit');
+    Route::post('/bulk/upload-image', [SmartBulkUploadController::class, 'uploadImage'])
+     ->name('bulk.upload-image');
+    Route::post('/bulk/upload-doc', [SmartBulkUploadController::class, 'uploadDoc'])
+     ->name('bulk.upload-doc');
+     Route::post('/bulk/check-job', [SmartBulkUploadController::class, 'checkJobStatus'])->name('job.check');
+     ;
+
+     //smart bu job tracking 
+     Route::prefix('bulk-jobs')->group(function () {
+        Route::get('/history', [BulkJobController::class, 'index'])->name('bulk.jobs.history');
+        
+        Route::delete('/destroy-multiple', [BulkJobController::class, 'bulkDelete'])
+        ->name('bulk.jobs.bulkDestroy');
+
+        Route::delete('/{id}', [BulkJobController::class, 'destroy'])
+        ->name('bulk.jobs.destroy');
+
+
+        Route::get('/{id}/download-product-file', [BulkJobController::class, 'downloadProductFile'])
+        ->name('bulk.jobs.download_product_file');
+        Route::get('/{id}/download-error-file',   [BulkJobController::class, 'downloadErrorFile'])
+        ->name('bulk.jobs.download_error_file');
+        Route::get('/{id}/progress', [BulkJobController::class, 'getProgress'])
+        ->name('bulk.jobs.progress');
+
+
+    });
+    
 
     // Digital Product
     Route::controller(DigitalProductController::class)->middleware('throttle:global')->group(function () {

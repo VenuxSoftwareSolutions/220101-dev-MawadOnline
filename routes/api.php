@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Middleware\EnsureSystemKey;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V2\Seller\SmartBulkController;
 
 Route::group(['prefix' => 'v2/auth', 'middleware' => ['app_language']], function () {
     Route::get('generate-salt/{email}','App\Http\Controllers\Api\V2\AuthController@generateSalt')->name('generateSalt');
@@ -198,6 +199,11 @@ Route::group(['prefix' => 'v2', 'middleware' => ['app_language']], function () {
 
 
     Route::get('seller/top', 'App\Http\Controllers\Api\V2\SellerController@topSellers');
+
+    Route::post('/upload-csv', [SmartBulkController::class, 'uploadCsv']);
+    Route::post('/fetch-shipping', [SmartBulkController::class, 'fetchShipping']);
+    Route::post('/fetch-discount', [SmartBulkController::class, 'fetchDiscount']);
+    Route::post('/start-process', [SmartBulkController::class, 'startProcess']);
 
     Route::apiResource('banners', 'App\Http\Controllers\Api\V2\BannerController')->only('index');
 
