@@ -400,7 +400,7 @@
         }
 
         #shipping_configuration_box {
-            display: none;
+            /*display: none;*/
         }
     </style>
 @endpush
@@ -6405,7 +6405,7 @@
         });
 
         async function processFiles(files) {
-            filesProcessed = true; 
+            filesProcessed = true;
             clearErrorsTable();
             errors = [];
             updateReprocessButton();
@@ -6906,7 +6906,7 @@
                     });
 
                     const data = await response.json();
-                    
+
                     if (data.valid) {
                         activeJobId = savedJobId;
                         showWarning('Resuming previous upload session');
@@ -6956,7 +6956,7 @@
                 .then(data => {
                     if (data.success) {
                         activeJobId = data.job_id;
-                        sessionStorage.setItem('activeJobId', activeJobId); 
+                        sessionStorage.setItem('activeJobId', activeJobId);
                         showSuccess("File Received successfully.");
 
                         $("#smartbulk-4").hide();
@@ -6993,7 +6993,7 @@
 
             const next5Btn = document.getElementById('next5Btn');
             const spinner = document.createElement('span');
-            spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2'); 
+            spinner.classList.add('spinner-border', 'spinner-border-sm', 'ms-2');
             next5Btn.appendChild(spinner);
             next5Btn.disabled = true;
 
@@ -7253,7 +7253,7 @@
         });
 
 
-       
+
 
         flatpickr('.discount-range', {
             mode: "range",

@@ -13,13 +13,10 @@ class BuJob extends Model
     use HasUuids;
 
     protected $table = 'bu_jobs';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     protected $primaryKey = 'id';
-    public $keyType = 'string';
-
     public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'vendor_user_id',

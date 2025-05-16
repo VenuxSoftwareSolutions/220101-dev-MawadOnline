@@ -21,6 +21,8 @@
                 $('#error_message').hide();
             }
 
+            return document.getElementById("login_form").submit();
+
             let url = '{{ route('generateSalt', ['email' => ':email']) }}';
             url = url.replace(':email', email);
 

@@ -1184,10 +1184,103 @@
             )
         };
 
+        function collectRangesFrom(selector) {
+            let collected = [];
+            $(selector).each(function () {
+                let from = parseInt($(this).find(".min-qty-shipping").val(), 10);
+                let to = parseInt($(this).find(".max-qty-shipping").val(), 10);
+
+                if (!isNaN(from) && !isNaN(to)) {
+                    collected.push({ from, to });
+                }
+            });
+
+            return collected.filter((value, index, self) =>
+                index === self.findIndex(obj => obj.from === value.from && obj.to === value.to)
+            );
+        }
+
         function validateShippingQuantityRanges() {
             let ranges = [];
+            let productHasVariants = $('body input[name="activate_attributes"]').is(':checked');
 
-            $("#bloc_shipping_configuration tr").each(function () {
+            const maxShippingQty = {{ MAX_SHIPPING_QUANTITY }};
+            let sourceLabel = 'default shipping config';
+
+            if (productHasVariants === false) {
+                ranges = collectRangesFrom("#bloc_shipping_configuration tr");
+            } else {
+                let defaultUsed = false;
+                let variantRanges = [];
+
+                $('#bloc_variants_created .clonedDiv').each(function () {
+                    const $variant = $(this);
+                    const variantUsesDefault = $variant.find('.variant-shipping').is(':checked');
+
+                    if (variantUsesDefault) {
+                        defaultUsed = true;
+                    } else {
+                        const variantShippingSelector = $variant.find('#bloc_default_shipping tr');
+                        variantRanges.push(...collectRangesFrom(variantShippingSelector));
+                    }
+                });
+
+                if (defaultUsed) {
+                    sourceLabel = 'default shipping config (used by at least one variant)';
+                    ranges = collectRangesFrom("#bloc_shipping_configuration tr");
+                } else {
+                    sourceLabel = 'one of the variants';
+                    ranges = variantRanges;
+                }
+            }
+
+            ranges.sort((a, b) => a.from - b.from);
+
+            let current = 1;
+
+            for (let i = 0; i < ranges.length; i++) {
+                let from = ranges[i].from;
+                let to = ranges[i].to;
+
+                if (from > current) {
+                    return {
+                        message: `${translations.rangeError
+                            .replace('__FROM__', from)
+                            .replace('__EXPECTED__', current)} (in ${sourceLabel})`,
+                        status: false
+                    };
+                }
+
+                current = to + 1;
+            }
+
+            if (current <= maxShippingQty) {
+                return {
+                    message: `${translations.uncoveredRange
+                        .replace('__FROM__', current)
+                        .replace('__TO__', maxShippingQty)} (in ${sourceLabel})`,
+                    status: false
+                };
+            }
+
+            return { message: null, status: true };
+        }
+
+        function oldvalidateShippingQuantityRanges() {
+            let ranges = [];
+            let productHasVariants = $('body input[name="activate_attributes"]').is(':checked');
+
+            //,#bloc_variants_created #bloc_shipping_configuration tr
+            // product has not variants => check default shipping config
+            // product has variants:
+                // 1. at least one of the variants uses default shipping config
+                    // => check default shipping config for all quantities,
+                // 2. variants use it own shipping config
+                    // => no check for default shipping config,
+                    // the check has to be done on variants' shipping config for all quantities.
+
+            let selector = "#bloc_shipping_configuration tr";
+            $(selector).each(function () {
                 let from = parseInt($(this).find(".min-qty-shipping").val(), 10);
                 let to = parseInt($(this).find(".max-qty-shipping").val(), 10);
 
@@ -1197,7 +1290,12 @@
             });
 
             ranges.sort((a, b) => a.from - b.from);
-
+            ranges = ranges.filter((value, index, self) =>
+                index === self.findIndex(obj =>
+                    obj.from === value.from && obj.to === value.to
+                )
+            );
+            console.log({ ranges })
             let current = 1;
             for (let i = 0; i < ranges.length; i++) {
                 let from = ranges[i].from;
